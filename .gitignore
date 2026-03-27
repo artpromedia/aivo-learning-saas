@@ -6,6 +6,8 @@ dist/
 .env.local
 .env.*.local
 coverage/
+.next/
+out/
 
 # Python
 __pycache__/
