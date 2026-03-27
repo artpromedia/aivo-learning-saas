@@ -1,0 +1,25 @@
+{
+  "name": "aivo-learning-saas",
+  "private": true,
+  "packageManager": "pnpm@10.6.5",
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=10"
+  },
+  "scripts": {
+    "build": "turbo build",
+    "test": "turbo test",
+    "lint": "turbo lint",
+    "dev": "turbo dev"
+  },
+  "devDependencies": {
+    "turbo": "^2.4.0",
+    "typescript": "~5.7.3"
+  },
+  "pnpm": {
+    "overrides": {
+      "drizzle-orm": "0.44.2"
+    },
+    "onlyBuiltDependencies": ["esbuild"]
+  }
+}

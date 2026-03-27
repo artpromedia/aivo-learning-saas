@@ -1,0 +1,33 @@
+{
+  "name": "@aivo/brand",
+  "version": "0.0.1",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./tailwind": {
+      "import": "./dist/tailwind-preset.js",
+      "types": "./dist/tailwind-preset.d.ts"
+    },
+    "./flutter": {
+      "import": "./dist/flutter-tokens.js",
+      "types": "./dist/flutter-tokens.d.ts"
+    },
+    "./email": {
+      "import": "./dist/email-constants.js",
+      "types": "./dist/email-constants.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.6",
+    "typescript": "~5.7.3",
+    "vitest": "^3.0.0"
+  }
+}
