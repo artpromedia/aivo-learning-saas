@@ -1,0 +1,397 @@
+# ─────────────────────────────────────────────
+# AIVO Learning Platform — Default Helm Values
+# Override per-environment via values/<env>.yaml
+# ─────────────────────────────────────────────
+
+global:
+  registry: ghcr.io/artpromedia
+  imageTag: latest
+  imagePullPolicy: IfNotPresent
+  namespace: aivo
+
+  environment: staging
+  logLevel: info
+
+  # Domain configuration
+  domain: aivo.local
+  tlsEnabled: true
+
+  # Database
+  database:
+    host: postgresql
+    port: 5432
+    name: aivo
+    sslMode: require
+
+  # Redis
+  redis:
+    host: redis-master
+    port: 6379
+
+  # NATS
+  nats:
+    url: nats://nats:4222
+    jetstream: true
+
+# ─────────────────────────────────────────────
+# Service Definitions
+# ─────────────────────────────────────────────
+
+identity-svc:
+  enabled: true
+  replicaCount: 2
+  image:
+    repository: ghcr.io/artpromedia/identity-svc
+    tag: latest
+  port: 3001
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  healthCheck:
+    path: /health
+    port: 3001
+  env:
+    NODE_ENV: production
+    PORT: "3001"
+
+billing-svc:
+  enabled: true
+  replicaCount: 2
+  image:
+    repository: ghcr.io/artpromedia/billing-svc
+    tag: latest
+  port: 3008
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  healthCheck:
+    path: /health
+    port: 3008
+  env:
+    NODE_ENV: production
+    PORT: "3008"
+
+family-svc:
+  enabled: true
+  replicaCount: 2
+  image:
+    repository: ghcr.io/artpromedia/family-svc
+    tag: latest
+  port: 3005
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  healthCheck:
+    path: /health
+    port: 3005
+  env:
+    NODE_ENV: production
+    PORT: "3005"
+
+integrations-svc:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: ghcr.io/artpromedia/integrations-svc
+    tag: latest
+  port: 3010
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  healthCheck:
+    path: /health
+    port: 3010
+  env:
+    NODE_ENV: production
+    PORT: "3010"
+
+admin-svc:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: ghcr.io/artpromedia/admin-svc
+    tag: latest
+  port: 3009
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  healthCheck:
+    path: /health
+    port: 3009
+  env:
+    NODE_ENV: production
+    PORT: "3009"
+
+learning-svc:
+  enabled: true
+  replicaCount: 2
+  image:
+    repository: ghcr.io/artpromedia/learning-svc
+    tag: latest
+  port: 3003
+  resources:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+  healthCheck:
+    path: /health
+    port: 3003
+  env:
+    NODE_ENV: production
+    PORT: "3003"
+
+engagement-svc:
+  enabled: true
+  replicaCount: 2
+  image:
+    repository: ghcr.io/artpromedia/engagement-svc
+    tag: latest
+  port: 3004
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  healthCheck:
+    path: /health
+    port: 3004
+  env:
+    NODE_ENV: production
+    PORT: "3004"
+
+comms-svc:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: ghcr.io/artpromedia/comms-svc
+    tag: latest
+  port: 3007
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  healthCheck:
+    path: /health
+    port: 3007
+  env:
+    NODE_ENV: production
+    PORT: "3007"
+
+i18n-svc:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: ghcr.io/artpromedia/i18n-svc
+    tag: latest
+  port: 3011
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+  healthCheck:
+    path: /health
+    port: 3011
+  env:
+    NODE_ENV: production
+    PORT: "3011"
+
+tutor-svc:
+  enabled: true
+  replicaCount: 2
+  image:
+    repository: ghcr.io/artpromedia/tutor-svc
+    tag: latest
+  port: 3006
+  resources:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+  healthCheck:
+    path: /health
+    port: 3006
+  env:
+    NODE_ENV: production
+    PORT: "3006"
+
+status-page-svc:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: ghcr.io/artpromedia/status-page-svc
+    tag: latest
+  port: 3012
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+  healthCheck:
+    path: /health
+    port: 3012
+  env:
+    NODE_ENV: production
+    PORT: "3012"
+
+research-svc:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: ghcr.io/artpromedia/research-svc
+    tag: latest
+  port: 3013
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  healthCheck:
+    path: /health
+    port: 3013
+  env:
+    NODE_ENV: production
+    PORT: "3013"
+
+research-worker:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: ghcr.io/artpromedia/research-svc
+    tag: latest
+  resources:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+  env:
+    NODE_ENV: production
+    WORKER_MODE: "true"
+
+ai-svc:
+  enabled: true
+  replicaCount: 2
+  image:
+    repository: ghcr.io/artpromedia/ai-svc
+    tag: latest
+  port: 5000
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+  healthCheck:
+    path: /health
+    port: 5000
+  env:
+    PYTHONUNBUFFERED: "1"
+
+web:
+  enabled: true
+  replicaCount: 2
+  image:
+    repository: ghcr.io/artpromedia/web
+    tag: latest
+  port: 3000
+  resources:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+  healthCheck:
+    path: /
+    port: 3000
+  env:
+    NODE_ENV: production
+    PORT: "3000"
+
+marketing:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: ghcr.io/artpromedia/marketing
+    tag: latest
+  port: 3000
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  healthCheck:
+    path: /
+    port: 3000
+  env:
+    NODE_ENV: production
+    PORT: "3000"
+
+# ─────────────────────────────────────────────
+# Infrastructure Dependencies
+# ─────────────────────────────────────────────
+
+postgresql:
+  enabled: false
+
+redis:
+  enabled: false
+
+nats:
+  enabled: false
+
+# ─────────────────────────────────────────────
+# Ingress
+# ─────────────────────────────────────────────
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  tls:
+    - secretName: aivo-tls
+      hosts:
+        - "*.aivo.local"

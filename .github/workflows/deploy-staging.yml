@@ -16,7 +16,7 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: read
+  contents: write
   packages: write
   attestations: write
   id-token: write
@@ -517,3 +517,350 @@ jobs:
           if [ "$MISSING" -gt 0 ]; then
             echo "::warning::$MISSING image(s) could not be verified"
           fi
+
+  # ═════════════════════════════════════════════
+  # Stage 3: Deploy to Hetzner Staging (Helm)
+  # ═════════════════════════════════════════════
+  deploy-staging:
+    name: Deploy to Hetzner Staging
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs:
+      - resolve
+      - build-push-python
+      - build-push-web
+      - build-push
+      - build-backup-agent
+      - verify-images
+    environment: staging
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: "3.16.3"
+
+      - name: Configure kubectl
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > ~/.kube/config
+          chmod 600 ~/.kube/config
+
+      - name: Verify cluster connectivity
+        run: |
+          kubectl cluster-info
+          kubectl get nodes
+          kubectl get ns aivo 2>/dev/null || kubectl create ns aivo
+
+      - name: Generate image tag overrides
+        run: |
+          VERSION="${{ needs.resolve.outputs.version }}"
+          IMAGE_PREFIX="${{ env.IMAGE_PREFIX }}"
+
+          cat > /tmp/image-tags.yaml << EOYAML
+          # Auto-generated image tag overrides for staging deploy
+          # Version: ${VERSION}
+          # Generated: $(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+          identity-svc:
+            image:
+              repository: ${IMAGE_PREFIX}/identity-svc
+              tag: "${VERSION}"
+
+          billing-svc:
+            image:
+              repository: ${IMAGE_PREFIX}/billing-svc
+              tag: "${VERSION}"
+
+          family-svc:
+            image:
+              repository: ${IMAGE_PREFIX}/family-svc
+              tag: "${VERSION}"
+
+          integrations-svc:
+            image:
+              repository: ${IMAGE_PREFIX}/integrations-svc
+              tag: "${VERSION}"
+
+          admin-svc:
+            image:
+              repository: ${IMAGE_PREFIX}/admin-svc
+              tag: "${VERSION}"
+
+          learning-svc:
+            image:
+              repository: ${IMAGE_PREFIX}/learning-svc
+              tag: "${VERSION}"
+
+          engagement-svc:
+            image:
+              repository: ${IMAGE_PREFIX}/engagement-svc
+              tag: "${VERSION}"
+
+          comms-svc:
+            image:
+              repository: ${IMAGE_PREFIX}/comms-svc
+              tag: "${VERSION}"
+
+          i18n-svc:
+            image:
+              repository: ${IMAGE_PREFIX}/i18n-svc
+              tag: "${VERSION}"
+
+          tutor-svc:
+            image:
+              repository: ${IMAGE_PREFIX}/tutor-svc
+              tag: "${VERSION}"
+
+          status-page-svc:
+            image:
+              repository: ${IMAGE_PREFIX}/status-page-svc
+              tag: "${VERSION}"
+
+          research-svc:
+            image:
+              repository: ${IMAGE_PREFIX}/research-svc
+              tag: "${VERSION}"
+
+          research-worker:
+            image:
+              repository: ${IMAGE_PREFIX}/research-svc
+              tag: "${VERSION}"
+
+          ai-svc:
+            image:
+              repository: ${IMAGE_PREFIX}/ai-svc
+              tag: "${VERSION}"
+
+          web:
+            image:
+              repository: ${IMAGE_PREFIX}/web
+              tag: "${VERSION}"
+
+          marketing:
+            image:
+              repository: ${IMAGE_PREFIX}/marketing
+              tag: "${VERSION}"
+          EOYAML
+
+          echo "Generated image tag overrides:"
+          cat /tmp/image-tags.yaml
+
+      - name: Helm upgrade (staging)
+        run: |
+          helm upgrade --install aivolearning infra/helm \
+            -f infra/helm/values/hetzner.yaml \
+            -f /tmp/image-tags.yaml \
+            -n aivo --create-namespace \
+            --timeout 10m \
+            --wait
+
+      - name: Verify rollout status
+        run: |
+          SERVICES=(
+            identity-svc billing-svc family-svc integrations-svc admin-svc
+            learning-svc engagement-svc comms-svc i18n-svc tutor-svc
+            status-page-svc research-svc research-worker ai-svc web marketing
+          )
+
+          FAILED=0
+          for svc in "${SERVICES[@]}"; do
+            echo "Checking rollout: $svc..."
+            if kubectl rollout status deployment/"$svc" -n aivo --timeout=180s 2>/dev/null; then
+              echo "  OK: $svc rolled out successfully"
+            else
+              echo "  FAILED: $svc rollout did not complete"
+              FAILED=$((FAILED + 1))
+            fi
+          done
+
+          if [ "$FAILED" -gt 0 ]; then
+            echo "::error::$FAILED deployment(s) failed rollout verification"
+            kubectl get pods -n aivo --no-headers | grep -v Running || true
+            exit 1
+          fi
+          echo "All deployments rolled out successfully"
+
+      - name: Staging smoke tests
+        run: |
+          echo "=== Staging Smoke Tests ==="
+          echo ""
+
+          # Check pod readiness
+          TOTAL_PODS=$(kubectl get pods -n aivo --no-headers | wc -l)
+          READY_PODS=$(kubectl get pods -n aivo --no-headers | grep -c "Running" || true)
+          NOT_READY=$(kubectl get pods -n aivo --no-headers | grep -v "Running" | grep -v "Completed" || true)
+
+          echo "Total pods: $TOTAL_PODS"
+          echo "Running:    $READY_PODS"
+
+          if [ -n "$NOT_READY" ]; then
+            echo ""
+            echo "Non-running pods:"
+            echo "$NOT_READY"
+          fi
+
+          # Check restart counts
+          HIGH_RESTARTS=$(kubectl get pods -n aivo -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{range .status.containerStatuses[*]}{.restartCount}{end}{"\n"}{end}' \
+            | awk -F'\t' '$2 > 3 {print $1 " (restarts: " $2 ")"}')
+
+          if [ -n "$HIGH_RESTARTS" ]; then
+            echo ""
+            echo "::warning::Pods with high restart counts (>3):"
+            echo "$HIGH_RESTARTS"
+          fi
+
+          # Check Ready condition on all deployments
+          FAIL=0
+          DEPLOYMENTS=$(kubectl get deployments -n aivo -o jsonpath='{.items[*].metadata.name}')
+          for dep in $DEPLOYMENTS; do
+            READY=$(kubectl get deployment "$dep" -n aivo -o jsonpath='{.status.readyReplicas}' 2>/dev/null || echo "0")
+            DESIRED=$(kubectl get deployment "$dep" -n aivo -o jsonpath='{.spec.replicas}' 2>/dev/null || echo "0")
+            if [ "${READY:-0}" -lt "${DESIRED:-1}" ]; then
+              echo "UNHEALTHY: $dep — ready=$READY desired=$DESIRED"
+              FAIL=1
+            else
+              echo "HEALTHY:   $dep — ready=$READY/$DESIRED"
+            fi
+          done
+
+          if [ "$FAIL" -eq 1 ]; then
+            echo ""
+            echo "::error::One or more deployments are not fully ready"
+            exit 1
+          fi
+
+          echo ""
+          echo "=== Staging smoke tests passed ==="
+
+          # Step summary
+          echo "## Staging Deploy Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** \`${{ needs.resolve.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Namespace:** \`aivo\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Pods:** $READY_PODS/$TOTAL_PODS running" >> $GITHUB_STEP_SUMMARY
+
+  # ═════════════════════════════════════════════
+  # Stage 4a: Tag Images for Release
+  # ═════════════════════════════════════════════
+  tag-images:
+    name: "Tag: ${{ matrix.service }}"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [resolve, deploy-staging]
+    strategy:
+      fail-fast: false
+      max-parallel: 10
+      matrix:
+        service:
+          - identity-svc
+          - billing-svc
+          - family-svc
+          - integrations-svc
+          - admin-svc
+          - learning-svc
+          - engagement-svc
+          - comms-svc
+          - i18n-svc
+          - tutor-svc
+          - status-page-svc
+          - research-svc
+          - ai-svc
+          - web
+          - marketing
+
+    steps:
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_TOKEN || secrets.GITHUB_TOKEN }}
+
+      - name: Re-tag image for release
+        run: |
+          SOURCE="${{ env.IMAGE_PREFIX }}/${{ matrix.service }}:${{ needs.resolve.outputs.version }}"
+          TARGET="${{ env.IMAGE_PREFIX }}/${{ matrix.service }}:staging-verified"
+
+          echo "Pulling:  $SOURCE"
+          docker pull "$SOURCE"
+
+          echo "Tagging:  $TARGET"
+          docker tag "$SOURCE" "$TARGET"
+
+          echo "Pushing:  $TARGET"
+          docker push "$TARGET"
+
+          echo "Tagged ${{ matrix.service }}: ${{ needs.resolve.outputs.version }} → staging-verified"
+
+  # ═════════════════════════════════════════════
+  # Stage 4b: Create GitHub Release
+  # ═════════════════════════════════════════════
+  create-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [resolve, deploy-staging, tag-images]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          # Get the previous tag
+          PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          VERSION="${{ needs.resolve.outputs.version }}"
+
+          if [ -n "$PREV_TAG" ]; then
+            echo "Generating changelog since $PREV_TAG..."
+            CHANGELOG=$(git log "$PREV_TAG"..HEAD --pretty=format:"- %s (%h)" --no-merges)
+          else
+            echo "No previous tag found, generating changelog from last 20 commits..."
+            CHANGELOG=$(git log --pretty=format:"- %s (%h)" --no-merges -20)
+          fi
+
+          # Write to file for the release body
+          cat > /tmp/changelog.md << EOMD
+          ## Staging Deploy: ${VERSION}
+
+          **Commit:** \`${GITHUB_SHA}\`
+          **Branch:** \`${GITHUB_REF_NAME}\`
+          **Deployed:** $(date -u +"%Y-%m-%d %H:%M UTC")
+
+          ### Changes
+
+          ${CHANGELOG}
+
+          ### Images
+
+          All 15 service images tagged as \`${VERSION}\` and \`staging-verified\` on GHCR.
+          EOMD
+
+          echo "Changelog generated"
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${{ needs.resolve.outputs.version }}"
+          TAG_NAME="staging-${VERSION}"
+
+          # Create tag
+          git tag -a "$TAG_NAME" -m "Staging deploy: $VERSION" || true
+
+          # Push tag
+          git push origin "$TAG_NAME" 2>/dev/null || true
+
+          # Create release
+          gh release create "$TAG_NAME" \
+            --title "Staging: ${VERSION}" \
+            --notes-file /tmp/changelog.md \
+            --prerelease \
+            --target "$GITHUB_SHA" || echo "::warning::Release creation skipped (may already exist)"

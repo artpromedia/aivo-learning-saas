@@ -1,0 +1,29 @@
+{{- $global := .Values.global -}}
+{{- $services := list
+  "identity-svc" "billing-svc" "family-svc" "integrations-svc" "admin-svc"
+  "learning-svc" "engagement-svc" "comms-svc" "i18n-svc" "tutor-svc"
+  "status-page-svc" "research-svc" "ai-svc" "web" "marketing"
+-}}
+{{- range $svc := $services }}
+{{- $svcValues := index $.Values $svc | default dict }}
+{{- if and (default true (index $svcValues "enabled")) $svcValues.port }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $svc }}
+  namespace: {{ $global.namespace | default "aivo" }}
+  labels:
+    app.kubernetes.io/name: {{ $svc }}
+    app.kubernetes.io/part-of: aivolearning
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: {{ $svc }}
+  ports:
+    - port: {{ $svcValues.port }}
+      targetPort: {{ $svcValues.port }}
+      protocol: TCP
+      name: http
+{{- end }}
+{{- end }}

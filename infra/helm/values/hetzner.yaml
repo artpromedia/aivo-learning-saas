@@ -1,0 +1,250 @@
+# ─────────────────────────────────────────────
+# AIVO Learning Platform — Hetzner Cloud Overrides
+# Applied via: helm upgrade -f infra/helm/values/hetzner.yaml
+# ─────────────────────────────────────────────
+
+global:
+  environment: staging
+  domain: staging.aivo.app
+  tlsEnabled: true
+
+  # Hetzner-managed PostgreSQL
+  database:
+    host: aivo-pg-staging.c.hetzner.cloud
+    port: 5432
+    name: aivo_staging
+    sslMode: require
+
+  # Hetzner-managed Redis
+  redis:
+    host: aivo-redis-staging.c.hetzner.cloud
+    port: 6379
+
+  # NATS on Hetzner K8s
+  nats:
+    url: nats://nats.aivo.svc.cluster.local:4222
+    jetstream: true
+
+  # Hetzner Object Storage (S3-compatible)
+  objectStorage:
+    endpoint: https://fsn1.your-objectstorage.com
+    bucket: aivo-staging-assets
+    region: fsn1
+
+# ─────────────────────────────────────────────
+# Hetzner-specific resource tuning
+# Staging uses smaller instances than production
+# ─────────────────────────────────────────────
+
+identity-svc:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 384Mi
+
+billing-svc:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 384Mi
+
+family-svc:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 384Mi
+
+integrations-svc:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+admin-svc:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+learning-svc:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+engagement-svc:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 384Mi
+
+comms-svc:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+i18n-svc:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 25m
+      memory: 64Mi
+    limits:
+      cpu: 125m
+      memory: 128Mi
+
+tutor-svc:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+status-page-svc:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 25m
+      memory: 64Mi
+    limits:
+      cpu: 125m
+      memory: 128Mi
+
+research-svc:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 384Mi
+
+research-worker:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+ai-svc:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+
+web:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+marketing:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+# ─────────────────────────────────────────────
+# Ingress — Hetzner with nginx + cert-manager
+# ─────────────────────────────────────────────
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+  hosts:
+    - host: staging.aivo.app
+      paths:
+        - path: /
+          service: web
+    - host: api.staging.aivo.app
+      paths:
+        - path: /auth
+          service: identity-svc
+        - path: /learning
+          service: learning-svc
+        - path: /billing
+          service: billing-svc
+        - path: /family
+          service: family-svc
+        - path: /engagement
+          service: engagement-svc
+        - path: /comms
+          service: comms-svc
+        - path: /admin
+          service: admin-svc
+        - path: /integrations
+          service: integrations-svc
+        - path: /tutor
+          service: tutor-svc
+        - path: /i18n
+          service: i18n-svc
+        - path: /ai
+          service: ai-svc
+        - path: /research
+          service: research-svc
+    - host: status.staging.aivo.app
+      paths:
+        - path: /
+          service: status-page-svc
+  tls:
+    - secretName: aivo-staging-tls
+      hosts:
+        - staging.aivo.app
+        - api.staging.aivo.app
+        - status.staging.aivo.app
