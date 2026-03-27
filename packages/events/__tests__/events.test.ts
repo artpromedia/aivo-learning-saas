@@ -368,9 +368,9 @@ describe("Identity Events", () => {
 
 // ─── SUBJECTS constant ─────────────────────────────────────────────────────────
 describe("SUBJECTS constant", () => {
-  it("should include all 46 event subjects", () => {
+  it("should include all 52 event subjects", () => {
     const subjectCount = Object.keys(SUBJECTS).length;
-    expect(subjectCount).toBe(46);
+    expect(subjectCount).toBe(52);
   });
 
   it("all subjects should start with 'aivo.'", () => {
