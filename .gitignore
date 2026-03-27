@@ -6,3 +6,12 @@ dist/
 .env.local
 .env.*.local
 coverage/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+.coverage
+.pytest_cache/
+htmlcov/
