@@ -8,3 +8,4 @@ export * from "./billing.js";
 export * from "./comms.js";
 export * from "./identity.js";
 export * from "./admin.js";
+export * from "./integrations.js";
