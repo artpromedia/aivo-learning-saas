@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1913.34 3038.57">
+  <defs>
+    <linearGradient id="gl" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9666e3"/>
+      <stop offset="100%" stop-color="#8143e1"/>
+    </linearGradient>
+    <linearGradient id="gr" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#35cbda"/>
+      <stop offset="100%" stop-color="#1d95b1"/>
+    </linearGradient>
+    <linearGradient id="tg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#8a43c1"/>
+      <stop offset="100%" stop-color="#352288"/>
+    </linearGradient>
+  </defs>
+  <!-- Stacked purple variant: icon over wordmark -->
+  <circle cx="956.67" cy="500" r="360" fill="#915ee3"/>
+  <path d="M500,1000 Q500,900 600,900 L850,900 Q935,900 935,1000 L935,2000 Q935,2100 850,2100 L600,2100 Q500,2100 500,2000 Z" fill="url(#gl)"/>
+  <path d="M980,1150 Q980,1050 1080,1050 L1330,1050 Q1430,1050 1430,1150 L1430,2000 Q1430,2100 1330,2100 L1080,2100 Q980,2100 980,2000 Z" fill="url(#gr)"/>
+  <text x="956.67" y="2700" font-family="Inter, system-ui, sans-serif" font-weight="800" font-size="500" fill="url(#tg)" text-anchor="middle" letter-spacing="30">AIVO</text>
+</svg>
