@@ -50,11 +50,15 @@ const expectedTables = [
   // Functional Curriculum (2)
   { name: "functional_milestones", ref: schema.functionalMilestones },
   { name: "learner_milestones", ref: schema.learnerMilestones },
+  // Comms (3)
+  { name: "notifications", ref: schema.notifications },
+  { name: "push_tokens", ref: schema.pushTokens },
+  { name: "notification_preferences", ref: schema.notificationPreferences },
 ];
 
 describe("Database Schema", () => {
-  it("should define exactly 33 tables", () => {
-    expect(expectedTables).toHaveLength(33);
+  it("should define exactly 36 tables", () => {
+    expect(expectedTables).toHaveLength(36);
   });
 
   describe("Table definitions", () => {
@@ -76,6 +80,7 @@ describe("Database Schema", () => {
       "homework_sessions",
       "learner_badges",
       "learner_quests",
+      "notification_preferences",
     ]);
     const tablesWithCreatedAt = expectedTables.filter(
       (t) => !excludeFromTimestamp.has(t.name)
@@ -169,6 +174,9 @@ describe("Relation Exports", () => {
     "tenantUsagesRelations",
     "functionalMilestonesRelations",
     "learnerMilestonesRelations",
+    "notificationsRelations",
+    "pushTokensRelations",
+    "notificationPreferencesRelations",
   ];
 
   for (const rel of expectedRelations) {

@@ -34,6 +34,21 @@ export * from "./engagement";
 // Billing
 export * from "./billing";
 
+// Comms
+export * from "./comms";
+
+// Config
+export * from "./config";
+
+// Functional Curriculum
+export * from "./functional-curriculum";
+
+// Engagement
+export * from "./engagement";
+
+// Billing
+export * from "./billing";
+
 // Config
 export * from "./config";
 
