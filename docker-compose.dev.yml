@@ -70,7 +70,36 @@ services:
       timeout: 5s
       retries: 5
 
+  brain-svc:
+    build:
+      context: ./services/brain-svc
+      dockerfile: Dockerfile
+    ports:
+      - "3002:3002"
+    environment:
+      PORT: 3002
+      DATABASE_URL: postgresql+asyncpg://aivo:aivo_dev@postgres:5432/aivo_dev
+      REDIS_URL: redis://redis:6379
+      NATS_URL: nats://nats:4222
+      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY:-}
+      MODEL_STORE_DIR: /data/models
+    volumes:
+      - brain_models:/data/models
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:3002/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 volumes:
   postgres_data:
   redis_data:
   nats_data:
+  brain_models:
