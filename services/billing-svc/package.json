@@ -1,0 +1,40 @@
+{
+  "name": "@aivo/billing-svc",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsup",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@aivo/db": "workspace:*",
+    "@aivo/events": "workspace:*",
+    "@fastify/cookie": "^11.0.2",
+    "@fastify/cors": "^11.0.0",
+    "@fastify/rate-limit": "^10.2.1",
+    "drizzle-orm": "0.44.2",
+    "fastify": "5.2.1",
+    "fastify-plugin": "^5.0.1",
+    "ioredis": "5.4.2",
+    "jose": "5.9.6",
+    "nats": "^2.28.0",
+    "node-cache": "5.1.2",
+    "node-cron": "^3.0.3",
+    "postgres": "3.4.5",
+    "stripe": "17.5.0",
+    "zod": "3.24.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsup": "^8.3.5",
+    "tsx": "^4.19.2",
+    "typescript": "5.7.3",
+    "vitest": "^3.0.4",
+    "@vitest/coverage-v8": "^3.0.4"
+  }
+}
