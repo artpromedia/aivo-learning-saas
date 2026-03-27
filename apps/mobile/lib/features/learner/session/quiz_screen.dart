@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,10 +8,13 @@ import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:aivo_mobile/config/theme.dart';
+import 'package:aivo_mobile/core/accessibility/audio_narrator.dart';
 import 'package:aivo_mobile/core/accessibility/functioning_level_provider.dart';
+import 'package:aivo_mobile/core/api/api_client.dart';
+import 'package:aivo_mobile/core/api/endpoints.dart';
+import 'package:aivo_mobile/core/connectivity/connectivity_provider.dart';
+import 'package:aivo_mobile/core/connectivity/sync_manager.dart';
 import 'package:aivo_mobile/data/models/learning_session.dart';
-import 'package:aivo_mobile/data/repositories/learning_repository.dart';
-import 'package:aivo_mobile/shared/widgets/celebration_overlay.dart';
 
 // ---------------------------------------------------------------------------
 // QuizScreen
@@ -39,6 +43,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
   Timer? _timer;
   int _elapsedSeconds = 0;
   bool _quizComplete = false;
+  int _xpEarned = 0;
 
   @override
   void initState() {
@@ -79,16 +84,36 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
 
     setState(() => _isSubmitting = true);
 
-    try {
-      final repo = ref.read(learningRepositoryProvider);
-      final result = await repo.submitInteraction(
-        widget.sessionId,
-        _current.id,
-        answer,
-      );
+    final api = ref.read(apiClientProvider);
+    final isOnline = ref.read(isOnlineProvider);
+    final payload = {
+      'interactionId': _current.id,
+      'response': answer,
+    };
 
-      final isCorrect = result.isCorrect ?? false;
-      final feedback = result.feedback ?? (isCorrect ? 'Correct!' : 'Incorrect');
+    try {
+      bool isCorrect = false;
+      String feedback = '';
+
+      if (isOnline) {
+        final result = await api.post(
+          Endpoints.learningSessionInteract(widget.sessionId),
+          data: payload,
+        );
+        final data = result.data as Map<String, dynamic>;
+        isCorrect = data['isCorrect'] as bool? ?? false;
+        feedback = data['feedback'] as String? ??
+            (isCorrect ? 'Correct!' : 'Incorrect');
+      } else {
+        final syncManager = ref.read(syncManagerProvider);
+        await syncManager.queueAction(SyncAction(
+          endpoint: Endpoints.learningSessionInteract(widget.sessionId),
+          method: 'POST',
+          payload: jsonEncode(payload),
+        ));
+        // Offline: cannot determine correctness
+        feedback = 'Answer saved. We will check when online.';
+      }
 
       setState(() {
         _totalAnswered++;
@@ -101,6 +126,11 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
 
       if (isCorrect) {
         HapticFeedback.lightImpact();
+        final level = ref.read(functioningLevelProvider);
+        if (level.index >= FunctioningLevel.lowVerbal.index) {
+          final narrator = ref.read(audioNarratorProvider);
+          narrator.speak('Correct! Great job!');
+        }
       }
     } catch (e) {
       if (mounted) {
@@ -121,25 +151,10 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
 
     if (_currentIndex + 1 >= _interactions.length) {
       _timer?.cancel();
+      _xpEarned = (_correctCount * 10).clamp(0, 200);
       setState(() => _quizComplete = true);
-      _showCompletionIfNeeded();
     } else {
       setState(() => _currentIndex++);
-    }
-  }
-
-  Future<void> _showCompletionIfNeeded() async {
-    final percentage =
-        _totalAnswered > 0 ? (_correctCount / _totalAnswered * 100) : 0.0;
-    final xp = (_correctCount * 10).clamp(0, 200);
-
-    if (percentage >= 80 && mounted) {
-      await CelebrationOverlay.show(
-        context,
-        type: CelebrationType.quizPerfect,
-        message: 'Great Score!',
-        xpEarned: xp,
-      );
     }
   }
 
@@ -160,7 +175,28 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     if (_interactions.isEmpty) {
       return Scaffold(
         appBar: AppBar(title: const Text('Quiz')),
-        body: const Center(child: Text('No quiz questions available.')),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.quiz_outlined,
+                    size: 64, color: theme.colorScheme.outline),
+                const SizedBox(height: 16),
+                Text('No quiz questions available.',
+                    style: theme.textTheme.bodyLarge),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () => context.canPop()
+                      ? context.pop()
+                      : context.go('/learner/home'),
+                  child: const Text('Go Back'),
+                ),
+              ],
+            ),
+          ),
+        ),
       );
     }
 
@@ -171,18 +207,28 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Quiz'),
-        leading: IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () =>
-              context.canPop() ? context.pop() : context.go('/learner/home'),
+        leading: Semantics(
+          button: true,
+          label: 'Close quiz',
+          child: IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () =>
+                context.canPop() ? context.pop() : context.go('/learner/home'),
+          ),
         ),
         actions: [
           Center(
             child: Padding(
               padding: const EdgeInsets.only(right: 16),
-              child: Text(
-                _formatTime(_elapsedSeconds),
-                style: theme.textTheme.bodyMedium,
+              child: Semantics(
+                label: 'Elapsed time: ${_formatTime(_elapsedSeconds)}',
+                child: Text(
+                  _formatTime(_elapsedSeconds),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    fontFeatures: [const FontFeature.tabularFigures()],
+                  ),
+                ),
               ),
             ),
           ),
@@ -193,27 +239,34 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
           // Progress dots
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(_interactions.length, (i) {
-                Color color;
-                if (i < _currentIndex) {
-                  color = theme.colorScheme.primary;
-                } else if (i == _currentIndex) {
-                  color = theme.colorScheme.tertiary;
-                } else {
-                  color = theme.colorScheme.outline.withAlpha(80);
-                }
-                return Container(
-                  width: isLowVerbal ? 14 : 10,
-                  height: isLowVerbal ? 14 : 10,
-                  margin: const EdgeInsets.symmetric(horizontal: 3),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: color,
-                  ),
-                );
-              }),
+            child: Semantics(
+              label:
+                  'Question ${_currentIndex + 1} of ${_interactions.length}',
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(
+                  _interactions.length > 20 ? 0 : _interactions.length,
+                  (i) {
+                    Color color;
+                    if (i < _currentIndex) {
+                      color = theme.colorScheme.primary;
+                    } else if (i == _currentIndex) {
+                      color = theme.colorScheme.tertiary;
+                    } else {
+                      color = theme.colorScheme.outline.withValues(alpha: 0.3);
+                    }
+                    return Container(
+                      width: isLowVerbal ? 14 : 10,
+                      height: isLowVerbal ? 14 : 10,
+                      margin: const EdgeInsets.symmetric(horizontal: 3),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: color,
+                      ),
+                    );
+                  },
+                ),
+              ),
             ),
           ),
 
@@ -227,14 +280,17 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                   'Question ${_currentIndex + 1} of ${_interactions.length}',
                   style: theme.textTheme.bodySmall,
                 ),
-                Row(
-                  children: [
-                    const Icon(Icons.check_circle,
-                        size: 16, color: AivoColors.questGreen),
-                    const SizedBox(width: 4),
-                    Text('$_correctCount/$_totalAnswered',
-                        style: theme.textTheme.bodySmall),
-                  ],
+                Semantics(
+                  label: '$_correctCount correct out of $_totalAnswered answered',
+                  child: Row(
+                    children: [
+                      const Icon(Icons.check_circle,
+                          size: 16, color: AivoColors.questGreen),
+                      const SizedBox(width: 4),
+                      Text('$_correctCount/$_totalAnswered',
+                          style: theme.textTheme.bodySmall),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -259,23 +315,37 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
               width: double.infinity,
               height: isLowVerbal ? 64 : 48,
               child: _showFeedback
-                  ? ElevatedButton(
-                      onPressed: _nextQuestion,
-                      child: Text(
+                  ? Semantics(
+                      button: true,
+                      label: _currentIndex + 1 >= _interactions.length
+                          ? 'See results'
+                          : 'Next question',
+                      child: ElevatedButton(
+                        onPressed: _nextQuestion,
+                        child: Text(
                           _currentIndex + 1 >= _interactions.length
                               ? 'See Results'
-                              : 'Next Question'),
+                              : 'Next Question',
+                          style: TextStyle(fontSize: isLowVerbal ? 20 : 16),
+                        ),
+                      ),
                     )
-                  : ElevatedButton(
-                      onPressed: _isSubmitting ? null : _submitAnswer,
-                      child: _isSubmitting
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                  strokeWidth: 2),
-                            )
-                          : const Text('Submit'),
+                  : Semantics(
+                      button: true,
+                      label: 'Submit answer',
+                      child: ElevatedButton(
+                        onPressed: _isSubmitting ? null : _submitAnswer,
+                        child: _isSubmitting
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child:
+                                    CircularProgressIndicator(strokeWidth: 2),
+                              )
+                            : Text('Submit',
+                                style:
+                                    TextStyle(fontSize: isLowVerbal ? 20 : 16)),
+                      ),
                     ),
             ),
           ),
@@ -290,10 +360,13 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          interaction.prompt,
-          style: theme.textTheme.titleLarge?.copyWith(
-            fontSize: isLowVerbal ? 24 : 20,
+        Semantics(
+          label: interaction.prompt,
+          child: Text(
+            interaction.prompt,
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontSize: isLowVerbal ? 24 : 20,
+            ),
           ),
         ),
         const SizedBox(height: 24),
@@ -333,18 +406,25 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
         final isSelected = _selectedAnswer == option;
         return Padding(
           padding: const EdgeInsets.only(bottom: 10),
-          child: RadioListTile<String>(
-            value: option,
-            groupValue: _selectedAnswer,
-            onChanged: (v) => setState(() => _selectedAnswer = v),
-            title: Text(option,
-                style: TextStyle(fontSize: isLowVerbal ? 20 : 16)),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12)),
-            tileColor: isSelected
-                ? theme.colorScheme.primary.withAlpha(20)
-                : theme.colorScheme.surfaceContainerHighest,
-            activeColor: theme.colorScheme.primary,
+          child: Semantics(
+            button: true,
+            selected: isSelected,
+            label: option,
+            child: RadioListTile<String>(
+              value: option,
+              groupValue: _selectedAnswer,
+              onChanged: (v) => setState(() => _selectedAnswer = v),
+              title: Text(option,
+                  style: TextStyle(fontSize: isLowVerbal ? 20 : 16)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+              tileColor: isSelected
+                  ? theme.colorScheme.primary.withValues(alpha: 0.08)
+                  : theme.colorScheme.surfaceContainerHighest,
+              activeColor: theme.colorScheme.primary,
+              contentPadding:
+                  EdgeInsets.symmetric(horizontal: isLowVerbal ? 20 : 12),
+            ),
           ),
         );
       }).toList(),
@@ -358,21 +438,26 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
         return Expanded(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 6),
-            child: ElevatedButton(
-              onPressed: () => setState(() => _selectedAnswer = option),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: isSelected
-                    ? theme.colorScheme.primary
-                    : theme.colorScheme.surfaceContainerHighest,
-                foregroundColor: isSelected
-                    ? theme.colorScheme.onPrimary
-                    : theme.colorScheme.onSurface,
-                minimumSize: Size(0, isLowVerbal ? 80 : 56),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16)),
+            child: Semantics(
+              button: true,
+              selected: isSelected,
+              label: option,
+              child: ElevatedButton(
+                onPressed: () => setState(() => _selectedAnswer = option),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: isSelected
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.surfaceContainerHighest,
+                  foregroundColor: isSelected
+                      ? theme.colorScheme.onPrimary
+                      : theme.colorScheme.onSurface,
+                  minimumSize: Size(0, isLowVerbal ? 80 : 56),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
+                ),
+                child: Text(option,
+                    style: TextStyle(fontSize: isLowVerbal ? 22 : 18)),
               ),
-              child: Text(option,
-                  style: TextStyle(fontSize: isLowVerbal ? 22 : 18)),
             ),
           ),
         );
@@ -381,14 +466,19 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
   }
 
   Widget _buildShortAnswer(ThemeData theme, bool isLowVerbal) {
-    return TextField(
-      controller: _shortAnswerController,
-      style: TextStyle(fontSize: isLowVerbal ? 20 : 16),
-      decoration: InputDecoration(
-        hintText: 'Type your answer...',
-        contentPadding: EdgeInsets.all(isLowVerbal ? 20 : 16),
+    return Semantics(
+      textField: true,
+      label: 'Type your answer',
+      child: TextField(
+        controller: _shortAnswerController,
+        style: TextStyle(fontSize: isLowVerbal ? 20 : 16),
+        decoration: InputDecoration(
+          hintText: 'Type your answer...',
+          contentPadding: EdgeInsets.all(isLowVerbal ? 20 : 16),
+        ),
+        maxLines: 3,
+        textInputAction: TextInputAction.done,
       ),
-      maxLines: 3,
     );
   }
 
@@ -410,43 +500,47 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
         final isSelected = _selectedAnswer == label;
         final size = isLowVerbal ? 150.0 : 120.0;
 
-        return GestureDetector(
-          onTap: () => setState(() => _selectedAnswer = label),
-          child: Container(
-            width: size,
-            decoration: BoxDecoration(
-              border: Border.all(
+        return Semantics(
+          button: true,
+          selected: isSelected,
+          label: label,
+          child: GestureDetector(
+            onTap: () => setState(() => _selectedAnswer = label),
+            child: Container(
+              width: size,
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: isSelected
+                      ? theme.colorScheme.primary
+                      : Colors.transparent,
+                  width: 3,
+                ),
+                borderRadius: BorderRadius.circular(16),
                 color: isSelected
-                    ? theme.colorScheme.primary
-                    : Colors.transparent,
-                width: 3,
+                    ? theme.colorScheme.primary.withValues(alpha: 0.08)
+                    : theme.colorScheme.surfaceContainerHighest,
               ),
-              borderRadius: BorderRadius.circular(16),
-              color: isSelected
-                  ? theme.colorScheme.primary.withAlpha(20)
-                  : theme.colorScheme.surfaceContainerHighest,
-            ),
-            padding: const EdgeInsets.all(8),
-            child: Column(
-              children: [
-                if (imageUrl.isNotEmpty)
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: CachedNetworkImage(
-                      imageUrl: imageUrl,
-                      width: size - 24,
-                      height: size - 24,
-                      fit: BoxFit.cover,
-                      errorWidget: (_, __, ___) =>
-                          Icon(Icons.image, size: size * 0.4),
+              padding: const EdgeInsets.all(8),
+              child: Column(
+                children: [
+                  if (imageUrl.isNotEmpty)
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: CachedNetworkImage(
+                        imageUrl: imageUrl,
+                        width: size - 24,
+                        height: size - 24,
+                        fit: BoxFit.cover,
+                        errorWidget: (_, __, ___) =>
+                            Icon(Icons.image, size: size * 0.4),
+                      ),
                     ),
-                  ),
-                const SizedBox(height: 6),
-                Text(label,
-                    textAlign: TextAlign.center,
-                    style:
-                        TextStyle(fontSize: isLowVerbal ? 16 : 13)),
-              ],
+                  const SizedBox(height: 6),
+                  Text(label,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: isLowVerbal ? 16 : 13)),
+                ],
+              ),
             ),
           ),
         );
@@ -457,12 +551,15 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
   Widget _buildFeedbackView(ThemeData theme, bool isLowVerbal) {
     return Column(
       children: [
-        Icon(
-          _lastCorrect == true ? Icons.check_circle : Icons.cancel,
-          size: isLowVerbal ? 80 : 64,
-          color: _lastCorrect == true
-              ? AivoColors.questGreen
-              : AivoColors.error,
+        Semantics(
+          label: _lastCorrect == true ? 'Correct' : 'Incorrect',
+          child: Icon(
+            _lastCorrect == true ? Icons.check_circle : Icons.cancel,
+            size: isLowVerbal ? 80 : 64,
+            color: _lastCorrect == true
+                ? AivoColors.questGreen
+                : AivoColors.error,
+          ),
         ),
         const SizedBox(height: 16),
         Text(
@@ -488,7 +585,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
   Widget _buildScoreSummary(ThemeData theme, bool isLowVerbal) {
     final percentage =
         _totalAnswered > 0 ? (_correctCount / _totalAnswered * 100) : 0.0;
-    final xp = (_correctCount * 10).clamp(0, 200);
+    final isGoodScore = percentage >= 80;
 
     return Scaffold(
       body: SafeArea(
@@ -498,25 +595,41 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  percentage >= 80 ? Icons.emoji_events : Icons.assignment_turned_in,
-                  size: 80,
-                  color: percentage >= 80
-                      ? AivoColors.xpGold
-                      : theme.colorScheme.primary,
+                TweenAnimationBuilder<double>(
+                  tween: Tween(begin: 0.0, end: 1.0),
+                  duration: const Duration(milliseconds: 800),
+                  curve: Curves.elasticOut,
+                  builder: (context, value, child) {
+                    return Transform.scale(scale: value, child: child);
+                  },
+                  child: Icon(
+                    isGoodScore
+                        ? Icons.emoji_events
+                        : Icons.assignment_turned_in,
+                    size: 80,
+                    color: isGoodScore
+                        ? AivoColors.xpGold
+                        : theme.colorScheme.primary,
+                  ),
                 ),
                 const SizedBox(height: 24),
-                Text('Quiz Complete!',
-                    style: theme.textTheme.headlineMedium),
+                Semantics(
+                  header: true,
+                  child: Text('Quiz Complete!',
+                      style: theme.textTheme.headlineMedium),
+                ),
                 const SizedBox(height: 16),
-                Text(
-                  '${percentage.toStringAsFixed(0)}%',
-                  style: theme.textTheme.headlineLarge?.copyWith(
-                    fontSize: 48,
-                    fontWeight: FontWeight.w800,
-                    color: percentage >= 80
-                        ? AivoColors.questGreen
-                        : theme.colorScheme.primary,
+                Semantics(
+                  label: '${percentage.toStringAsFixed(0)} percent',
+                  child: Text(
+                    '${percentage.toStringAsFixed(0)}%',
+                    style: theme.textTheme.headlineLarge?.copyWith(
+                      fontSize: 48,
+                      fontWeight: FontWeight.w800,
+                      color: isGoodScore
+                          ? AivoColors.questGreen
+                          : theme.colorScheme.primary,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -525,34 +638,53 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                   style: theme.textTheme.bodyLarge,
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  'Time: ${_formatTime(_elapsedSeconds)}',
-                  style: theme.textTheme.bodyMedium,
+                Semantics(
+                  label: 'Time taken: ${_formatTime(_elapsedSeconds)}',
+                  child: Text(
+                    'Time: ${_formatTime(_elapsedSeconds)}',
+                    style: theme.textTheme.bodyMedium,
+                  ),
                 ),
                 const SizedBox(height: 16),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.bolt, color: AivoColors.xpGold),
-                    const SizedBox(width: 4),
-                    Text(
-                      '+$xp XP',
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        color: AivoColors.xpGold,
-                        fontWeight: FontWeight.w700,
+                TweenAnimationBuilder<double>(
+                  tween: Tween(begin: 0.0, end: 1.0),
+                  duration: const Duration(milliseconds: 600),
+                  curve: Curves.easeOut,
+                  builder: (context, value, child) {
+                    return Opacity(opacity: value, child: child);
+                  },
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.bolt, color: AivoColors.xpGold),
+                      const SizedBox(width: 4),
+                      Semantics(
+                        label: '$_xpEarned XP earned',
+                        child: Text(
+                          '+$_xpEarned XP',
+                          style: theme.textTheme.titleLarge?.copyWith(
+                            color: AivoColors.xpGold,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 32),
                 SizedBox(
                   width: double.infinity,
                   height: isLowVerbal ? 64 : 48,
-                  child: ElevatedButton(
-                    onPressed: () => context.canPop()
-                        ? context.pop()
-                        : context.go('/learner/home'),
-                    child: const Text('Done'),
+                  child: Semantics(
+                    button: true,
+                    label: 'Done, return to home',
+                    child: ElevatedButton(
+                      onPressed: () => context.canPop()
+                          ? context.pop()
+                          : context.go('/learner/home'),
+                      child: Text('Done',
+                          style: TextStyle(fontSize: isLowVerbal ? 20 : 16)),
+                    ),
                   ),
                 ),
               ],
