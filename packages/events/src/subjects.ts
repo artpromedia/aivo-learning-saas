@@ -8,6 +8,7 @@ import {
   BILLING_SUBJECTS,
   COMMS_SUBJECTS,
   IDENTITY_SUBJECTS,
+  ADMIN_SUBJECTS,
 } from "./schemas/index.js";
 
 export const SUBJECTS = {
@@ -20,6 +21,7 @@ export const SUBJECTS = {
   ...BILLING_SUBJECTS,
   ...COMMS_SUBJECTS,
   ...IDENTITY_SUBJECTS,
+  ...ADMIN_SUBJECTS,
 } as const;
 
 export type EventName = keyof typeof SUBJECTS;

@@ -12,6 +12,7 @@ import {
   BILLING_SCHEMAS,
   COMMS_SCHEMAS,
   IDENTITY_SCHEMAS,
+  ADMIN_SCHEMAS,
 } from "./schemas/index.js";
 
 const sc = StringCodec();
@@ -26,6 +27,7 @@ const ALL_SCHEMAS: Record<string, z.ZodType> = {
   ...BILLING_SCHEMAS,
   ...COMMS_SCHEMAS,
   ...IDENTITY_SCHEMAS,
+  ...ADMIN_SCHEMAS,
 };
 
 function getSchema(eventName: string): z.ZodType {

@@ -39,3 +39,6 @@ export * from "./config";
 
 // Functional Curriculum
 export * from "./functional-curriculum";
+
+// Admin
+export * from "./admin";
