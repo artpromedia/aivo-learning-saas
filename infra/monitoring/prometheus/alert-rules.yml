@@ -1,0 +1,86 @@
+groups:
+  - name: aivo-service-health
+    rules:
+      - alert: ServiceDown
+        expr: up{namespace="aivo"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Service {{ $labels.service }} is down"
+          description: "{{ $labels.service }} in namespace {{ $labels.namespace }} has been down for more than 2 minutes."
+
+      - alert: HighRestartCount
+        expr: increase(kube_pod_container_status_restarts_total{namespace="aivo"}[1h]) > 5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Pod {{ $labels.pod }} restarting frequently"
+          description: "{{ $labels.pod }} has restarted {{ $value }} times in the last hour."
+
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{namespace="aivo", status=~"5.."}[5m]) / rate(http_requests_total{namespace="aivo"}[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High 5xx error rate on {{ $labels.service }}"
+          description: "{{ $labels.service }} has a {{ $value | humanizePercentage }} error rate."
+
+      - alert: HighLatencyP95
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{namespace="aivo"}[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High P95 latency on {{ $labels.service }}"
+          description: "{{ $labels.service }} P95 latency is {{ $value }}s (threshold: 2s)."
+
+      - alert: HighMemoryUsage
+        expr: container_memory_usage_bytes{namespace="aivo"} / container_spec_memory_limit_bytes{namespace="aivo"} > 0.9
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage on {{ $labels.pod }}"
+          description: "{{ $labels.pod }} is using {{ $value | humanizePercentage }} of its memory limit."
+
+      - alert: HighCPUUsage
+        expr: rate(container_cpu_usage_seconds_total{namespace="aivo"}[5m]) / container_spec_cpu_quota{namespace="aivo"} * container_spec_cpu_period{namespace="aivo"} > 0.9
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage on {{ $labels.pod }}"
+
+  - name: aivo-database
+    rules:
+      - alert: PostgresConnectionPoolExhausted
+        expr: pg_stat_activity_count / pg_settings_max_connections > 0.8
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "PostgreSQL connection pool near exhaustion"
+          description: "{{ $value | humanizePercentage }} of max connections in use."
+
+      - alert: PostgresReplicationLag
+        expr: pg_replication_lag > 30
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "PostgreSQL replication lag"
+          description: "Replication lag is {{ $value }}s."
+
+  - name: aivo-nats
+    rules:
+      - alert: NATSSlowConsumer
+        expr: nats_consumer_num_pending > 10000
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "NATS consumer {{ $labels.consumer }} has high pending count"
+          description: "{{ $value }} messages pending."

@@ -1,0 +1,66 @@
+{
+  "apiVersion": 1,
+  "providers": [
+    {
+      "name": "AIVO Platform",
+      "orgId": 1,
+      "folder": "AIVO",
+      "type": "file",
+      "disableDeletion": false,
+      "editable": true,
+      "options": {
+        "path": "/var/lib/grafana/dashboards/aivo"
+      }
+    }
+  ],
+  "dashboards": [
+    {
+      "name": "Service Overview",
+      "uid": "aivo-svc-overview",
+      "description": "All AIVO services: request rate, latency, error rate, pod health",
+      "panels": [
+        "request_rate_by_service",
+        "p95_latency_by_service",
+        "error_rate_5xx",
+        "pod_restart_count",
+        "memory_usage_by_service",
+        "cpu_usage_by_service"
+      ]
+    },
+    {
+      "name": "Database",
+      "uid": "aivo-database",
+      "description": "PostgreSQL: connections, query latency, replication lag, disk usage",
+      "panels": [
+        "pg_connections",
+        "pg_query_duration",
+        "pg_replication_lag",
+        "pg_disk_usage",
+        "pg_cache_hit_ratio"
+      ]
+    },
+    {
+      "name": "NATS Messaging",
+      "uid": "aivo-nats",
+      "description": "NATS JetStream: message rate, consumer lag, stream depth",
+      "panels": [
+        "nats_message_rate",
+        "nats_consumer_pending",
+        "nats_stream_depth",
+        "nats_connection_count"
+      ]
+    },
+    {
+      "name": "AI Service",
+      "uid": "aivo-ai-svc",
+      "description": "AI service: generation latency, token usage, model routing, error rate",
+      "panels": [
+        "ai_generation_latency",
+        "ai_token_usage",
+        "ai_model_distribution",
+        "ai_error_rate",
+        "ai_queue_depth"
+      ]
+    }
+  ]
+}

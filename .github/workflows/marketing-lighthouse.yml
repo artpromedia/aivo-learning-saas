@@ -1,0 +1,187 @@
+name: Marketing Lighthouse CI
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "apps/marketing/**"
+      - "packages/brand/**"
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: "22.22.1"
+  PNPM_VERSION: "10.32.1"
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  lighthouse:
+    name: Lighthouse Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build marketing
+        run: pnpm turbo run build --filter=marketing...
+
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli@0.14.x
+
+      - name: Serve marketing and run Lighthouse
+        run: |
+          # Start a static server for the built marketing app
+          if [ -d "apps/marketing/.next/standalone" ]; then
+            cd apps/marketing/.next/standalone
+            node server.js &
+            SERVER_PID=$!
+            SERVE_URL="http://localhost:3000"
+          elif [ -d "apps/marketing/out" ]; then
+            npx --yes serve -s apps/marketing/out -l 3000 &
+            SERVER_PID=$!
+            SERVE_URL="http://localhost:3000"
+          else
+            npx --yes serve -s apps/marketing/dist -l 3000 2>/dev/null &
+            SERVER_PID=$!
+            SERVE_URL="http://localhost:3000"
+          fi
+
+          # Wait for server
+          for i in $(seq 1 20); do
+            if curl -sf "$SERVE_URL" > /dev/null 2>&1; then
+              echo "Server is ready at $SERVE_URL"
+              break
+            fi
+            sleep 2
+          done
+
+          # Run Lighthouse on key pages
+          lhci autorun \
+            --collect.url="$SERVE_URL/" \
+            --collect.url="$SERVE_URL/pricing" \
+            --collect.url="$SERVE_URL/for-teachers" \
+            --collect.numberOfRuns=3 \
+            --assert.assertions.categories:performance=["error", {"minScore": 0.9}] \
+            --assert.assertions.categories:accessibility=["error", {"minScore": 0.9}] \
+            --assert.assertions.categories:best-practices=["error", {"minScore": 0.9}] \
+            --assert.assertions.categories:seo=["error", {"minScore": 0.9}] \
+            --upload.target=filesystem \
+            --upload.outputDir=.lighthouseci/ || LHCI_EXIT=$?
+
+          kill $SERVER_PID 2>/dev/null || true
+
+          # Generate summary regardless of exit code
+          echo "## Lighthouse CI Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Thresholds:** Performance >= 0.9, Accessibility >= 0.9, Best Practices >= 0.9, SEO >= 0.9" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ -d ".lighthouseci" ]; then
+            echo "**Pages audited:** /, /pricing, /for-teachers" >> $GITHUB_STEP_SUMMARY
+            echo "**Runs per page:** 3" >> $GITHUB_STEP_SUMMARY
+
+            # Parse results if manifest exists
+            if [ -f ".lighthouseci/manifest.json" ]; then
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "| Page | Performance | Accessibility | Best Practices | SEO |" >> $GITHUB_STEP_SUMMARY
+              echo "|------|-------------|---------------|----------------|-----|" >> $GITHUB_STEP_SUMMARY
+
+              python3 -c "
+          import json, sys
+          with open('.lighthouseci/manifest.json') as f:
+            manifest = json.load(f)
+          for entry in manifest:
+            url = entry.get('url', 'unknown')
+            path = url.replace('http://localhost:3000', '') or '/'
+            summary = entry.get('summary', {})
+            perf = summary.get('performance', 0)
+            a11y = summary.get('accessibility', 0)
+            bp = summary.get('best-practices', 0)
+            seo = summary.get('seo', 0)
+            print(f'| {path} | {perf:.2f} | {a11y:.2f} | {bp:.2f} | {seo:.2f} |')
+              " >> $GITHUB_STEP_SUMMARY 2>/dev/null || echo "Could not parse manifest" >> $GITHUB_STEP_SUMMARY
+            fi
+          fi
+
+          exit ${LHCI_EXIT:-0}
+
+      - name: Upload Lighthouse reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-reports
+          path: .lighthouseci/
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - name: Comment Lighthouse results on PR
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let body = '## Lighthouse CI Results\n\n';
+
+            try {
+              const manifest = JSON.parse(fs.readFileSync('.lighthouseci/manifest.json', 'utf8'));
+              body += '| Page | Perf | A11y | BP | SEO |\n';
+              body += '|------|------|------|----|-----|\n';
+
+              for (const entry of manifest) {
+                const url = (entry.url || '').replace('http://localhost:3000', '') || '/';
+                const s = entry.summary || {};
+                const perf = (s.performance || 0).toFixed(2);
+                const a11y = (s.accessibility || 0).toFixed(2);
+                const bp = (s['best-practices'] || 0).toFixed(2);
+                const seo = (s.seo || 0).toFixed(2);
+                body += `| ${url} | ${perf} | ${a11y} | ${bp} | ${seo} |\n`;
+              }
+
+              body += '\n**Thresholds:** >= 0.9 for all categories\n';
+            } catch {
+              body += 'Could not parse Lighthouse results.\n';
+            }
+
+            // Find existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find(c =>
+              c.body.includes('## Lighthouse CI Results') && c.user.type === 'Bot'
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
