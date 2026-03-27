@@ -13,7 +13,7 @@ export interface CreateNotificationInput {
 }
 
 export class NotificationService {
-  private preferenceService: PreferenceService;
+  private readonly preferenceService: PreferenceService;
 
   constructor(private readonly app: FastifyInstance) {
     this.preferenceService = new PreferenceService(app);
