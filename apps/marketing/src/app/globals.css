@@ -1,0 +1,23 @@
+@import "tailwindcss";
+@import "@aivo/brand/tailwind-theme.css";
+@import "../../src/styles/animations.css";
+
+:root {
+  --aivo-purple: #7c3aed;
+  --aivo-teal: #14b8c8;
+  --aivo-navy: #1a1a2e;
+  --aivo-purple-gradient: linear-gradient(135deg, #7c3aed 0%, #9666e3 50%, #b99aff 100%);
+  --aivo-teal-gradient: linear-gradient(135deg, #14b8c8 0%, #35cbda 50%, #67e0eb 100%);
+  --aivo-hero-gradient: linear-gradient(135deg, #7c3aed 0%, #14b8c8 100%);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  color: #1a1a2e;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

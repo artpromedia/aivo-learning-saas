@@ -1,0 +1,52 @@
+@theme {
+  /* ─── Purple Palette ──────────────────────────────────────────────────── */
+  --color-aivo-purple-50: #f5f0ff;
+  --color-aivo-purple-100: #ede5ff;
+  --color-aivo-purple-200: #d9c7ff;
+  --color-aivo-purple-300: #b99aff;
+  --color-aivo-purple-400: #9666e3;
+  --color-aivo-purple-500: #7c3aed;
+  --color-aivo-purple-600: #6d28d9;
+  --color-aivo-purple-700: #5b21b6;
+  --color-aivo-purple-800: #4c1d95;
+  --color-aivo-purple-900: #3b0d7e;
+
+  /* ─── Teal Palette ────────────────────────────────────────────────────── */
+  --color-aivo-teal-50: #effcfd;
+  --color-aivo-teal-100: #d5f7fa;
+  --color-aivo-teal-200: #a5eef4;
+  --color-aivo-teal-300: #67e0eb;
+  --color-aivo-teal-400: #35cbda;
+  --color-aivo-teal-500: #14b8c8;
+  --color-aivo-teal-600: #0d95a8;
+  --color-aivo-teal-700: #0e7a8a;
+  --color-aivo-teal-800: #126271;
+  --color-aivo-teal-900: #14505f;
+
+  /* ─── Navy Palette ────────────────────────────────────────────────────── */
+  --color-aivo-navy-50: #eef0f6;
+  --color-aivo-navy-100: #d4d8e8;
+  --color-aivo-navy-200: #a8b0d0;
+  --color-aivo-navy-300: #7c88b8;
+  --color-aivo-navy-400: #5060a0;
+  --color-aivo-navy-500: #2d3a6e;
+  --color-aivo-navy-600: #252f5a;
+  --color-aivo-navy-700: #1d2448;
+  --color-aivo-navy-800: #161a36;
+  --color-aivo-navy-900: #0f1024;
+
+  /* ─── Semantic Colors ─────────────────────────────────────────────────── */
+  --color-aivo-success: #10B981;
+  --color-aivo-warning: #F59E0B;
+  --color-aivo-error: #EF4444;
+  --color-aivo-white: #FFFFFF;
+
+  /* ─── Typography ──────────────────────────────────────────────────────── */
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  /* ─── Shadows ─────────────────────────────────────────────────────────── */
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-card-hover: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-nav: 0 1px 3px 0 rgb(0 0 0 / 0.06);
+  --shadow-nav-scrolled: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}

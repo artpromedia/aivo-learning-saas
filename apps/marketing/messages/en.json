@@ -1,0 +1,21 @@
+{
+  "nav": {
+    "features": "Features",
+    "pricing": "Pricing",
+    "about": "About",
+    "blog": "Blog",
+    "login": "Log In",
+    "getStarted": "Get Started Free"
+  },
+  "hero": {
+    "headline": "AI-Powered Learning That Adapts to Every Student",
+    "subheadline": "No Learner Left Behind. Personalized education powered by Brain Clone AI technology that creates a unique learning profile for every student.",
+    "cta": "Get Started Free",
+    "ctaSecondary": "Request a Demo"
+  },
+  "footer": {
+    "copyright": "© 2025 AIVO Learning. All rights reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  }
+}
