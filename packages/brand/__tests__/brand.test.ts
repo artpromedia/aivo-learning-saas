@@ -1,21 +1,33 @@
 import { describe, it, expect } from "vitest";
-import { AIVO_BRAND } from "../src/tokens.js";
-import { aivoPreset } from "../src/tailwind-preset.js";
-import { EMAIL_CONSTANTS } from "../src/email-constants.js";
-import { FLUTTER_TOKENS } from "../src/flutter-tokens.js";
+import {
+  AIVO_COLORS,
+  AIVO_TYPOGRAPHY,
+  AIVO_SPACING,
+  AIVO_BORDER_RADIUS,
+  AIVO_SHADOWS,
+  AIVO_GRADIENTS,
+  AIVO_ANIMATION,
+} from "../src/tokens.js";
+import { AIVO_BRAND } from "../src/email.js";
+import {
+  AIVO_FLUTTER_COLORS,
+  AIVO_FLUTTER_TYPOGRAPHY,
+  AIVO_FLUTTER_SPACING,
+  AIVO_FLUTTER_BORDER_RADIUS,
+} from "../src/flutter.js";
 
-// ─── Tokens ─────────────────────────────────────────────────────────────────────
-describe("AIVO_BRAND tokens", () => {
+// ─── Color Tokens ───────────────────────────────────────────────────────────────
+describe("AIVO_COLORS", () => {
   it("should have purple palette with 10 shades", () => {
-    expect(Object.keys(AIVO_BRAND.colors.purple)).toHaveLength(10);
+    expect(Object.keys(AIVO_COLORS.purple)).toHaveLength(10);
   });
 
   it("should have teal palette with 10 shades", () => {
-    expect(Object.keys(AIVO_BRAND.colors.teal)).toHaveLength(10);
+    expect(Object.keys(AIVO_COLORS.teal)).toHaveLength(10);
   });
 
   it("should have navy palette with 10 shades", () => {
-    expect(Object.keys(AIVO_BRAND.colors.navy)).toHaveLength(10);
+    expect(Object.keys(AIVO_COLORS.navy)).toHaveLength(10);
   });
 
   it("all hex colors should be valid format", () => {
@@ -29,107 +41,116 @@ describe("AIVO_BRAND tokens", () => {
         }
       }
     }
-    validateColors(AIVO_BRAND.colors);
+    validateColors(AIVO_COLORS as unknown as Record<string, unknown>);
   });
 
-  it("should have primary purple at 500", () => {
-    expect(AIVO_BRAND.colors.purple[500]).toBe("#7C4DFF");
+  it("should have PRD-correct purple 500", () => {
+    expect(AIVO_COLORS.purple[500]).toBe("#7c3aed");
   });
 
-  it("should have three font families", () => {
-    expect(AIVO_BRAND.typography.fontFamily.display).toContain("Nunito");
-    expect(AIVO_BRAND.typography.fontFamily.body).toContain("Inter");
-    expect(AIVO_BRAND.typography.fontFamily.mono).toContain("JetBrains Mono");
+  it("should have PRD-correct teal 400", () => {
+    expect(AIVO_COLORS.teal[400]).toBe("#35cbda");
+  });
+
+  it("should have PRD-correct navy 800", () => {
+    expect(AIVO_COLORS.navy[800]).toBe("#161a36");
+  });
+
+  it("should have semantic colors", () => {
+    expect(AIVO_COLORS.success).toBe("#10B981");
+    expect(AIVO_COLORS.warning).toBe("#F59E0B");
+    expect(AIVO_COLORS.error).toBe("#EF4444");
+  });
+});
+
+// ─── Typography ─────────────────────────────────────────────────────────────────
+describe("AIVO_TYPOGRAPHY", () => {
+  it("should use Inter font family", () => {
+    expect(AIVO_TYPOGRAPHY.fontFamily).toContain("Inter");
+  });
+
+  it("should have 5 font weights", () => {
+    expect(Object.keys(AIVO_TYPOGRAPHY.fontWeights)).toHaveLength(5);
   });
 
   it("should have 9 font sizes", () => {
-    expect(Object.keys(AIVO_BRAND.typography.fontSize)).toHaveLength(9);
+    expect(Object.keys(AIVO_TYPOGRAPHY.fontSize)).toHaveLength(9);
   });
+});
 
+// ─── Shadows ────────────────────────────────────────────────────────────────────
+describe("AIVO_SHADOWS", () => {
+  it("should have card and nav shadows", () => {
+    expect(AIVO_SHADOWS.card).toBeDefined();
+    expect(AIVO_SHADOWS.cardHover).toBeDefined();
+    expect(AIVO_SHADOWS.nav).toBeDefined();
+    expect(AIVO_SHADOWS.navScrolled).toBeDefined();
+  });
+});
+
+// ─── Gradients ──────────────────────────────────────────────────────────────────
+describe("AIVO_GRADIENTS", () => {
+  it("should have all gradient definitions", () => {
+    expect(AIVO_GRADIENTS.purple).toContain("linear-gradient");
+    expect(AIVO_GRADIENTS.teal).toContain("linear-gradient");
+    expect(AIVO_GRADIENTS.hero).toContain("linear-gradient");
+    expect(AIVO_GRADIENTS.purpleHeader).toContain("linear-gradient");
+  });
+});
+
+// ─── Spacing & Border Radius ────────────────────────────────────────────────────
+describe("AIVO_SPACING", () => {
   it("should have spacing scale", () => {
-    expect(Object.keys(AIVO_BRAND.spacing).length).toBeGreaterThan(15);
-  });
-
-  it("should have border radius scale", () => {
-    expect(AIVO_BRAND.borderRadius.full).toBe("9999px");
-  });
-
-  it("should have shadow presets", () => {
-    expect(Object.keys(AIVO_BRAND.shadow)).toHaveLength(5);
-  });
-
-  it("should have animation tokens", () => {
-    expect(AIVO_BRAND.animation.duration.fast).toBe("150ms");
-    expect(AIVO_BRAND.animation.easing.bounce).toContain("cubic-bezier");
-  });
-
-  it("should have email-specific tokens", () => {
-    expect(AIVO_BRAND.email.maxWidth).toBe("600px");
-    expect(AIVO_BRAND.email.headerBg).toBe("#7C4DFF");
-    expect(AIVO_BRAND.email.buttonRadius).toBe("8px");
+    expect(Object.keys(AIVO_SPACING).length).toBeGreaterThan(15);
   });
 });
 
-// ─── Tailwind Preset ────────────────────────────────────────────────────────────
-describe("Tailwind preset", () => {
-  it("should export theme with extended colors", () => {
-    expect(aivoPreset.theme.extend.colors.purple).toBeDefined();
-    expect(aivoPreset.theme.extend.colors.teal).toBeDefined();
-    expect(aivoPreset.theme.extend.colors.navy).toBeDefined();
-  });
-
-  it("should map font families", () => {
-    expect(aivoPreset.theme.extend.fontFamily.display).toBeDefined();
-    expect(aivoPreset.theme.extend.fontFamily.body).toBeDefined();
-  });
-
-  it("should include spacing and borderRadius", () => {
-    expect(aivoPreset.theme.extend.spacing).toBeDefined();
-    expect(aivoPreset.theme.extend.borderRadius).toBeDefined();
-  });
-
-  it("should include shadows and transitions", () => {
-    expect(aivoPreset.theme.extend.boxShadow).toBeDefined();
-    expect(aivoPreset.theme.extend.transitionDuration).toBeDefined();
-    expect(aivoPreset.theme.extend.transitionTimingFunction).toBeDefined();
+describe("AIVO_BORDER_RADIUS", () => {
+  it("should have full radius", () => {
+    expect(AIVO_BORDER_RADIUS.full).toBe("9999px");
   });
 });
 
-// ─── Email Constants ────────────────────────────────────────────────────────────
-describe("Email constants", () => {
-  it("should have colors derived from brand", () => {
-    expect(EMAIL_CONSTANTS.colors.primary).toBe("#7C4DFF");
+// ─── Animation ──────────────────────────────────────────────────────────────────
+describe("AIVO_ANIMATION", () => {
+  it("should have duration and easing tokens", () => {
+    expect(AIVO_ANIMATION.duration.fast).toBe("150ms");
+    expect(AIVO_ANIMATION.easing.bounce).toContain("cubic-bezier");
   });
+});
 
+// ─── Email Brand ────────────────────────────────────────────────────────────────
+describe("AIVO_BRAND (email)", () => {
   it("should have email layout values", () => {
-    expect(EMAIL_CONSTANTS.maxWidth).toBe("600px");
-    expect(EMAIL_CONSTANTS.fontFamily).toContain("Inter");
+    expect(AIVO_BRAND.maxWidth).toBe(600);
+    expect(AIVO_BRAND.borderRadius).toBe(12);
   });
 
-  it("should have typography settings", () => {
-    expect(EMAIL_CONSTANTS.typography.bodySize).toBe("16px");
-    expect(EMAIL_CONSTANTS.typography.headingSize).toBe("24px");
+  it("should have correct CTA colors", () => {
+    expect(AIVO_BRAND.ctaBackground).toBe("#7c3aed");
+    expect(AIVO_BRAND.ctaTextColor).toBe("#ffffff");
+  });
+
+  it("should have font family with Inter", () => {
+    expect(AIVO_BRAND.fontFamily).toContain("Inter");
   });
 });
 
 // ─── Flutter Tokens ─────────────────────────────────────────────────────────────
 describe("Flutter tokens", () => {
-  it("should have ARGB color values", () => {
-    const colors = FLUTTER_TOKENS.colors;
-    const someColor = Object.values(colors)[0];
-    expect(someColor).toMatch(/^0xFF[0-9A-Fa-f]{6}$/);
+  it("should have ARGB color values for purple", () => {
+    expect(AIVO_FLUTTER_COLORS.purple["500"]).toMatch(/^0xFF[0-9A-Fa-f]{6}$/);
   });
 
-  it("should have flutter font families", () => {
-    expect(FLUTTER_TOKENS.typography.fontFamilyDisplay).toBe("Nunito");
-    expect(FLUTTER_TOKENS.typography.fontFamilyBody).toBe("Inter");
+  it("should have Inter font family", () => {
+    expect(AIVO_FLUTTER_TYPOGRAPHY.fontFamily).toBe("Inter");
   });
 
   it("should have numeric spacing values", () => {
-    expect(FLUTTER_TOKENS.spacing.md).toBe(16);
+    expect(AIVO_FLUTTER_SPACING.md).toBe(16);
   });
 
   it("should have numeric border radius values", () => {
-    expect(FLUTTER_TOKENS.borderRadius.full).toBe(9999);
+    expect(AIVO_FLUTTER_BORDER_RADIUS.full).toBe(9999);
   });
 });

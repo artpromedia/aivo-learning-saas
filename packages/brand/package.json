@@ -7,21 +7,24 @@
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
-    "./tailwind": {
-      "import": "./dist/tailwind-preset.js",
-      "types": "./dist/tailwind-preset.d.ts"
+    "./tokens": {
+      "import": "./dist/tokens.js",
+      "types": "./dist/tokens.d.ts"
+    },
+    "./tailwind-theme.css": "./src/tailwind-theme.css",
+    "./email": {
+      "import": "./dist/email.js",
+      "types": "./dist/email.d.ts"
     },
     "./flutter": {
-      "import": "./dist/flutter-tokens.js",
-      "types": "./dist/flutter-tokens.d.ts"
-    },
-    "./email": {
-      "import": "./dist/email-constants.js",
-      "types": "./dist/email-constants.d.ts"
+      "import": "./dist/flutter.js",
+      "types": "./dist/flutter.d.ts"
     }
   },
+  "files": ["dist", "src/tailwind-theme.css"],
   "scripts": {
     "build": "tsup",
+    "type-check": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest"
   },

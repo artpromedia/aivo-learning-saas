@@ -3,9 +3,9 @@ import { defineConfig } from "tsup";
 export default defineConfig({
   entry: [
     "src/index.ts",
-    "src/tailwind-preset.ts",
-    "src/email-constants.ts",
-    "src/flutter-tokens.ts",
+    "src/tokens.ts",
+    "src/email.ts",
+    "src/flutter.ts",
   ],
   format: ["esm"],
   dts: true,
