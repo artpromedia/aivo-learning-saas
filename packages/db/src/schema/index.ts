@@ -42,3 +42,6 @@ export * from "./functional-curriculum";
 
 // Admin
 export * from "./admin";
+
+// Integrations
+export * from "./integrations";
