@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+:root {
+  --aivo-purple-50: #F5F0FF;
+  --aivo-purple-100: #EDE5FF;
+  --aivo-purple-200: #D4C4FF;
+  --aivo-purple-300: #B89EFF;
+  --aivo-purple-400: #9B75FF;
+  --aivo-purple-500: #7C4DFF;
+  --aivo-purple-600: #6B3FE8;
+  --aivo-purple-700: #5530CC;
+  --aivo-purple-800: #4024A3;
+  --aivo-purple-900: #2C1875;
+  --aivo-teal-400: #38B2AC;
+  --aivo-teal-500: #319795;
+  --aivo-navy-900: #1A237E;
+  --aivo-cta: #7C3AED;
+  --aivo-bg: #FFFFFF;
+  --aivo-bg-alt: #F8F9FA;
+  --aivo-text: #212529;
+  --aivo-text-secondary: #6C757D;
+  --aivo-text-muted: #ADB5BD;
+  --aivo-success: #4CAF50;
+  --aivo-warning: #FFC107;
+  --aivo-error: #F44336;
+  --font-display: 'Nunito', 'Segoe UI', sans-serif;
+  --font-body: 'Inter', 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+.dark {
+  --aivo-bg: #1A1A2E;
+  --aivo-bg-alt: #2D2D44;
+  --aivo-text: #E0E0E0;
+  --aivo-text-secondary: #9E9E9E;
+  --aivo-text-muted: #757575;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--aivo-bg);
+  color: var(--aivo-text);
+}

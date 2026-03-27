@@ -1,0 +1,48 @@
+import { create } from "zustand";
+
+export interface Learner {
+  id: string;
+  name: string;
+  avatarUrl?: string;
+  dateOfBirth: string;
+  functioningLevel: "level1" | "level2" | "level3";
+  preferences: {
+    theme?: string;
+    reduceAnimations?: boolean;
+    fontSize?: "small" | "medium" | "large";
+    soundEnabled?: boolean;
+  };
+}
+
+interface LearnerState {
+  activeLearner: Learner | null;
+  learners: Learner[];
+
+  setActiveLearner: (learner: Learner | null) => void;
+  setLearners: (learners: Learner[]) => void;
+  addLearner: (learner: Learner) => void;
+  updateLearner: (id: string, updates: Partial<Learner>) => void;
+}
+
+export const useLearnerStore = create<LearnerState>((set) => ({
+  activeLearner: null,
+  learners: [],
+
+  setActiveLearner: (activeLearner) => set({ activeLearner }),
+
+  setLearners: (learners) => set({ learners }),
+
+  addLearner: (learner) =>
+    set((state) => ({ learners: [...state.learners, learner] })),
+
+  updateLearner: (id, updates) =>
+    set((state) => ({
+      learners: state.learners.map((l) =>
+        l.id === id ? { ...l, ...updates } : l,
+      ),
+      activeLearner:
+        state.activeLearner?.id === id
+          ? { ...state.activeLearner, ...updates }
+          : state.activeLearner,
+    })),
+}));
