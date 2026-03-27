@@ -1,0 +1,59 @@
+{
+  "nav": {
+    "features": "[FR] Features",
+    "pricing": "[FR] Pricing",
+    "about": "[FR] About",
+    "blog": "[FR] Blog",
+    "howItWorks": "[FR] How It Works",
+    "tutors": "[FR] AI Tutors",
+    "login": "[FR] Log In",
+    "getStarted": "[FR] Get Started Free"
+  },
+  "hero": {
+    "headline": "[FR] AI-Powered Learning That Adapts to Every Student",
+    "subheadline": "[FR] No Learner Left Behind. Personalized education powered by Brain Clone AI technology.",
+    "cta": "[FR] Get Started Free",
+    "ctaSecondary": "[FR] Request a Demo"
+  },
+  "features": {
+    "title": "[FR] Everything Your Students Need to Succeed",
+    "subtitle": "[FR] AIVO combines cutting-edge AI with proven educational science."
+  },
+  "howItWorks": {
+    "title": "[FR] How AIVO Works",
+    "subtitle": "[FR] Three simple steps to personalized learning."
+  },
+  "pricing": {
+    "title": "[FR] Simple, Transparent Pricing",
+    "subtitle": "[FR] Start free. Upgrade when you're ready.",
+    "monthly": "[FR] Monthly",
+    "annual": "[FR] Annual",
+    "faqTitle": "[FR] Frequently Asked Questions"
+  },
+  "demo": {
+    "title": "[FR] See AIVO in Action",
+    "subtitle": "[FR] Schedule a personalized demo.",
+    "successTitle": "[FR] Thank You!",
+    "successMessage": "[FR] Our team will reach out within 24 hours."
+  },
+  "contact": {
+    "title": "[FR] Get in Touch",
+    "subtitle": "[FR] Have a question? We'd love to hear from you.",
+    "successTitle": "[FR] Message Sent!",
+    "successMessage": "[FR] We'll get back to you within 1-2 business days."
+  },
+  "footer": {
+    "copyright": "[FR] © 2025 AIVO Learning. All rights reserved.",
+    "privacy": "[FR] Privacy Policy",
+    "terms": "[FR] Terms of Service",
+    "newsletter": "[FR] Stay updated",
+    "subscribe": "[FR] Subscribe"
+  },
+  "common": {
+    "learnMore": "[FR] Learn More",
+    "getStarted": "[FR] Get Started Free",
+    "contactUs": "[FR] Contact Us",
+    "readMore": "[FR] Read More",
+    "backToHome": "[FR] Back to Home"
+  }
+}

@@ -1,8 +1,15 @@
 module.exports = {
   ci: {
     collect: {
-      url: ["http://localhost:3001/"],
+      url: [
+        "http://localhost:3000/",
+        "http://localhost:3000/pricing",
+        "http://localhost:3000/for-teachers",
+      ],
       numberOfRuns: 3,
+      settings: {
+        preset: "desktop",
+      },
     },
     assert: {
       assertions: {

@@ -14,6 +14,7 @@ export default tseslint.config(
       "**/*.config.{js,mjs,ts}",
       "**/vitest.setup.ts",
       "**/lighthouserc.js",
+      "**/scripts/**",
       "apps/web/**",
       "apps/mobile/**",
       "services/**",
