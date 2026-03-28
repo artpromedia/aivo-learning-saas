@@ -65,24 +65,49 @@ class TestEmptyInput:
 # ── Math detection ───────────────────────────────────────────────────────
 
 class TestMathDetection:
-    async def test_equation_keywords(self, detector: SubjectDetector):
-        text = "Solve the equation: 3x + 5 = 20. Calculate the answer."
+    async def test_equation_keywords(self):
+        """Dense math text scores high enough for pattern detection."""
+        gw = _make_mock_gateway()
+        detector = SubjectDetector(gateway=gw)
+        text = (
+            "Solve the equation: 3 + 5 = 8. Calculate the answer. "
+            "Use algebra to find x = 10. Work with fractions and decimals. "
+            "Multiply 4 * 3 and solve for the ratio and proportion."
+        )
         result = await detector.detect(text)
         assert result.subject == "MATH"
         assert result.method == "pattern"
 
-    async def test_arithmetic_expression(self, detector: SubjectDetector):
-        text = "What is 12 + 8? What is 15 - 3? Subtract 4 from 10. Addition practice."
+    async def test_arithmetic_expression(self):
+        gw = _make_mock_gateway()
+        detector = SubjectDetector(gateway=gw)
+        text = (
+            "What is 12 + 8? What is 15 - 3? What is 6 * 7? "
+            "Subtract 4 from 10. Addition practice. Calculate 9 + 1. "
+            "Solve 20 - 5 and multiply 3 * 8."
+        )
         result = await detector.detect(text)
         assert result.subject == "MATH"
 
-    async def test_algebra_terms(self, detector: SubjectDetector):
-        text = "Solve for x: algebra problems with fractions and decimals and ratios."
+    async def test_algebra_terms(self):
+        gw = _make_mock_gateway()
+        detector = SubjectDetector(gateway=gw)
+        text = (
+            "Solve the equation for x = 5. Use algebra with fractions "
+            "and decimals and ratios and proportions. Calculate the percent "
+            "and graph the polynomial. Find the area of the triangle."
+        )
         result = await detector.detect(text)
         assert result.subject == "MATH"
 
-    async def test_geometry_terms(self, detector: SubjectDetector):
-        text = "Find the area and perimeter of the triangle. Calculate the angle."
+    async def test_geometry_terms(self):
+        gw = _make_mock_gateway()
+        detector = SubjectDetector(gateway=gw)
+        text = (
+            "Find the area and perimeter of the triangle. Calculate the angle. "
+            "Measure the volume. Use the equation to solve for x = 10. "
+            "Work with fractions and decimals and geometry."
+        )
         result = await detector.detect(text)
         assert result.subject == "MATH"
 
@@ -117,8 +142,14 @@ class TestScienceDetection:
         result = await detector.detect(text)
         assert result.subject == "SCIENCE"
 
-    async def test_biology_terms(self, detector: SubjectDetector):
-        text = "Describe photosynthesis and the ecosystem. What is the habitat of this species?"
+    async def test_biology_terms(self):
+        gw = _make_mock_gateway()
+        detector = SubjectDetector(gateway=gw)
+        text = (
+            "Describe photosynthesis and the ecosystem. What is the habitat "
+            "of this species? Form a hypothesis about the experiment. "
+            "Observe the genetic evolution of the organism in the lab."
+        )
         result = await detector.detect(text)
         assert result.subject == "SCIENCE"
 

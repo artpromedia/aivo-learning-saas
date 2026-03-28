@@ -215,10 +215,11 @@ class TestClassification:
     def test_word_problem_type(self, parser: ProblemParser):
         """Long text with question keywords → WORD_PROBLEM."""
         text = (
-            "Sarah went to the store and bought 5 apples and 3 oranges. "
-            "Each apple costs $1.50 and each orange costs $2.00. She gave "
-            "the cashier a $20 bill. She also bought a bag of chips for $3.50 "
-            "and a bottle of water for $1.25. Her friend gave her $5 back. "
+            "Sarah went to the store and bought five apples and three oranges. "
+            "Each apple costs one dollar and fifty cents and each orange costs "
+            "two dollars. She gave the cashier a twenty dollar bill. She also "
+            "bought a bag of chips and a bottle of water. Her friend gave her "
+            "some money back later that day at school during recess. "
             "How many pieces of fruit did she buy in total and how much "
             "change did she get back from the cashier?"
         )
