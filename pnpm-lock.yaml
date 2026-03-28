@@ -283,6 +283,9 @@ importers:
       '@fastify/rate-limit':
         specifier: ^10.2.0
         version: 10.3.0
+      dotenv:
+        specifier: ^17.3.1
+        version: 17.3.1
       drizzle-orm:
         specifier: 0.44.2
         version: 0.44.2(@opentelemetry/api@1.9.1)(gel@2.2.0)(kysely@0.28.14)(postgres@3.4.8)
@@ -405,6 +408,9 @@ importers:
       '@fastify/rate-limit':
         specifier: ^10.2.1
         version: 10.3.0
+      dotenv:
+        specifier: ^17.3.1
+        version: 17.3.1
       drizzle-orm:
         specifier: 0.44.2
         version: 0.44.2(@opentelemetry/api@1.9.1)(gel@2.2.0)(kysely@0.28.14)(postgres@3.4.5)
@@ -481,6 +487,9 @@ importers:
       '@fastify/websocket':
         specifier: ^11.0.1
         version: 11.2.0
+      dotenv:
+        specifier: ^17.3.1
+        version: 17.3.1
       drizzle-orm:
         specifier: 0.44.2
         version: 0.44.2(@opentelemetry/api@1.9.1)(gel@2.2.0)(kysely@0.28.14)(postgres@3.4.5)
@@ -554,6 +563,9 @@ importers:
       '@aivo/events':
         specifier: workspace:*
         version: link:../../packages/events
+      dotenv:
+        specifier: ^17.3.1
+        version: 17.3.1
       drizzle-orm:
         specifier: 0.44.2
         version: 0.44.2(@opentelemetry/api@1.9.1)(gel@2.2.0)(kysely@0.28.14)(postgres@3.4.8)
@@ -606,6 +618,9 @@ importers:
       '@aivo/events':
         specifier: workspace:*
         version: link:../../packages/events
+      dotenv:
+        specifier: ^17.3.1
+        version: 17.3.1
       drizzle-orm:
         specifier: 0.44.2
         version: 0.44.2(@opentelemetry/api@1.9.1)(gel@2.2.0)(kysely@0.28.14)(postgres@3.4.8)
@@ -637,6 +652,67 @@ importers:
       '@vitest/coverage-v8':
         specifier: ^3.2.4
         version: 3.2.4(vitest@3.2.4(@types/node@25.5.0)(jiti@2.6.1)(jsdom@25.0.1)(lightningcss@1.32.0)(tsx@4.21.0))
+      tsup:
+        specifier: ^8.3.6
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.8)(tsx@4.21.0)(typescript@5.7.3)
+      tsx:
+        specifier: ^4.19.0
+        version: 4.21.0
+      typescript:
+        specifier: ~5.7.3
+        version: 5.7.3
+      vitest:
+        specifier: ^3.0.0
+        version: 3.2.4(@types/node@25.5.0)(jiti@2.6.1)(jsdom@25.0.1)(lightningcss@1.32.0)(tsx@4.21.0)
+
+  services/i18n-svc:
+    dependencies:
+      '@aivo/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      '@aivo/events':
+        specifier: workspace:*
+        version: link:../../packages/events
+      '@fastify/cookie':
+        specifier: ^11.0.0
+        version: 11.0.2
+      '@fastify/cors':
+        specifier: ^10.0.0
+        version: 10.1.0
+      '@fastify/multipart':
+        specifier: ^9.0.0
+        version: 9.4.0
+      '@fastify/rate-limit':
+        specifier: ^10.2.0
+        version: 10.3.0
+      drizzle-orm:
+        specifier: 0.44.2
+        version: 0.44.2(@opentelemetry/api@1.9.1)(gel@2.2.0)(kysely@0.28.14)(postgres@3.4.5)
+      fastify:
+        specifier: ^5.2.0
+        version: 5.2.1
+      fastify-plugin:
+        specifier: ^5.0.0
+        version: 5.1.0
+      nats:
+        specifier: ^2.28.0
+        version: 2.29.3
+      postgres:
+        specifier: ^3.4.5
+        version: 3.4.5
+      zod:
+        specifier: ^3.24.0
+        version: 3.24.0
+    devDependencies:
+      '@types/node':
+        specifier: ^25.5.0
+        version: 25.5.0
+      '@vitest/coverage-v8':
+        specifier: ^3.2.4
+        version: 3.2.4(vitest@3.2.4(@types/node@25.5.0)(jiti@2.6.1)(jsdom@25.0.1)(lightningcss@1.32.0)(tsx@4.21.0))
+      dotenv:
+        specifier: ^17.3.1
+        version: 17.3.1
       tsup:
         specifier: ^8.3.6
         version: 8.5.1(jiti@2.6.1)(postcss@8.5.8)(tsx@4.21.0)(typescript@5.7.3)
@@ -746,6 +822,9 @@ importers:
       '@fastify/rate-limit':
         specifier: ^10.2.0
         version: 10.3.0
+      dotenv:
+        specifier: ^17.3.1
+        version: 17.3.1
       drizzle-orm:
         specifier: 0.44.2
         version: 0.44.2(@opentelemetry/api@1.9.1)(gel@2.2.0)(kysely@0.28.14)(postgres@3.4.8)
@@ -804,6 +883,9 @@ importers:
       '@aivo/events':
         specifier: workspace:*
         version: link:../../packages/events
+      dotenv:
+        specifier: ^17.3.1
+        version: 17.3.1
       drizzle-orm:
         specifier: 0.44.2
         version: 0.44.2(@opentelemetry/api@1.9.1)(gel@2.2.0)(kysely@0.28.14)(postgres@3.4.8)
@@ -856,6 +938,18 @@ importers:
       '@aivo/events':
         specifier: workspace:*
         version: link:../../packages/events
+      '@fastify/cookie':
+        specifier: ^11.0.0
+        version: 11.0.2
+      '@fastify/cors':
+        specifier: ^10.0.0
+        version: 10.1.0
+      '@fastify/multipart':
+        specifier: ^9.0.0
+        version: 9.4.0
+      dotenv:
+        specifier: ^17.3.1
+        version: 17.3.1
       drizzle-orm:
         specifier: 0.44.2
         version: 0.44.2(@opentelemetry/api@1.9.1)(gel@2.2.0)(kysely@0.28.14)(postgres@3.4.8)
