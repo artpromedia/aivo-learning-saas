@@ -48,3 +48,6 @@ export * from "./admin";
 
 // Integrations
 export * from "./integrations";
+
+// Classrooms
+export * from "./classrooms";

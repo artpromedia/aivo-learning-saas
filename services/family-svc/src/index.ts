@@ -19,6 +19,7 @@ import { respondRecommendationRoute } from "./routes/recommendations/respond.js"
 import { recommendationHistoryRoute } from "./routes/recommendations/history.js";
 import { submitInsightRoute } from "./routes/insights/submit.js";
 import { listInsightsRoute } from "./routes/insights/list.js";
+import { teacherInsightRecommendationRoute } from "./routes/insights/teacher-insight.js";
 import { collaborationMembersRoute } from "./routes/collaboration/members.js";
 import { inviteTeacherRoute } from "./routes/collaboration/invite-teacher.js";
 import { inviteCaregiverRoute } from "./routes/collaboration/invite-caregiver.js";
@@ -86,6 +87,7 @@ export async function buildApp() {
   // Insights
   await app.register(submitInsightRoute);
   await app.register(listInsightsRoute);
+  await app.register(teacherInsightRecommendationRoute);
 
   // Collaboration
   await app.register(collaborationMembersRoute);

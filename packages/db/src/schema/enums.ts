@@ -70,6 +70,7 @@ export const iepParseStatusEnum = pgEnum("iep_parse_status", [
   "PARSED",
   "CONFIRMED",
   "FAILED",
+  "PENDING_TEACHER_UPLOAD",
 ]);
 
 export const iepGoalStatusEnum = pgEnum("iep_goal_status", [
@@ -110,6 +111,7 @@ export const recommendationTypeEnum = pgEnum("recommendation_type", [
   "BREAK_SUGGESTION",
   "CELEBRATION",
   "REGRESSION_ALERT",
+  "TEACHER_INSIGHT",
 ]);
 
 export const recommendationStatusEnum = pgEnum("recommendation_status", [

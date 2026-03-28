@@ -41,6 +41,19 @@ const learnerNav: NavItem[] = [
   { href: "/learner/badges", label: "Badges", icon: <Trophy size={20} /> },
 ];
 
+const teacherNav: NavItem[] = [
+  { href: "/teacher", label: "My Classrooms", icon: <Home size={20} /> },
+  { href: "/notifications", label: "Notifications", icon: <Bell size={20} /> },
+];
+
+const districtAdminNav: NavItem[] = [
+  { href: "/admin/district", label: "Overview", icon: <Home size={20} /> },
+  { href: "/admin/district/teachers", label: "Teachers", icon: <Users size={20} /> },
+  { href: "/admin/district/classrooms", label: "Classrooms", icon: <BookOpen size={20} /> },
+  { href: "/admin/district/integrations", label: "Integrations", icon: <Settings size={20} /> },
+  { href: "/admin/district/licenses", label: "Licenses", icon: <CreditCard size={20} /> },
+];
+
 export default function DashboardLayout({
   children,
 }: {
@@ -52,7 +65,13 @@ export default function DashboardLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const isLearner = pathname.startsWith("/learner");
-  const navItems = isLearner ? learnerNav : parentNav;
+  const isTeacher = pathname.startsWith("/teacher");
+  const isAdmin = pathname.startsWith("/admin");
+
+  let navItems = parentNav;
+  if (isLearner) navItems = learnerNav;
+  else if (isTeacher) navItems = teacherNav;
+  else if (isAdmin) navItems = districtAdminNav;
 
   const handleLogout = async () => {
     await logout();

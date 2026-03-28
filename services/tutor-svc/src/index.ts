@@ -1,4 +1,5 @@
 import Fastify from "fastify";
+import multipart from "@fastify/multipart";
 import { ZodError } from "zod";
 import { loadConfig } from "./config.js";
 
@@ -60,6 +61,7 @@ export async function buildApp() {
   });
 
   // Infrastructure plugins
+  await app.register(multipart, { limits: { fileSize: 10 * 1024 * 1024 } });
   await app.register(dbPlugin);
   await app.register(natsPlugin);
   await app.register(redisPlugin);

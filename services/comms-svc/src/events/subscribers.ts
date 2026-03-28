@@ -113,7 +113,7 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
     });
   } catch { app.log.warn("Could not subscribe to brain.cloned"); }
 
-  // ─── brain.recommendation.created → in-app + push ─────────────────────────
+  // ─── brain.recommendation.created → in-app + push + email (teacher_insight) ─
   try {
     await subscribeEvent(nc, "brain.recommendation.created", BRAIN_SCHEMAS["brain.recommendation.created"], async (data) => {
       try {
@@ -123,8 +123,12 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
         await notificationService.create({
           userId: result.parent.id,
           type: "recommendation_pending",
-          title: "New recommendation",
-          body: `A new ${data.type.replace(/_/g, " ").toLowerCase()} recommendation is ready for ${result.learner.name}`,
+          title: data.type === "TEACHER_INSIGHT"
+            ? "Teacher observation shared"
+            : "New recommendation",
+          body: data.type === "TEACHER_INSIGHT"
+            ? `${result.learner.name}'s teacher shared an observation`
+            : `A new ${data.type.replace(/_/g, " ").toLowerCase()} recommendation is ready for ${result.learner.name}`,
           actionUrl: `/parent/${result.learner.id}/recommendations`,
         });
 
@@ -137,6 +141,20 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
           type: data.type,
           data: { learnerId: data.learnerId, recommendationId: data.recommendationId },
         });
+
+        // Send teacher insight email
+        if (data.type === "TEACHER_INSIGHT" && data.teacherId) {
+          const teacher = await getUserById(app, data.teacherId);
+          if (teacher) {
+            await emailService.sendTemplate("teacher_insight", result.parent.email, result.parent.id, {
+              userName: result.parent.name,
+              learnerName: result.learner.name,
+              teacherName: teacher.name,
+              insightText: "A teacher has shared an observation about your child's progress.",
+              reviewUrl: `${config.APP_URL}/parent/${result.learner.id}/recommendations`,
+            });
+          }
+        }
       } catch (err) {
         app.log.error({ err, data }, "Failed to process brain.recommendation.created");
       }

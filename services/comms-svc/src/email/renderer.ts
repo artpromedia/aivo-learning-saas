@@ -19,6 +19,7 @@ import { brainProfileRevealTemplate, type BrainProfileRevealData } from "./templ
 import { streakBrokenTemplate, type StreakBrokenData } from "./templates/streak-broken.js";
 import { badgeEarnedTemplate, type BadgeEarnedData } from "./templates/badge-earned.js";
 import { weeklyProgressDigestTemplate, type WeeklyProgressDigestData } from "./templates/weekly-progress-digest.js";
+import { teacherInsightTemplate, type TeacherInsightData } from "./templates/teacher-insight.js";
 
 export type TemplateSlug =
   | "welcome"
@@ -41,7 +42,8 @@ export type TemplateSlug =
   | "brain_profile_reveal"
   | "streak_broken"
   | "badge_earned"
-  | "weekly_progress_digest";
+  | "weekly_progress_digest"
+  | "teacher_insight";
 
 export type TemplateDataMap = {
   welcome: WelcomeData;
@@ -65,6 +67,7 @@ export type TemplateDataMap = {
   streak_broken: StreakBrokenData;
   badge_earned: BadgeEarnedData;
   weekly_progress_digest: WeeklyProgressDigestData;
+  teacher_insight: TeacherInsightData;
 };
 
 const templateRenderers: { [K in TemplateSlug]: (data: TemplateDataMap[K]) => { subject: string; html: string } } = {
@@ -89,6 +92,7 @@ const templateRenderers: { [K in TemplateSlug]: (data: TemplateDataMap[K]) => { 
   streak_broken: streakBrokenTemplate,
   badge_earned: badgeEarnedTemplate,
   weekly_progress_digest: weeklyProgressDigestTemplate,
+  teacher_insight: teacherInsightTemplate,
 };
 
 export function renderTemplate<T extends TemplateSlug>(

@@ -11,7 +11,9 @@ export interface TutorRespondParams {
 }
 
 export interface HomeworkOCRParams {
-  imageBase64: string;
+  learnerId?: string;
+  imageUrl?: string;
+  imageBase64?: string;
   mimeType: string;
 }
 
@@ -20,6 +22,17 @@ export interface HomeworkAdaptParams {
   subject: string;
   problems: unknown[];
   brainContext: unknown;
+}
+
+export interface HomeworkAdaptFullParams {
+  extractedProblems: unknown[];
+  brainContext: Record<string, unknown>;
+  subject: string;
+}
+
+export interface VisionExtractParams {
+  fileBuffer: Buffer;
+  mimeType: string;
 }
 
 export interface GenerateQuizParams {
@@ -35,6 +48,8 @@ export interface AiClient {
   tutorRespond(params: TutorRespondParams): Promise<unknown>;
   homeworkOCR(params: HomeworkOCRParams): Promise<unknown>;
   homeworkAdapt(params: HomeworkAdaptParams): Promise<unknown>;
+  homeworkAdaptFull(params: HomeworkAdaptFullParams): Promise<unknown>;
+  visionExtract(params: VisionExtractParams): Promise<unknown>;
   generateQuiz(params: GenerateQuizParams): Promise<unknown>;
 }
 
@@ -65,7 +80,10 @@ export default fp(async (fastify: FastifyInstance) => {
       const res = await fetch(`${baseUrl}/api/ai/homework/ocr`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(params),
+        body: JSON.stringify({
+          image_url: params.imageUrl,
+          image_base64: params.imageBase64,
+        }),
       });
       if (!res.ok) {
         throw new Error(`ai-svc homeworkOCR failed: ${res.status} ${res.statusText}`);
@@ -81,6 +99,37 @@ export default fp(async (fastify: FastifyInstance) => {
       });
       if (!res.ok) {
         throw new Error(`ai-svc homeworkAdapt failed: ${res.status} ${res.statusText}`);
+      }
+      return res.json();
+    },
+
+    async homeworkAdaptFull(params: HomeworkAdaptFullParams): Promise<unknown> {
+      const res = await fetch(`${baseUrl}/api/ai/homework/adapt`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          extracted_problems: params.extractedProblems,
+          brain_context: params.brainContext,
+          subject: params.subject,
+        }),
+      });
+      if (!res.ok) {
+        throw new Error(`ai-svc homeworkAdaptFull failed: ${res.status} ${res.statusText}`);
+      }
+      return res.json();
+    },
+
+    async visionExtract(params: VisionExtractParams): Promise<unknown> {
+      const formData = new FormData();
+      const blob = new Blob([params.fileBuffer], { type: params.mimeType });
+      formData.append("file", blob, "homework-upload");
+
+      const res = await fetch(`${baseUrl}/api/ai/vision/extract`, {
+        method: "POST",
+        body: formData,
+      });
+      if (!res.ok) {
+        throw new Error(`ai-svc visionExtract failed: ${res.status} ${res.statusText}`);
       }
       return res.json();
     },

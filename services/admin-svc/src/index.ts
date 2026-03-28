@@ -52,6 +52,14 @@ import { updateLeadRoute } from "./routes/leads/update.js";
 import { leadNotesRoute } from "./routes/leads/notes.js";
 import { convertLeadRoute } from "./routes/leads/convert.js";
 
+// Routes — Classrooms
+import { createClassroomRoute } from "./routes/classrooms/create.js";
+import { listClassroomsRoute } from "./routes/classrooms/list.js";
+import { updateClassroomRoute } from "./routes/classrooms/update.js";
+import { deleteClassroomRoute } from "./routes/classrooms/delete.js";
+import { classroomLearnersRoute } from "./routes/classrooms/learners.js";
+import { classroomAnalyticsRoute } from "./routes/classrooms/analytics.js";
+
 // Routes — Audit
 import { auditLogRoute } from "./routes/audit/log.js";
 
@@ -151,6 +159,14 @@ export async function buildApp() {
   await app.register(updateLeadRoute);
   await app.register(leadNotesRoute);
   await app.register(convertLeadRoute);
+
+  // Classrooms
+  await app.register(createClassroomRoute);
+  await app.register(listClassroomsRoute);
+  await app.register(updateClassroomRoute);
+  await app.register(deleteClassroomRoute);
+  await app.register(classroomLearnersRoute);
+  await app.register(classroomAnalyticsRoute);
 
   // Audit
   await app.register(auditLogRoute);
