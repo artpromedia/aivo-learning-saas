@@ -1,4 +1,5 @@
 services:
+  # ─── Infrastructure ────────────────────────────────────────────────────────────
   postgres:
     image: postgres:16-alpine
     ports:
@@ -41,6 +42,7 @@ services:
       timeout: 5s
       retries: 5
 
+  # ─── Identity Service (TypeScript) ─────────────────────────────────────────────
   identity-svc:
     build:
       context: .
@@ -52,10 +54,16 @@ services:
       DATABASE_URL: postgresql://aivo:aivo_dev@postgres:5432/aivo_dev
       REDIS_URL: redis://redis:6379
       NATS_URL: nats://nats:4222
-      AUTH_SECRET: change-me-to-a-random-32-char-secret
       JWT_PRIVATE_KEY: ${JWT_PRIVATE_KEY:-}
       JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY:-}
-      APP_URL: http://localhost:3000
+      AUTH_SECRET: ${AUTH_SECRET:-change-me-to-a-random-32-char-secret}
+      APP_URL: ${APP_URL:-http://localhost:3000}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      APPLE_CLIENT_ID: ${APPLE_CLIENT_ID:-}
+      APPLE_CLIENT_SECRET: ${APPLE_CLIENT_SECRET:-}
+      OONRUMAIL_API_KEY: ${OONRUMAIL_API_KEY:-}
+      OONRUMAIL_BASE_URL: ${OONRUMAIL_BASE_URL:-https://api.oonrumail.com/v1}
       NODE_ENV: development
     depends_on:
       postgres:
@@ -69,7 +77,9 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 30s
 
+  # ─── Brain Service (Python) ────────────────────────────────────────────────────
   brain-svc:
     build:
       context: ./services/brain-svc
@@ -97,6 +107,330 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 30s
+
+  # ─── AI Service (Python) ───────────────────────────────────────────────────────
+  ai-svc:
+    build:
+      context: ./services/ai-svc
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      PORT: 5000
+      HOST: 0.0.0.0
+      LOG_LEVEL: info
+      DATABASE_URL: postgresql+asyncpg://aivo:aivo_dev@postgres:5432/aivo_dev
+      REDIS_URL: redis://redis:6379
+      NATS_URL: nats://nats:4222
+      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY:-}
+      JWT_ALGORITHM: RS256
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      REASONING_MODEL: ${REASONING_MODEL:-anthropic/claude-sonnet-4-20250514}
+      REASONING_FALLBACK_MODEL: ${REASONING_FALLBACK_MODEL:-google/gemini-2.0-flash}
+      SMART_MODEL: ${SMART_MODEL:-anthropic/claude-sonnet-4-20250514}
+      SMART_FALLBACK_MODEL: ${SMART_FALLBACK_MODEL:-google/gemini-2.0-flash}
+      FAST_MODEL: ${FAST_MODEL:-anthropic/claude-sonnet-4-20250514}
+      FAST_FALLBACK_MODEL: ${FAST_FALLBACK_MODEL:-google/gemini-2.0-flash}
+      SELF_HOSTED_MODEL: ${SELF_HOSTED_MODEL:-ollama/llama3}
+      VISION_MODEL: ${VISION_MODEL:-google/gemini-2.0-flash}
+      VISION_FALLBACK_MODEL: ${VISION_FALLBACK_MODEL:-openai/gpt-4o}
+      IEP_PARSE_MODEL: ${IEP_PARSE_MODEL:-anthropic/claude-sonnet-4-20250514}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-text-embedding-3-small}
+      BRAIN_SVC_URL: http://brain-svc:3002
+      TOKEN_QUOTA_SOFT_LIMIT_PERCENT: ${TOKEN_QUOTA_SOFT_LIMIT_PERCENT:-80}
+      LANGFUSE_PUBLIC_KEY: ${LANGFUSE_PUBLIC_KEY:-}
+      LANGFUSE_SECRET_KEY: ${LANGFUSE_SECRET_KEY:-}
+      LANGFUSE_HOST: ${LANGFUSE_HOST:-https://cloud.langfuse.com}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ─── Learning Service (TypeScript) ─────────────────────────────────────────────
+  learning-svc:
+    build:
+      context: .
+      dockerfile: services/learning-svc/Dockerfile
+    ports:
+      - "3003:3003"
+    environment:
+      PORT: 3003
+      DATABASE_URL: postgresql://aivo:aivo_dev@postgres:5432/aivo_dev
+      REDIS_URL: redis://redis:6379
+      NATS_URL: nats://nats:4222
+      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY:-}
+      BRAIN_SVC_URL: http://brain-svc:3002
+      AI_SVC_URL: http://ai-svc:5000
+      NODE_ENV: development
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+      brain-svc:
+        condition: service_healthy
+      ai-svc:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3003/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ─── Billing Service (TypeScript) ──────────────────────────────────────────────
+  billing-svc:
+    build:
+      context: .
+      dockerfile: services/billing-svc/Dockerfile
+    ports:
+      - "3008:3008"
+    environment:
+      PORT: 3008
+      DATABASE_URL: postgresql://aivo:aivo_dev@postgres:5432/aivo_dev
+      REDIS_URL: redis://redis:6379
+      NATS_URL: nats://nats:4222
+      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY:-}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY:-}
+      APP_URL: ${APP_URL:-http://localhost:3000}
+      NODE_ENV: development
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3008/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ─── Tutor Service (TypeScript) ────────────────────────────────────────────────
+  tutor-svc:
+    build:
+      context: .
+      dockerfile: services/tutor-svc/Dockerfile
+    ports:
+      - "3006:3006"
+    environment:
+      PORT: 3006
+      DATABASE_URL: postgresql://aivo:aivo_dev@postgres:5432/aivo_dev
+      REDIS_URL: redis://redis:6379
+      NATS_URL: nats://nats:4222
+      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY:-}
+      BRAIN_SVC_URL: http://brain-svc:3002
+      AI_SVC_URL: http://ai-svc:5000
+      NODE_ENV: development
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+      brain-svc:
+        condition: service_healthy
+      ai-svc:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3006/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ─── Comms Service (TypeScript) ────────────────────────────────────────────────
+  comms-svc:
+    build:
+      context: .
+      dockerfile: services/comms-svc/Dockerfile
+    ports:
+      - "3007:3007"
+    environment:
+      PORT: 3007
+      DATABASE_URL: postgresql://aivo:aivo_dev@postgres:5432/aivo_dev
+      REDIS_URL: redis://redis:6379
+      NATS_URL: nats://nats:4222
+      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY:-}
+      OONRUMAIL_API_KEY: ${OONRUMAIL_API_KEY:-}
+      OONRUMAIL_BASE_URL: ${OONRUMAIL_BASE_URL:-https://api.oonrumail.com/v1}
+      FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID:-}
+      FIREBASE_CLIENT_EMAIL: ${FIREBASE_CLIENT_EMAIL:-}
+      FIREBASE_PRIVATE_KEY: ${FIREBASE_PRIVATE_KEY:-}
+      VAPID_PUBLIC_KEY: ${VAPID_PUBLIC_KEY:-}
+      VAPID_PRIVATE_KEY: ${VAPID_PRIVATE_KEY:-}
+      VAPID_CONTACT_EMAIL: ${VAPID_CONTACT_EMAIL:-support@aivolearning.com}
+      APP_URL: ${APP_URL:-http://localhost:3000}
+      NODE_ENV: development
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+      identity-svc:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3007/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ─── Engagement Service (TypeScript) ───────────────────────────────────────────
+  engagement-svc:
+    build:
+      context: .
+      dockerfile: services/engagement-svc/Dockerfile
+    ports:
+      - "3004:3004"
+    environment:
+      PORT: 3004
+      DATABASE_URL: postgresql://aivo:aivo_dev@postgres:5432/aivo_dev
+      REDIS_URL: redis://redis:6379
+      NATS_URL: nats://nats:4222
+      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY:-}
+      BRAIN_SVC_URL: http://brain-svc:3002
+      NODE_ENV: development
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3004/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ─── Family Service (TypeScript) ───────────────────────────────────────────────
+  family-svc:
+    build:
+      context: .
+      dockerfile: services/family-svc/Dockerfile
+    ports:
+      - "3005:3005"
+    environment:
+      PORT: 3005
+      DATABASE_URL: postgresql://aivo:aivo_dev@postgres:5432/aivo_dev
+      REDIS_URL: redis://redis:6379
+      NATS_URL: nats://nats:4222
+      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY:-}
+      BRAIN_SVC_URL: http://brain-svc:3002
+      IDENTITY_SVC_URL: http://identity-svc:3001
+      LEARNING_SVC_URL: http://learning-svc:3003
+      ENGAGEMENT_SVC_URL: http://engagement-svc:3004
+      TUTOR_SVC_URL: http://tutor-svc:3006
+      S3_BUCKET: ${S3_BUCKET:-aivo-family-exports}
+      S3_REGION: ${S3_REGION:-us-east-1}
+      NODE_ENV: development
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3005/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ─── Admin Service (TypeScript) ────────────────────────────────────────────────
+  admin-svc:
+    build:
+      context: .
+      dockerfile: services/admin-svc/Dockerfile
+    ports:
+      - "3009:3009"
+    environment:
+      PORT: 3009
+      DATABASE_URL: postgresql://aivo:aivo_dev@postgres:5432/aivo_dev
+      REDIS_URL: redis://redis:6379
+      NATS_URL: nats://nats:4222
+      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY:-}
+      BRAIN_SVC_URL: http://brain-svc:3002
+      APP_URL: ${APP_URL:-http://localhost:3000}
+      NODE_ENV: development
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3009/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ─── Integrations Service (TypeScript) ─────────────────────────────────────────
+  integrations-svc:
+    build:
+      context: .
+      dockerfile: services/integrations-svc/Dockerfile
+    ports:
+      - "3010:3010"
+    environment:
+      PORT: 3010
+      DATABASE_URL: postgresql://aivo:aivo_dev@postgres:5432/aivo_dev
+      REDIS_URL: redis://redis:6379
+      NATS_URL: nats://nats:4222
+      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY:-}
+      CLEVER_CLIENT_ID: ${CLEVER_CLIENT_ID:-}
+      CLEVER_CLIENT_SECRET: ${CLEVER_CLIENT_SECRET:-}
+      CLEVER_REDIRECT_URI: ${CLEVER_REDIRECT_URI:-http://localhost:3010/integrations/clever/callback}
+      CLASSLINK_CLIENT_ID: ${CLASSLINK_CLIENT_ID:-}
+      CLASSLINK_CLIENT_SECRET: ${CLASSLINK_CLIENT_SECRET:-}
+      CLASSLINK_REDIRECT_URI: ${CLASSLINK_REDIRECT_URI:-http://localhost:3010/integrations/classlink/callback}
+      LTI_PRIVATE_KEY: ${LTI_PRIVATE_KEY:-}
+      LTI_PUBLIC_KEY: ${LTI_PUBLIC_KEY:-}
+      LTI_KID: ${LTI_KID:-aivo-lti-key-1}
+      IDENTITY_SVC_URL: http://identity-svc:3001
+      AWS_S3_BUCKET: ${AWS_S3_BUCKET:-aivo-integrations}
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+      APP_URL: ${APP_URL:-http://localhost:3000}
+      NODE_ENV: development
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3010/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
 volumes:
   postgres_data:
