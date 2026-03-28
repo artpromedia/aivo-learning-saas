@@ -55,6 +55,14 @@ import { convertLeadRoute } from "./routes/leads/convert.js";
 // Routes — Brain Upgrade
 import { brainUpgradeRoute } from "./routes/brain-upgrade.js";
 
+// Routes — Classrooms
+import { createClassroomRoute } from "./routes/classrooms/create.js";
+import { listClassroomsRoute } from "./routes/classrooms/list.js";
+import { updateClassroomRoute } from "./routes/classrooms/update.js";
+import { deleteClassroomRoute } from "./routes/classrooms/delete.js";
+import { classroomLearnersRoute } from "./routes/classrooms/learners.js";
+import { classroomAnalyticsRoute } from "./routes/classrooms/analytics.js";
+
 // Routes — Audit
 import { auditLogRoute } from "./routes/audit/log.js";
 
@@ -157,6 +165,14 @@ export async function buildApp() {
 
   // Brain Upgrade
   await app.register(brainUpgradeRoute);
+
+  // Classrooms
+  await app.register(createClassroomRoute);
+  await app.register(listClassroomsRoute);
+  await app.register(updateClassroomRoute);
+  await app.register(deleteClassroomRoute);
+  await app.register(classroomLearnersRoute);
+  await app.register(classroomAnalyticsRoute);
 
   // Audit
   await app.register(auditLogRoute);

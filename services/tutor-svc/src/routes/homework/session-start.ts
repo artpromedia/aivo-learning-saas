@@ -1,8 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import { authenticate } from "../../middleware/authenticate.js";
-import { HomeworkSessionService } from "../../services/homework-session.service.js";
-import { SubscriptionGateService } from "../../services/subscription-gate.service.js";
-import { HomeworkUploadService } from "../../services/homework-upload.service.js";
+import { HomeworkService } from "../../services/homework.service.js";
 
 export async function homeworkSessionStartRoute(app: FastifyInstance) {
   app.post(
@@ -16,28 +14,26 @@ export async function homeworkSessionStartRoute(app: FastifyInstance) {
         return reply.status(400).send({ error: "learnerId is required" });
       }
 
-      // Verify assignment exists and get subject
-      const uploadSvc = new HomeworkUploadService(app);
-      const assignment = await uploadSvc.getAssignment(assignmentId);
-      if (!assignment) {
-        return reply.status(404).send({ error: "Assignment not found" });
-      }
+      const svc = new HomeworkService(app);
 
-      // Subscription gate for homework subject
-      const gate = new SubscriptionGateService(app);
-      const access = await gate.verifyAccess(learnerId, assignment.subject);
-      if (!access.allowed) {
-        return reply.status(403).send({
-          error: "Tutor subscription required for homework help",
-          locked: true,
-          requiredSku: access.requiredSku,
-          message: access.message,
+      try {
+        const result = await svc.startSession(assignmentId, learnerId);
+        return reply.status(201).send({
+          session: result.session,
+          firstPrompt: result.firstPrompt,
         });
+      } catch (err) {
+        const error = err as { statusCode?: number; locked?: boolean; requiredSku?: string; message?: string };
+        if (error.statusCode === 403) {
+          return reply.status(403).send({
+            error: "Tutor subscription required for homework help",
+            locked: error.locked ?? true,
+            requiredSku: error.requiredSku,
+            message: error.message,
+          });
+        }
+        throw err;
       }
-
-      const sessionSvc = new HomeworkSessionService(app);
-      const session = await sessionSvc.startSession(assignmentId, learnerId);
-      return reply.status(201).send({ session });
     },
   );
 }

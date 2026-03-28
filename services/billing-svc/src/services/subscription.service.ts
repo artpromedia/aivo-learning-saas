@@ -96,11 +96,11 @@ export class SubscriptionService {
     this.app.log.info(`Subscription created for tenant=${tenantId} plan=${planId} sub=${sub.id}`);
   }
 
-  async cancelSubscription(subscriptionId: string): Promise<void> {
+  async cancelSubscription(subscriptionId: string) {
     const now = new Date();
     const gracePeriodEndsAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // +30 days
 
-    await this.app.db
+    const [updated] = await this.app.db
       .update(subscriptions)
       .set({
         status: "GRACE_PERIOD",
@@ -108,9 +108,11 @@ export class SubscriptionService {
         gracePeriodEndsAt,
         updatedAt: now,
       })
-      .where(eq(subscriptions.id, subscriptionId));
+      .where(eq(subscriptions.id, subscriptionId))
+      .returning();
 
     this.app.log.info(`Subscription ${subscriptionId} set to GRACE_PERIOD until ${gracePeriodEndsAt.toISOString()}`);
+    return updated;
   }
 
   async reactivateSubscription(subscriptionId: string): Promise<void> {

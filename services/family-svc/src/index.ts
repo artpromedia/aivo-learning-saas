@@ -19,6 +19,7 @@ import { respondRecommendationRoute } from "./routes/recommendations/respond.js"
 import { recommendationHistoryRoute } from "./routes/recommendations/history.js";
 import { submitInsightRoute } from "./routes/insights/submit.js";
 import { listInsightsRoute } from "./routes/insights/list.js";
+import { teacherInsightRecommendationRoute } from "./routes/insights/teacher-insight.js";
 import { collaborationMembersRoute } from "./routes/collaboration/members.js";
 import { inviteTeacherRoute } from "./routes/collaboration/invite-teacher.js";
 import { inviteCaregiverRoute } from "./routes/collaboration/invite-caregiver.js";
@@ -39,6 +40,8 @@ import { subscriptionOverviewRoute } from "./routes/subscriptions/overview.js";
 import { getSettingsRoute } from "./routes/settings/get.js";
 import { updateSettingsRoute } from "./routes/settings/update.js";
 import { privacySettingsRoute } from "./routes/settings/privacy.js";
+import { dataExportRoute } from "./routes/settings/data-export.js";
+import { deleteAllDataRoute } from "./routes/settings/delete-data.js";
 
 // Events
 import { setupSubscribers } from "./events/subscribers.js";
@@ -87,6 +90,7 @@ export async function buildApp() {
   // Insights
   await app.register(submitInsightRoute);
   await app.register(listInsightsRoute);
+  await app.register(teacherInsightRecommendationRoute);
 
   // Collaboration
   await app.register(collaborationMembersRoute);
@@ -117,6 +121,10 @@ export async function buildApp() {
   await app.register(getSettingsRoute);
   await app.register(updateSettingsRoute);
   await app.register(privacySettingsRoute);
+
+  // Data Lifecycle
+  await app.register(dataExportRoute);
+  await app.register(deleteAllDataRoute);
 
   // NATS subscribers
   try {

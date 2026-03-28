@@ -11,6 +11,7 @@ from brain_svc.routes.recommendations import router as recommendations_router
 from brain_svc.routes.tutor_registry import router as tutor_registry_router
 from brain_svc.routes.upgrade import router as upgrade_router
 from brain_svc.routes.versioning import router as versioning_router
+from brain_svc.routes.data_lifecycle import router as data_lifecycle_router
 
 all_routers = [
     health_router,
@@ -24,4 +25,5 @@ all_routers = [
     functional_router,
     versioning_router,
     upgrade_router,
+    data_lifecycle_router,
 ]

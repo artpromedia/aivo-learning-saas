@@ -6,10 +6,11 @@ import {
   BookOpen,
   Upload,
   Loader2,
-  RefreshCw,
   Clock,
   ChevronRight,
   FileText,
+  Lock,
+  Sparkles,
 } from "lucide-react";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -19,63 +20,93 @@ import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
 import { apiFetch } from "@/lib/api";
 import { useLearnerStore } from "@/stores/learner.store";
 
-interface HomeworkSession {
+interface HomeworkAssignment {
   id: string;
-  title: string;
   subject: string;
-  status: "active" | "completed";
+  status: string;
+  homeworkMode: string;
   createdAt: string;
-  questionsAnswered: number;
-  uploadedFileName?: string;
+  adaptedProblems: unknown[];
+  extractedText?: string;
+}
+
+interface UploadResponse {
+  assignment?: HomeworkAssignment;
+  locked?: boolean;
+  requiredSku?: string;
 }
 
 export default function HomeworkPage() {
   const activeLearner = useLearnerStore((s) => s.activeLearner);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [sessions, setSessions] = useState<HomeworkSession[]>([]);
+  const [assignments, setAssignments] = useState<HomeworkAssignment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [lockedInfo, setLockedInfo] = useState<{
+    locked: boolean;
+    requiredSku: string;
+  } | null>(null);
 
   useEffect(() => {
     if (!activeLearner?.id) return;
 
-    async function fetchSessions() {
+    async function fetchAssignments() {
       try {
-        const data = await apiFetch<HomeworkSession[]>(
-          `/api/learners/${activeLearner!.id}/homework`,
+        const data = await apiFetch<{ assignments: HomeworkAssignment[] }>(
+          `/api/tutors/homework/learner/${activeLearner!.id}`,
         );
-        setSessions(data);
+        setAssignments(data.assignments);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load homework");
+        setError(
+          err instanceof Error ? err.message : "Failed to load homework",
+        );
       } finally {
         setLoading(false);
       }
     }
 
-    fetchSessions();
+    fetchAssignments();
   }, [activeLearner]);
 
   const handleUpload = async (file: File) => {
     if (!activeLearner?.id) return;
     setUploading(true);
     setError(null);
+    setLockedInfo(null);
+
     try {
       const formData = new FormData();
       formData.append("file", file);
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001"}/api/learners/${activeLearner.id}/homework/upload`,
-        {
-          method: "POST",
-          credentials: "include",
-          body: formData,
-        },
-      );
-      if (!res.ok) throw new Error("Upload failed");
-      const newSession = await res.json();
-      setSessions((prev) => [newSession, ...prev]);
+      formData.append("learnerId", activeLearner.id);
+
+      const apiBase =
+        process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+      const res = await fetch(`${apiBase}/api/tutors/homework/upload`, {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      });
+
+      const data: UploadResponse = await res.json();
+
+      if (data.locked) {
+        setLockedInfo({
+          locked: true,
+          requiredSku: data.requiredSku ?? "",
+        });
+        return;
+      }
+
+      if (!res.ok) {
+        throw new Error("Upload failed");
+      }
+
+      if (data.assignment) {
+        setAssignments((prev) => [data.assignment!, ...prev]);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed");
     } finally {
@@ -90,8 +121,12 @@ export default function HomeworkPage() {
     if (f) handleUpload(f);
   };
 
-  const activeSessions = sessions.filter((s) => s.status === "active");
-  const completedSessions = sessions.filter((s) => s.status === "completed");
+  const activeAssignments = assignments.filter(
+    (a) => a.status === "READY" || a.status === "IN_PROGRESS",
+  );
+  const completedAssignments = assignments.filter(
+    (a) => a.status === "COMPLETED",
+  );
 
   if (loading) {
     return (
@@ -127,6 +162,34 @@ export default function HomeworkPage() {
         </div>
       )}
 
+      {/* Locked State */}
+      {lockedInfo && (
+        <Card className="mb-6 border-2 border-amber-300 dark:border-amber-600">
+          <CardBody className="flex items-center gap-4 py-6">
+            <div className="w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center shrink-0">
+              <Lock className="text-amber-600" size={24} />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+                Tutor Subscription Required
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                This subject requires an active tutor subscription. Subscribe to
+                unlock homework help for this subject.
+              </p>
+              <p className="text-xs text-gray-400 mt-1">
+                Required: {lockedInfo.requiredSku?.replace("ADDON_TUTOR_", "").replace("_", " ")}
+              </p>
+            </div>
+            <Link href="/learner/tutors">
+              <Button size="sm" leftIcon={<Sparkles size={16} />}>
+                Subscribe
+              </Button>
+            </Link>
+          </CardBody>
+        </Card>
+      )}
+
       {/* Upload Zone */}
       <Card className="mb-8">
         <CardBody>
@@ -146,8 +209,16 @@ export default function HomeworkPage() {
           >
             {uploading ? (
               <div className="flex flex-col items-center">
-                <Loader2 className="text-[#7C3AED] animate-spin mb-3" size={32} />
-                <p className="text-sm text-gray-500">Uploading homework...</p>
+                <Loader2
+                  className="text-[#7C3AED] animate-spin mb-3"
+                  size={32}
+                />
+                <p className="text-sm text-gray-500">
+                  Processing homework...
+                </p>
+                <p className="text-xs text-gray-400 mt-1">
+                  Extracting text, detecting subject, and adapting problems
+                </p>
               </div>
             ) : (
               <>
@@ -159,7 +230,8 @@ export default function HomeworkPage() {
                   Upload your homework
                 </p>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Drag and drop or click to browse. Supports PDF and images.
+                  Drag and drop or click to browse. Supports PDF and images (max
+                  10MB).
                 </p>
               </>
             )}
@@ -177,15 +249,18 @@ export default function HomeworkPage() {
         </CardBody>
       </Card>
 
-      {/* Active Sessions */}
-      {activeSessions.length > 0 && (
+      {/* Active Assignments */}
+      {activeAssignments.length > 0 && (
         <div className="mb-8">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            In Progress ({activeSessions.length})
+            In Progress ({activeAssignments.length})
           </h2>
           <div className="space-y-3">
-            {activeSessions.map((session) => (
-              <Link key={session.id} href={`/learner/homework/${session.id}`}>
+            {activeAssignments.map((assignment) => (
+              <Link
+                key={assignment.id}
+                href={`/learner/homework/${assignment.id}`}
+              >
                 <Card className="hover:shadow-md transition-shadow cursor-pointer group">
                   <CardBody className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-lg bg-[#7C3AED]/10 flex items-center justify-center shrink-0">
@@ -193,14 +268,35 @@ export default function HomeworkPage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="font-medium text-gray-900 dark:text-white truncate">
-                        {session.title}
+                        {assignment.subject.charAt(0).toUpperCase() +
+                          assignment.subject.slice(1)}{" "}
+                        Homework
                       </h3>
                       <div className="flex items-center gap-2 text-xs text-gray-500">
-                        <Badge variant="secondary">{session.subject}</Badge>
-                        <span>{session.questionsAnswered} questions helped</span>
+                        <Badge variant="secondary">
+                          {assignment.subject}
+                        </Badge>
+                        <Badge variant="outline">
+                          {assignment.homeworkMode}
+                        </Badge>
+                        <span>
+                          {(assignment.adaptedProblems as unknown[])?.length ??
+                            0}{" "}
+                          problems
+                        </span>
                       </div>
                     </div>
-                    <Badge variant="warning">Active</Badge>
+                    <Badge
+                      variant={
+                        assignment.status === "IN_PROGRESS"
+                          ? "warning"
+                          : "default"
+                      }
+                    >
+                      {assignment.status === "IN_PROGRESS"
+                        ? "Active"
+                        : "Ready"}
+                    </Badge>
                     <ChevronRight
                       className="text-gray-400 group-hover:text-[#7C3AED] transition-colors shrink-0"
                       size={18}
@@ -213,15 +309,18 @@ export default function HomeworkPage() {
         </div>
       )}
 
-      {/* Completed Sessions */}
-      {completedSessions.length > 0 && (
+      {/* Completed Assignments */}
+      {completedAssignments.length > 0 && (
         <div>
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Completed ({completedSessions.length})
+            Completed ({completedAssignments.length})
           </h2>
           <div className="space-y-3">
-            {completedSessions.map((session) => (
-              <Link key={session.id} href={`/learner/homework/${session.id}`}>
+            {completedAssignments.map((assignment) => (
+              <Link
+                key={assignment.id}
+                href={`/learner/homework/${assignment.id}`}
+              >
                 <Card className="hover:shadow-md transition-shadow cursor-pointer opacity-75">
                   <CardBody className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center shrink-0">
@@ -229,13 +328,19 @@ export default function HomeworkPage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="font-medium text-gray-900 dark:text-white truncate">
-                        {session.title}
+                        {assignment.subject.charAt(0).toUpperCase() +
+                          assignment.subject.slice(1)}{" "}
+                        Homework
                       </h3>
                       <div className="flex items-center gap-2 text-xs text-gray-500">
-                        <Badge variant="secondary">{session.subject}</Badge>
+                        <Badge variant="secondary">
+                          {assignment.subject}
+                        </Badge>
                         <span className="flex items-center gap-1">
                           <Clock size={12} />
-                          {new Date(session.createdAt).toLocaleDateString()}
+                          {new Date(
+                            assignment.createdAt,
+                          ).toLocaleDateString()}
                         </span>
                       </div>
                     </div>
@@ -248,7 +353,7 @@ export default function HomeworkPage() {
         </div>
       )}
 
-      {sessions.length === 0 && (
+      {assignments.length === 0 && !lockedInfo && (
         <Card>
           <CardBody className="text-center py-12">
             <BookOpen className="mx-auto mb-3 text-gray-400" size={48} />

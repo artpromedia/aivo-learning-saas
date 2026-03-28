@@ -1,7 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import { z } from "zod";
 import { authenticate } from "../../middleware/authenticate.js";
-import { HomeworkSessionService } from "../../services/homework-session.service.js";
+import { HomeworkService } from "../../services/homework.service.js";
 
 const bodySchema = z.object({ userInput: z.string().min(1) });
 
@@ -12,7 +12,7 @@ export async function homeworkSessionMessageRoute(app: FastifyInstance) {
     async (request) => {
       const { id } = request.params as { id: string };
       const body = bodySchema.parse(request.body);
-      const svc = new HomeworkSessionService(app);
+      const svc = new HomeworkService(app);
       return svc.sendMessage(id, body.userInput);
     },
   );

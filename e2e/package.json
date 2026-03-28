@@ -1,0 +1,21 @@
+{
+  "name": "@aivo/e2e",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "test:auth": "playwright test --project=module-0b-auth",
+    "test:assessment": "playwright test --project=module-1a-assessment",
+    "test:brain": "playwright test --project=module-1b-brain",
+    "test:tutors": "playwright test --project=module-2b-tutors",
+    "test:homework": "playwright test --project=module-3a-homework",
+    "test:collaboration": "playwright test --project=module-3b-collaboration",
+    "test:gamification": "playwright test --project=module-4a-gamification",
+    "test:report": "playwright show-report",
+    "services:up": "docker compose -f docker-compose.test.yml up -d --wait",
+    "services:down": "docker compose -f docker-compose.test.yml down -v"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.50.0",
+    "@axe-core/playwright": "^4.10.0"
+  }
+}

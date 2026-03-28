@@ -113,7 +113,7 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
     });
   } catch { app.log.warn("Could not subscribe to brain.cloned"); }
 
-  // ─── brain.recommendation.created → in-app + push + regression email ───────
+  // ─── brain.recommendation.created → in-app + push + regression email + teacher_insight ─
   try {
     await subscribeEvent(nc, "brain.recommendation.created", BRAIN_SCHEMAS["brain.recommendation.created"], async (data) => {
       try {
@@ -137,8 +137,12 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
         await notificationService.create({
           userId: result.parent.id,
           type: "recommendation_pending",
-          title: "New recommendation",
-          body: `A new ${data.type.replace(/_/g, " ").toLowerCase()} recommendation is ready for ${result.learner.name}`,
+          title: data.type === "TEACHER_INSIGHT"
+            ? "Teacher observation shared"
+            : "New recommendation",
+          body: data.type === "TEACHER_INSIGHT"
+            ? `${result.learner.name}'s teacher shared an observation`
+            : `A new ${data.type.replace(/_/g, " ").toLowerCase()} recommendation is ready for ${result.learner.name}`,
           actionUrl: `/parent/${result.learner.id}/recommendations`,
         });
 
@@ -151,6 +155,20 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
           type: data.type,
           data: { learnerId: data.learnerId, recommendationId: data.recommendationId },
         });
+
+        // Send teacher insight email
+        if (data.type === "TEACHER_INSIGHT" && data.teacherId) {
+          const teacher = await getUserById(app, data.teacherId);
+          if (teacher) {
+            await emailService.sendTemplate("teacher_insight", result.parent.email, result.parent.id, {
+              userName: result.parent.name,
+              learnerName: result.learner.name,
+              teacherName: teacher.name,
+              insightText: "A teacher has shared an observation about your child's progress.",
+              reviewUrl: `${config.APP_URL}/parent/${result.learner.id}/recommendations`,
+            });
+          }
+        }
       } catch (err) {
         app.log.error({ err, data }, "Failed to process brain.recommendation.created");
       }
@@ -518,5 +536,79 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
     });
   } catch { app.log.warn("Could not subscribe to comms.notification.created"); }
 
-  app.log.info("Comms-svc NATS subscribers set up (20+ event handlers)");
+  // ─── billing.subscription.grace.started → grace period email ─────────────
+  try {
+    await subscribeEvent(nc, "billing.subscription.grace.started", BILLING_SCHEMAS["billing.subscription.grace.started"], async (data) => {
+      try {
+        const tenantUsers = await app.db.select().from(users).where(eq(users.tenantId, data.tenantId)).limit(1);
+        const owner = tenantUsers[0];
+        if (!owner) return;
+
+        const endsAt = data.gracePeriodEndsAt
+          ? new Date(data.gracePeriodEndsAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
+          : "30 days from now";
+
+        await emailService.sendTemplate("grace_period_started", owner.email, owner.id, {
+          userName: owner.name,
+          gracePeriodEndsAt: endsAt,
+          exportUrl: `${config.APP_URL}/parent/settings`,
+          resubscribeUrl: `${config.APP_URL}/billing/manage`,
+        });
+      } catch (err) {
+        app.log.error({ err, data }, "Failed to process billing.subscription.grace.started");
+      }
+    });
+  } catch { app.log.warn("Could not subscribe to billing.subscription.grace.started"); }
+
+  // ─── billing.subscription.grace.warning_7day → warning email ──────────────
+  try {
+    await subscribeEvent(nc, "billing.subscription.grace.warning_7day", BILLING_SCHEMAS["billing.subscription.grace.warning_7day"], async (data) => {
+      try {
+        const tenantUsers = await app.db.select().from(users).where(eq(users.tenantId, data.tenantId)).limit(1);
+        const owner = tenantUsers[0];
+        if (!owner) return;
+
+        const endsAt = data.gracePeriodEndsAt
+          ? new Date(data.gracePeriodEndsAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
+          : "7 days";
+
+        const daysRemaining = data.gracePeriodEndsAt
+          ? Math.ceil((new Date(data.gracePeriodEndsAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+          : 7;
+
+        await emailService.sendTemplate("grace_period_warning", owner.email, owner.id, {
+          userName: owner.name,
+          gracePeriodEndsAt: endsAt,
+          daysRemaining,
+          exportUrl: `${config.APP_URL}/parent/settings`,
+          resubscribeUrl: `${config.APP_URL}/billing/manage`,
+        });
+      } catch (err) {
+        app.log.error({ err, data }, "Failed to process billing.subscription.grace.warning_7day");
+      }
+    });
+  } catch { app.log.warn("Could not subscribe to billing.subscription.grace.warning_7day"); }
+
+  // ─── brain.export.completed → export ready email ──────────────────────────
+  try {
+    await subscribeEvent(nc, "brain.export.completed", BRAIN_SCHEMAS["brain.export.completed"], async (data) => {
+      try {
+        const result = await getLearnerWithParent(app, data.learnerId);
+        if (!result) return;
+
+        await emailService.sendTemplate("export_ready", result.parent.email, result.parent.id, {
+          userName: result.parent.name,
+          learnerName: result.learner.name,
+          downloadUrl: data.downloadUrl,
+          expiresAt: data.expiresAt
+            ? new Date(data.expiresAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", hour: "numeric" })
+            : "72 hours",
+        });
+      } catch (err) {
+        app.log.error({ err, data }, "Failed to process brain.export.completed");
+      }
+    });
+  } catch { app.log.warn("Could not subscribe to brain.export.completed"); }
+
+  app.log.info("Comms-svc NATS subscribers set up (25+ event handlers)");
 }
