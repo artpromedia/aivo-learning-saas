@@ -45,6 +45,7 @@ import { listFeatureFlagsRoute } from "./routes/feature-flags/list.js";
 import { createFeatureFlagRoute } from "./routes/feature-flags/create.js";
 import { updateFeatureFlagRoute } from "./routes/feature-flags/update.js";
 import { tenantOverrideRoute } from "./routes/feature-flags/tenant-override.js";
+import { deleteFeatureFlagRoute } from "./routes/feature-flags/delete.js";
 
 // Routes — Leads
 import { listLeadsRoute } from "./routes/leads/list.js";
@@ -162,6 +163,7 @@ export async function buildApp() {
   await app.register(createFeatureFlagRoute);
   await app.register(updateFeatureFlagRoute);
   await app.register(tenantOverrideRoute);
+  await app.register(deleteFeatureFlagRoute);
 
   // Leads
   await app.register(listLeadsRoute);

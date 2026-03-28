@@ -1,0 +1,41 @@
+{
+  "name": "@aivo/feature-flags",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": { "import": "./dist/index.js", "types": "./dist/index.d.ts" },
+    "./fastify": { "import": "./dist/fastify-plugin.js", "types": "./dist/fastify-plugin.d.ts" },
+    "./react": { "import": "./dist/react.js", "types": "./dist/react.d.ts" }
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "ioredis": "^5.4.2",
+    "nats": "^2.28.0",
+    "fastify-plugin": "^5.0.0",
+    "murmurhash-js": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "fastify": "^5.2.0",
+    "tsup": "^8.3.6",
+    "typescript": "~5.7.3",
+    "vitest": "^3.0.0",
+    "react": "^19.0.0",
+    "@types/react": "^19.0.0"
+  },
+  "peerDependencies": {
+    "fastify": "^5.0.0",
+    "react": "^18.0.0 || ^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "fastify": { "optional": true },
+    "react": { "optional": true }
+  }
+}

@@ -96,4 +96,13 @@ export const JETSTREAM_STREAMS: StreamDefinition[] = [
     maxBytes: 5 * GB,
     duplicateWindow: 2 * 60 * 1_000_000_000,
   },
+  {
+    name: "AIVO_RESEARCH",
+    subjects: ["aivo.research.>"],
+    retention: "limits",
+    storage: "file",
+    maxAge: 365 * DAY_NS,
+    maxBytes: 10 * GB,
+    duplicateWindow: 2 * 60 * 1_000_000_000,
+  },
 ];

@@ -118,6 +118,13 @@ jobs:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
 
+      - name: Verify Fastlane configuration
+        run: |
+          if [ ! -f "apps/mobile/android/fastlane/Fastfile" ]; then
+            echo "::error::Fastlane configuration not found"
+            exit 1
+          fi
+
       - name: Upload to Play Store via Fastlane
         working-directory: apps/mobile/android
         run: |
@@ -201,6 +208,13 @@ jobs:
             --build-name=${{ inputs.version }} \
             --build-number=${{ needs.validate.outputs.build-number }} \
             --export-options-plist=ios/ExportOptions.plist
+
+      - name: Verify Fastlane configuration
+        run: |
+          if [ ! -f "apps/mobile/ios/fastlane/Fastfile" ]; then
+            echo "::error::Fastlane configuration not found"
+            exit 1
+          fi
 
       - name: Upload to App Store via Fastlane
         working-directory: apps/mobile/ios
