@@ -61,6 +61,7 @@ export const snapshotTriggerEnum = pgEnum("snapshot_trigger", [
   "TUTOR_ADDON_DEACTIVATED",
   "FUNCTIONING_LEVEL_CHANGE",
   "IEP_UPDATE",
+  "ROLLBACK",
 ]);
 
 // IEP

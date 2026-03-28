@@ -52,6 +52,9 @@ import { updateLeadRoute } from "./routes/leads/update.js";
 import { leadNotesRoute } from "./routes/leads/notes.js";
 import { convertLeadRoute } from "./routes/leads/convert.js";
 
+// Routes — Brain Upgrade
+import { brainUpgradeRoute } from "./routes/brain-upgrade.js";
+
 // Routes — Audit
 import { auditLogRoute } from "./routes/audit/log.js";
 
@@ -151,6 +154,9 @@ export async function buildApp() {
   await app.register(updateLeadRoute);
   await app.register(leadNotesRoute);
   await app.register(convertLeadRoute);
+
+  // Brain Upgrade
+  await app.register(brainUpgradeRoute);
 
   // Audit
   await app.register(auditLogRoute);

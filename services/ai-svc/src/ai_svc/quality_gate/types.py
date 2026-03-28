@@ -21,3 +21,5 @@ class QualityResult:
     passed: bool
     gates: list[GateResult]
     content: str
+    violations: list[str] = field(default_factory=list)
+    auto_remediated: bool = False

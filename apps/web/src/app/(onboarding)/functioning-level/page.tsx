@@ -12,7 +12,7 @@ import { API_ROUTES } from "@/lib/api-routes";
 import { useLearnerStore } from "@/stores/learner.store";
 
 interface FunctioningLevelResult {
-  level: "level1" | "level2" | "level3";
+  level: "STANDARD" | "SUPPORTED" | "LOW_VERBAL" | "NON_VERBAL" | "PRE_SYMBOLIC";
   label: string;
   description: string;
   assessmentType: "STANDARD" | "PICTURE_BASED";
@@ -20,9 +20,11 @@ interface FunctioningLevelResult {
 }
 
 const levelColors: Record<string, string> = {
-  level1: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-  level2: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
-  level3: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400",
+  STANDARD: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
+  SUPPORTED: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
+  LOW_VERBAL: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
+  NON_VERBAL: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400",
+  PRE_SYMBOLIC: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
 };
 
 export default function FunctioningLevelPage() {

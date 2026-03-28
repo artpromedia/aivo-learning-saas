@@ -40,6 +40,36 @@ class TestSafetyGate:
         result = check_safety("Alcohol and beer are really fun and cool to try at parties.")
         assert not result.passed
 
+    def test_pii_email_detected(self):
+        result = check_safety("Please contact teacher@school.edu for more info.")
+        assert not result.passed
+        assert "PII" in result.details
+        assert result.metadata.get("pii_type") == "email address"
+
+    def test_pii_phone_detected(self):
+        result = check_safety("Call us at 555-123-4567 for help.")
+        assert not result.passed
+        assert "PII" in result.details
+        assert result.metadata.get("pii_type") == "phone number"
+
+    def test_pii_ssn_detected(self):
+        result = check_safety("The SSN is 123-45-6789 which should not appear.")
+        assert not result.passed
+        assert "PII" in result.details
+        assert result.metadata.get("pii_type") == "SSN"
+
+    def test_pii_full_name_detected(self):
+        result = check_safety("The student John Smith completed the assignment.")
+        assert not result.passed
+        assert "PII" in result.details
+        assert result.metadata.get("pii_type") == "full name"
+
+    def test_no_pii_clean_content(self):
+        result = check_safety(
+            "Add three apples and two oranges. How many fruits do you have?"
+        )
+        assert result.passed
+
 
 class TestReadabilityGate:
     def test_syllable_count(self):
@@ -88,6 +118,26 @@ class TestReadabilityGate:
             delivery_levels={},
         )
         assert result.passed
+
+    def test_fk_grade_in_metadata(self):
+        result = check_readability(
+            "The cat sat. The dog ran.",
+            enrolled_grade=5,
+            delivery_levels={},
+        )
+        assert "fk_grade" in result.metadata
+        assert "target_grade" in result.metadata
+        assert "max_allowed" in result.metadata
+
+    def test_tolerance_boundary(self):
+        """Content at or near the tolerance boundary."""
+        result = check_readability(
+            "The cat sat. The dog ran. It was fun.",
+            enrolled_grade=1,
+            delivery_levels={"reading_level": "EARLY"},
+        )
+        # Target is 1.5, tolerance is 1.5, so max_allowed is 3.0
+        assert result.metadata["max_allowed"] == 3.0
 
 
 class TestAccommodationGate:
@@ -255,6 +305,8 @@ class TestQualityGatePipeline:
         assert result.passed
         assert len(result.gates) == 4
         assert result.content != ""
+        assert result.violations == []
+        assert result.auto_remediated is False
 
     def test_unsafe_content_fails(self, sample_learner_context):
         pipeline = QualityGatePipeline()
@@ -265,6 +317,8 @@ class TestQualityGatePipeline:
         assert not result.passed
         safety_gate = [g for g in result.gates if g.name == "safety"][0]
         assert not safety_gate.passed
+        assert len(result.violations) > 0
+        assert any("safety" in v for v in result.violations)
 
     def test_low_verbal_enforced(self, low_verbal_context):
         pipeline = QualityGatePipeline()
@@ -274,3 +328,35 @@ class TestQualityGatePipeline:
             low_verbal_context,
         )
         assert not result.passed
+
+    def test_pii_auto_remediation(self, sample_learner_context):
+        pipeline = QualityGatePipeline()
+        result = pipeline.validate(
+            "Please email teacher@school.edu for more information about the lesson.",
+            sample_learner_context,
+        )
+        assert result.auto_remediated is True
+        # After remediation the email should be redacted
+        assert "teacher@school.edu" not in result.content or not result.passed
+
+    def test_violations_collected_across_gates(self, low_verbal_context):
+        pipeline = QualityGatePipeline()
+        result = pipeline.validate(
+            "This is a long block of content. It has many sentences. "
+            "Way too many for a low verbal learner. Four sentences now.",
+            low_verbal_context,
+        )
+        assert not result.passed
+        assert len(result.violations) > 0
+
+    def test_all_gates_run(self, sample_learner_context):
+        pipeline = QualityGatePipeline()
+        result = pipeline.validate(
+            "The cat sat on the mat. It was a sunny day.",
+            sample_learner_context,
+        )
+        gate_names = [g.name for g in result.gates]
+        assert "safety" in gate_names
+        assert "readability" in gate_names
+        assert "accommodation_compliance" in gate_names
+        assert "functioning_level_compliance" in gate_names

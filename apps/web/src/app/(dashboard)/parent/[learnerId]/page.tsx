@@ -29,7 +29,7 @@ interface LearnerDetail {
   id: string;
   name: string;
   avatarUrl?: string;
-  functioningLevel: "level1" | "level2" | "level3";
+  functioningLevel: "STANDARD" | "SUPPORTED" | "LOW_VERBAL" | "NON_VERBAL" | "PRE_SYMBOLIC";
   dateOfBirth: string;
   enrolledGrade?: string;
 }
@@ -129,11 +129,15 @@ export default function ChildDashboardPage() {
             <h1 className="text-2xl font-bold">{learner?.name}</h1>
             <p className="text-white/80 text-sm">
               {learner?.enrolledGrade ?? "Grade not set"} &middot;{" "}
-              {learner?.functioningLevel === "level1"
-                ? "Level 1"
-                : learner?.functioningLevel === "level2"
-                  ? "Level 2"
-                  : "Level 3"}
+              {learner?.functioningLevel === "STANDARD"
+                ? "Standard"
+                : learner?.functioningLevel === "SUPPORTED"
+                  ? "Supported"
+                  : learner?.functioningLevel === "LOW_VERBAL"
+                    ? "Low Verbal"
+                    : learner?.functioningLevel === "NON_VERBAL"
+                      ? "Non-Verbal"
+                      : "Pre-Symbolic"}
             </p>
           </div>
         </div>

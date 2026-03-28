@@ -17,11 +17,12 @@ final dyslexicFontProvider = StateProvider<bool>((_) => false);
 /// Learner functioning level drives text scale and UI density.
 ///
 /// Levels:
-///   1 - Very young / significant support  (text scale 1.3, larger targets)
-///   2 - Moderate support                  (text scale 1.15)
-///   3 - Standard                          (text scale 1.0)
-///   4 - Advanced / minimal support        (text scale 0.95)
-final functioningLevelProvider = StateProvider<int>((_) => 3);
+///   STANDARD     - Standard independence          (text scale 1.0)
+///   SUPPORTED    - Moderate support               (text scale 1.15)
+///   LOW_VERBAL   - Low verbal, picture support    (text scale 1.3)
+///   NON_VERBAL   - Non-verbal, partner assisted   (text scale 1.3)
+///   PRE_SYMBOLIC - Adult-directed, no learner text (text scale 1.0)
+final functioningLevelProvider = StateProvider<String>((_) => 'STANDARD');
 
 // ---------------------------------------------------------------------------
 // Root app widget
@@ -66,19 +67,21 @@ class FunctioningLevelAdapter extends StatelessWidget {
     super.key,
   });
 
-  final int level;
+  final String level;
   final Widget child;
 
   double get _scaleForLevel {
     switch (level) {
-      case 1:
-        return 1.3;
-      case 2:
-        return 1.15;
-      case 3:
+      case 'STANDARD':
         return 1.0;
-      case 4:
-        return 0.95;
+      case 'SUPPORTED':
+        return 1.15;
+      case 'LOW_VERBAL':
+        return 1.3;
+      case 'NON_VERBAL':
+        return 1.3;
+      case 'PRE_SYMBOLIC':
+        return 1.0; // Adult-directed, no learner text
       default:
         return 1.0;
     }

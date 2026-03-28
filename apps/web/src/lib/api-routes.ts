@@ -111,15 +111,16 @@ export const FUNCTIONING_LEVEL_ROUTES = {
   CURRENT: (learnerId: string) => `/api/learners/${learnerId}/functioning-level`,
 } as const;
 
-// Onboarding
+// Onboarding (assessment-svc)
 export const ONBOARDING_ROUTES = {
-  PARENT_ASSESSMENT: "/api/onboarding/parent-assessment",
-  IEP_UPLOAD: "/api/onboarding/iep-upload",
-  IEP_STATUS: (uploadId: string) => `/api/onboarding/iep-upload/${uploadId}/status`,
-  IEP_CONFIRM: (uploadId: string) => `/api/onboarding/iep-upload/${uploadId}/confirm`,
-  BASELINE_START: (learnerId: string) => `/api/onboarding/${learnerId}/baseline/start`,
-  BASELINE_ANSWER: (learnerId: string) => `/api/onboarding/${learnerId}/baseline/answer`,
-  BASELINE_COMPLETE: (learnerId: string) => `/api/onboarding/${learnerId}/baseline/complete`,
+  PARENT_ASSESSMENT: "/assessment/parent",
+  IEP_UPLOAD: "/assessment/iep/upload",
+  IEP_STATUS: (uploadId: string) => `/assessment/iep/${uploadId}/status`,
+  IEP_CONFIRM: (uploadId: string) => `/assessment/iep/${uploadId}/confirm`,
+  BASELINE_START: (learnerId: string) => `/assessment/baseline/${learnerId}/start`,
+  BASELINE_ANSWER: (learnerId: string) => `/assessment/baseline/${learnerId}/answer`,
+  BASELINE_COMPLETE: (learnerId: string) => `/assessment/baseline/${learnerId}/complete`,
+  BASELINE_STATUS: (learnerId: string) => `/assessment/baseline/${learnerId}/status`,
   COMPLETE: "/api/onboarding/complete",
 } as const;
 

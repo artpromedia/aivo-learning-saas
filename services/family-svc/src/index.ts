@@ -34,6 +34,7 @@ import { brainFunctioningLevelRoute } from "./routes/brain/functioning-level.js"
 import { brainAccommodationsRoute } from "./routes/brain/accommodations.js";
 import { brainVersionsRoute } from "./routes/brain/versions.js";
 import { brainExportRoute } from "./routes/brain/export.js";
+import { brainRollbackRoute } from "./routes/brain/rollback.js";
 import { subscriptionOverviewRoute } from "./routes/subscriptions/overview.js";
 import { getSettingsRoute } from "./routes/settings/get.js";
 import { updateSettingsRoute } from "./routes/settings/update.js";
@@ -107,6 +108,7 @@ export async function buildApp() {
   await app.register(brainAccommodationsRoute);
   await app.register(brainVersionsRoute);
   await app.register(brainExportRoute);
+  await app.register(brainRollbackRoute);
 
   // Subscriptions
   await app.register(subscriptionOverviewRoute);

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Upload, FileText, CheckCircle, Loader2, X, AlertCircle, SkipForward } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardBody } from "@/components/ui/Card";
-import { apiFetch } from "@/lib/api";
+import { apiFetch, assessmentApiFetch } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
 
 type UploadStatus = "idle" | "uploading" | "parsing" | "parsed" | "error";
@@ -49,7 +49,7 @@ export default function IepUploadPage() {
       formData.append("file", f);
 
       const uploadRes = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001"}${API_ROUTES.ONBOARDING.IEP_UPLOAD}`,
+        `${process.env.NEXT_PUBLIC_ASSESSMENT_API_URL ?? "http://localhost:3012"}${API_ROUTES.ONBOARDING.IEP_UPLOAD}`,
         {
           method: "POST",
           credentials: "include",
@@ -74,7 +74,7 @@ export default function IepUploadPage() {
         attempts++;
 
         try {
-          const statusRes = await apiFetch<{
+          const statusRes = await assessmentApiFetch<{
             status: "processing" | "completed" | "error";
             data?: ParsedIepData;
             error?: string;
@@ -113,7 +113,7 @@ export default function IepUploadPage() {
     if (!uploadId) return;
     setIsConfirming(true);
     try {
-      await apiFetch(API_ROUTES.ONBOARDING.IEP_CONFIRM(uploadId), {
+      await assessmentApiFetch(API_ROUTES.ONBOARDING.IEP_CONFIRM(uploadId), {
         method: "POST",
         body: JSON.stringify({ data: parsedData }),
       });

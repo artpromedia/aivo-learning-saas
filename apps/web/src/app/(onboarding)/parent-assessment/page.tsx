@@ -6,7 +6,7 @@ import { ClipboardList, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardBody } from "@/components/ui/Card";
 import { ProgressBar } from "@/components/ui/ProgressBar";
-import { apiFetch } from "@/lib/api";
+import { assessmentApiFetch } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
 import { useLearnerStore } from "@/stores/learner.store";
 
@@ -141,7 +141,7 @@ export default function ParentAssessmentPage() {
     setIsSubmitting(true);
     setError(null);
     try {
-      await apiFetch(API_ROUTES.ONBOARDING.PARENT_ASSESSMENT, {
+      await assessmentApiFetch(API_ROUTES.ONBOARDING.PARENT_ASSESSMENT, {
         method: "POST",
         body: JSON.stringify({
           learnerId: activeLearner?.id,

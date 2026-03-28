@@ -5,7 +5,7 @@ import { useFunctioningLevel as useFunctioningLevelContext } from "@/providers/F
 
 export interface FunctioningLevelData {
   learnerId: string;
-  level: "level1" | "level2" | "level3";
+  level: "STANDARD" | "SUPPORTED" | "LOW_VERBAL" | "NON_VERBAL" | "PRE_SYMBOLIC";
   label: string;
   description: string;
   adaptations: {
