@@ -3,7 +3,10 @@ import { z } from "zod";
 import { authenticate } from "../../middleware/authenticate.js";
 import { HomeworkService } from "../../services/homework.service.js";
 
-const bodySchema = z.object({ userInput: z.string().min(1) });
+const bodySchema = z.object({
+  userInput: z.string().min(1),
+  locale: z.string().min(2).max(10).default("en"),
+});
 
 export async function homeworkSessionMessageRoute(app: FastifyInstance) {
   app.post(
@@ -13,7 +16,7 @@ export async function homeworkSessionMessageRoute(app: FastifyInstance) {
       const { id } = request.params as { id: string };
       const body = bodySchema.parse(request.body);
       const svc = new HomeworkService(app);
-      return svc.sendMessage(id, body.userInput);
+      return svc.sendMessage(id, body.userInput, body.locale);
     },
   );
 }

@@ -28,6 +28,7 @@ class TutorResponder:
         conversation_history: list[dict[str, str]] | None = None,
         tutor_persona: str | None = None,
         tenant_override: str | None = None,
+        locale: str = "en",
     ) -> dict[str, Any]:
         """Generate a tutor response."""
         persona = tutor_persona or subject.lower()
@@ -41,6 +42,7 @@ class TutorResponder:
                 "conversation_history": conversation_history,
             },
             tutor_persona=persona,
+            locale=locale,
         )
 
         # Inject conversation history before the user message

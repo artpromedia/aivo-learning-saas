@@ -18,6 +18,7 @@ export class SessionService {
     sku: string,
     subject: string,
     sessionType: string,
+    locale: string = "en",
   ) {
     // Load brain context for the learner
     const brainContext = await this.brainRelay.fetchContext(learnerId);
@@ -29,6 +30,7 @@ export class SessionService {
         tutorSku: sku,
         subject,
         sessionType,
+        locale,
         brainContextSnapshot: brainContext,
         messages: [],
         startedAt: new Date(),
@@ -44,7 +46,7 @@ export class SessionService {
     return session;
   }
 
-  async sendMessage(sessionId: string, userInput: string) {
+  async sendMessage(sessionId: string, userInput: string, localeOverride?: string) {
     const session = await this.getSession(sessionId);
     if (!session) {
       throw Object.assign(new Error("Session not found"), {
@@ -68,13 +70,14 @@ export class SessionService {
       timestamp: new Date().toISOString(),
     };
 
-    // Call AI tutor with brain context, conversation history, and persona
+    // Call AI tutor with brain context, conversation history, persona, and locale
     const aiResponse = await this.app.aiClient.tutorRespond({
       learnerId: session.learnerId,
       sessionId,
       subject: session.subject,
       messages: [...(conversationHistory as Array<{ role: string; content: string }>), { role: userMessage.role, content: userMessage.content }],
       brainContext: session.brainContextSnapshot as Record<string, unknown>,
+      locale: localeOverride ?? (session as { locale?: string }).locale ?? "en",
     });
 
     const assistantMessage = {

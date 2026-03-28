@@ -5,6 +5,7 @@ import { SessionService } from "../../services/session.service.js";
 
 const bodySchema = z.object({
   userInput: z.string().min(1),
+  locale: z.string().min(2).max(10).optional(),
 });
 
 export async function messageSessionRoute(app: FastifyInstance) {
@@ -15,7 +16,7 @@ export async function messageSessionRoute(app: FastifyInstance) {
       const { id } = request.params as { id: string };
       const body = bodySchema.parse(request.body);
       const sessionSvc = new SessionService(app);
-      const response = await sessionSvc.sendMessage(id, body.userInput);
+      const response = await sessionSvc.sendMessage(id, body.userInput, body.locale);
       return response;
     },
   );

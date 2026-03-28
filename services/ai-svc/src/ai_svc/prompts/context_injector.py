@@ -28,6 +28,8 @@ def build_learner_context_block(context: dict[str, Any]) -> str:
         parts.append(f"- Attention Span: {context['attention_span']} minutes")
     if context.get("cognitive_load"):
         parts.append(f"- Cognitive Load Target: {context['cognitive_load']}")
+    if context.get("locale") and context["locale"] != "en":
+        parts.append(f"- Response Language: {context['locale']}")
 
     # Delivery levels
     if context.get("delivery_levels"):

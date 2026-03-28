@@ -62,6 +62,10 @@ class AivoApp extends ConsumerWidget {
           Locale('ja'),
           Locale('ko'),
           Locale('hi'),
+          Locale('sw'),
+          Locale('ig'),
+          Locale('yo'),
+          Locale('ha'),
         ],
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,

@@ -239,6 +239,7 @@ export class HomeworkService {
   async sendMessage(
     sessionId: string,
     userInput: string,
+    locale: string = "en",
   ): Promise<{
     content: string;
     problemProgress: { attempted: number; completed: number };
@@ -269,7 +270,7 @@ export class HomeworkService {
       timestamp: new Date().toISOString(),
     };
 
-    // Call AI tutor with homework context
+    // Call AI tutor with homework context and locale
     const aiResponse = (await this.app.aiClient.tutorRespond({
       learnerId: session.learnerId,
       sessionId,
@@ -282,6 +283,7 @@ export class HomeworkService {
         adaptedProblems: assignment.adaptedProblems,
         homeworkMode: assignment.homeworkMode,
       },
+      locale,
     })) as { content: string };
 
     const assistantMessage = {

@@ -8,6 +8,7 @@ const bodySchema = z.object({
   learnerId: z.string().uuid(),
   subject: z.string().min(1),
   sessionType: z.enum(["LESSON", "REVIEW", "PRACTICE"]).default("LESSON"),
+  locale: z.string().min(2).max(10).default("en"),
 });
 
 export async function startSessionRoute(app: FastifyInstance) {
@@ -35,6 +36,7 @@ export async function startSessionRoute(app: FastifyInstance) {
         access.sku!,
         body.subject,
         body.sessionType,
+        body.locale,
       );
 
       return reply.status(201).send({ session });

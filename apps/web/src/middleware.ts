@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const SUPPORTED_LOCALES = ["en", "es", "fr", "ar", "zh", "pt", "de", "ja", "ko", "hi"];
+const SUPPORTED_LOCALES = ["en", "es", "fr", "ar", "zh", "pt", "de", "ja", "ko", "hi", "sw", "ig", "yo", "ha"];
 const DEFAULT_LOCALE = "en";
 
 const ROLE_REDIRECTS: Record<string, string> = {

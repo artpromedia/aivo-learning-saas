@@ -8,6 +8,7 @@ export interface TutorRespondParams {
   subject: string;
   messages: unknown[];
   brainContext: unknown;
+  locale?: string;
 }
 
 export interface HomeworkOCRParams {

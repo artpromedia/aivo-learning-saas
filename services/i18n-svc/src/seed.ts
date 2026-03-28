@@ -11,8 +11,12 @@ const SEED_LOCALES = [
   { code: "es", name: "Spanish", nativeName: "Espa\u00f1ol", direction: "LTR" as const, isDefault: false, isEnabled: true },
   { code: "fr", name: "French", nativeName: "Fran\u00e7ais", direction: "LTR" as const, isDefault: false, isEnabled: true },
   { code: "ar", name: "Arabic", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064a\u0629", direction: "RTL" as const, isDefault: false, isEnabled: true },
-  { code: "zh", name: "Chinese", nativeName: "\u4e2d\u6587", direction: "LTR" as const, isDefault: false, isEnabled: false },
-  { code: "pt", name: "Portuguese", nativeName: "Portugu\u00eas", direction: "LTR" as const, isDefault: false, isEnabled: false },
+  { code: "zh", name: "Chinese", nativeName: "\u4e2d\u6587", direction: "LTR" as const, isDefault: false, isEnabled: true },
+  { code: "pt", name: "Portuguese", nativeName: "Portugu\u00eas", direction: "LTR" as const, isDefault: false, isEnabled: true },
+  { code: "sw", name: "Swahili", nativeName: "Kiswahili", direction: "LTR" as const, isDefault: false, isEnabled: true },
+  { code: "ig", name: "Igbo", nativeName: "As\u1ee5s\u1ee5 Igbo", direction: "LTR" as const, isDefault: false, isEnabled: true },
+  { code: "yo", name: "Yoruba", nativeName: "\u00c8d\u00e8 Yor\u00f9b\u00e1", direction: "LTR" as const, isDefault: false, isEnabled: true },
+  { code: "ha", name: "Hausa", nativeName: "Hausa", direction: "LTR" as const, isDefault: false, isEnabled: true },
 ];
 
 const SEED_NAMESPACES = [

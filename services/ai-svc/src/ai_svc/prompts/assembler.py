@@ -17,8 +17,23 @@ from ai_svc.prompts.functioning_level_rules import get_content_rules_prompt
 logger = logging.getLogger(__name__)
 
 
-class PromptAssembler:
-    """Assembles 3-layer prompts for LLM generation."""
+    # Locale code → full language name mapping for prompt instructions
+    LOCALE_NAMES: dict[str, str] = {
+        "en": "English",
+        "es": "Spanish",
+        "fr": "French",
+        "ar": "Arabic",
+        "zh": "Chinese (Simplified)",
+        "pt": "Portuguese",
+        "de": "German",
+        "ja": "Japanese",
+        "ko": "Korean",
+        "hi": "Hindi",
+        "sw": "Swahili",
+        "ig": "Igbo",
+        "yo": "Yoruba",
+        "ha": "Hausa",
+    }
 
     def assemble(
         self,
@@ -27,6 +42,7 @@ class PromptAssembler:
         request_data: dict[str, Any],
         tutor_persona: str | None = None,
         curriculum_standards: list[str] | None = None,
+        locale: str = "en",
     ) -> list[dict[str, str]]:
         """Assemble a full messages array from three prompt layers.
 
@@ -36,6 +52,7 @@ class PromptAssembler:
             request_data: Per-request payload (skill, user_input, etc.)
             tutor_persona: Optional tutor persona name (nova, sage, etc.)
             curriculum_standards: RAG-retrieved curriculum standards
+            locale: ISO locale code for the response language (default: en)
 
         Returns:
             OpenAI-format messages array ready for LLM call.
@@ -48,6 +65,7 @@ class PromptAssembler:
             learner_context=learner_context,
             tutor_persona=tutor_persona,
             curriculum_standards=curriculum_standards,
+            locale=locale,
         )
         messages.append({"role": "system", "content": system_prompt})
 
@@ -68,12 +86,27 @@ class PromptAssembler:
         learner_context: dict[str, Any],
         tutor_persona: str | None = None,
         curriculum_standards: list[str] | None = None,
+        locale: str = "en",
     ) -> str:
         """Build the Layer 1 system prompt."""
         parts: list[str] = []
 
         # Main Brain teaching philosophy
         parts.append(get_main_brain_prompt())
+
+        # Multi-lingual instruction (injected early so it governs all output)
+        if locale and locale != "en":
+            lang_name = self.LOCALE_NAMES.get(locale, locale)
+            parts.append(
+                f"## Language Requirement\n"
+                f"You MUST respond entirely in **{lang_name}** ({locale}).\n"
+                f"- All explanations, questions, encouragement, and feedback must be in {lang_name}.\n"
+                f"- Use culturally appropriate examples and references for {lang_name}-speaking learners.\n"
+                f"- Maintain age-appropriate vocabulary in {lang_name} matching the learner's delivery level.\n"
+                f"- Technical/mathematical terms may use standard international notation alongside {lang_name} equivalents.\n"
+                f"- [TTS], [PICTURE], [LARGE_TARGET], and [SENSORY_BREAK] markers remain in English (they are system tokens).\n"
+                f"- If the learner writes in a different language, respond in {lang_name} but acknowledge what they said."
+            )
 
         # Tutor persona (if applicable)
         if tutor_persona and session_type in ("tutor_chat", "lesson"):

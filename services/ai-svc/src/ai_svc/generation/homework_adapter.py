@@ -172,6 +172,7 @@ class HomeworkAdapter:
         brain_context: dict[str, Any],
         subject: str,
         tenant_override: str | None = None,
+        locale: str = "en",
     ) -> AdaptedAssignment:
         """Adapt homework problems for the learner's current level.
 
@@ -209,6 +210,20 @@ class HomeworkAdapter:
             adaptation_rules=adaptation_rules,
             problems_text=problems_text,
         )
+
+        # Inject language requirement for non-English locales
+        if locale and locale != "en":
+            _LOCALE_NAMES = {
+                "es": "Spanish", "fr": "French", "ar": "Arabic", "zh": "Chinese (Simplified)",
+                "pt": "Portuguese", "de": "German", "ja": "Japanese", "ko": "Korean",
+                "hi": "Hindi", "sw": "Swahili", "ig": "Igbo", "yo": "Yoruba", "ha": "Hausa",
+            }
+            lang = _LOCALE_NAMES.get(locale, locale)
+            prompt += (
+                f"\n\n## Language Requirement\n"
+                f"All adapted content, scaffolding, parent guides, and accommodation notes "
+                f"MUST be written in {lang} ({locale}). Keep system markers in English."
+            )
 
         messages = [
             {"role": "system", "content": prompt},

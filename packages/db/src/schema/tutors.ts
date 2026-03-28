@@ -5,6 +5,7 @@ import {
   timestamp,
   jsonb,
   index,
+  text,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { learners } from "./learners";
@@ -48,6 +49,7 @@ export const tutorSessions = pgTable(
     tutorSku: tutorSkuEnum("tutor_sku").notNull(),
     subject: varchar("subject", { length: 128 }).notNull(),
     sessionType: tutorSessionTypeEnum("session_type").notNull(),
+    locale: varchar("locale", { length: 10 }).notNull().default("en"),
     brainContextSnapshot: jsonb("brain_context_snapshot").default({}),
     messages: jsonb("messages").notNull().default([]),
     masteryUpdates: jsonb("mastery_updates").default({}),

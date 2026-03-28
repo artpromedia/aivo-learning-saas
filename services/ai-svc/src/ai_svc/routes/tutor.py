@@ -21,6 +21,7 @@ class TutorRequest(BaseModel):
     conversation_history: list[dict[str, str]] = Field(default_factory=list)
     tutor_persona: str | None = None
     tenant_override: str | None = None
+    locale: str = "en"
 
 
 @router.post("/respond")
@@ -37,5 +38,6 @@ async def tutor_respond(
         conversation_history=body.conversation_history or None,
         tutor_persona=body.tutor_persona,
         tenant_override=body.tenant_override,
+        locale=body.locale,
     )
     return result

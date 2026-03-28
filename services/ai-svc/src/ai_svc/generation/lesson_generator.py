@@ -31,6 +31,7 @@ class LessonGenerator:
         tutor_persona: str | None = None,
         curriculum_standards: list[str] | None = None,
         tenant_override: str | None = None,
+        locale: str = "en",
     ) -> dict[str, Any]:
         """Generate a complete adaptive lesson.
 
@@ -47,6 +48,7 @@ class LessonGenerator:
             },
             tutor_persona=tutor_persona,
             curriculum_standards=curriculum_standards,
+            locale=locale,
         )
 
         response = await self._gateway.generate(
