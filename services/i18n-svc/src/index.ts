@@ -5,6 +5,7 @@ import multipart from "@fastify/multipart";
 import { ZodError } from "zod";
 
 import { loadConfig } from "./config.js";
+import { observabilityPlugin } from "@aivo/observability";
 
 import dbPlugin from "./plugins/db.js";
 import natsPlugin from "./plugins/nats.js";
@@ -62,6 +63,12 @@ export async function buildApp() {
 
   await app.register(dbPlugin);
   await app.register(natsPlugin);
+
+  await app.register(observabilityPlugin, {
+    serviceName: 'i18n-svc',
+    environment: config.NODE_ENV,
+    sentryDsn: process.env.SENTRY_DSN,
+  });
 
   await app.register(healthRoutes);
   await app.register(localeRoutes);

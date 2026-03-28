@@ -25,10 +25,14 @@ receivers:
     webhook_configs:
       - url: "http://comms-svc.aivo.svc.cluster.local:3007/webhooks/alerts"
         send_resolved: true
+      - url: "http://status-page-svc.aivo.svc.cluster.local:3013/status/webhook/alertmanager"
+        send_resolved: true
 
   - name: critical
     webhook_configs:
       - url: "http://comms-svc.aivo.svc.cluster.local:3007/webhooks/alerts"
+        send_resolved: true
+      - url: "http://status-page-svc.aivo.svc.cluster.local:3013/status/webhook/alertmanager"
         send_resolved: true
     # Slack/PagerDuty integration configured via secrets
     # slack_configs:
@@ -38,6 +42,8 @@ receivers:
   - name: warning
     webhook_configs:
       - url: "http://comms-svc.aivo.svc.cluster.local:3007/webhooks/alerts"
+        send_resolved: true
+      - url: "http://status-page-svc.aivo.svc.cluster.local:3013/status/webhook/alertmanager"
         send_resolved: true
 
 inhibit_rules:

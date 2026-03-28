@@ -5,6 +5,7 @@ import rateLimit from "@fastify/rate-limit";
 import { ZodError } from "zod";
 
 import { loadConfig } from "./config.js";
+import { observabilityPlugin } from "@aivo/observability";
 
 // Plugins
 import dbPlugin from "./plugins/db.js";
@@ -104,6 +105,12 @@ export async function buildApp() {
   await app.register(natsPlugin);
   await app.register(emailPlugin);
   await app.register(authPlugin);
+
+  await app.register(observabilityPlugin, {
+    serviceName: 'identity-svc',
+    environment: config.NODE_ENV,
+    sentryDsn: process.env.SENTRY_DSN,
+  });
 
   // Register routes
   await app.register(healthRoutes);

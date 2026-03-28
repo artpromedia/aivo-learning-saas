@@ -2,6 +2,7 @@ import Fastify from "fastify";
 import multipart from "@fastify/multipart";
 import { ZodError } from "zod";
 import { loadConfig } from "./config.js";
+import { observabilityPlugin } from "@aivo/observability";
 
 // Plugins
 import dbPlugin from "./plugins/db.js";
@@ -71,6 +72,12 @@ export async function buildApp() {
   await app.register(natsPlugin);
   await app.register(redisPlugin);
   await app.register(aiClientPlugin);
+
+  await app.register(observabilityPlugin, {
+    serviceName: 'assessment-svc',
+    environment: config.NODE_ENV,
+    sentryDsn: process.env.SENTRY_DSN,
+  });
 
   // Health
   await app.register(healthRoutes);

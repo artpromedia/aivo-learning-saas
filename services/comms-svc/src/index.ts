@@ -5,6 +5,7 @@ import rateLimit from "@fastify/rate-limit";
 import { ZodError } from "zod";
 
 import { loadConfig } from "./config.js";
+import { observabilityPlugin } from "@aivo/observability";
 
 // Plugins
 import dbPlugin from "./plugins/db.js";
@@ -84,6 +85,12 @@ export async function buildApp() {
   await app.register(firebasePlugin);
   await app.register(webPushPlugin);
   await app.register(socketPlugin);
+
+  await app.register(observabilityPlugin, {
+    serviceName: 'comms-svc',
+    environment: config.NODE_ENV,
+    sentryDsn: process.env.SENTRY_DSN,
+  });
 
   // Register routes
   await app.register(healthRoutes);

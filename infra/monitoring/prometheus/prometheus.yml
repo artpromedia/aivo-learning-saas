@@ -5,6 +5,7 @@ global:
 
 rule_files:
   - "alert-rules.yml"
+  - "rules/*.yml"
 
 alerting:
   alertmanagers:

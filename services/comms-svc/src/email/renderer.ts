@@ -25,6 +25,12 @@ import { gracePeriodStartedTemplate, type GracePeriodStartedData } from "./templ
 import { gracePeriodWarningTemplate, type GracePeriodWarningData } from "./templates/grace-period-warning.js";
 import { exportReadyTemplate, type ExportReadyData } from "./templates/export-ready.js";
 import { dataDeletionConfirmationTemplate, type DataDeletionConfirmationData } from "./templates/data-deletion-confirmation.js";
+import { incidentCreatedTemplate, type IncidentCreatedData } from "./templates/incident-created.js";
+import { incidentUpdatedTemplate, type IncidentUpdatedData } from "./templates/incident-updated.js";
+import { incidentResolvedTemplate, type IncidentResolvedData } from "./templates/incident-resolved.js";
+import { maintenanceScheduledTemplate, type MaintenanceScheduledData } from "./templates/maintenance-scheduled.js";
+import { maintenanceStartedTemplate, type MaintenanceStartedData } from "./templates/maintenance-started.js";
+import { maintenanceCompletedTemplate, type MaintenanceCompletedData } from "./templates/maintenance-completed.js";
 
 export type TemplateSlug =
   | "welcome"
@@ -53,7 +59,13 @@ export type TemplateSlug =
   | "grace_period_started"
   | "grace_period_warning"
   | "export_ready"
-  | "data_deletion_confirmation";
+  | "data_deletion_confirmation"
+  | "incident_created"
+  | "incident_updated"
+  | "incident_resolved"
+  | "maintenance_scheduled"
+  | "maintenance_started"
+  | "maintenance_completed";
 
 export type TemplateDataMap = {
   welcome: WelcomeData;
@@ -83,6 +95,12 @@ export type TemplateDataMap = {
   grace_period_warning: GracePeriodWarningData;
   export_ready: ExportReadyData;
   data_deletion_confirmation: DataDeletionConfirmationData;
+  incident_created: IncidentCreatedData;
+  incident_updated: IncidentUpdatedData;
+  incident_resolved: IncidentResolvedData;
+  maintenance_scheduled: MaintenanceScheduledData;
+  maintenance_started: MaintenanceStartedData;
+  maintenance_completed: MaintenanceCompletedData;
 };
 
 const templateRenderers: { [K in TemplateSlug]: (data: TemplateDataMap[K]) => { subject: string; html: string } } = {
@@ -113,6 +131,12 @@ const templateRenderers: { [K in TemplateSlug]: (data: TemplateDataMap[K]) => { 
   grace_period_warning: gracePeriodWarningTemplate,
   export_ready: exportReadyTemplate,
   data_deletion_confirmation: dataDeletionConfirmationTemplate,
+  incident_created: incidentCreatedTemplate,
+  incident_updated: incidentUpdatedTemplate,
+  incident_resolved: incidentResolvedTemplate,
+  maintenance_scheduled: maintenanceScheduledTemplate,
+  maintenance_started: maintenanceStartedTemplate,
+  maintenance_completed: maintenanceCompletedTemplate,
 };
 
 export function renderTemplate<T extends TemplateSlug>(
