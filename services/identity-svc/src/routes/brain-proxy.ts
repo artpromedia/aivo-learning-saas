@@ -2,6 +2,8 @@
  * Proxy routes that forward brain-related requests to brain-svc.
  * Acts as an API gateway: extracts JWT from cookies and forwards
  * as Bearer token to brain-svc.
+ * The seed endpoint writes directly to Postgres since brain-svc
+ * doesn't expose a seed API.
  */
 import type { FastifyPluginAsync } from "fastify";
 import { sql } from "drizzle-orm";
@@ -25,11 +27,30 @@ async function proxyToBrain(
   const res = await fetch(`${BRAIN_SVC_URL}${path}`, {
     method,
     headers,
-    body: method !== "GET" ? body : undefined,
+    body: method === "GET" ? undefined : body,
   });
 
   const data = await res.json().catch(() => null);
   return { status: res.status, data };
+}
+
+function transformBrainProfile(data: unknown) {
+  const bs = data as Record<string, unknown>;
+  const state = (bs.state ?? {}) as Record<string, unknown>;
+  const flp = (bs.functioning_level_profile ?? {}) as Record<string, unknown>;
+  return {
+    id: bs.id,
+    learnerId: bs.learner_id,
+    functioningLevel: flp.level ?? "level2",
+    strengths: state.strengths ?? [],
+    challenges: state.challenges ?? [],
+    learningStyle: (bs.preferred_modality as string) ?? "multi-sensory",
+    sensoryPreferences: state.sensory_preferences ?? [],
+    communicationStyle: state.communication_style ?? "verbal",
+    status: state.approval_status ?? "pending",
+    createdAt: bs.created_at ?? new Date().toISOString(),
+    updatedAt: bs.updated_at ?? new Date().toISOString(),
+  };
 }
 
 /* ── Brain Profile ─────────────────────────────────────── */
@@ -46,35 +67,10 @@ export const brainProxyRoutes: FastifyPluginAsync = async (app) => {
         token
       );
 
-      if (status === 404) {
-        // No brain state yet — return null so page shows "no profile" state
-        return reply.send(null);
-      }
-      if (status !== 200) {
-        return reply.status(status).send(data);
-      }
+      if (status === 404) return reply.send(null);
+      if (status !== 200) return reply.status(status).send(data);
 
-      // Transform brain-svc shape → frontend BrainProfile shape
-      const bs = data as Record<string, unknown>;
-      const state = (bs.state ?? {}) as Record<string, unknown>;
-      const flp = (bs.functioning_level_profile ?? {}) as Record<
-        string,
-        unknown
-      >;
-
-      return reply.send({
-        id: bs.id,
-        learnerId: bs.learner_id,
-        functioningLevel: flp.level ?? "level2",
-        strengths: state.strengths ?? [],
-        challenges: state.challenges ?? [],
-        learningStyle: (bs.preferred_modality as string) ?? "multi-sensory",
-        sensoryPreferences: state.sensory_preferences ?? [],
-        communicationStyle: state.communication_style ?? "verbal",
-        status: state.approval_status ?? "pending",
-        createdAt: bs.created_at ?? new Date().toISOString(),
-        updatedAt: bs.updated_at ?? new Date().toISOString(),
-      });
+      return reply.send(transformBrainProfile(data));
     }
   );
 
@@ -85,26 +81,22 @@ export const brainProxyRoutes: FastifyPluginAsync = async (app) => {
       const { learnerId } = request.params;
       const token = request.cookies.access_token;
 
-      // First get the brain state to find its ID
       const { status, data } = await proxyToBrain(
         `/brain/learner/${learnerId}`,
         token
       );
-      if (status !== 200) {
-        return reply.status(status).send(data);
-      }
+      if (status !== 200) return reply.status(status).send(data);
 
       const bs = data as Record<string, unknown>;
       const state = (bs.state ?? {}) as Record<string, unknown>;
       state.approval_status = "approved";
 
       const patchRes = await proxyToBrain(
-        `/brain/${bs.id}`,
+        `/brain/${String(bs.id)}`,
         token,
         "PATCH",
         JSON.stringify({ state })
       );
-
       return reply.status(patchRes.status).send({ ok: true });
     }
   );
@@ -120,21 +112,18 @@ export const brainProxyRoutes: FastifyPluginAsync = async (app) => {
         `/brain/learner/${learnerId}`,
         token
       );
-      if (status !== 200) {
-        return reply.status(status).send(data);
-      }
+      if (status !== 200) return reply.status(status).send(data);
 
       const bs = data as Record<string, unknown>;
       const state = (bs.state ?? {}) as Record<string, unknown>;
       state.approval_status = "declined";
 
       const patchRes = await proxyToBrain(
-        `/brain/${bs.id}`,
+        `/brain/${String(bs.id)}`,
         token,
         "PATCH",
         JSON.stringify({ state })
       );
-
       return reply.status(patchRes.status).send({ ok: true });
     }
   );
@@ -150,9 +139,7 @@ export const brainProxyRoutes: FastifyPluginAsync = async (app) => {
         `/brain/learner/${learnerId}`,
         token
       );
-      if (status !== 200) {
-        return reply.status(status).send(data);
-      }
+      if (status !== 200) return reply.status(status).send(data);
 
       const bs = data as Record<string, unknown>;
       const state = (bs.state ?? {}) as Record<string, unknown>;
@@ -161,12 +148,11 @@ export const brainProxyRoutes: FastifyPluginAsync = async (app) => {
       state.parent_insights = insights;
 
       const patchRes = await proxyToBrain(
-        `/brain/${bs.id}`,
+        `/brain/${String(bs.id)}`,
         token,
         "PATCH",
         JSON.stringify({ state })
       );
-
       return reply.status(patchRes.status).send({ ok: true });
     }
   );
@@ -174,13 +160,14 @@ export const brainProxyRoutes: FastifyPluginAsync = async (app) => {
   // POST /learners/:learnerId/brain-profile/seed
   // Creates a seed brain state from baseline assessment results
   // when clone_brain hasn't fired via NATS yet.
+  // Writes directly to Postgres since brain-svc doesn't expose a seed API.
   app.post<{ Params: { learnerId: string }; Body: { accuracy?: number } }>(
     "/learners/:learnerId/brain-profile/seed",
     async (request, reply) => {
       const { learnerId } = request.params;
       const token = request.cookies.access_token;
 
-      // Check if brain state already exists
+      // Check if brain state already exists via brain-svc
       const existing = await proxyToBrain(
         `/brain/learner/${learnerId}`,
         token
@@ -217,7 +204,9 @@ export const brainProxyRoutes: FastifyPluginAsync = async (app) => {
         approval_status: "pending",
       });
       const flpJson = JSON.stringify({ level: functioningLevel });
-      const attentionSpan = functioningLevel === "level3" ? 10 : functioningLevel === "level2" ? 20 : 30;
+      let attentionSpan = 30;
+      if (functioningLevel === "level3") attentionSpan = 10;
+      else if (functioningLevel === "level2") attentionSpan = 20;
 
       await app.db.execute(
         sql`INSERT INTO brain_states (

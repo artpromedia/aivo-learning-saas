@@ -14,7 +14,7 @@
     "type-check:all": "pnpm -r --filter './packages/*' type-check",
     "test": "turbo test",
     "test:all": "pnpm --filter @aivo/brand --filter @aivo/ui test",
-    "dev": "turbo dev",
+    "dev": "turbo dev --concurrency=20",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
