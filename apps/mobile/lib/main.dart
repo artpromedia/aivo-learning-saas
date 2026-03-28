@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +10,13 @@ import 'package:workmanager/workmanager.dart';
 
 import 'package:aivo_mobile/app.dart';
 import 'package:aivo_mobile/config/env.dart';
+import 'package:aivo_mobile/core/api/api_client.dart';
+import 'package:aivo_mobile/core/auth/secure_storage.dart';
+import 'package:aivo_mobile/core/connectivity/sync_manager.dart';
+import 'package:aivo_mobile/data/local/daos/lesson_dao.dart';
+import 'package:aivo_mobile/data/local/daos/sync_dao.dart';
+import 'package:aivo_mobile/data/local/database.dart';
+import 'package:aivo_mobile/data/services/lesson_prefetch_service.dart';
 
 /// Workmanager top-level callback dispatcher.
 ///
@@ -19,10 +27,47 @@ void callbackDispatcher() {
   Workmanager().executeTask((taskName, inputData) async {
     switch (taskName) {
       case 'offlineSync':
-        // Offline sync logic will be wired up in data/repositories.
+        final db = AivoDatabase.create();
+        try {
+          final dao = DriftSyncDao(db);
+          final dio = Dio(BaseOptions(
+            baseUrl: Env.apiBaseUrl,
+            connectTimeout: Duration(seconds: Env.apiTimeoutSeconds),
+            receiveTimeout: Duration(seconds: Env.apiTimeoutSeconds),
+          ));
+          final manager = SyncManager(dao: dao, dio: dio);
+          final beforeCount = await dao.pendingCount();
+          await manager.drainSyncQueue();
+          await dao.cleanupSyncedActions();
+
+          // If any actions were synced, trigger lesson prefetch.
+          final afterCount = await dao.pendingCount();
+          if (beforeCount > afterCount) {
+            final lessonDao = LessonDao(db);
+            final apiClient = ApiClient(
+              secureStorage: SecureStorageService(),
+              dio: dio,
+            );
+            final prefetcher = LessonPrefetchService(
+              apiClient: apiClient,
+              lessonDao: lessonDao,
+              isOnline: true,
+            );
+            // Prefetch requires a learnerId; background sync retrieves it from
+            // the most recent brain snapshot if available.
+            final snapshots = await (db.select(db.brainSnapshots)
+                  ..orderBy([(t) => OrderingTerm.desc(t.lastSyncedAt)])
+                  ..limit(1))
+                .getSingleOrNull();
+            if (snapshots != null) {
+              await prefetcher.prefetchLessons(snapshots.learnerId);
+            }
+          }
+        } finally {
+          await db.close();
+        }
         break;
       case 'refreshPushToken':
-        // Push token refresh logic will be wired up in core/push.
         break;
     }
     return true;

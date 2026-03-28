@@ -1,116 +1,17 @@
-import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:uuid/uuid.dart';
 import 'package:workmanager/workmanager.dart';
 
 import 'package:aivo_mobile/config/env.dart';
 import 'package:aivo_mobile/core/connectivity/connectivity_provider.dart';
+import 'package:aivo_mobile/core/connectivity/sync_types.dart';
+import 'package:aivo_mobile/data/local/daos/sync_dao.dart';
+import 'package:aivo_mobile/data/local/database.dart';
 
-// ---------------------------------------------------------------------------
-// SyncAction model
-// ---------------------------------------------------------------------------
-
-/// Represents a single action that was performed while offline and needs to be
-/// replayed against the backend when connectivity is restored.
-class SyncAction {
-  SyncAction({
-    String? id,
-    required this.endpoint,
-    required this.method,
-    required this.payload,
-    DateTime? createdAt,
-    this.synced = false,
-  })  : id = id ?? const Uuid().v4(),
-        createdAt = createdAt ?? DateTime.now();
-
-  final String id;
-  final String endpoint;
-
-  /// HTTP method: POST or PUT.
-  final String method;
-
-  /// JSON-encoded payload body.
-  final String payload;
-
-  final DateTime createdAt;
-  final bool synced;
-
-  Map<String, dynamic> toMap() => {
-        'id': id,
-        'endpoint': endpoint,
-        'method': method,
-        'payload': payload,
-        'createdAt': createdAt.toIso8601String(),
-        'synced': synced ? 1 : 0,
-      };
-
-  factory SyncAction.fromMap(Map<String, dynamic> map) => SyncAction(
-        id: map['id'] as String,
-        endpoint: map['endpoint'] as String,
-        method: map['method'] as String,
-        payload: map['payload'] as String,
-        createdAt: DateTime.parse(map['createdAt'] as String),
-        synced: (map['synced'] as int) == 1,
-      );
-
-  SyncAction copyWith({bool? synced}) => SyncAction(
-        id: id,
-        endpoint: endpoint,
-        method: method,
-        payload: payload,
-        createdAt: createdAt,
-        synced: synced ?? this.synced,
-      );
-}
-
-// ---------------------------------------------------------------------------
-// SyncDao – thin persistence layer over Drift / raw SQLite
-// ---------------------------------------------------------------------------
-
-/// Abstract DAO contract so the SyncManager is testable without a real DB.
-///
-/// The concrete implementation is expected to be backed by the app's Drift
-/// database and registered as a Riverpod provider.  Because the database layer
-/// may not yet be generated when this file is first compiled, we keep the
-/// interface here and supply a simple in-memory fallback.
-abstract class SyncDao {
-  Future<void> insertAction(SyncAction action);
-  Future<List<SyncAction>> unsyncedActions();
-  Future<void> markSynced(String id);
-}
-
-/// Fallback in-memory implementation used until the real Drift DAO is wired up.
-class InMemorySyncDao implements SyncDao {
-  final List<SyncAction> _store = [];
-
-  @override
-  Future<void> insertAction(SyncAction action) async {
-    _store.add(action);
-  }
-
-  @override
-  Future<List<SyncAction>> unsyncedActions() async {
-    final items = _store.where((a) => !a.synced).toList()
-      ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
-    return items;
-  }
-
-  @override
-  Future<void> markSynced(String id) async {
-    final idx = _store.indexWhere((a) => a.id == id);
-    if (idx != -1) {
-      _store[idx] = _store[idx].copyWith(synced: true);
-    }
-  }
-}
-
-/// Provider for the SyncDao. Override this with the real Drift-backed DAO at
-/// the app's ProviderScope level.
-final syncDaoProvider = Provider<SyncDao>((ref) => InMemorySyncDao());
+export 'package:aivo_mobile/core/connectivity/sync_types.dart';
 
 // ---------------------------------------------------------------------------
 // SyncManager
@@ -198,21 +99,27 @@ class SyncManager {
 
 /// Top-level callback invoked by Workmanager in a background isolate.
 ///
-/// Because the background isolate has no access to the main Riverpod container,
-/// we create a fresh [SyncManager] with its own Dio instance and an
-/// in-memory DAO.  The real Drift DB should be opened here in a production
-/// setup; the in-memory fallback ensures compilation succeeds immediately.
+/// Opens a real Drift database so queued actions persisted by the main isolate
+/// are visible and can be drained.  The DB file path matches the one used by
+/// [AivoDatabase.create] so both isolates share the same SQLite file.
 @pragma('vm:entry-point')
 void backgroundSyncCallback() {
   Workmanager().executeTask((taskName, inputData) async {
     if (taskName == kBackgroundSyncTaskName) {
-      final dio = Dio(BaseOptions(
-        baseUrl: Env.apiBaseUrl,
-        connectTimeout: Duration(seconds: Env.apiTimeoutSeconds),
-        receiveTimeout: Duration(seconds: Env.apiTimeoutSeconds),
-      ));
-      final manager = SyncManager(dao: InMemorySyncDao(), dio: dio);
-      await manager.drainSyncQueue();
+      final db = AivoDatabase.create();
+      try {
+        final dao = DriftSyncDao(db);
+        final dio = Dio(BaseOptions(
+          baseUrl: Env.apiBaseUrl,
+          connectTimeout: Duration(seconds: Env.apiTimeoutSeconds),
+          receiveTimeout: Duration(seconds: Env.apiTimeoutSeconds),
+        ));
+        final manager = SyncManager(dao: dao, dio: dio);
+        await manager.drainSyncQueue();
+        await dao.cleanupSyncedActions();
+      } finally {
+        await db.close();
+      }
     }
     return true;
   });

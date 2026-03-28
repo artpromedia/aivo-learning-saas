@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:aivo_mobile/core/connectivity/connectivity_provider.dart';
-import 'package:aivo_mobile/core/connectivity/sync_manager.dart';
+import 'package:aivo_mobile/data/local/daos/sync_dao.dart';
 
 /// A slim banner displayed when the device is offline.
 ///
@@ -174,10 +174,7 @@ class _BannerContent extends ConsumerWidget {
 /// Watches the [SyncDao] for un-synced action count. Refreshes automatically
 /// whenever the connectivity status changes.
 final _pendingSyncCountProvider = FutureProvider<int>((ref) async {
-  // Re-evaluate whenever connectivity changes.
   ref.watch(connectivityProvider);
-
   final dao = ref.watch(syncDaoProvider);
-  final actions = await dao.unsyncedActions();
-  return actions.length;
+  return dao.pendingCount();
 });

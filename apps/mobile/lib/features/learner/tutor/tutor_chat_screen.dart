@@ -13,6 +13,7 @@ import 'package:aivo_mobile/core/accessibility/audio_narrator.dart';
 import 'package:aivo_mobile/core/accessibility/functioning_level_provider.dart';
 import 'package:aivo_mobile/core/api/api_client.dart';
 import 'package:aivo_mobile/core/api/endpoints.dart';
+import 'package:aivo_mobile/core/connectivity/connectivity_provider.dart';
 import 'package:aivo_mobile/data/models/tutor_session.dart';
 
 // ---------------------------------------------------------------------------
@@ -233,9 +234,15 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final sessionAsync = ref.watch(_tutorSessionProvider(widget.tutorId));
+    final isOnline = ref.watch(isOnlineProvider);
     final theme = Theme.of(context);
     final isLowVerbal = ref.watch(isLowVerbalOrBelowProvider);
+
+    if (!isOnline) {
+      return _buildOfflineFallback(theme);
+    }
+
+    final sessionAsync = ref.watch(_tutorSessionProvider(widget.tutorId));
 
     return sessionAsync.when(
       loading: () => Scaffold(
@@ -283,6 +290,39 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
         _initFromSession(session);
         return _buildChatScreen(theme, isLowVerbal);
       },
+    );
+  }
+
+  Widget _buildOfflineFallback(ThemeData theme) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Tutor Chat')),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.cloud_off, size: 64,
+                  color: theme.colorScheme.outline),
+              const SizedBox(height: 16),
+              Text('Offline — Tutor unavailable',
+                  style: theme.textTheme.titleMedium,
+                  textAlign: TextAlign.center),
+              const SizedBox(height: 8),
+              Text(
+                'The AI tutor requires an internet connection. '
+                'You can still continue lessons offline.',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.outline,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              const _OfflineFaqSection(),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -633,6 +673,61 @@ class _TypingDotsState extends State<_TypingDots>
           }),
         );
       },
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Offline FAQ fallback
+// ---------------------------------------------------------------------------
+
+class _OfflineFaqSection extends StatelessWidget {
+  const _OfflineFaqSection();
+
+  static const _faqs = [
+    (
+      q: 'Can I still learn offline?',
+      a: 'Yes! Pre-cached lessons are available offline. Your progress '
+          'will sync when you reconnect.'
+    ),
+    (
+      q: 'Will I lose my progress?',
+      a: 'No. All offline activity is saved locally and synced '
+          'automatically when you go back online.'
+    ),
+    (
+      q: 'When will the tutor be available?',
+      a: 'The AI tutor will be available as soon as your device '
+          'reconnects to the internet.'
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Frequently Asked Questions',
+            style: theme.textTheme.titleSmall),
+        const SizedBox(height: 12),
+        ..._faqs.map((faq) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(faq.q,
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(fontWeight: FontWeight.w600)),
+                  const SizedBox(height: 4),
+                  Text(faq.a,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.outline,
+                      )),
+                ],
+              ),
+            )),
+      ],
     );
   }
 }

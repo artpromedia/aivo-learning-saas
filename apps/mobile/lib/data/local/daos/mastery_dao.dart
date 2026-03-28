@@ -35,6 +35,33 @@ class MasteryDao {
         .insert(companion, mode: InsertMode.insertOrReplace);
   }
 
+  /// Returns a single mastery record for [learnerId] + [skillId], aliased
+  /// as `getMasteryForSkill` for clarity in domain code.
+  Future<MasteryCacheData?> getMasteryForSkill(
+      String learnerId, String skillId) {
+    return getMastery(learnerId, skillId);
+  }
+
+  /// Returns all mastery records for [learnerId] filtered to a [subject].
+  Future<List<MasteryCacheData>> getMasteryForSubject(
+      String learnerId, String subject) {
+    return (_db.select(_db.masteryCache)
+          ..where((t) =>
+              t.learnerId.equals(learnerId) & t.subject.equals(subject)))
+        .get();
+  }
+
+  /// Batch-inserts or replaces multiple mastery records in a single
+  /// transaction.
+  Future<void> batchUpsertMastery(List<MasteryCacheCompanion> companions) {
+    return _db.batch((batch) {
+      for (final companion in companions) {
+        batch.insert(_db.masteryCache, companion,
+            mode: InsertMode.insertOrReplace);
+      }
+    });
+  }
+
   /// Returns all mastery records for [learnerId] whose [nextReviewAt] is at or
   /// before [now], ordered by review date ascending.
   Future<List<MasteryCacheData>> getSkillsDueForReview(

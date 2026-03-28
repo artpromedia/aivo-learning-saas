@@ -12,6 +12,15 @@ import 'package:aivo_mobile/data/local/daos/brain_dao.dart';
 import 'package:aivo_mobile/data/local/daos/mastery_dao.dart';
 import 'package:aivo_mobile/data/models/brain_context.dart';
 import 'package:aivo_mobile/data/models/recommendation.dart';
+import 'package:aivo_mobile/data/services/lesson_prefetch_service.dart';
+
+/// Result of a brain snapshot reconciliation after reconnecting.
+enum BrainReconciliationResult {
+  noChange,
+  serverUpdated,
+  offlineReplayed,
+  conflictResolved,
+}
 
 /// Repository for the learner Brain (cognitive profile, mastery, accommodations).
 ///
@@ -25,17 +34,20 @@ class BrainRepository {
     required MasteryDao masteryDao,
     required bool isOnline,
     required SyncManager syncManager,
+    LessonPrefetchService? lessonPrefetchService,
   })  : _api = apiClient,
         _brainDao = brainDao,
         _masteryDao = masteryDao,
         _isOnline = isOnline,
-        _syncManager = syncManager;
+        _syncManager = syncManager,
+        _lessonPrefetchService = lessonPrefetchService;
 
   final ApiClient _api;
   final BrainDao _brainDao;
   final MasteryDao _masteryDao;
   final bool _isOnline;
   final SyncManager _syncManager;
+  final LessonPrefetchService? _lessonPrefetchService;
 
   // ---------------------------------------------------------------------------
   // Brain context
@@ -205,6 +217,76 @@ class BrainRepository {
   }
 
   // ---------------------------------------------------------------------------
+  // Reconciliation
+  // ---------------------------------------------------------------------------
+
+  /// Reconciles the local brain state with the server after reconnecting.
+  ///
+  /// 1. Fetches the authoritative server Brain state
+  /// 2. Compares timestamps to detect drift
+  /// 3. Replays unsynced actions onto the server state
+  /// 4. Fetches the final state (now including replayed actions)
+  /// 5. Pre-fetches fresh lessons based on the new state
+  ///
+  /// Returns a [BrainReconciliationResult] describing what changed.
+  Future<BrainReconciliationResult> reconcileAfterReconnect(
+      String learnerId) async {
+    final localSnapshot = await _brainDao.getBrainSnapshot(learnerId);
+    final localLastSynced = localSnapshot?.lastSyncedAt;
+
+    // Fetch server state.
+    BrainContext serverContext;
+    try {
+      final response = await _api.get(Endpoints.brainLearner(learnerId));
+      final data = response.data as Map<String, dynamic>;
+      serverContext = BrainContext.fromJson(data);
+    } on DioException {
+      return BrainReconciliationResult.noChange;
+    }
+
+    final serverUpdatedAt = serverContext.lastUpdated;
+    final hasUnsyncedActions =
+        (await _syncManager.dao.unsyncedActions()).isNotEmpty;
+
+    // Determine if the server moved ahead while we were offline.
+    final serverIsNewer = localLastSynced == null ||
+        serverUpdatedAt.isAfter(localLastSynced);
+
+    if (!serverIsNewer && !hasUnsyncedActions) {
+      return BrainReconciliationResult.noChange;
+    }
+
+    // Server wins: overwrite local snapshot.
+    await _saveBrainContext(serverContext);
+
+    // Replay all unsynced mastery interactions on top of server state.
+    if (hasUnsyncedActions) {
+      await _syncManager.drainSyncQueue();
+
+      // Fetch fresh state that now includes replayed actions.
+      try {
+        final response = await _api.get(Endpoints.brainLearner(learnerId));
+        final data = response.data as Map<String, dynamic>;
+        final finalContext = BrainContext.fromJson(data);
+        await _saveBrainContext(finalContext);
+      } on DioException {
+        // Proceed with the server state we already saved.
+      }
+    }
+
+    // Pre-fetch fresh lessons based on the reconciled state.
+    await _lessonPrefetchService?.prefetchLessons(learnerId);
+
+    if (hasUnsyncedActions && serverIsNewer) {
+      return BrainReconciliationResult.conflictResolved;
+    }
+    if (hasUnsyncedActions) {
+      return BrainReconciliationResult.offlineReplayed;
+    }
+    return BrainReconciliationResult.serverUpdated;
+  }
+
+  // ---------------------------------------------------------------------------
   // Helpers
   // ---------------------------------------------------------------------------
 
@@ -298,5 +380,6 @@ final brainRepositoryProvider = Provider<BrainRepository>((ref) {
     masteryDao: ref.watch(masteryDaoProvider),
     isOnline: ref.watch(isOnlineProvider),
     syncManager: ref.watch(syncManagerProvider),
+    lessonPrefetchService: ref.watch(lessonPrefetchServiceProvider),
   );
 });

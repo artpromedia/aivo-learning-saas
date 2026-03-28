@@ -1,34 +1,54 @@
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:aivo_mobile/core/connectivity/sync_types.dart';
 import 'package:aivo_mobile/data/local/database.dart';
 
-/// Data access object for the offline sync queue.
+/// Drift-backed implementation of [SyncDao] that persists sync queue actions
+/// to the SQLite [SyncQueueItems] table.
 ///
-/// Queued items represent mutations that were made while the device was offline
-/// and need to be replayed against the remote API when connectivity returns.
-class SyncDao {
+/// This replaces the in-memory fallback so that queued actions survive app
+/// restarts and are visible to background isolates.
+class DriftSyncDao implements SyncDao {
   final AivoDatabase _db;
 
-  SyncDao(this._db);
+  DriftSyncDao(this._db);
 
-  /// Returns all items that have not yet been synced, ordered oldest-first.
-  Future<List<SyncQueueItemData>> getUnsyncedItems() {
-    return (_db.select(_db.syncQueueItems)
+  @override
+  Future<void> insertAction(SyncAction action) async {
+    await _db.into(_db.syncQueueItems).insert(
+      SyncQueueItemsCompanion.insert(
+        actionId: action.id,
+        endpoint: action.endpoint,
+        method: action.method,
+        payload: action.payload,
+      ),
+      mode: InsertMode.insertOrReplace,
+    );
+  }
+
+  @override
+  Future<List<SyncAction>> unsyncedActions() async {
+    final rows = await (_db.select(_db.syncQueueItems)
           ..where((t) => t.synced.equals(false))
           ..orderBy([(t) => OrderingTerm.asc(t.createdAt)]))
         .get();
+    return rows
+        .map((row) => SyncAction(
+              id: row.actionId,
+              endpoint: row.endpoint,
+              method: row.method,
+              payload: row.payload,
+              createdAt: row.createdAt,
+              synced: row.synced,
+            ))
+        .toList();
   }
 
-  /// Enqueues a new action for later synchronisation.
-  Future<int> addToQueue(SyncQueueItemsCompanion companion) {
-    return _db.into(_db.syncQueueItems).insert(companion);
-  }
-
-  /// Marks the queue item identified by [actionId] as successfully synced.
-  Future<int> markSynced(String actionId) {
-    return (_db.update(_db.syncQueueItems)
-          ..where((t) => t.actionId.equals(actionId)))
+  @override
+  Future<void> markSynced(String id) async {
+    await (_db.update(_db.syncQueueItems)
+          ..where((t) => t.actionId.equals(id)))
         .write(SyncQueueItemsCompanion(
       synced: const Value(true),
       syncedAt: Value(DateTime.now()),
@@ -36,49 +56,25 @@ class SyncDao {
     ));
   }
 
-  /// Marks the queue item as failed with a descriptive [errorMessage].
-  Future<int> markFailed(String actionId, String errorMessage) {
-    return (_db.update(_db.syncQueueItems)
-          ..where((t) => t.actionId.equals(actionId)))
-        .write(SyncQueueItemsCompanion(
-      errorMessage: Value(errorMessage),
-    ));
-  }
-
-  /// Increments the retry counter for the given [actionId] by one.
-  Future<void> incrementRetry(String actionId) async {
-    final row = await (_db.select(_db.syncQueueItems)
-          ..where((t) => t.actionId.equals(actionId))
-          ..limit(1))
-        .getSingleOrNull();
-    if (row == null) return;
-
-    await (_db.update(_db.syncQueueItems)
-          ..where((t) => t.actionId.equals(actionId)))
-        .write(SyncQueueItemsCompanion(
-      retryCount: Value(row.retryCount + 1),
-    ));
-  }
-
-  /// Deletes synced items whose [syncedAt] timestamp is older than
-  /// [olderThan].
-  ///
-  /// Returns the number of rows deleted.
-  Future<int> deleteOldSyncedItems(DateTime olderThan) {
-    return (_db.delete(_db.syncQueueItems)
-          ..where((t) => t.synced.equals(true))
-          ..where((t) => t.syncedAt.isSmallerThanValue(olderThan)))
-        .go();
-  }
-
-  /// Returns the total number of unsynced items in the queue.
-  Future<int> getQueueCount() async {
+  @override
+  Future<int> pendingCount() async {
     final countExpr = _db.syncQueueItems.id.count();
     final query = _db.selectOnly(_db.syncQueueItems)
       ..addColumns([countExpr])
       ..where(_db.syncQueueItems.synced.equals(false));
     final result = await query.getSingle();
     return result.read(countExpr) ?? 0;
+  }
+
+  @override
+  Future<void> cleanupSyncedActions({
+    Duration olderThan = const Duration(days: 7),
+  }) async {
+    final threshold = DateTime.now().subtract(olderThan);
+    await (_db.delete(_db.syncQueueItems)
+          ..where((t) => t.synced.equals(true))
+          ..where((t) => t.syncedAt.isSmallerThanValue(threshold)))
+        .go();
   }
 }
 
@@ -163,5 +159,5 @@ class SyncQueueItemsCompanion extends UpdateCompanion<SyncQueueItemData> {
 
 final syncDaoProvider = Provider<SyncDao>((ref) {
   final db = ref.watch(databaseProvider);
-  return SyncDao(db);
+  return DriftSyncDao(db);
 });

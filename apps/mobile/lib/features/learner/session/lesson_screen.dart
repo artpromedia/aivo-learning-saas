@@ -18,7 +18,10 @@ import 'package:aivo_mobile/core/auth/auth_provider.dart';
 import 'package:aivo_mobile/core/auth/auth_service.dart';
 import 'package:aivo_mobile/core/connectivity/connectivity_provider.dart';
 import 'package:aivo_mobile/core/connectivity/sync_manager.dart';
+import 'package:aivo_mobile/data/local/daos/lesson_dao.dart';
 import 'package:aivo_mobile/data/models/learning_session.dart';
+import 'package:aivo_mobile/data/services/lesson_prefetch_service.dart';
+import 'package:aivo_mobile/data/services/offline_mastery_engine.dart';
 
 // ---------------------------------------------------------------------------
 // Providers
@@ -57,6 +60,8 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
   bool _isPaused = false;
   bool _isCompleted = false;
   int _xpEarned = 0;
+  int _correctAttempts = 0;
+  int _totalAttempts = 0;
 
   @override
   void dispose() {
@@ -134,6 +139,7 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
     };
 
     try {
+      _totalAttempts++;
       if (isOnline) {
         final result = await api.post(
           Endpoints.learningSessionInteract(session.id),
@@ -143,6 +149,7 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
         final isCorrect = data['isCorrect'] as bool? ?? false;
 
         if (isCorrect) {
+          _correctAttempts++;
           HapticFeedback.lightImpact();
           final level = ref.read(functioningLevelProvider);
           if (level.index >= FunctioningLevel.lowVerbal.index) {
@@ -151,6 +158,8 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
           }
         }
       } else {
+        // Assume correct for offline (server will re-evaluate on sync).
+        _correctAttempts++;
         final syncManager = ref.read(syncManagerProvider);
         await syncManager.queueAction(SyncAction(
           endpoint: Endpoints.learningSessionInteract(session.id),
@@ -205,13 +214,25 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
       } catch (_) {
         // Best effort
       }
+      // Mark lesson completed in cache and refill buffer.
+      final lessonDao = ref.read(lessonDaoProvider);
+      await lessonDao.markLessonCompleted(session.lessonId);
+      final prefetcher = ref.read(lessonPrefetchServiceProvider);
+      await prefetcher.refillAfterCompletion(session.learnerId);
     } else {
-      final syncManager = ref.read(syncManagerProvider);
-      await syncManager.queueAction(SyncAction(
-        endpoint: Endpoints.learningSessionComplete(session.id),
-        method: 'POST',
-        payload: jsonEncode(payload),
-      ));
+      // Process offline mastery inference and queue for sync.
+      final engine = ref.read(offlineMasteryEngineProvider);
+      await engine.processCompletion(
+        learnerId: session.learnerId,
+        skillId: session.skillId,
+        subject: session.subject,
+        correctAttempts: _correctAttempts,
+        totalAttempts: _totalAttempts,
+        sessionId: session.id,
+        timeSpentSeconds: session.timeSpentSeconds,
+      );
+      final lessonDao = ref.read(lessonDaoProvider);
+      await lessonDao.markLessonCompleted(session.lessonId);
     }
 
     if (mounted) {
@@ -427,10 +448,30 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
       bool isLowVerbal, bool isNonVerbal) {
     final total = _totalSteps(session);
     final progress = total > 0 ? (_currentStep + 1) / total : 0.0;
+    final isOffline = !ref.watch(isOnlineProvider);
 
     return SafeArea(
       child: Column(
         children: [
+          if (isOffline)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              color: theme.colorScheme.tertiaryContainer,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.cloud_off, size: 14,
+                      color: theme.colorScheme.onTertiaryContainer),
+                  const SizedBox(width: 6),
+                  Text('Offline Mode',
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: theme.colorScheme.onTertiaryContainer,
+                        fontWeight: FontWeight.w600,
+                      )),
+                ],
+              ),
+            ),
           // App bar area
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
