@@ -39,6 +39,7 @@ import { analyticsRevenueRoute } from "./routes/analytics/revenue.js";
 import { analyticsEngagementRoute } from "./routes/analytics/engagement.js";
 import { analyticsTutorsRoute } from "./routes/analytics/tutors.js";
 import { analyticsLlmUsageRoute } from "./routes/analytics/llm-usage.js";
+import { marketingAnalyticsRoute } from "./routes/analytics/marketing.js";
 
 // Routes — Feature Flags
 import { listFeatureFlagsRoute } from "./routes/feature-flags/list.js";
@@ -50,6 +51,7 @@ import { deleteFeatureFlagRoute } from "./routes/feature-flags/delete.js";
 // Routes — Leads
 import { listLeadsRoute } from "./routes/leads/list.js";
 import { createLeadRoute } from "./routes/leads/create.js";
+import { publicCreateLeadRoute } from "./routes/leads/public-create.js";
 import { updateLeadRoute } from "./routes/leads/update.js";
 import { leadNotesRoute } from "./routes/leads/notes.js";
 import { convertLeadRoute } from "./routes/leads/convert.js";
@@ -111,8 +113,13 @@ export async function buildApp() {
   // Core plugins
   await app.register(cookie);
   await app.register(cors, {
-    origin: config.APP_URL,
+    origin: [
+      config.APP_URL,
+      config.MARKETING_URL ?? "https://aivolearning.com",
+      "http://localhost:3001",
+    ],
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   });
   await app.register(rateLimit, {
     max: 200,
@@ -157,6 +164,7 @@ export async function buildApp() {
   await app.register(analyticsEngagementRoute);
   await app.register(analyticsTutorsRoute);
   await app.register(analyticsLlmUsageRoute);
+  await app.register(marketingAnalyticsRoute);
 
   // Feature Flags
   await app.register(listFeatureFlagsRoute);
@@ -168,6 +176,7 @@ export async function buildApp() {
   // Leads
   await app.register(listLeadsRoute);
   await app.register(createLeadRoute);
+  await app.register(publicCreateLeadRoute);
   await app.register(updateLeadRoute);
   await app.register(leadNotesRoute);
   await app.register(convertLeadRoute);

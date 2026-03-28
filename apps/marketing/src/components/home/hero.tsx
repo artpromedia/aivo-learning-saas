@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { events } from "@/lib/analytics";
 
 const headlineWords = "AI-Powered Learning That Adapts to Every Student".split(" ");
 
@@ -67,6 +68,7 @@ export function Hero() {
         >
           <Link
             href="/get-started"
+            onClick={() => events.signupClick("hero")}
             className={cn(
               "inline-flex items-center justify-center rounded-lg px-8 py-4",
               "bg-white text-aivo-purple-600 font-semibold text-lg",
@@ -78,6 +80,7 @@ export function Hero() {
           </Link>
           <Link
             href="/demo"
+            onClick={() => events.signupClick("hero-demo")}
             className={cn(
               "inline-flex items-center justify-center rounded-lg px-8 py-4",
               "border-2 border-white text-white font-semibold text-lg",

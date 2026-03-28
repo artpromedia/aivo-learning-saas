@@ -2,9 +2,11 @@
 
 import { useState, type FormEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, MapPin, Mail, Phone } from "lucide-react";
+import { Check, MapPin, Mail, Phone, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { submitLead } from "@/lib/leads-api";
+import { events } from "@/lib/analytics";
 
 /* ------------------------------------------------------------------ */
 /*  Animated checkmark                                                  */
@@ -82,15 +84,32 @@ export function ContactPageClient() {
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (!name || !email || !subject || !message) return;
+    if (submitting) return;
 
-    if (!name || !email || !subject || !message) {
-      return;
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      await submitLead({
+        contactName: name,
+        contactEmail: email,
+        source: "contact_form",
+        message,
+        metadata: { subject },
+      });
+      events.contactSubmit(subject);
+      setSubmitted(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to send. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
-
-    setSubmitted(true);
   }
 
   return (
@@ -224,10 +243,16 @@ export function ContactPageClient() {
                       />
                     </div>
 
+                    {error && (
+                      <p className="text-sm text-red-500">{error}</p>
+                    )}
+
                     <button
                       type="submit"
-                      className="w-full rounded-lg bg-aivo-purple-600 px-6 py-3 font-semibold text-white shadow-sm transition-colors hover:bg-aivo-purple-700 focus:outline-none focus:ring-2 focus:ring-aivo-purple-500 focus:ring-offset-2"
+                      disabled={submitting}
+                      className="w-full rounded-lg bg-aivo-purple-600 px-6 py-3 font-semibold text-white shadow-sm transition-colors hover:bg-aivo-purple-700 focus:outline-none focus:ring-2 focus:ring-aivo-purple-500 focus:ring-offset-2 disabled:opacity-60 flex items-center justify-center gap-2"
                     >
+                      {submitting && <Loader2 size={18} className="animate-spin" />}
                       Send Message
                     </button>
                   </form>

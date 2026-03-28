@@ -5,6 +5,7 @@ import { Footer } from "@/components/layout/footer";
 import { CookieBanner } from "@/components/layout/cookie-banner";
 import { ExitIntentModal } from "@/components/cro/exit-intent-modal";
 import { MobileStickyCta } from "@/components/cro/mobile-sticky-cta";
+import { UtmCapture } from "@/components/cro/utm-capture";
 
 export const metadata: Metadata = {
   title: {
@@ -52,8 +53,15 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="icon" href="/favicon.ico" />
+        {/* Plausible Analytics — cookieless, GDPR-compliant */}
+        <script
+          defer
+          data-domain="aivolearning.com"
+          src="https://plausible.io/js/script.tagged-events.js"
+        />
       </head>
       <body className="min-h-screen bg-white antialiased">
+        <UtmCapture />
         <Nav />
         <main>{children}</main>
         <Footer />

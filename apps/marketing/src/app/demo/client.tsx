@@ -2,9 +2,11 @@
 
 import { useState, type FormEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, Clock, MessageSquare, DollarSign, Users } from "lucide-react";
+import { Check, Clock, MessageSquare, DollarSign, Users, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { submitLead } from "@/lib/leads-api";
+import { events } from "@/lib/analytics";
 
 /* ------------------------------------------------------------------ */
 /*  Form field helpers                                                  */
@@ -144,16 +146,39 @@ export function DemoPageClient() {
   const [students, setStudents] = useState("");
   const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (!firstName || !lastName || !email || !school || !role || !students) return;
+    if (submitting) return;
 
-    // Basic validation — native HTML validation handles required fields
-    if (!firstName || !lastName || !email || !school || !role || !students) {
-      return;
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      const sizeMap: Record<string, number> = {
+        "1-50": 25, "51-200": 125, "201-500": 350, "501-1000": 750, "1000+": 1500,
+      };
+
+      await submitLead({
+        organizationName: school,
+        contactName: `${firstName} ${lastName}`,
+        contactEmail: email,
+        source: "demo_form",
+        districtSize: sizeMap[students] ?? 0,
+        message,
+        metadata: { role, studentRange: students },
+      });
+
+      events.demoRequest(sizeMap[students]);
+      setSubmitted(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to submit. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
-
-    setSubmitted(true);
   }
 
   return (
@@ -276,10 +301,16 @@ export function DemoPageClient() {
                       />
                     </div>
 
+                    {error && (
+                      <p className="text-sm text-red-500">{error}</p>
+                    )}
+
                     <button
                       type="submit"
-                      className="w-full rounded-lg bg-aivo-purple-600 px-6 py-3 font-semibold text-white shadow-sm transition-colors hover:bg-aivo-purple-700 focus:outline-none focus:ring-2 focus:ring-aivo-purple-500 focus:ring-offset-2"
+                      disabled={submitting}
+                      className="w-full rounded-lg bg-aivo-purple-600 px-6 py-3 font-semibold text-white shadow-sm transition-colors hover:bg-aivo-purple-700 focus:outline-none focus:ring-2 focus:ring-aivo-purple-500 focus:ring-offset-2 disabled:opacity-60 flex items-center justify-center gap-2"
                     >
+                      {submitting && <Loader2 size={18} className="animate-spin" />}
                       Request Demo
                     </button>
                   </form>

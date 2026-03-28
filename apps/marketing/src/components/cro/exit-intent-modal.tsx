@@ -1,10 +1,16 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { X } from "lucide-react";
+import { X, Loader2 } from "lucide-react";
+import { submitLead } from "@/lib/leads-api";
+import { events } from "@/lib/analytics";
 
 export function ExitIntentModal() {
   const [isVisible, setIsVisible] = useState(false);
+  const [email, setEmail] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const hasShown = useRef(false);
 
   useEffect(() => {
@@ -27,9 +33,28 @@ export function ExitIntentModal() {
     sessionStorage.setItem("aivo-exit-intent-dismissed", "true");
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    handleClose();
+    if (!email || submitting) return;
+
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      await submitLead({
+        contactName: email.split("@")[0],
+        contactEmail: email,
+        source: "exit_intent",
+        stage: "NURTURE",
+      });
+      events.exitIntentCapture();
+      setSuccess(true);
+      setTimeout(handleClose, 2000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (!isVisible) return null;
@@ -69,20 +94,35 @@ export function ExitIntentModal() {
             Discover your child&apos;s unique learning profile with our free AI-powered assessment. Takes less than 5 minutes.
           </p>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              required
-              className="w-full rounded-lg border border-aivo-navy-200 px-4 py-3 text-sm text-aivo-navy-800 placeholder:text-aivo-navy-400 focus:outline-none focus:ring-2 focus:ring-aivo-purple-500 focus:border-transparent"
-            />
-            <button
-              type="submit"
-              className="w-full rounded-lg bg-aivo-purple-600 px-4 py-3 text-sm font-semibold text-white hover:bg-aivo-purple-700 transition-colors"
-            >
-              Get Free Assessment
-            </button>
-          </form>
+          {success ? (
+            <div className="py-4">
+              <p className="text-sm font-medium text-aivo-teal-600">
+                You&apos;re all set! Check your inbox for next steps.
+              </p>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full rounded-lg border border-aivo-navy-200 px-4 py-3 text-sm text-aivo-navy-800 placeholder:text-aivo-navy-400 focus:outline-none focus:ring-2 focus:ring-aivo-purple-500 focus:border-transparent"
+              />
+              {error && (
+                <p className="text-xs text-red-500">{error}</p>
+              )}
+              <button
+                type="submit"
+                disabled={submitting}
+                className="w-full rounded-lg bg-aivo-purple-600 px-4 py-3 text-sm font-semibold text-white hover:bg-aivo-purple-700 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+              >
+                {submitting && <Loader2 size={16} className="animate-spin" />}
+                Get Free Assessment
+              </button>
+            </form>
+          )}
 
           <p className="mt-4 text-xs text-aivo-navy-400">
             No spam, ever. Unsubscribe anytime.

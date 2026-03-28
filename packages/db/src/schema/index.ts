@@ -63,3 +63,6 @@ export * from "./status";
 
 // Research
 export * from "./research";
+
+// Consent
+export * from "./consent";
