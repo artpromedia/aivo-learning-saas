@@ -6,7 +6,7 @@ import { Brain, ChevronRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardBody } from "@/components/ui/Card";
 import { ProgressBar } from "@/components/ui/ProgressBar";
-import { apiFetch } from "@/lib/api";
+import { apiFetch, assessmentApiFetch } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
 import { useLearnerStore } from "@/stores/learner.store";
 
@@ -46,7 +46,7 @@ export default function BaselineAssessmentPage() {
 
     async function startBaseline() {
       try {
-        const data = await apiFetch<{ question: BaselineQuestion; progress: number }>(
+        const data = await assessmentApiFetch<{ question: BaselineQuestion; progress: number }>(
           API_ROUTES.ONBOARDING.BASELINE_START(activeLearner!.id),
           { method: "POST" },
         );
@@ -68,7 +68,7 @@ export default function BaselineAssessmentPage() {
     setIsSubmitting(true);
     setError(null);
     try {
-      const result = await apiFetch<AnswerResult>(
+      const result = await assessmentApiFetch<AnswerResult>(
         API_ROUTES.ONBOARDING.BASELINE_ANSWER(activeLearner.id),
         {
           method: "POST",
@@ -104,7 +104,7 @@ export default function BaselineAssessmentPage() {
   const handleComplete = async () => {
     if (!activeLearner?.id) return;
     try {
-      await apiFetch(API_ROUTES.ONBOARDING.BASELINE_COMPLETE(activeLearner.id), {
+      await assessmentApiFetch(API_ROUTES.ONBOARDING.BASELINE_COMPLETE(activeLearner.id), {
         method: "POST",
       });
       router.push("/brain-profile-reveal");
