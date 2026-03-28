@@ -384,11 +384,10 @@ export default function BrainProfileRevealPage() {
                 <Brain className="text-white" size={40} />
               </div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                {childName}&apos;s Brain Profile
+                {t("childBrainProfile", { childName })}
               </h1>
               <p className="mt-2 text-gray-500 dark:text-gray-400">
-                Here&apos;s what we&apos;ve discovered about how{" "}
-                {childName} learns best.
+                {t("brainProfileDiscovery", { childName })}
               </p>
             </div>
 
@@ -403,24 +402,24 @@ export default function BrainProfileRevealPage() {
                 <CardBody>
                   <div className="flex items-center justify-between mb-3">
                     <h3 className="font-semibold text-gray-900 dark:text-white">
-                      Functioning Level
+                      {t("functioningLevel")}
                     </h3>
                     <Badge>
                       {(() => {
                         const labels: Record<string, string> = {
-                          level1: "Level 1 - High Independence",
-                          level2: "Level 2 - Moderate Support",
-                          level3: "Level 3 - Substantial Support",
+                          level1: t("level1HighIndependence"),
+                          level2: t("level2ModerateSupport"),
+                          level3: t("level3SubstantialSupport"),
                         };
-                        return labels[profile.functioningLevel] ?? "Level 3 - Substantial Support";
+                        return labels[profile.functioningLevel] ?? t("level3SubstantialSupport");
                       })()}
                     </Badge>
                   </div>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Learning style: {profile.learningStyle}
+                    {t("learningStyleLabel", { style: profile.learningStyle })}
                   </p>
                   <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                    Communication: {profile.communicationStyle}
+                    {t("communicationLabel", { style: profile.communicationStyle })}
                   </p>
                 </CardBody>
               </Card>
@@ -428,7 +427,7 @@ export default function BrainProfileRevealPage() {
               <Card>
                 <CardBody>
                   <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
-                    Strengths
+                    {t("strengths")}
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {profile.strengths.map((s) => (
@@ -446,7 +445,7 @@ export default function BrainProfileRevealPage() {
               <Card>
                 <CardBody>
                   <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
-                    Growth Areas
+                    {t("growthAreas")}
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {profile.challenges.map((c) => (
@@ -465,7 +464,7 @@ export default function BrainProfileRevealPage() {
                 <Card>
                   <CardBody>
                     <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
-                      Sensory Preferences
+                      {t("sensoryPreferences")}
                     </h3>
                     <div className="flex flex-wrap gap-2">
                       {profile.sensoryPreferences.map((p) => (
@@ -486,14 +485,14 @@ export default function BrainProfileRevealPage() {
               <Card className="mt-4">
                 <CardBody>
                   <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
-                    Add Your Insights
+                    {t("addYourInsights")}
                   </h3>
                   <textarea
                     value={insightText}
                     onChange={(e) => setInsightText(e.target.value)}
                     rows={4}
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none resize-none"
-                    placeholder="Share anything else about your child that would help us personalize their learning..."
+                    placeholder={t("insightsPlaceholder")}
                   />
                   <div className="flex justify-end gap-2 mt-3">
                     <Button
@@ -501,14 +500,14 @@ export default function BrainProfileRevealPage() {
                       size="sm"
                       onClick={() => setShowInsightInput(false)}
                     >
-                      Cancel
+                      {t("cancel")}
                     </Button>
                     <Button
                       size="sm"
                       onClick={handleAddInsights}
                       disabled={!insightText.trim()}
                     >
-                      Submit & Continue
+                      {t("submitAndContinue")}
                     </Button>
                   </div>
                 </CardBody>
@@ -522,7 +521,7 @@ export default function BrainProfileRevealPage() {
                 loading={isDeclining}
                 leftIcon={<ThumbsDown size={18} />}
               >
-                Decline
+                {t("decline")}
               </Button>
               <Button
                 variant="secondary"
@@ -530,14 +529,14 @@ export default function BrainProfileRevealPage() {
                 leftIcon={<MessageSquarePlus size={18} />}
                 disabled={showInsightInput}
               >
-                Add Insights
+                {t("addInsights")}
               </Button>
               <Button
                 onClick={handleApprove}
                 loading={isApproving}
                 leftIcon={<ThumbsUp size={18} />}
               >
-                Approve Profile
+                {t("approveProfile")}
               </Button>
             </div>
           </motion.div>
