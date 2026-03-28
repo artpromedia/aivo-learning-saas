@@ -43,7 +43,7 @@ export async function registerRoute(app: FastifyInstance) {
         httpOnly: true,
         secure: config.NODE_ENV === "production",
         sameSite: "lax",
-        path: "/auth/refresh",
+        path: "/api/auth/refresh",
         maxAge: 7 * 24 * 60 * 60, // 7 days
       });
 

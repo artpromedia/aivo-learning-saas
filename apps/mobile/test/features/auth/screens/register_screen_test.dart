@@ -75,6 +75,8 @@ void main() {
 
       // Find and tap the Create Account button (ElevatedButton).
       final buttons = find.byType(ElevatedButton);
+      await tester.ensureVisible(buttons.last);
+      await tester.pumpAndSettle();
       await tester.tap(buttons.last);
       await tester.pumpAndSettle();
 
@@ -95,6 +97,8 @@ void main() {
       await tester.enterText(fields.at(3), 'different');
 
       final buttons = find.byType(ElevatedButton);
+      await tester.ensureVisible(buttons.last);
+      await tester.pumpAndSettle();
       await tester.tap(buttons.last);
       await tester.pumpAndSettle();
 
@@ -129,6 +133,8 @@ void main() {
       await tester.enterText(fields.at(3), 'short');
 
       final buttons = find.byType(ElevatedButton);
+      await tester.ensureVisible(buttons.last);
+      await tester.pumpAndSettle();
       await tester.tap(buttons.last);
       await tester.pumpAndSettle();
 

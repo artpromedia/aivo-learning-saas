@@ -42,9 +42,14 @@ export default function BrainProfilePage() {
         <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
           No brain profile yet
         </h2>
-        <p className="text-gray-500 dark:text-gray-400">
+        <p className="text-gray-500 dark:text-gray-400 mb-6">
           Complete the onboarding assessment to generate a brain profile.
         </p>
+        <Link href={`/baseline-assessment?learnerId=${learnerId}`}>
+          <Button variant="primary" leftIcon={<Brain size={16} />}>
+            Start Baseline Assessment
+          </Button>
+        </Link>
       </div>
     );
   }

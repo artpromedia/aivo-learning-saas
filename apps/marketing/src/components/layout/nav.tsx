@@ -42,14 +42,26 @@ export function Nav() {
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <span
+            <img
+              src="/logos/aivo-logo-horizontal-white.svg"
+              alt="AIVO Learning"
+              width={120}
+              height={48}
               className={cn(
-                "text-2xl font-extrabold transition-colors",
-                isScrolled ? "text-aivo-purple-600" : "text-white",
+                "h-10 w-auto transition-opacity",
+                isScrolled ? "hidden" : "block",
               )}
-            >
-              AIVO
-            </span>
+            />
+            <img
+              src="/logos/aivo-logo-horizontal-purple.svg"
+              alt="AIVO Learning"
+              width={120}
+              height={48}
+              className={cn(
+                "h-10 w-auto transition-opacity",
+                isScrolled ? "block" : "hidden",
+              )}
+            />
           </Link>
 
           {/* Desktop links */}

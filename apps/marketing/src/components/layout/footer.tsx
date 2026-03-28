@@ -38,8 +38,14 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
           {/* Brand */}
           <div className="col-span-2 md:col-span-4 lg:col-span-1 mb-4 lg:mb-0">
-            <Link href="/" className="text-2xl font-extrabold text-white">
-              AIVO
+            <Link href="/" className="inline-block">
+              <img
+                src="/logos/aivo-logo-horizontal-white.svg"
+                alt="AIVO Learning"
+                width={120}
+                height={48}
+                className="h-10 w-auto"
+              />
             </Link>
             <p className="mt-3 text-sm text-aivo-navy-300 max-w-xs">
               AI-powered personalized learning that adapts to every student. No learner left behind.

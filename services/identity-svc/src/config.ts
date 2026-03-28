@@ -1,4 +1,8 @@
+import { config as loadDotenv } from "dotenv";
 import { z } from "zod";
+
+// Load .env file in development
+loadDotenv();
 
 const configSchema = z.object({
   PORT: z.coerce.number().default(3001),

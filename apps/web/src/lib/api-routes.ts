@@ -69,6 +69,7 @@ export const NOTIFICATION_ROUTES = {
 // Brain Profile
 export const BRAIN_ROUTES = {
   PROFILE: (learnerId: string) => `/api/learners/${learnerId}/brain-profile`,
+  SEED: (learnerId: string) => `/api/learners/${learnerId}/brain-profile/seed`,
   APPROVE: (learnerId: string) => `/api/learners/${learnerId}/brain-profile/approve`,
   DECLINE: (learnerId: string) => `/api/learners/${learnerId}/brain-profile/decline`,
   ADD_INSIGHTS: (learnerId: string) => `/api/learners/${learnerId}/brain-profile/insights`,

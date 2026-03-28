@@ -80,11 +80,14 @@ export class AuthService {
     const session = await this.createSession(user.id);
 
     // Publish event
+    // Publish event (non-blocking — streams may not be provisioned yet)
     await publishEvent(this.app.nats, "identity.user.created", {
       userId: user.id,
       tenantId: tenant.id,
       role: "PARENT",
       email: user.email,
+    }).catch((err) => {
+      this.app.log.warn({ err }, "Failed to publish user.created event");
     });
 
     return { user, tenant, session };
@@ -210,6 +213,8 @@ export class AuthService {
       tenantId: tenant.id,
       role: "PARENT",
       email: user.email,
+    }).catch((err) => {
+      this.app.log.warn({ err }, "Failed to publish user.created event");
     });
 
     return { user, tenant, session, isNew: true };

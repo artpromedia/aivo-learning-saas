@@ -432,9 +432,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            'Already have an account?',
-                            style: theme.textTheme.bodyMedium,
+                          Flexible(
+                            child: Text(
+                              'Already have an account?',
+                              style: theme.textTheme.bodyMedium,
+                            ),
                           ),
                           TextButton(
                             onPressed:

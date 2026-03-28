@@ -33,8 +33,8 @@ export default function ParentDashboardPage() {
   useEffect(() => {
     async function fetchLearners() {
       try {
-        const data = await apiFetch<LearnerSummary[]>(API_ROUTES.LEARNER.LIST);
-        setLearners(data);
+        const data = await apiFetch<{ learners: LearnerSummary[] }>(API_ROUTES.LEARNER.LIST);
+        setLearners(data.learners ?? []);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load learners");
       } finally {

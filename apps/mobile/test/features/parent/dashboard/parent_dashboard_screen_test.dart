@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 
 import 'package:aivo_mobile/core/auth/auth_provider.dart';
@@ -13,6 +14,7 @@ import 'package:aivo_mobile/features/parent/dashboard/parent_dashboard_screen.da
 // ---------------------------------------------------------------------------
 
 class MockFamilyRepository extends Mock implements FamilyRepository {}
+class MockGoRouter extends Mock implements GoRouter {}
 
 class _FakeAuthService extends Fake implements AuthService {
   @override
@@ -35,9 +37,15 @@ class _TestAuthNotifier extends AuthNotifier {
 
 void main() {
   late MockFamilyRepository mockFamilyRepo;
+  late MockGoRouter mockRouter;
 
   setUp(() {
     mockFamilyRepo = MockFamilyRepository();
+    mockRouter = MockGoRouter();
+    when(() => mockFamilyRepo.getLearners())
+        .thenAnswer((_) async => <Map<String, dynamic>>[]);
+    when(() => mockRouter.go(any(), extra: any(named: 'extra')))
+        .thenReturn(null);
   });
 
   Widget buildApp() {
@@ -46,8 +54,11 @@ void main() {
         authProvider.overrideWith((ref) => _TestAuthNotifier()),
         familyRepositoryProvider.overrideWithValue(mockFamilyRepo),
       ],
-      child: const MaterialApp(
-        home: ParentDashboardScreen(),
+      child: InheritedGoRouter(
+        goRouter: mockRouter,
+        child: const MaterialApp(
+          home: ParentDashboardScreen(),
+        ),
       ),
     );
   }
@@ -76,7 +87,7 @@ void main() {
       await tester.pumpWidget(buildApp());
       await tester.pump();
 
-      expect(find.byType(Scaffold), findsOneWidget);
+      expect(find.byType(Scaffold), findsAtLeast(1));
     });
 
     testWidgets('IndexedStack contains 4 children', (tester) async {

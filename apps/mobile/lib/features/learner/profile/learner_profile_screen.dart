@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Badge;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -9,7 +9,6 @@ import 'package:aivo_mobile/core/api/api_client.dart';
 import 'package:aivo_mobile/core/api/endpoints.dart';
 import 'package:aivo_mobile/core/auth/auth_provider.dart'
     show authProvider, AuthAuthenticated;
-import 'package:aivo_mobile/core/auth/auth_service.dart';
 import 'package:aivo_mobile/features/learner/engagement/xp_widget.dart';
 import 'package:aivo_mobile/features/learner/engagement/streak_widget.dart';
 import 'package:aivo_mobile/features/learner/engagement/badge_collection_screen.dart'
@@ -124,7 +123,7 @@ class LearnerProfileScreen extends ConsumerWidget {
   }
 
   Widget _buildError(
-      BuildContext context, WidgetRef ref, Object error, ThemeData theme) {
+      BuildContext context, WidgetRef ref, Object error, ThemeData theme,) {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -144,7 +143,7 @@ class LearnerProfileScreen extends ConsumerWidget {
   }
 
   Widget _buildProfile(BuildContext context, WidgetRef ref, ThemeData theme,
-      ColorScheme colorScheme, _ProfileData profile) {
+      ColorScheme colorScheme, _ProfileData profile,) {
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
       child: Column(
@@ -210,7 +209,7 @@ class LearnerProfileScreen extends ConsumerWidget {
                               color:
                                   badge.rarityColor.withValues(alpha: 0.15),
                               border: Border.all(
-                                  color: badge.rarityColor, width: 2),
+                                  color: badge.rarityColor, width: 2,),
                             ),
                             child: Icon(
                               Icons.emoji_events,
@@ -265,7 +264,7 @@ class LearnerProfileScreen extends ConsumerWidget {
   }
 
   Widget _buildHeader(
-      ThemeData theme, ColorScheme colorScheme, _ProfileData profile) {
+      ThemeData theme, ColorScheme colorScheme, _ProfileData profile,) {
     return Center(
       child: Column(
         children: [
@@ -343,7 +342,7 @@ class LearnerProfileScreen extends ConsumerWidget {
   }
 
   Widget _buildSettings(BuildContext context, WidgetRef ref, ThemeData theme,
-      ColorScheme colorScheme) {
+      ColorScheme colorScheme,) {
     final themeMode = ref.watch(themeModeProvider);
     final isDarkMode = themeMode == ThemeMode.dark;
     final useDyslexicFont = ref.watch(dyslexicFontProvider);
@@ -363,7 +362,7 @@ class LearnerProfileScreen extends ConsumerWidget {
             child: Row(
               children: [
                 Icon(Icons.accessibility_new,
-                    size: 18, color: colorScheme.primary),
+                    size: 18, color: colorScheme.primary,),
                 const SizedBox(width: 8),
                 Text(
                   'Accessibility',
@@ -427,7 +426,7 @@ class LearnerProfileScreen extends ConsumerWidget {
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                    content: Text('Notification settings coming soon')),
+                    content: Text('Notification settings coming soon'),),
               );
             },
           ),

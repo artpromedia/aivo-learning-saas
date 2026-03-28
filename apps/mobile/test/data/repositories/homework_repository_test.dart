@@ -3,6 +3,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:dio/dio.dart';
 
 import 'package:aivo_mobile/core/api/api_client.dart';
+import 'package:aivo_mobile/data/models/homework.dart';
 import 'package:aivo_mobile/data/repositories/homework_repository.dart';
 
 // ---------------------------------------------------------------------------

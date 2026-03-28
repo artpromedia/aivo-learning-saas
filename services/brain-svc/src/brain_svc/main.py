@@ -9,7 +9,7 @@ import uvicorn
 from fastapi import FastAPI
 
 from brain_svc.config import get_settings
-from brain_svc.db import dispose_engine
+from brain_svc.db import dispose_engine, get_engine
 from brain_svc.middleware.tenant import TenantMiddleware
 from brain_svc.nats_client import close_nats, connect_nats
 from brain_svc.redis_client import close_redis
@@ -24,6 +24,13 @@ async def lifespan(app: FastAPI):
     settings = get_settings()
     logging.basicConfig(level=settings.log_level.upper())
     logger.info("brain-svc starting on port %d", settings.port)
+
+    # Auto-create tables (idempotent)
+    from brain_svc.models import Base
+    engine = get_engine()
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    logger.info("Database tables ensured")
 
     # Connect to NATS
     try:

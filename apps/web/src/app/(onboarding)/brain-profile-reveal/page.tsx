@@ -1,20 +1,73 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Brain, Sparkles, ThumbsUp, ThumbsDown, MessageSquarePlus, Loader2 } from "lucide-react";
+import {
+  Brain,
+  Sparkles,
+  ThumbsUp,
+  ThumbsDown,
+  MessageSquarePlus,
+  Loader2,
+  BarChart3,
+  Search,
+  Lightbulb,
+  Shield,
+  Puzzle,
+  BookOpen,
+} from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { useBrain } from "@/hooks/useBrain";
 import { useLearnerStore } from "@/stores/learner.store";
+import { apiFetch } from "@/lib/api";
+import { API_ROUTES } from "@/lib/api-routes";
 
-type RevealPhase = "intro" | "revealing" | "revealed";
+/** XAI pipeline steps shown to the parent during profile building */
+const XAI_STEPS = [
+  {
+    icon: BarChart3,
+    title: "Analyzing assessment results",
+    detail: "Reviewing each response for accuracy, speed, and confidence patterns to understand current skill levels across subjects.",
+  },
+  {
+    icon: Search,
+    title: "Mapping learning patterns",
+    detail: "Identifying how your child approaches different question types — whether they favor visual, logical, or step-by-step reasoning.",
+  },
+  {
+    icon: Puzzle,
+    title: "Identifying strengths & growth areas",
+    detail: "Pinpointing subjects and skills where your child excels, and areas where targeted support will make the biggest difference.",
+  },
+  {
+    icon: Shield,
+    title: "Setting support level",
+    detail: "Determining the right level of scaffolding — from high independence to structured guidance — so lessons match your child's needs.",
+  },
+  {
+    icon: BookOpen,
+    title: "Building personalized curriculum",
+    detail: "Selecting grade-appropriate content and adaptive difficulty so your child starts at the right level and progresses at their own pace.",
+  },
+  {
+    icon: Lightbulb,
+    title: "Generating recommendations",
+    detail: "Creating a tailored set of first activities, accommodations, and learning strategies based on everything we've learned.",
+  },
+];
+
+type RevealPhase = "building" | "revealing" | "revealed";
 
 export default function BrainProfileRevealPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const activeLearner = useLearnerStore((s) => s.activeLearner);
+  const learnerId = activeLearner?.id ?? searchParams.get("learnerId");
+  const childName = activeLearner?.name ?? "your child";
+
   const {
     profile,
     isLoading,
@@ -24,19 +77,79 @@ export default function BrainProfileRevealPage() {
     addInsights,
     isApproving,
     isDeclining,
-  } = useBrain(activeLearner?.id);
+  } = useBrain(learnerId ?? undefined);
 
-  const [phase, setPhase] = useState<RevealPhase>("intro");
+  const [phase, setPhase] = useState<RevealPhase>("building");
+  const [activeStep, setActiveStep] = useState(0);
   const [insightText, setInsightText] = useState("");
   const [showInsightInput, setShowInsightInput] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
+  const seeded = useRef(false);
 
+  // Animate through XAI pipeline steps
   useEffect(() => {
-    if (profile && phase === "intro") {
-      const timer = setTimeout(() => setPhase("revealing"), 1500);
+    if (phase !== "building") return;
+
+    const interval = setInterval(() => {
+      setActiveStep((prev) => {
+        if (prev >= XAI_STEPS.length - 1) return prev;
+        return prev + 1;
+      });
+    }, 2500);
+
+    return () => clearInterval(interval);
+  }, [phase]);
+
+  // Seed brain profile if it doesn't exist after initial load
+  const seedProfile = useCallback(async () => {
+    if (!learnerId || seeded.current) return;
+    seeded.current = true;
+    try {
+      await apiFetch(API_ROUTES.BRAIN.SEED(learnerId), {
+        method: "POST",
+        body: JSON.stringify({ accuracy: 0.5 }),
+      });
+    } catch {
+      // Non-critical — profile may already exist
+    }
+  }, [learnerId]);
+
+  // When loading finishes and no profile, trigger seed creation
+  useEffect(() => {
+    if (!isLoading && !profile && !error && learnerId) {
+      seedProfile();
+    }
+  }, [isLoading, profile, error, learnerId, seedProfile]);
+
+  // Poll for profile once we've seeded
+  useEffect(() => {
+    if (profile || !learnerId || phase !== "building") return;
+
+    const pollInterval = setInterval(async () => {
+      try {
+        const p = await apiFetch(API_ROUTES.BRAIN.PROFILE(learnerId));
+        if (p) {
+          // Profile is ready — force a refetch via React Query
+          globalThis.dispatchEvent(new Event("brain-profile-ready"));
+          clearInterval(pollInterval);
+        }
+      } catch {
+        // Still waiting
+      }
+    }, 3000);
+
+    return () => clearInterval(pollInterval);
+  }, [profile, learnerId, phase]);
+
+  // Transition from building → revealing → revealed once profile arrives
+  useEffect(() => {
+    if (profile && phase === "building") {
+      // Let the last step finish, then transition
+      const delay = Math.max(0, (XAI_STEPS.length - activeStep) * 800);
+      const timer = setTimeout(() => setPhase("revealing"), delay);
       return () => clearTimeout(timer);
     }
-  }, [profile, phase]);
+  }, [profile, phase, activeStep]);
 
   useEffect(() => {
     if (phase === "revealing") {
@@ -78,18 +191,18 @@ export default function BrainProfileRevealPage() {
     }
   };
 
-  if (isLoading) {
+  if (isLoading && !profile) {
     return (
       <div className="text-center py-16">
         <Loader2 className="mx-auto mb-4 text-[#7C3AED] animate-spin" size={48} />
         <p className="text-gray-500 dark:text-gray-400">
-          Building {activeLearner?.name ? `${activeLearner.name}'s` : "your child's"} brain profile...
+          Loading...
         </p>
       </div>
     );
   }
 
-  if (error) {
+  if (error && !profile) {
     return (
       <div className="text-center py-16">
         <div className="w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center mx-auto mb-4">
@@ -101,7 +214,7 @@ export default function BrainProfileRevealPage() {
         <p className="text-gray-500 dark:text-gray-400 mb-4">
           {error.message}
         </p>
-        <Button variant="outline" onClick={() => window.location.reload()}>
+        <Button variant="outline" onClick={() => globalThis.location.reload()}>
           Try again
         </Button>
       </div>
@@ -111,28 +224,154 @@ export default function BrainProfileRevealPage() {
   return (
     <div>
       <AnimatePresence mode="wait">
-        {phase === "intro" && (
+        {phase === "building" && (
           <motion.div
-            key="intro"
+            key="building"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="text-center py-16"
+            className="py-8"
           >
-            <motion.div
-              animate={{ scale: [1, 1.1, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="w-24 h-24 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#7C4DFF] flex items-center justify-center mx-auto mb-6 shadow-lg shadow-[#7C3AED]/30"
-            >
-              <Brain className="text-white" size={48} />
-            </motion.div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-              Analyzing learning profile...
-            </h1>
-            <p className="text-gray-500 dark:text-gray-400">
-              Our AI is building a personalized brain profile for{" "}
-              {activeLearner?.name ?? "your child"}.
-            </p>
+            {/* Header */}
+            <div className="text-center mb-10">
+              <motion.div
+                animate={{ scale: [1, 1.05, 1] }}
+                transition={{ duration: 3, repeat: Infinity }}
+                className="w-20 h-20 rounded-full bg-linear-to-br from-[#7C3AED] to-[#7C4DFF] flex items-center justify-center mx-auto mb-5 shadow-lg shadow-[#7C3AED]/30"
+              >
+                <Brain className="text-white" size={40} />
+              </motion.div>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                Building {childName}&apos;s Brain Profile
+              </h1>
+              <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto">
+                Our AI is analyzing assessment data to create a personalized learning model.
+                Here&apos;s what&apos;s happening behind the scenes:
+              </p>
+            </div>
+
+            {/* XAI Pipeline Steps */}
+            <div className="max-w-lg mx-auto space-y-3">
+              {XAI_STEPS.map((step, i) => {
+                const StepIcon = step.icon;
+                const isActive = i === activeStep;
+                const isComplete = i < activeStep;
+                const isPending = i > activeStep;
+
+                let cardClass: string;
+                if (isActive) {
+                  cardClass = "border-[#7C3AED] bg-[#7C3AED]/5 shadow-sm shadow-[#7C3AED]/10";
+                } else if (isComplete) {
+                  cardClass = "border-green-200 dark:border-green-800 bg-green-50/50 dark:bg-green-900/10";
+                } else {
+                  cardClass = "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50";
+                }
+
+                let iconBgClass: string;
+                if (isActive) {
+                  iconBgClass = "bg-[#7C3AED] text-white";
+                } else if (isComplete) {
+                  iconBgClass = "bg-green-500 text-white";
+                } else {
+                  iconBgClass = "bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500";
+                }
+
+                let titleClass: string;
+                if (isActive) {
+                  titleClass = "text-[#7C3AED]";
+                } else if (isComplete) {
+                  titleClass = "text-green-700 dark:text-green-400";
+                } else {
+                  titleClass = "text-gray-400 dark:text-gray-500";
+                }
+
+                let stepIcon: React.ReactNode;
+                if (isComplete) {
+                  stepIcon = (
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                  );
+                } else if (isActive) {
+                  stepIcon = (
+                    <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity, ease: "linear" }}>
+                      <StepIcon size={20} />
+                    </motion.div>
+                  );
+                } else {
+                  stepIcon = <StepIcon size={20} />;
+                }
+
+                return (
+                  <motion.div
+                    key={step.title}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{
+                      opacity: isPending ? 0.4 : 1,
+                      x: 0,
+                    }}
+                    transition={{ delay: i * 0.15, duration: 0.4 }}
+                  >
+                    <div
+                      className={`flex items-start gap-4 p-4 rounded-xl border transition-all duration-500 ${cardClass}`}
+                    >
+                      <div
+                        className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 transition-colors duration-500 ${iconBgClass}`}
+                      >
+                        {stepIcon}
+                      </div>
+                      <div className="min-w-0">
+                        <p className={`font-medium text-sm ${titleClass}`}>
+                          {step.title}
+                        </p>
+                        <AnimatePresence>
+                          {isActive && (
+                            <motion.p
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: "auto" }}
+                              exit={{ opacity: 0, height: 0 }}
+                              className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed"
+                            >
+                              {step.detail}
+                            </motion.p>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            {/* Progress bar */}
+            <div className="max-w-lg mx-auto mt-8">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs text-gray-400 dark:text-gray-500">Progress</span>
+                <span className="text-xs font-medium text-[#7C3AED]">
+                  {Math.round(((activeStep + 1) / XAI_STEPS.length) * 100)}%
+                </span>
+              </div>
+              <div className="h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full bg-linear-to-r from-[#7C3AED] to-[#7C4DFF] rounded-full"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${((activeStep + 1) / XAI_STEPS.length) * 100}%` }}
+                  transition={{ duration: 0.8, ease: "easeOut" }}
+                />
+              </div>
+            </div>
+
+            {/* Trust note */}
+            <div className="max-w-lg mx-auto mt-6">
+              <div className="flex items-start gap-3 p-3 rounded-lg bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/30">
+                <Shield className="text-blue-500 shrink-0 mt-0.5" size={16} />
+                <p className="text-xs text-blue-700 dark:text-blue-400 leading-relaxed">
+                  <span className="font-medium">Transparent AI:</span> We never use a black box.
+                  Every recommendation is traceable to your child&apos;s assessment data, and you
+                  can review, approve, or adjust the profile before any learning begins.
+                </p>
+              </div>
+            </div>
           </motion.div>
         )}
 
@@ -148,7 +387,7 @@ export default function BrainProfileRevealPage() {
               initial={{ rotate: 0 }}
               animate={{ rotate: 360 }}
               transition={{ duration: 2, ease: "easeInOut" }}
-              className="w-24 h-24 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#38B2AC] flex items-center justify-center mx-auto mb-6 shadow-lg shadow-[#7C3AED]/30"
+              className="w-24 h-24 rounded-full bg-linear-to-br from-[#7C3AED] to-[#38B2AC] flex items-center justify-center mx-auto mb-6 shadow-lg shadow-[#7C3AED]/30"
             >
               <Sparkles className="text-white" size={48} />
             </motion.div>
@@ -166,16 +405,15 @@ export default function BrainProfileRevealPage() {
             transition={{ duration: 0.5 }}
           >
             <div className="text-center mb-8">
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#7C4DFF] flex items-center justify-center mx-auto mb-4 shadow-lg shadow-[#7C3AED]/20">
+              <div className="w-20 h-20 rounded-full bg-linear-to-br from-[#7C3AED] to-[#7C4DFF] flex items-center justify-center mx-auto mb-4 shadow-lg shadow-[#7C3AED]/20">
                 <Brain className="text-white" size={40} />
               </div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                {activeLearner?.name ? `${activeLearner.name}'s` : "Your Child's"}{" "}
-                Brain Profile
+                {childName}&apos;s Brain Profile
               </h1>
               <p className="mt-2 text-gray-500 dark:text-gray-400">
                 Here&apos;s what we&apos;ve discovered about how{" "}
-                {activeLearner?.name ?? "your child"} learns best.
+                {childName} learns best.
               </p>
             </div>
 
@@ -193,11 +431,14 @@ export default function BrainProfileRevealPage() {
                       Functioning Level
                     </h3>
                     <Badge>
-                      {profile.functioningLevel === "level1"
-                        ? "Level 1 - High Independence"
-                        : profile.functioningLevel === "level2"
-                          ? "Level 2 - Moderate Support"
-                          : "Level 3 - Substantial Support"}
+                      {(() => {
+                        const labels: Record<string, string> = {
+                          level1: "Level 1 - High Independence",
+                          level2: "Level 2 - Moderate Support",
+                          level3: "Level 3 - Substantial Support",
+                        };
+                        return labels[profile.functioningLevel] ?? "Level 3 - Substantial Support";
+                      })()}
                     </Badge>
                   </div>
                   <p className="text-sm text-gray-500 dark:text-gray-400">

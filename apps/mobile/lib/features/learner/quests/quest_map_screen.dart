@@ -6,7 +6,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:aivo_mobile/config/theme.dart';
 import 'package:aivo_mobile/core/api/api_client.dart';
 import 'package:aivo_mobile/core/api/endpoints.dart';
-import 'package:aivo_mobile/data/models/learning.dart';
+import 'package:aivo_mobile/data/models/quest.dart';
 
 // ---------------------------------------------------------------------------
 // Providers
@@ -114,7 +114,7 @@ class QuestMapScreen extends ConsumerWidget {
       error: (_, __) => const SizedBox.shrink(),
       data: (progress) {
         final worldProgress = progress.totalWorlds > 0
-            ? progress.completedWorlds / progress.totalWorlds
+            ? progress.worldsCompleted / progress.totalWorlds
             : 0.0;
         return Container(
           margin: const EdgeInsets.all(16),
@@ -157,7 +157,7 @@ class QuestMapScreen extends ConsumerWidget {
                         const Icon(Icons.star, color: AivoColors.xpGold, size: 16),
                         const SizedBox(width: 4),
                         Text(
-                          '${progress.earnedStars}/${progress.totalStars}',
+                          '${progress.chaptersCompleted}/${progress.totalChapters}',
                           style: theme.textTheme.bodySmall
                               ?.copyWith(color: Colors.white),
                         ),
@@ -178,7 +178,7 @@ class QuestMapScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                '${progress.completedWorlds} of ${progress.totalWorlds} worlds completed',
+                '${progress.worldsCompleted} of ${progress.totalWorlds} worlds completed',
                 style: theme.textTheme.bodySmall
                     ?.copyWith(color: Colors.white.withValues(alpha: 0.8)),
               ),
@@ -272,15 +272,17 @@ class _WorldCard extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final subjectColor = _subjectColor(colorScheme);
-    final progress = world.totalChapters > 0
-        ? world.completedChapters / world.totalChapters
+    final completedChapters = world.chapters.where((c) => c.status == 'completed').length;
+    final totalChapters = world.chapters.length;
+    final progress = totalChapters > 0
+        ? completedChapters / totalChapters
         : 0.0;
 
     return Semantics(
       label:
-          '${world.name}, ${world.subject}, ${world.completedChapters} of ${world.totalChapters} chapters'
-          '${world.unlocked ? '' : ', locked'}',
-      button: world.unlocked,
+          '${world.name}, ${world.subject}, $completedChapters of $totalChapters chapters'
+          '${world.isUnlocked ? '' : ', locked'}',
+      button: world.isUnlocked,
       child: Padding(
         padding: const EdgeInsets.only(bottom: 12),
         child: AnimatedContainer(
@@ -304,12 +306,12 @@ class _WorldCard extends StatelessWidget {
             margin: EdgeInsets.zero,
             clipBehavior: Clip.antiAlias,
             child: InkWell(
-              onTap: world.unlocked
+              onTap: world.isUnlocked
                   ? () => context.push(
                       '/learner/quests/${world.id}/chapter/${world.id}')
                   : null,
               child: Opacity(
-                opacity: world.unlocked ? 1.0 : 0.5,
+                opacity: world.isUnlocked ? 1.0 : 0.5,
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Row(
@@ -322,7 +324,7 @@ class _WorldCard extends StatelessWidget {
                           color: subjectColor.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        child: world.unlocked
+                        child: world.isUnlocked
                             ? Icon(_subjectIcon, size: 32, color: subjectColor)
                             : Icon(Icons.lock, size: 32, color: colorScheme.outline),
                       ),
@@ -392,7 +394,7 @@ class _WorldCard extends StatelessWidget {
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
-                                  '${world.completedChapters}/${world.totalChapters}',
+                                  '$completedChapters/$totalChapters',
                                   style: theme.textTheme.bodySmall?.copyWith(
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -403,7 +405,7 @@ class _WorldCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      if (world.unlocked)
+                      if (world.isUnlocked)
                         Icon(Icons.chevron_right, color: colorScheme.outline),
                     ],
                   ),

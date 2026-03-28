@@ -35,6 +35,8 @@ export class LearnerService {
       learnerId: learner.id,
       tenantId,
       parentId,
+    }).catch((err) => {
+      this.app.log.warn({ err }, "Failed to publish learner.created event");
     });
 
     return learner;

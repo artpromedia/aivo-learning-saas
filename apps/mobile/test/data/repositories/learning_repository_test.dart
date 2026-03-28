@@ -35,6 +35,15 @@ void main() {
       method: 'POST',
       payload: '{}',
     ));
+    registerFallbackValue(CachedLessonsCompanion.insert(
+      lessonId: '',
+      learnerId: '',
+      subject: '',
+      topic: '',
+      skillId: '',
+      contentJson: '',
+      expiresAt: DateTime(2025),
+    ));
   });
 
   LearningRepository _createRepo({bool isOnline = true}) {
@@ -98,9 +107,8 @@ void main() {
     });
 
     test('throws StateError when offline and no cached lesson', () async {
-      when(() => mockLessonDao.getLesson('lesson-1'))
+      when(() => mockLessonDao.getCachedLesson('lesson-1'))
           .thenAnswer((_) async => null);
-      when(() => mockLessonDao.rowToSession(null)).thenReturn(null);
 
       final repo = _createRepo(isOnline: false);
 
@@ -223,30 +231,13 @@ void main() {
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
               ));
-      when(() => mockLessonDao.upsertLesson(
-            lessonId: any(named: 'lessonId'),
-            learnerId: any(named: 'learnerId'),
-            subject: any(named: 'subject'),
-            topic: any(named: 'topic'),
-            skillId: any(named: 'skillId'),
-            content: any(named: 'content'),
-            orderIndex: any(named: 'orderIndex'),
-            expiresAt: any(named: 'expiresAt'),
-          )).thenAnswer((_) async {});
+      when(() => mockLessonDao.cacheLesson(any()))
+          .thenAnswer((_) async => 1);
 
       final repo = _createRepo(isOnline: true);
       await repo.preCacheLessons('learner-1', count: 1);
 
-      verify(() => mockLessonDao.upsertLesson(
-            lessonId: any(named: 'lessonId'),
-            learnerId: any(named: 'learnerId'),
-            subject: any(named: 'subject'),
-            topic: any(named: 'topic'),
-            skillId: any(named: 'skillId'),
-            content: any(named: 'content'),
-            orderIndex: any(named: 'orderIndex'),
-            expiresAt: any(named: 'expiresAt'),
-          )).called(1);
+      verify(() => mockLessonDao.cacheLesson(any())).called(1);
     });
   });
 

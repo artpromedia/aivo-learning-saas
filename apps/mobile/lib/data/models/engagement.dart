@@ -5,6 +5,7 @@
 import 'package:flutter/foundation.dart';
 
 class EngagementSummary {
+  final String? learnerId;
   final int totalXp;
   final int currentLevel;
   final int xpToNextLevel;
@@ -16,6 +17,7 @@ class EngagementSummary {
   final DateTime? lastActivityAt;
 
   const EngagementSummary({
+    this.learnerId,
     required this.totalXp,
     required this.currentLevel,
     required this.xpToNextLevel,
@@ -28,6 +30,7 @@ class EngagementSummary {
   });
 
   EngagementSummary copyWith({
+    String? Function()? learnerId,
     int? totalXp,
     int? currentLevel,
     int? xpToNextLevel,
@@ -39,6 +42,7 @@ class EngagementSummary {
     DateTime? Function()? lastActivityAt,
   }) {
     return EngagementSummary(
+      learnerId: learnerId != null ? learnerId() : this.learnerId,
       totalXp: totalXp ?? this.totalXp,
       currentLevel: currentLevel ?? this.currentLevel,
       xpToNextLevel: xpToNextLevel ?? this.xpToNextLevel,
@@ -55,6 +59,7 @@ class EngagementSummary {
 
   factory EngagementSummary.fromJson(Map<String, dynamic> json) {
     return EngagementSummary(
+      learnerId: json['learnerId'] as String?,
       totalXp: json['totalXp'] as int,
       currentLevel: json['currentLevel'] as int,
       xpToNextLevel: json['xpToNextLevel'] as int,
@@ -73,6 +78,7 @@ class EngagementSummary {
 
   Map<String, dynamic> toJson() {
     return {
+      'learnerId': learnerId,
       'totalXp': totalXp,
       'currentLevel': currentLevel,
       'xpToNextLevel': xpToNextLevel,
@@ -89,6 +95,7 @@ class EngagementSummary {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     return other is EngagementSummary &&
+        other.learnerId == learnerId &&
         other.totalXp == totalXp &&
         other.currentLevel == currentLevel &&
         other.xpToNextLevel == xpToNextLevel &&
@@ -103,6 +110,7 @@ class EngagementSummary {
   @override
   int get hashCode {
     return Object.hash(
+      learnerId,
       totalXp,
       currentLevel,
       xpToNextLevel,

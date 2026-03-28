@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:drift/drift.dart';
+import 'package:drift/drift.dart' hide isNotNull, isNull;
 
 import 'package:aivo_mobile/data/local/database.dart';
 import 'package:aivo_mobile/data/local/daos/brain_dao.dart';

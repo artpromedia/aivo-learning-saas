@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:dio/dio.dart';
 
+import 'package:aivo_mobile/core/api/api_client.dart';
 import 'package:aivo_mobile/core/auth/auth_provider.dart';
 import 'package:aivo_mobile/core/auth/auth_service.dart';
 import 'package:aivo_mobile/core/accessibility/functioning_level_provider.dart';
@@ -12,6 +15,8 @@ import 'package:aivo_mobile/features/learner/home/learner_home_screen.dart';
 // ---------------------------------------------------------------------------
 // Mocks
 // ---------------------------------------------------------------------------
+
+class MockApiClient extends Mock implements ApiClient {}
 
 class _TestAuthNotifier extends AuthNotifier {
   _TestAuthNotifier()
@@ -35,6 +40,15 @@ class _FakeAuthService extends Fake implements AuthService {
 }
 
 void main() {
+  late MockApiClient mockApi;
+
+  setUp(() {
+    mockApi = MockApiClient();
+    when(() => mockApi.get(any())).thenThrow(
+      DioException(requestOptions: RequestOptions(path: '')),
+    );
+  });
+
   Widget buildApp({
     bool isOnline = true,
     FunctioningLevel level = FunctioningLevel.standard,
@@ -42,6 +56,7 @@ void main() {
     return ProviderScope(
       overrides: [
         authProvider.overrideWith((ref) => _TestAuthNotifier()),
+        apiClientProvider.overrideWithValue(mockApi),
         isOnlineProvider.overrideWithValue(isOnline),
         functioningLevelProvider.overrideWith(
           (ref) => _FixedLevelNotifier(level),
@@ -119,7 +134,15 @@ class _FixedLevelNotifier extends FunctioningLevelNotifier {
   }
 }
 
-class _NoopStorage extends Fake implements FlutterSecureStorage {}
-
-// FlutterSecureStorage import for the mock.
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+class _NoopStorage extends Fake implements FlutterSecureStorage {
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    if (invocation.memberName == #read) {
+      return Future<String?>.value(null);
+    }
+    if (invocation.memberName == #write) {
+      return Future<void>.value();
+    }
+    return super.noSuchMethod(invocation);
+  }
+}

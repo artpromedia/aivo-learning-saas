@@ -37,6 +37,13 @@ const GRADES = [
   "12th Grade",
 ];
 
+function gradeToNumber(grade: string): number {
+  if (grade === "Pre-K") return 0;
+  if (grade === "Kindergarten") return 0;
+  const match = grade.match(/^(\d+)/);
+  return match ? parseInt(match[1], 10) : 0;
+}
+
 export default function AddChildPage() {
   const router = useRouter();
   const { addLearner, setActiveLearner } = useLearnerStore();
@@ -53,17 +60,24 @@ export default function AddChildPage() {
   const onSubmit = async (data: AddChildForm) => {
     setServerError(null);
     try {
-      const learner = await apiFetch<{
-        id: string;
-        name: string;
-        dateOfBirth: string;
-        avatarUrl?: string;
-        functioningLevel: "level1" | "level2" | "level3";
-        preferences: Record<string, unknown>;
+      const res = await apiFetch<{
+        learner: {
+          id: string;
+          name: string;
+          dateOfBirth: string;
+          avatarUrl?: string;
+          functioningLevel: "level1" | "level2" | "level3";
+          preferences: Record<string, unknown>;
+        };
       }>(API_ROUTES.LEARNER.CREATE, {
         method: "POST",
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          name: data.name,
+          dateOfBirth: new Date(data.dateOfBirth).toISOString(),
+          enrolledGrade: gradeToNumber(data.enrolledGrade),
+        }),
       });
+      const learner = res.learner;
       addLearner({
         id: learner.id,
         name: learner.name,

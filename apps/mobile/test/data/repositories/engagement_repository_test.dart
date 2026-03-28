@@ -1,10 +1,11 @@
-import 'package:flutter_test/flutter_test.dart';
+﻿import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:dio/dio.dart';
 
 import 'package:aivo_mobile/core/api/api_client.dart';
 import 'package:aivo_mobile/core/connectivity/sync_manager.dart';
 import 'package:aivo_mobile/data/local/daos/engagement_dao.dart';
+import 'package:aivo_mobile/data/local/database.dart';
 import 'package:aivo_mobile/data/models/engagement.dart';
 import 'package:aivo_mobile/data/repositories/engagement_repository.dart';
 
@@ -35,10 +36,7 @@ void main() {
       method: 'POST',
       payload: '{}',
     ));
-    registerFallbackValue(const EngagementSummary(
-      totalXp: 0, currentLevel: 1, xpToNextLevel: 100, xpProgress: 0,
-      currentStreak: 0, longestStreak: 0, aivoCoins: 0,
-    ));
+    registerFallbackValue(const EngagementCacheCompanion());
   });
 
   EngagementRepository _createRepo({bool isOnline = true}) {
@@ -66,22 +64,29 @@ void main() {
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
               ));
-      when(() => mockEngagementDao.upsertSummary(any()))
-          .thenAnswer((_) async {});
+      when(() => mockEngagementDao.upsertEngagement(any()))
+          .thenAnswer((_) async => 1);
 
       final repo = _createRepo(isOnline: true);
       final summary = await repo.getXpSummary('learner-1');
 
       expect(summary.totalXp, 500);
-      verify(() => mockEngagementDao.upsertSummary(any())).called(1);
+      verify(() => mockEngagementDao.upsertEngagement(any())).called(1);
     });
 
     test('falls back to local cache when offline', () async {
-      const cached = EngagementSummary(
-        totalXp: 300, currentLevel: 2, xpToNextLevel: 150, xpProgress: 50,
-        currentStreak: 3, longestStreak: 7, aivoCoins: 20,
+      final cached = EngagementCacheData(
+        id: 1,
+        learnerId: 'learner-1',
+        totalXp: 300,
+        currentLevel: 2,
+        xpToNextLevel: 150,
+        currentStreak: 3,
+        longestStreak: 7,
+        aivoCoins: 20,
+        updatedAt: DateTime(2025, 3, 1),
       );
-      when(() => mockEngagementDao.getSummary('learner-1'))
+      when(() => mockEngagementDao.getEngagement('learner-1'))
           .thenAnswer((_) async => cached);
 
       final repo = _createRepo(isOnline: false);
@@ -92,7 +97,7 @@ void main() {
     });
 
     test('throws StateError when offline and no cache', () async {
-      when(() => mockEngagementDao.getSummary('learner-1'))
+      when(() => mockEngagementDao.getEngagement('learner-1'))
           .thenAnswer((_) async => null);
 
       final repo = _createRepo(isOnline: false);

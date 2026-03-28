@@ -36,7 +36,7 @@ export default function LoginPage() {
     setServerError(null);
     try {
       const result = await login(data.email, data.password);
-      if (result.user.role === "parent") {
+      if (result.user.role.toLowerCase() === "parent") {
         router.push("/parent");
       } else {
         router.push("/learner");

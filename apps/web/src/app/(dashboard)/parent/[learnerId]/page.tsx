@@ -55,11 +55,11 @@ export default function ChildDashboardPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const [learnerData, progressData] = await Promise.all([
-          apiFetch<LearnerDetail>(API_ROUTES.LEARNER.DETAIL(learnerId)),
-          apiFetch<ProgressData>(API_ROUTES.LEARNER.PROGRESS(learnerId)),
+        const [learnerRes, progressData] = await Promise.all([
+          apiFetch<{ learner: LearnerDetail }>(API_ROUTES.LEARNER.DETAIL(learnerId)),
+          apiFetch<ProgressData>(API_ROUTES.LEARNER.PROGRESS(learnerId)).catch(() => null),
         ]);
-        setLearner(learnerData);
+        setLearner(learnerRes.learner);
         setProgress(progressData);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load data");

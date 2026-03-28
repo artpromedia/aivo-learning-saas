@@ -30,6 +30,8 @@
     "overrides": {
       "drizzle-orm": "0.44.2"
     },
-    "onlyBuiltDependencies": ["esbuild"]
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }

@@ -8,7 +8,6 @@ import 'package:aivo_mobile/core/api/api_client.dart';
 import 'package:aivo_mobile/core/api/endpoints.dart';
 import 'package:aivo_mobile/core/connectivity/connectivity_provider.dart';
 import 'package:aivo_mobile/core/connectivity/sync_manager.dart';
-import 'package:aivo_mobile/data/local/database.dart';
 import 'package:aivo_mobile/data/local/daos/brain_dao.dart';
 import 'package:aivo_mobile/data/local/daos/mastery_dao.dart';
 import 'package:aivo_mobile/data/models/brain_context.dart';
@@ -95,7 +94,7 @@ class BrainRepository {
         final data = response.data as Map<String, dynamic>;
         final items = (data['masteryLevels'] as List<dynamic>?)
                 ?.map(
-                    (e) => MasteryLevel.fromJson(e as Map<String, dynamic>))
+                    (e) => MasteryLevel.fromJson(e as Map<String, dynamic>),)
                 .toList() ??
             [];
         // Cache each mastery record locally.
@@ -109,7 +108,7 @@ class BrainRepository {
             correctAttempts: Value(mastery.correctAttempts),
             lastPracticedAt: Value(mastery.lastPracticedAt),
             nextReviewAt: Value(mastery.nextReviewAt),
-          ));
+          ),);
         }
         return items;
       } on DioException {
@@ -127,13 +126,13 @@ class BrainRepository {
               correctAttempts: row.correctAttempts,
               lastPracticedAt: row.lastPracticedAt,
               nextReviewAt: row.nextReviewAt,
-            ))
+            ),)
         .toList();
   }
 
   /// Updates a single mastery score. Queues the mutation when offline.
   Future<void> updateMastery(
-      String learnerId, String skillId, double score) async {
+      String learnerId, String skillId, double score,) async {
     final payload = {
       'learnerId': learnerId,
       'skillId': skillId,
@@ -153,7 +152,7 @@ class BrainRepository {
       endpoint: Endpoints.brainMasteryUpdate,
       method: 'POST',
       payload: jsonEncode(payload),
-    ));
+    ),);
   }
 
   // ---------------------------------------------------------------------------
@@ -189,7 +188,7 @@ class BrainRepository {
     if (_isOnline) {
       try {
         final response = await _api
-            .get(Endpoints.brainRecommendationsLearner(learnerId));
+            .get(Endpoints.brainRecommendationsLearner(learnerId),);
         final data = response.data as Map<String, dynamic>;
         final items = (data['recommendations'] as List<dynamic>?)
                 ?.map((e) =>
@@ -220,19 +219,19 @@ class BrainRepository {
       masteryLevels: Value(jsonEncode(
         context.masteryLevels
             .map((key, value) => MapEntry(key, value.toJson())),
-      )),
+      ),),
       learningPreferences: Value(jsonEncode(context.learningPreferences)),
       strengths: Value(jsonEncode(context.strengths)),
       challenges: Value(jsonEncode(context.challenges)),
       currentGoals: Value(jsonEncode(
         context.currentGoals.map((g) => g.toJson()).toList(),
-      )),
+      ),),
       iepGoals: Value(jsonEncode(
         context.iepGoals.map((g) => g.toJson()).toList(),
-      )),
+      ),),
       overallProgress: Value(context.overallProgress),
       lastSyncedAt: DateTime.now(),
-    ));
+    ),);
   }
 
   /// Reads a [BrainContext] from the local database, or returns `null`.

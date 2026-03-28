@@ -80,7 +80,7 @@ class HomeworkRepository {
         message: 'Upload failed: ${e.toString()}',
       );
     } finally {
-      await controller.close();
+      controller.close();
     }
   }
 

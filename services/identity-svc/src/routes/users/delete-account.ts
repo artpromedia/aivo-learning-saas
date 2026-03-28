@@ -9,7 +9,7 @@ export async function deleteAccountRoute(app: FastifyInstance) {
 
     reply
       .clearCookie("access_token", { path: "/" })
-      .clearCookie("refresh_token", { path: "/auth/refresh" });
+      .clearCookie("refresh_token", { path: "/api/auth/refresh" });
 
     return reply.status(200).send({ deleted: true });
   });

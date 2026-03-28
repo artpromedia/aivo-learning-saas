@@ -44,7 +44,7 @@ class EngagementRepository {
         final response = await _api.get(Endpoints.xp(learnerId));
         final summary = EngagementSummary.fromJson(
             response.data as Map<String, dynamic>);
-        await _saveEngagementSummary(summary);
+        await _saveEngagementSummary(learnerId, summary);
         return summary;
       } on DioException {
         // Fall through.
@@ -70,7 +70,7 @@ class EngagementRepository {
         final response = await _api.get(Endpoints.streaks(learnerId));
         final summary = EngagementSummary.fromJson(
             response.data as Map<String, dynamic>);
-        await _saveEngagementSummary(summary);
+        await _saveEngagementSummary(learnerId, summary);
         return summary;
       } on DioException {
         // Fall through.
@@ -280,9 +280,9 @@ class EngagementRepository {
   // ---------------------------------------------------------------------------
 
   /// Persists an [EngagementSummary] to the local database.
-  Future<void> _saveEngagementSummary(EngagementSummary summary) async {
+  Future<void> _saveEngagementSummary(String learnerId, EngagementSummary summary) async {
     await _engagementDao.upsertEngagement(EngagementCacheCompanion.insert(
-      learnerId: summary.learnerId,
+      learnerId: learnerId,
       totalXp: Value(summary.totalXp),
       currentLevel: Value(summary.currentLevel),
       xpToNextLevel: Value(summary.xpToNextLevel),
@@ -308,6 +308,7 @@ class EngagementRepository {
       totalXp: row.totalXp,
       currentLevel: row.currentLevel,
       xpToNextLevel: row.xpToNextLevel,
+      xpProgress: 0,
       currentStreak: row.currentStreak,
       longestStreak: row.longestStreak,
       aivoCoins: row.aivoCoins,

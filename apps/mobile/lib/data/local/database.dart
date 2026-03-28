@@ -309,6 +309,11 @@ class $BrainSnapshotsTable extends BrainSnapshots
         challenges, currentGoals, iepGoals, overallProgress, lastSyncedAt,
         createdAt,
       ];
+
+  @override
+  $BrainSnapshotsTable createAlias(String alias) {
+    return $BrainSnapshotsTable(attachedDatabase, alias);
+  }
 }
 
 // -- CachedLessons -----------------------------------------------------------
@@ -424,6 +429,11 @@ class $CachedLessonsTable extends CachedLessons
         id, lessonId, learnerId, subject, topic, skillId, contentJson,
         interactionsJson, orderIndex, isCompleted, cachedAt, expiresAt,
       ];
+
+  @override
+  $CachedLessonsTable createAlias(String alias) {
+    return $CachedLessonsTable(attachedDatabase, alias);
+  }
 }
 
 // -- SyncQueueItems ----------------------------------------------------------
@@ -532,6 +542,11 @@ class $SyncQueueItemsTable extends SyncQueueItems
         id, actionId, endpoint, method, payload, headers, synced, retryCount,
         errorMessage, createdAt, syncedAt,
       ];
+
+  @override
+  $SyncQueueItemsTable createAlias(String alias) {
+    return $SyncQueueItemsTable(attachedDatabase, alias);
+  }
 }
 
 // -- MasteryCache ------------------------------------------------------------
@@ -645,6 +660,11 @@ class $MasteryCacheTable extends MasteryCache
         id, learnerId, skillId, subject, masteryLevel, totalAttempts,
         correctAttempts, recentScores, lastPracticedAt, nextReviewAt, updatedAt,
       ];
+
+  @override
+  $MasteryCacheTable createAlias(String alias) {
+    return $MasteryCacheTable(attachedDatabase, alias);
+  }
 }
 
 // -- EngagementCache ---------------------------------------------------------
@@ -770,6 +790,11 @@ class $EngagementCacheTable extends EngagementCache
         longestStreak, aivoCoins, earnedBadges, activeItems, lastActivityAt,
         streakExpiresAt, updatedAt,
       ];
+
+  @override
+  $EngagementCacheTable createAlias(String alias) {
+    return $EngagementCacheTable(attachedDatabase, alias);
+  }
 }
 
 // ---------------------------------------------------------------------------

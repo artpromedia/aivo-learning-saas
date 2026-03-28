@@ -61,6 +61,9 @@ void main() {
       );
       addTearDown(container.dispose);
 
+      // Subscribe before adding events so the StreamProvider is active.
+      container.listen(connectivityProvider, (_, __) {});
+
       controller.add(ConnectivityStatus.offline);
       await Future.delayed(Duration.zero);
 
@@ -77,6 +80,9 @@ void main() {
         ],
       );
       addTearDown(container.dispose);
+
+      // Subscribe before adding events so the StreamProvider is active.
+      container.listen(connectivityProvider, (_, __) {});
 
       controller.add(ConnectivityStatus.offline);
       await Future.delayed(Duration.zero);
@@ -97,6 +103,9 @@ void main() {
         ],
       );
       addTearDown(container.dispose);
+
+      // Subscribe before adding events so the StreamProvider is active.
+      container.listen(connectivityProvider, (_, __) {});
 
       controller.addError(Exception('Connectivity check failed'));
       await Future.delayed(Duration.zero);

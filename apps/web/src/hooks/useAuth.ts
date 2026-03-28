@@ -8,10 +8,11 @@ interface LoginResponse {
     id: string;
     email: string;
     name: string;
-    role: "parent" | "therapist" | "educator" | "admin";
+    role: string;
     avatarUrl?: string;
+    tenantId?: string;
   };
-  token: string;
+  token?: string;
 }
 
 export function useAuth() {
@@ -23,7 +24,10 @@ export function useAuth() {
         method: "POST",
         body: JSON.stringify({ email, password }),
       });
-      storeLogin(data.user, data.token);
+      storeLogin(
+        { ...data.user, role: data.user.role.toLowerCase() as "parent" | "therapist" | "educator" | "admin" },
+        data.token ?? "",
+      );
       return data;
     },
     [storeLogin],

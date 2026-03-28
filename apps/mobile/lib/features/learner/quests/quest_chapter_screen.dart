@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -8,7 +6,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:aivo_mobile/config/theme.dart';
 import 'package:aivo_mobile/core/api/api_client.dart';
 import 'package:aivo_mobile/core/api/endpoints.dart';
-import 'package:aivo_mobile/data/models/learning.dart';
+import 'package:aivo_mobile/data/models/quest.dart';
 
 // ---------------------------------------------------------------------------
 // Providers
@@ -53,6 +51,7 @@ class QuestChapterScreen extends ConsumerWidget {
     final chaptersAsync = ref.watch(_questChaptersProvider(worldId));
     final worldAsync = ref.watch(_worldDetailProvider(worldId));
     final theme = Theme.of(context);
+    // ignore: unused_local_variable
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
@@ -151,7 +150,7 @@ class QuestChapterScreen extends ConsumerWidget {
             Icon(Icons.error_outline, size: 48, color: theme.colorScheme.error),
             const SizedBox(height: 16),
             Text('Failed to load chapters',
-                style: theme.textTheme.titleMedium),
+                style: theme.textTheme.titleMedium,),
             const SizedBox(height: 24),
             ElevatedButton.icon(
               onPressed: () =>
@@ -185,7 +184,7 @@ class _ChapterNode extends StatelessWidget {
   final int index;
   final String worldId;
 
-  bool get _isBoss => chapter.bossChallenge != null;
+  bool get _isBoss => chapter.isBoss;
   bool get _isCompleted => chapter.status == 'completed';
   bool get _isInProgress => chapter.status == 'in_progress';
   bool get _isLocked => chapter.status == 'locked';
@@ -307,7 +306,7 @@ class _ChapterNode extends StatelessWidget {
                               if (_isBoss)
                                 Container(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 2),
+                                      horizontal: 8, vertical: 2,),
                                   decoration: BoxDecoration(
                                     color: AivoColors.streakFlame
                                         .withValues(alpha: 0.15),
@@ -335,16 +334,16 @@ class _ChapterNode extends StatelessWidget {
                           Row(
                             children: [
                               Icon(Icons.menu_book,
-                                  size: 14, color: colorScheme.outline),
+                                  size: 14, color: colorScheme.outline,),
                               const SizedBox(width: 4),
                               Text(
-                                '${chapter.lessons.length} lessons',
+                                '${chapter.stages.length} stages',
                                 style: theme.textTheme.bodySmall,
                               ),
                               if (_isAvailable) ...[
                                 const SizedBox(width: 12),
                                 Icon(Icons.chevron_right,
-                                    size: 16, color: colorScheme.primary),
+                                    size: 16, color: colorScheme.primary,),
                               ],
                             ],
                           ),
@@ -362,11 +361,9 @@ class _ChapterNode extends StatelessWidget {
   }
 
   void _showChapterDetail(
-      BuildContext context, ThemeData theme, ColorScheme colorScheme) {
-    final xpReward = chapter.bossChallenge?['xpReward'] as int? ?? 50;
-    final estimatedMinutes =
-        chapter.bossChallenge?['estimatedMinutes'] as int? ??
-            chapter.lessons.length * 5;
+      BuildContext context, ThemeData theme, ColorScheme colorScheme,) {
+    final xpReward = chapter.stages.fold(0, (sum, s) => sum + s.xpReward);
+    final estimatedMinutes = chapter.stages.length * 5;
 
     showModalBottomSheet(
       context: context,
@@ -396,8 +393,8 @@ class _ChapterNode extends StatelessWidget {
                   if (_isBoss)
                     Padding(
                       padding: const EdgeInsets.only(right: 8),
-                      child: Icon(Icons.star,
-                          color: AivoColors.streakFlame, size: 28),
+                      child: const Icon(Icons.star,
+                          color: AivoColors.streakFlame, size: 28,),
                     ),
                   Expanded(
                     child: Text(
@@ -430,7 +427,7 @@ class _ChapterNode extends StatelessWidget {
                   const SizedBox(width: 12),
                   _StatChip(
                     icon: Icons.menu_book,
-                    label: '${chapter.lessons.length} lessons',
+                    label: '${chapter.stages.length} stages',
                     color: colorScheme.secondary,
                   ),
                 ],
@@ -441,9 +438,9 @@ class _ChapterNode extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.pop(ctx);
-                    if (chapter.lessons.isNotEmpty) {
+                    if (chapter.stages.isNotEmpty) {
                       context.push(
-                        '/learner/session/${chapter.lessons.first.lessonId}',
+                        '/learner/session/${chapter.stages.first.id}',
                       );
                     }
                   },

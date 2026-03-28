@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Brain, ChevronRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardBody } from "@/components/ui/Card";
@@ -30,7 +30,9 @@ interface AnswerResult {
 
 export default function BaselineAssessmentPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const activeLearner = useLearnerStore((s) => s.activeLearner);
+  const learnerId = activeLearner?.id ?? searchParams.get("learnerId");
 
   const [loading, setLoading] = useState(true);
   const [question, setQuestion] = useState<BaselineQuestion | null>(null);
@@ -42,12 +44,12 @@ export default function BaselineAssessmentPage() {
   const [questionsAnswered, setQuestionsAnswered] = useState(0);
 
   useEffect(() => {
-    if (!activeLearner?.id) return;
+    if (!learnerId) return;
 
     async function startBaseline() {
       try {
         const data = await apiFetch<{ question: BaselineQuestion; progress: number }>(
-          API_ROUTES.ONBOARDING.BASELINE_START(activeLearner!.id),
+          API_ROUTES.ONBOARDING.BASELINE_START(learnerId!),
           { method: "POST" },
         );
         setQuestion(data.question);
@@ -60,16 +62,16 @@ export default function BaselineAssessmentPage() {
     }
 
     startBaseline();
-  }, [activeLearner]);
+  }, [learnerId]);
 
   const handleAnswer = async () => {
-    if (!activeLearner?.id || !question || selectedAnswer === null) return;
+    if (!learnerId || !question || selectedAnswer === null) return;
 
     setIsSubmitting(true);
     setError(null);
     try {
       const result = await apiFetch<AnswerResult>(
-        API_ROUTES.ONBOARDING.BASELINE_ANSWER(activeLearner.id),
+        API_ROUTES.ONBOARDING.BASELINE_ANSWER(learnerId),
         {
           method: "POST",
           body: JSON.stringify({
@@ -102,9 +104,9 @@ export default function BaselineAssessmentPage() {
   };
 
   const handleComplete = async () => {
-    if (!activeLearner?.id) return;
+    if (!learnerId) return;
     try {
-      await apiFetch(API_ROUTES.ONBOARDING.BASELINE_COMPLETE(activeLearner.id), {
+      await apiFetch(API_ROUTES.ONBOARDING.BASELINE_COMPLETE(learnerId), {
         method: "POST",
       });
       router.push("/brain-profile-reveal");

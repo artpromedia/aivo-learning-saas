@@ -62,6 +62,9 @@ class _AnimatedBannerState extends State<_AnimatedBanner>
       duration: const Duration(milliseconds: 300),
       value: widget.visible ? 1.0 : 0.0,
     );
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.dismissed) setState(() {});
+    });
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, -1),
       end: Offset.zero,
@@ -91,6 +94,7 @@ class _AnimatedBannerState extends State<_AnimatedBanner>
 
   @override
   Widget build(BuildContext context) {
+    if (_controller.isDismissed) return const SizedBox.shrink();
     return SizeTransition(
       sizeFactor: _controller,
       axisAlignment: -1,

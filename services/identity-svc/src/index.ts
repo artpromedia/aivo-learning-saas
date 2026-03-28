@@ -21,6 +21,7 @@ import { verifyEmailRoute } from "./routes/auth/verify-email.js";
 import { forgotPasswordRoute } from "./routes/auth/forgot-password.js";
 import { resetPasswordRoute } from "./routes/auth/reset-password.js";
 import { refreshRoute } from "./routes/auth/refresh.js";
+import { sessionRoute } from "./routes/auth/session.js";
 
 // Routes — Users
 import { meRoute } from "./routes/users/me.js";
@@ -45,6 +46,12 @@ import { listInvitationsRoute } from "./routes/invitations/list.js";
 
 // Routes — Internal
 import { internalEmailRoute } from "./routes/internal/email.js";
+
+// Routes — Onboarding
+import { baselineRoutes } from "./routes/onboarding/baseline.js";
+
+// Routes — Brain Proxy (API Gateway → brain-svc)
+import { brainProxyRoutes } from "./routes/brain-proxy.js";
 
 // Routes — Health
 import { healthRoutes } from "./routes/health.js";
@@ -100,28 +107,33 @@ export async function buildApp() {
 
   // Register routes
   await app.register(healthRoutes);
-  await app.register(registerRoute);
-  await app.register(loginRoute);
-  await app.register(logoutRoute);
-  await app.register(oauthCallbackRoute);
-  await app.register(verifyEmailRoute);
-  await app.register(forgotPasswordRoute);
-  await app.register(resetPasswordRoute);
-  await app.register(refreshRoute);
-  await app.register(meRoute);
-  await app.register(updateProfileRoute);
-  await app.register(deleteAccountRoute);
-  await app.register(createTenantRoute);
-  await app.register(getTenantRoute);
-  await app.register(updateTenantRoute);
-  await app.register(createLearnerRoute);
-  await app.register(listLearnersRoute);
-  await app.register(getLearnerRoute);
-  await app.register(inviteTeacherRoute);
-  await app.register(inviteCaregiverRoute);
-  await app.register(acceptInvitationRoute);
-  await app.register(listInvitationsRoute);
-  await app.register(internalEmailRoute);
+  await app.register(async function apiRoutes(api) {
+    await api.register(registerRoute);
+    await api.register(loginRoute);
+    await api.register(logoutRoute);
+    await api.register(oauthCallbackRoute);
+    await api.register(verifyEmailRoute);
+    await api.register(forgotPasswordRoute);
+    await api.register(resetPasswordRoute);
+    await api.register(refreshRoute);
+    await api.register(sessionRoute);
+    await api.register(meRoute);
+    await api.register(updateProfileRoute);
+    await api.register(deleteAccountRoute);
+    await api.register(createTenantRoute);
+    await api.register(getTenantRoute);
+    await api.register(updateTenantRoute);
+    await api.register(createLearnerRoute);
+    await api.register(listLearnersRoute);
+    await api.register(getLearnerRoute);
+    await api.register(inviteTeacherRoute);
+    await api.register(inviteCaregiverRoute);
+    await api.register(acceptInvitationRoute);
+    await api.register(listInvitationsRoute);
+    await api.register(internalEmailRoute);
+    await api.register(baselineRoutes);
+    await api.register(brainProxyRoutes);
+  }, { prefix: "/api" });
 
   return app;
 }

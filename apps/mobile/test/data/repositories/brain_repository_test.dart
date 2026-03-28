@@ -1,4 +1,4 @@
-import 'package:flutter_test/flutter_test.dart';
+﻿import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:dio/dio.dart';
 
@@ -6,6 +6,7 @@ import 'package:aivo_mobile/core/api/api_client.dart';
 import 'package:aivo_mobile/core/connectivity/sync_manager.dart';
 import 'package:aivo_mobile/data/local/daos/brain_dao.dart';
 import 'package:aivo_mobile/data/local/daos/mastery_dao.dart';
+import 'package:aivo_mobile/data/local/database.dart';
 import 'package:aivo_mobile/data/models/brain_context.dart';
 import 'package:aivo_mobile/data/repositories/brain_repository.dart';
 
@@ -40,20 +41,11 @@ void main() {
       method: 'POST',
       payload: '{}',
     ));
-    registerFallbackValue(BrainContext(
-      brainStateId: 'bs-1',
+    registerFallbackValue(BrainSnapshotsCompanion.insert(
       learnerId: 'l-1',
+      brainStateId: 'bs-1',
       functioningLevel: 'standard',
-      diagnoses: const [],
-      accommodations: const {},
-      masteryLevels: const {},
-      learningPreferences: const {},
-      strengths: const [],
-      challenges: const [],
-      currentGoals: const [],
-      iepGoals: const [],
-      overallProgress: 0.0,
-      lastUpdated: DateTime.now(),
+      lastSyncedAt: DateTime(2025, 1, 1),
     ));
   });
 
@@ -91,23 +83,39 @@ void main() {
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
               ));
-      when(() => mockBrainDao.upsertSnapshot(any()))
-          .thenAnswer((_) async {});
+      when(() => mockBrainDao.saveBrainSnapshot(any()))
+          .thenAnswer((_) async => 1);
 
       final repo = _createRepo(isOnline: true);
       final result = await repo.getBrainContext('learner-1');
 
       expect(result.brainStateId, 'bs-1');
-      verify(() => mockBrainDao.upsertSnapshot(any())).called(1);
+      verify(() => mockBrainDao.saveBrainSnapshot(any())).called(1);
     });
 
     test('falls back to local cache on API error when online', () async {
       when(() => mockApi.get(any()))
           .thenThrow(DioException(requestOptions: RequestOptions(path: '')));
 
-      final localContext = BrainContext.fromJson(testBrainContextJson);
-      when(() => mockBrainDao.getSnapshot('learner-1'))
-          .thenAnswer((_) async => localContext);
+      final localSnapshotData = BrainSnapshotData(
+        id: 1,
+        learnerId: 'learner-1',
+        brainStateId: 'bs-1',
+        functioningLevel: 'standard',
+        diagnoses: '[]',
+        accommodations: '{}',
+        masteryLevels: '{}',
+        learningPreferences: '{}',
+        strengths: '[]',
+        challenges: '[]',
+        currentGoals: '[]',
+        iepGoals: '[]',
+        overallProgress: 0.5,
+        lastSyncedAt: DateTime(2025, 3, 1),
+        createdAt: DateTime(2025, 3, 1),
+      );
+      when(() => mockBrainDao.getBrainSnapshot('learner-1'))
+          .thenAnswer((_) async => localSnapshotData);
 
       final repo = _createRepo(isOnline: true);
       final result = await repo.getBrainContext('learner-1');
@@ -116,9 +124,25 @@ void main() {
     });
 
     test('reads from local cache when offline', () async {
-      final localContext = BrainContext.fromJson(testBrainContextJson);
-      when(() => mockBrainDao.getSnapshot('learner-1'))
-          .thenAnswer((_) async => localContext);
+      final localSnapshotData = BrainSnapshotData(
+        id: 1,
+        learnerId: 'learner-1',
+        brainStateId: 'bs-1',
+        functioningLevel: 'standard',
+        diagnoses: '[]',
+        accommodations: '{}',
+        masteryLevels: '{}',
+        learningPreferences: '{}',
+        strengths: '[]',
+        challenges: '[]',
+        currentGoals: '[]',
+        iepGoals: '[]',
+        overallProgress: 0.5,
+        lastSyncedAt: DateTime(2025, 3, 1),
+        createdAt: DateTime(2025, 3, 1),
+      );
+      when(() => mockBrainDao.getBrainSnapshot('learner-1'))
+          .thenAnswer((_) async => localSnapshotData);
 
       final repo = _createRepo(isOnline: false);
       final result = await repo.getBrainContext('learner-1');
@@ -128,7 +152,7 @@ void main() {
     });
 
     test('throws StateError when offline and no cache', () async {
-      when(() => mockBrainDao.getSnapshot('learner-1'))
+      when(() => mockBrainDao.getBrainSnapshot('learner-1'))
           .thenAnswer((_) async => null);
 
       final repo = _createRepo(isOnline: false);
@@ -148,14 +172,14 @@ void main() {
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
               ));
-      when(() => mockBrainDao.upsertSnapshot(any()))
-          .thenAnswer((_) async {});
+      when(() => mockBrainDao.saveBrainSnapshot(any()))
+          .thenAnswer((_) async => 1);
 
       final repo = _createRepo();
       final result = await repo.syncBrainSnapshot('learner-1');
 
       expect(result.overallProgress, 0.5);
-      verify(() => mockBrainDao.upsertSnapshot(any())).called(1);
+      verify(() => mockBrainDao.saveBrainSnapshot(any())).called(1);
     });
   });
 
@@ -201,9 +225,25 @@ void main() {
 
   group('getLocalBrainSnapshot', () {
     test('returns cached snapshot', () async {
-      final ctx = BrainContext.fromJson(testBrainContextJson);
-      when(() => mockBrainDao.getSnapshot('learner-1'))
-          .thenAnswer((_) async => ctx);
+      final localSnapshotData = BrainSnapshotData(
+        id: 1,
+        learnerId: 'learner-1',
+        brainStateId: 'bs-1',
+        functioningLevel: 'standard',
+        diagnoses: '[]',
+        accommodations: '{}',
+        masteryLevels: '{}',
+        learningPreferences: '{}',
+        strengths: '[]',
+        challenges: '[]',
+        currentGoals: '[]',
+        iepGoals: '[]',
+        overallProgress: 0.5,
+        lastSyncedAt: DateTime(2025, 3, 1),
+        createdAt: DateTime(2025, 3, 1),
+      );
+      when(() => mockBrainDao.getBrainSnapshot('learner-1'))
+          .thenAnswer((_) async => localSnapshotData);
 
       final repo = _createRepo();
       final result = await repo.getLocalBrainSnapshot('learner-1');

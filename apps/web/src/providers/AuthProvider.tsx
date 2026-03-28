@@ -10,10 +10,10 @@ interface SessionResponse {
     id: string;
     email: string;
     name: string;
-    role: "parent" | "therapist" | "educator" | "admin";
+    role: string;
     avatarUrl?: string;
   };
-  token: string;
+  token?: string;
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -26,8 +26,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         const data = await apiFetch<SessionResponse>(AUTH_ROUTES.SESSION);
         if (!cancelled) {
-          setUser(data.user);
-          setToken(data.token);
+          setUser({ ...data.user, role: data.user.role.toLowerCase() as "parent" | "therapist" | "educator" | "admin" });
+          setToken(data.token ?? "");
         }
       } catch {
         if (!cancelled) {

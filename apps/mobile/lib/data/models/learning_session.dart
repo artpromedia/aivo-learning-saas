@@ -1,6 +1,7 @@
 /// Learning session models for tracking lesson progress, interactions,
 /// and learning path items in the AIVO Learning mobile app.
 
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 
 class LearningSession {
@@ -232,7 +233,7 @@ class Interaction {
         other.id == id &&
         other.type == type &&
         other.prompt == prompt &&
-        mapEquals(other.data, data) &&
+        const DeepCollectionEquality().equals(other.data, data) &&
         other.studentResponse == studentResponse &&
         other.isCorrect == isCorrect &&
         other.feedback == feedback &&
