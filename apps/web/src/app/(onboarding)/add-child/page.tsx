@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { User, Calendar, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardBody } from "@/components/ui/Card";
@@ -12,42 +13,43 @@ import { apiFetch } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
 import { useLearnerStore } from "@/stores/learner.store";
 
-const addChildSchema = z.object({
-  name: z.string().min(1, "Child's name is required").max(50),
-  dateOfBirth: z.string().min(1, "Date of birth is required"),
-  enrolledGrade: z.string().min(1, "Please select a grade"),
-});
-
-type AddChildForm = z.infer<typeof addChildSchema>;
-
-const GRADES = [
-  "Pre-K",
-  "Kindergarten",
-  "1st Grade",
-  "2nd Grade",
-  "3rd Grade",
-  "4th Grade",
-  "5th Grade",
-  "6th Grade",
-  "7th Grade",
-  "8th Grade",
-  "9th Grade",
-  "10th Grade",
-  "11th Grade",
-  "12th Grade",
-];
+const GRADE_KEYS = [
+  "preK",
+  "kindergarten",
+  "grade1",
+  "grade2",
+  "grade3",
+  "grade4",
+  "grade5",
+  "grade6",
+  "grade7",
+  "grade8",
+  "grade9",
+  "grade10",
+  "grade11",
+  "grade12",
+] as const;
 
 function gradeToNumber(grade: string): number {
-  if (grade === "Pre-K") return 0;
-  if (grade === "Kindergarten") return 0;
-  const match = grade.match(/^(\d+)/);
+  if (grade === "preK") return 0;
+  if (grade === "kindergarten") return 0;
+  const match = grade.match(/^grade(\d+)/);
   return match ? parseInt(match[1], 10) : 0;
 }
 
 export default function AddChildPage() {
   const router = useRouter();
+  const t = useTranslations("onboarding");
   const { addLearner, setActiveLearner } = useLearnerStore();
   const [serverError, setServerError] = useState<string | null>(null);
+
+  const addChildSchema = z.object({
+    name: z.string().min(1, t("childNameRequired")).max(50),
+    dateOfBirth: z.string().min(1, t("dateOfBirth")),
+    enrolledGrade: z.string().min(1, t("selectGradeRequired")),
+  });
+
+  type AddChildForm = z.infer<typeof addChildSchema>;
 
   const {
     register,
@@ -97,7 +99,7 @@ export default function AddChildPage() {
       router.push("/parent-assessment");
     } catch (err) {
       setServerError(
-        err instanceof Error ? err.message : "Failed to add child",
+        err instanceof Error ? err.message : t("failedToAddChild"),
       );
     }
   };
@@ -109,10 +111,10 @@ export default function AddChildPage() {
           <User className="text-[#7C3AED]" size={32} />
         </div>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Tell us about your child
+          {t("tellUsAboutChild")}
         </h1>
         <p className="mt-2 text-gray-500 dark:text-gray-400">
-          This helps us create a personalized learning experience.
+          {t("tellUsAboutChildSubtitle")}
         </p>
       </div>
 
@@ -130,7 +132,7 @@ export default function AddChildPage() {
                 htmlFor="name"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
               >
-                Child&apos;s name
+                {t("childName")}
               </label>
               <div className="relative">
                 <User
@@ -142,7 +144,7 @@ export default function AddChildPage() {
                   type="text"
                   {...register("name")}
                   className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-shadow"
-                  placeholder="First name"
+                  placeholder={t("firstName")}
                 />
               </div>
               {errors.name && (
@@ -157,7 +159,7 @@ export default function AddChildPage() {
                 htmlFor="dateOfBirth"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
               >
-                Date of birth
+                {t("dateOfBirth")}
               </label>
               <div className="relative">
                 <Calendar
@@ -183,7 +185,7 @@ export default function AddChildPage() {
                 htmlFor="enrolledGrade"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
               >
-                Enrolled grade
+                {t("enrolledGrade")}
               </label>
               <div className="relative">
                 <GraduationCap
@@ -195,10 +197,10 @@ export default function AddChildPage() {
                   {...register("enrolledGrade")}
                   className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-shadow appearance-none"
                 >
-                  <option value="">Select a grade</option>
-                  {GRADES.map((grade) => (
-                    <option key={grade} value={grade}>
-                      {grade}
+                  <option value="">{t("selectGrade")}</option>
+                  {GRADE_KEYS.map((key) => (
+                    <option key={key} value={key}>
+                      {t(key)}
                     </option>
                   ))}
                 </select>
@@ -217,7 +219,7 @@ export default function AddChildPage() {
                 className="w-full"
                 size="lg"
               >
-                Continue
+                {t("continue")}
               </Button>
             </div>
           </form>

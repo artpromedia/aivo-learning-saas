@@ -7,34 +7,40 @@ import { z } from "zod";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { User, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { AivoLogo } from "@/components/brand/AivoLogo";
 import { Button } from "@/components/ui/Button";
 import { apiFetch } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
 
-const registerSchema = z
-  .object({
-    name: z.string().min(2, "Name must be at least 2 characters"),
-    email: z.string().email("Please enter a valid email address"),
-    password: z
-      .string()
-      .min(8, "Password must be at least 8 characters")
-      .regex(/[A-Z]/, "Must contain at least one uppercase letter")
-      .regex(/[a-z]/, "Must contain at least one lowercase letter")
-      .regex(/[0-9]/, "Must contain at least one number"),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
+type RegisterForm = z.infer<ReturnType<typeof createRegisterSchema>>;
 
-type RegisterForm = z.infer<typeof registerSchema>;
+function createRegisterSchema(t: (key: string) => string) {
+  return z
+    .object({
+      name: z.string().min(2, t("nameMinLength")),
+      email: z.string().email(t("emailInvalid")),
+      password: z
+        .string()
+        .min(8, t("passwordMinLength"))
+        .regex(/[A-Z]/, t("passwordUppercase"))
+        .regex(/[a-z]/, t("passwordLowercase"))
+        .regex(/[0-9]/, t("passwordNumber")),
+      confirmPassword: z.string(),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: t("passwordsMismatch"),
+      path: ["confirmPassword"],
+    });
+}
 
 export default function RegisterPage() {
+  const t = useTranslations("auth");
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+
+  const registerSchema = createRegisterSchema(t);
 
   const {
     register,
@@ -60,7 +66,7 @@ export default function RegisterPage() {
       setServerError(
         err instanceof Error
           ? err.message
-          : "Registration failed. Please try again.",
+          : t("registrationFailed"),
       );
     }
   };
@@ -71,10 +77,10 @@ export default function RegisterPage() {
         <div className="flex flex-col items-center mb-8">
           <AivoLogo size="lg" />
           <h1 className="mt-4 text-2xl font-bold text-gray-900 dark:text-white">
-            Create your account
+            {t("createYourAccount")}
           </h1>
           <p className="mt-1 text-gray-500 dark:text-gray-400">
-            Start your child&apos;s personalized learning journey
+            {t("registerSubtitle")}
           </p>
         </div>
 
@@ -91,7 +97,7 @@ export default function RegisterPage() {
                 htmlFor="name"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
               >
-                Full name
+                {t("fullName")}
               </label>
               <div className="relative">
                 <User
@@ -104,7 +110,7 @@ export default function RegisterPage() {
                   autoComplete="name"
                   {...register("name")}
                   className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-shadow"
-                  placeholder="Your full name"
+                  placeholder={t("fullNamePlaceholder")}
                 />
               </div>
               {errors.name && (
@@ -119,7 +125,7 @@ export default function RegisterPage() {
                 htmlFor="email"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
               >
-                Email address
+                {t("emailAddress")}
               </label>
               <div className="relative">
                 <Mail
@@ -132,7 +138,7 @@ export default function RegisterPage() {
                   autoComplete="email"
                   {...register("email")}
                   className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-shadow"
-                  placeholder="parent@example.com"
+                  placeholder={t("emailPlaceholder")}
                 />
               </div>
               {errors.email && (
@@ -147,7 +153,7 @@ export default function RegisterPage() {
                 htmlFor="password"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
               >
-                Password
+                {t("password")}
               </label>
               <div className="relative">
                 <Lock
@@ -160,7 +166,7 @@ export default function RegisterPage() {
                   autoComplete="new-password"
                   {...register("password")}
                   className="w-full pl-10 pr-12 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-shadow"
-                  placeholder="Min. 8 characters"
+                  placeholder={t("passwordHint")}
                 />
                 <button
                   type="button"
@@ -183,7 +189,7 @@ export default function RegisterPage() {
                 htmlFor="confirmPassword"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
               >
-                Confirm password
+                {t("confirmPassword")}
               </label>
               <div className="relative">
                 <Lock
@@ -196,7 +202,7 @@ export default function RegisterPage() {
                   autoComplete="new-password"
                   {...register("confirmPassword")}
                   className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-shadow"
-                  placeholder="Confirm your password"
+                  placeholder={t("confirmPasswordPlaceholder")}
                 />
               </div>
               {errors.confirmPassword && (
@@ -212,30 +218,30 @@ export default function RegisterPage() {
               className="w-full"
               size="lg"
             >
-              Create account
+              {t("createAccount")}
             </Button>
           </form>
 
           <p className="mt-4 text-xs text-gray-500 dark:text-gray-400 text-center">
-            By creating an account, you agree to our{" "}
+            {t("termsAgreement")}{" "}
             <a href="/terms" className="text-[#7C3AED] hover:underline">
-              Terms of Service
+              {t("termsOfService")}
             </a>{" "}
-            and{" "}
+            &{" "}
             <a href="/privacy" className="text-[#7C3AED] hover:underline">
-              Privacy Policy
+              {t("privacyPolicy")}
             </a>
             .
           </p>
         </div>
 
         <p className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
-          Already have an account?{" "}
+          {t("alreadyHaveAccount")}{" "}
           <Link
             href="/login"
             className="text-[#7C3AED] hover:text-[#6B3FE8] font-semibold"
           >
-            Sign in
+            {t("signIn")}
           </Link>
         </p>
       </div>

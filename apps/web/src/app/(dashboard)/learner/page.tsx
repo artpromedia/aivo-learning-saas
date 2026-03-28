@@ -13,6 +13,7 @@ import {
   ChevronRight,
   Clock,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -35,6 +36,7 @@ interface LearningActivity {
 }
 
 export default function LearnerHomePage() {
+  const t = useTranslations("dashboard");
   const activeLearner = useLearnerStore((s) => s.activeLearner);
   const { xp, streak, level, isLoading: engLoading } = useEngagement(activeLearner?.id);
 
@@ -52,7 +54,7 @@ export default function LearnerHomePage() {
         );
         setActivities(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load activities");
+        setError(err instanceof Error ? err.message : t("failedToLoadActivities"));
       } finally {
         setLoading(false);
       }
@@ -80,10 +82,10 @@ export default function LearnerHomePage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold">
-              Hey, {activeLearner?.name ?? "Learner"}!
+              {t("heyName", { name: activeLearner?.name ?? "Learner" })}
             </h1>
             <p className="mt-1 text-white/80">
-              Ready to learn something awesome today?
+              {t("readyToLearn")}
             </p>
           </div>
           <div className="flex items-center gap-4">
@@ -92,14 +94,14 @@ export default function LearnerHomePage() {
                 <Trophy size={16} />
                 <span className="font-bold">{xp?.totalXp ?? 0}</span>
               </div>
-              <span className="text-xs text-white/70">XP</span>
+              <span className="text-xs text-white/70">{t("xp")}</span>
             </div>
             <div className="text-center">
               <div className="flex items-center gap-1">
                 <Flame size={16} />
                 <span className="font-bold">{streak?.currentStreak ?? 0}</span>
               </div>
-              <span className="text-xs text-white/70">Streak</span>
+              <span className="text-xs text-white/70">{t("streak")}</span>
             </div>
           </div>
         </div>
@@ -112,7 +114,7 @@ export default function LearnerHomePage() {
             <CardBody className="flex flex-col items-center justify-center text-center py-5">
               <Compass className="text-[#7C3AED] mb-1" size={24} />
               <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Quests
+                {t("questsLabel")}
               </span>
             </CardBody>
           </Card>
@@ -122,7 +124,7 @@ export default function LearnerHomePage() {
             <CardBody className="flex flex-col items-center justify-center text-center py-5">
               <Bot className="text-[#7C3AED] mb-1" size={24} />
               <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Tutors
+                {t("tutors")}
               </span>
             </CardBody>
           </Card>
@@ -132,7 +134,7 @@ export default function LearnerHomePage() {
             <CardBody className="flex flex-col items-center justify-center text-center py-5">
               <BookOpen className="text-[#7C3AED] mb-1" size={24} />
               <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Homework
+                {t("homework")}
               </span>
             </CardBody>
           </Card>
@@ -141,7 +143,7 @@ export default function LearnerHomePage() {
 
       {/* Today's Activities */}
       <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-        Today&apos;s Learning Path
+        {t("todaysLearningPath")}
       </h2>
 
       {error && (
@@ -161,13 +163,13 @@ export default function LearnerHomePage() {
           <CardBody className="text-center py-12">
             <Sparkles className="mx-auto mb-3 text-[#7C3AED]" size={40} />
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              All caught up!
+              {t("allCaughtUp")}
             </h3>
             <p className="text-gray-500 dark:text-gray-400 mb-4">
-              No activities scheduled for today. Explore quests or practice on your own.
+              {t("noActivitiesScheduled")}
             </p>
             <Link href="/learner/quests">
-              <Button>Explore Quests</Button>
+              <Button>{t("exploreQuests")}</Button>
             </Link>
           </CardBody>
         </Card>

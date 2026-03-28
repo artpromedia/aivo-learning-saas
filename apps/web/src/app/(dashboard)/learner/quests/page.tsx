@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Compass, Loader2, RefreshCw, Lock, Star, ChevronRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -37,6 +38,7 @@ const WORLD_GRADIENTS = [
 ];
 
 export default function QuestsPage() {
+  const t = useTranslations("dashboard");
   const activeLearner = useLearnerStore((s) => s.activeLearner);
   const [worlds, setWorlds] = useState<QuestWorld[]>([]);
   const [loading, setLoading] = useState(true);
@@ -52,7 +54,7 @@ export default function QuestsPage() {
         );
         setWorlds(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load quests");
+        setError(err instanceof Error ? err.message : t("failedToLoadQuests"));
       } finally {
         setLoading(false);
       }
@@ -83,7 +85,7 @@ export default function QuestsPage() {
           onClick={() => window.location.reload()}
           leftIcon={<RefreshCw size={16} />}
         >
-          Retry
+          {t("retry")}
         </Button>
       </div>
     );
@@ -95,10 +97,9 @@ export default function QuestsPage() {
         <div className="flex items-center gap-3">
           <Compass size={32} />
           <div>
-            <h1 className="text-2xl font-bold">Quest Worlds</h1>
+            <h1 className="text-2xl font-bold">{t("questWorlds")}</h1>
             <p className="text-white/80 text-sm">
-              Explore different worlds and complete learning quests to earn XP
-              and badges.
+              {t("questWorldsDescription")}
             </p>
           </div>
         </div>
@@ -109,11 +110,10 @@ export default function QuestsPage() {
           <CardBody className="text-center py-12">
             <Compass className="mx-auto mb-3 text-gray-400" size={48} />
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              No quests available
+              {t("noQuestsAvailable")}
             </h3>
             <p className="text-gray-500 dark:text-gray-400">
-              Quests will be unlocked as you progress through your learning
-              journey.
+              {t("questsWillBeUnlocked")}
             </p>
           </CardBody>
         </Card>
@@ -141,10 +141,10 @@ export default function QuestsPage() {
                             {world.name}
                           </h3>
                           <p className="text-sm text-gray-500 dark:text-gray-400">
-                            Requires Level {world.requiredLevel} to unlock
+                            {t("requiresLevel", { level: world.requiredLevel })}
                           </p>
                         </div>
-                        <Badge variant="secondary">Locked</Badge>
+                        <Badge variant="secondary">{t("locked")}</Badge>
                       </div>
                     </CardBody>
                   </Card>

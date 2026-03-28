@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Swords, Loader2, RefreshCw, Users, Clock, Trophy, Zap } from "lucide-react";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -25,6 +26,7 @@ interface Challenge {
 }
 
 export default function ChallengesPage() {
+  const t = useTranslations("dashboard");
   const activeLearner = useLearnerStore((s) => s.activeLearner);
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [loading, setLoading] = useState(true);
@@ -41,7 +43,7 @@ export default function ChallengesPage() {
         );
         setChallenges(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load challenges");
+        setError(err instanceof Error ? err.message : t("failedToLoadChallenges"));
       } finally {
         setLoading(false);
       }
@@ -66,16 +68,16 @@ export default function ChallengesPage() {
         ),
       );
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to join challenge");
+      setError(err instanceof Error ? err.message : t("failedToJoinChallenge"));
     } finally {
       setJoiningId(null);
     }
   };
 
   const typeLabels: Record<string, string> = {
-    "1v1": "1 vs 1",
-    team: "Team Battle",
-    global: "Global",
+    "1v1": t("oneVsOne"),
+    team: t("teamBattle"),
+    global: t("global"),
   };
 
   const difficultyVariant: Record<string, "success" | "warning" | "error"> = {
@@ -122,9 +124,9 @@ export default function ChallengesPage() {
         <div className="flex items-center gap-3">
           <Swords size={32} />
           <div>
-            <h1 className="text-2xl font-bold">Challenges</h1>
+            <h1 className="text-2xl font-bold">{t("challenges")}</h1>
             <p className="text-white/80 text-sm">
-              Compete with other learners and earn extra XP!
+              {t("challengesDescription")}
             </p>
           </div>
         </div>

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Plus, Brain, BookOpen, Trophy, ChevronRight, Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -25,6 +26,7 @@ interface LearnerSummary {
 }
 
 export default function ParentDashboardPage() {
+  const t = useTranslations("dashboard");
   const { user } = useAuth();
   const [learners, setLearners] = useState<LearnerSummary[]>([]);
   const [loading, setLoading] = useState(true);
@@ -36,7 +38,7 @@ export default function ParentDashboardPage() {
         const data = await apiFetch<{ learners: LearnerSummary[] }>(API_ROUTES.LEARNER.LIST);
         setLearners(data.learners ?? []);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load learners");
+        setError(err instanceof Error ? err.message : t("failedToLoadLearners"));
       } finally {
         setLoading(false);
       }
@@ -48,15 +50,15 @@ export default function ParentDashboardPage() {
   const levelLabel = (fl: string) => {
     switch (fl) {
       case "STANDARD":
-        return "Standard";
+        return t("standard");
       case "SUPPORTED":
-        return "Supported";
+        return t("supported");
       case "LOW_VERBAL":
-        return "Low Verbal";
+        return t("lowVerbal");
       case "NON_VERBAL":
-        return "Non-Verbal";
+        return t("nonVerbal");
       case "PRE_SYMBOLIC":
-        return "Pre-Symbolic";
+        return t("preSymbolic");
       default:
         return fl;
     }
@@ -66,10 +68,10 @@ export default function ParentDashboardPage() {
     <div>
       <PurpleGradientHeader className="rounded-xl mb-8">
         <h1 className="text-2xl font-bold">
-          Welcome back, {user?.name?.split(" ")[0] ?? "Parent"}
+          {t("welcomeBack", { name: user?.name?.split(" ")[0] ?? "Parent" })}
         </h1>
         <p className="mt-1 text-white/80">
-          Here&apos;s how your children are doing today.
+          {t("childrenOverview")}
         </p>
       </PurpleGradientHeader>
 
@@ -81,11 +83,11 @@ export default function ParentDashboardPage() {
 
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-          Your Children
+          {t("yourChildren")}
         </h2>
         <Link href="/add-child">
           <Button size="sm" leftIcon={<Plus size={16} />}>
-            Add Child
+            {t("addChild")}
           </Button>
         </Link>
       </div>
@@ -112,13 +114,13 @@ export default function ParentDashboardPage() {
               <Plus className="text-[#7C3AED]" size={32} />
             </div>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              No children added yet
+              {t("noChildrenYet")}
             </h3>
             <p className="text-gray-500 dark:text-gray-400 mb-4">
-              Add your first child to start their personalized learning journey.
+              {t("addChildPrompt")}
             </p>
             <Link href="/add-child">
-              <Button leftIcon={<Plus size={18} />}>Add Your First Child</Button>
+              <Button leftIcon={<Plus size={18} />}>{t("addYourFirstChild")}</Button>
             </Link>
           </CardBody>
         </Card>
@@ -154,27 +156,27 @@ export default function ParentDashboardPage() {
                             <Trophy size={14} />
                             <span className="text-sm font-bold">{learner.totalXp}</span>
                           </div>
-                          <span className="text-xs text-gray-500">XP</span>
+                          <span className="text-xs text-gray-500">{t("xp")}</span>
                         </div>
                         <div className="text-center">
                           <div className="flex items-center justify-center gap-1 text-orange-500">
                             <span className="text-sm">🔥</span>
                             <span className="text-sm font-bold">{learner.currentStreak}</span>
                           </div>
-                          <span className="text-xs text-gray-500">Streak</span>
+                          <span className="text-xs text-gray-500">{t("streak")}</span>
                         </div>
                         <div className="text-center">
                           <div className="flex items-center justify-center gap-1 text-[#38B2AC]">
                             <BookOpen size={14} />
                             <span className="text-sm font-bold">Lv.{learner.level}</span>
                           </div>
-                          <span className="text-xs text-gray-500">Level</span>
+                          <span className="text-xs text-gray-500">{t("level")}</span>
                         </div>
                       </div>
 
                       <div className="mt-3">
                         <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
-                          <span>Today&apos;s progress</span>
+                          <span>{t("todaysProgress")}</span>
                           <span>{learner.todayProgress}%</span>
                         </div>
                         <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">

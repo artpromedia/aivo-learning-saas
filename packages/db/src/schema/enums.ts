@@ -200,3 +200,15 @@ export const functionalDomainEnum = pgEnum("functional_domain", [
   "PRE_ACADEMIC",
   "MOTOR_SENSORY",
 ]);
+
+// i18n
+export const localeDirectionEnum = pgEnum("locale_direction", [
+  "LTR",
+  "RTL",
+]);
+
+export const translationExportFormatEnum = pgEnum("translation_export_format", [
+  "JSON",
+  "ARB",
+  "ICU",
+]);

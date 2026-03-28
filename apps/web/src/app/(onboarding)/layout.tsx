@@ -2,20 +2,21 @@
 
 import React from "react";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { AivoLogo } from "@/components/brand/AivoLogo";
 import { ProgressStepper } from "@/components/onboarding/ProgressStepper";
 
-const ONBOARDING_STEPS = [
-  { path: "/add-child", label: "Add Child" },
-  { path: "/parent-assessment", label: "Assessment" },
-  { path: "/iep-upload", label: "IEP Upload" },
-  { path: "/baseline-assessment", label: "Baseline" },
-  { path: "/brain-profile-reveal", label: "Brain Profile" },
-  { path: "/complete", label: "Complete" },
-];
+const ONBOARDING_STEP_KEYS = [
+  { path: "/add-child", labelKey: "addChild" },
+  { path: "/parent-assessment", labelKey: "assessment" },
+  { path: "/iep-upload", labelKey: "iepUpload" },
+  { path: "/baseline-assessment", labelKey: "baseline" },
+  { path: "/brain-profile-reveal", labelKey: "brainProfile" },
+  { path: "/complete", labelKey: "complete" },
+] as const;
 
 function getCurrentStep(pathname: string): number {
-  const index = ONBOARDING_STEPS.findIndex((step) =>
+  const index = ONBOARDING_STEP_KEYS.findIndex((step) =>
     pathname.includes(step.path),
   );
   return index >= 0 ? index + 1 : 1;
@@ -27,6 +28,7 @@ export default function OnboardingLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const t = useTranslations("onboarding");
   const currentStep = getCurrentStep(pathname);
 
   return (
@@ -35,16 +37,16 @@ export default function OnboardingLayout({
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <AivoLogo size="sm" />
           <span className="text-sm text-gray-500 dark:text-gray-400">
-            Step {currentStep} of {ONBOARDING_STEPS.length}
+            {t("stepProgress", { current: currentStep, total: ONBOARDING_STEP_KEYS.length })}
           </span>
         </div>
       </header>
 
       <div className="max-w-3xl mx-auto px-6 py-6">
         <ProgressStepper
-          totalSteps={ONBOARDING_STEPS.length}
+          totalSteps={ONBOARDING_STEP_KEYS.length}
           currentStep={currentStep}
-          labels={ONBOARDING_STEPS.map((s) => s.label)}
+          labels={ONBOARDING_STEP_KEYS.map((s) => t(s.labelKey))}
           className="mb-8"
         />
       </div>

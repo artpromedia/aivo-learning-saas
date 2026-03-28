@@ -9,6 +9,7 @@ import {
   Coins,
   Check,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -32,13 +33,7 @@ interface ShopItem {
   equipped: boolean;
 }
 
-const CATEGORY_LABELS: Record<string, string> = {
-  hair: "Hair",
-  outfit: "Outfits",
-  accessory: "Accessories",
-  background: "Backgrounds",
-  effect: "Effects",
-};
+// Category labels will be resolved via t() in the component
 
 const RARITY_COLORS: Record<string, string> = {
   common: "secondary",
@@ -47,7 +42,15 @@ const RARITY_COLORS: Record<string, string> = {
   legendary: "error",
 };
 
+const RARITY_KEYS: Record<string, string> = {
+  common: "common",
+  rare: "rare",
+  epic: "epic",
+  legendary: "legendary",
+};
+
 export default function ShopPage() {
+  const t = useTranslations("dashboard");
   const activeLearner = useLearnerStore((s) => s.activeLearner);
   const { xp } = useEngagement(activeLearner?.id);
 
@@ -64,7 +67,7 @@ export default function ShopPage() {
         const data = await apiFetch<ShopItem[]>(API_ROUTES.SHOP.ITEMS);
         setItems(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load shop");
+        setError(err instanceof Error ? err.message : t("failedToLoadShop"));
       } finally {
         setLoading(false);
       }
@@ -88,7 +91,7 @@ export default function ShopPage() {
       );
       setSelectedItem(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Purchase failed");
+      setError(err instanceof Error ? err.message : t("purchaseFailed"));
     } finally {
       setPurchasing(false);
     }
@@ -134,9 +137,9 @@ export default function ShopPage() {
           <div className="flex items-center gap-3">
             <ShoppingBag size={32} />
             <div>
-              <h1 className="text-2xl font-bold">Avatar Shop</h1>
+              <h1 className="text-2xl font-bold">{t("avatarShop")}</h1>
               <p className="text-white/80 text-sm">
-                Customize your avatar with items earned through XP.
+                {t("shopSubtitle")}
               </p>
             </div>
           </div>
@@ -176,7 +179,7 @@ export default function ShopPage() {
                 : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
             }`}
           >
-            {CATEGORY_LABELS[cat] ?? cat}
+            {t(cat === "outfit" ? "outfits" : cat === "accessory" ? "accessories" : cat === "background" ? "backgrounds" : cat === "effect" ? "effects" : cat)}
           </button>
         ))}
       </div>

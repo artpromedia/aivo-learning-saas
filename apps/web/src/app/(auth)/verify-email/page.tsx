@@ -4,11 +4,13 @@ import React, { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle, XCircle, Loader2, Mail } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { AivoLogo } from "@/components/brand/AivoLogo";
 import { Button } from "@/components/ui/Button";
 import { apiFetch } from "@/lib/api";
 
 function VerifyEmailContent() {
+  const t = useTranslations("auth");
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
   const email = searchParams.get("email");
@@ -32,7 +34,7 @@ function VerifyEmailContent() {
       } catch (err) {
         setStatus("error");
         setErrorMessage(
-          err instanceof Error ? err.message : "Verification failed",
+          err instanceof Error ? err.message : t("verificationFailed"),
         );
       }
     }
@@ -68,10 +70,10 @@ function VerifyEmailContent() {
                 size={48}
               />
               <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                Verifying your email
+                {t("verifyingEmail")}
               </h1>
               <p className="text-gray-500 dark:text-gray-400">
-                Please wait while we verify your email address...
+                {t("verifyingEmailDescription")}
               </p>
             </>
           )}
@@ -83,15 +85,14 @@ function VerifyEmailContent() {
                 size={48}
               />
               <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                Email verified!
+                {t("emailVerified")}
               </h1>
               <p className="text-gray-500 dark:text-gray-400 mb-6">
-                Your email has been successfully verified. You can now sign in to
-                your account.
+                {t("emailVerifiedDescription")}
               </p>
               <Link href="/login">
                 <Button className="w-full" size="lg">
-                  Continue to sign in
+                  {t("continueToSignIn")}
                 </Button>
               </Link>
             </>
@@ -101,11 +102,11 @@ function VerifyEmailContent() {
             <>
               <XCircle className="mx-auto mb-4 text-red-500" size={48} />
               <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                Verification failed
+                {t("verificationFailed")}
               </h1>
               <p className="text-gray-500 dark:text-gray-400 mb-6">
                 {errorMessage ||
-                  "The verification link may have expired or is invalid."}
+                  t("verificationLinkExpired")}
               </p>
               <div className="space-y-3">
                 <Button
@@ -114,11 +115,11 @@ function VerifyEmailContent() {
                   variant="outline"
                   className="w-full"
                 >
-                  Resend verification email
+                  {t("resendVerificationEmail")}
                 </Button>
                 <Link href="/login">
                   <Button variant="ghost" className="w-full">
-                    Back to sign in
+                    {t("backToSignIn")}
                   </Button>
                 </Link>
               </div>
@@ -131,10 +132,10 @@ function VerifyEmailContent() {
                 <Mail className="text-[#7C3AED]" size={32} />
               </div>
               <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                Check your email
+                {t("checkYourEmail")}
               </h1>
               <p className="text-gray-500 dark:text-gray-400 mb-2">
-                We&apos;ve sent a verification link to:
+                {t("verificationSentTo")}
               </p>
               {email && (
                 <p className="font-semibold text-gray-900 dark:text-white mb-6">
@@ -142,8 +143,7 @@ function VerifyEmailContent() {
                 </p>
               )}
               <p className="text-sm text-gray-400 dark:text-gray-500 mb-6">
-                Click the link in the email to verify your account. If you
-                don&apos;t see it, check your spam folder.
+                {t("verificationSentDescription")}
               </p>
               <div className="space-y-3">
                 <Button
@@ -153,11 +153,11 @@ function VerifyEmailContent() {
                   className="w-full"
                   disabled={!email}
                 >
-                  Resend verification email
+                  {t("resendVerificationEmail")}
                 </Button>
                 <Link href="/login">
                   <Button variant="ghost" className="w-full">
-                    Back to sign in
+                    {t("backToSignIn")}
                   </Button>
                 </Link>
               </div>

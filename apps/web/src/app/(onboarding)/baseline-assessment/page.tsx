@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Brain, ChevronRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardBody } from "@/components/ui/Card";
@@ -31,6 +32,7 @@ interface AnswerResult {
 export default function BaselineAssessmentPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations("onboarding");
   const activeLearner = useLearnerStore((s) => s.activeLearner);
   const learnerId = activeLearner?.id ?? searchParams.get("learnerId");
 
@@ -55,7 +57,7 @@ export default function BaselineAssessmentPage() {
         setQuestion(data.question);
         setProgress(data.progress);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to start assessment");
+        setError(err instanceof Error ? err.message : t("failedToStartAssessment"));
       } finally {
         setLoading(false);
       }
@@ -97,7 +99,7 @@ export default function BaselineAssessmentPage() {
         }
       }, 1500);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to submit answer");
+      setError(err instanceof Error ? err.message : t("failedToSubmitAnswer"));
     } finally {
       setIsSubmitting(false);
     }
@@ -111,7 +113,7 @@ export default function BaselineAssessmentPage() {
       });
       router.push("/brain-profile-reveal");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to complete assessment");
+      setError(err instanceof Error ? err.message : t("failedToCompleteAssessment"));
     }
   };
 
@@ -120,7 +122,7 @@ export default function BaselineAssessmentPage() {
       <div className="text-center py-16">
         <Loader2 className="mx-auto mb-4 text-[#7C3AED] animate-spin" size={48} />
         <p className="text-gray-500 dark:text-gray-400">
-          Preparing personalized assessment...
+          {t("preparingAssessment")}
         </p>
       </div>
     );
@@ -133,12 +135,10 @@ export default function BaselineAssessmentPage() {
           <Brain className="text-[#7C3AED]" size={32} />
         </div>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Baseline Assessment
+          {t("baselineAssessment")}
         </h1>
         <p className="mt-2 text-gray-500 dark:text-gray-400">
-          This adaptive assessment helps us understand{" "}
-          {activeLearner?.name ? `${activeLearner.name}'s` : "your child's"}{" "}
-          current skill levels. There are no wrong answers.
+          {t("baselineDescription", { name: activeLearner?.name ?? "" })}
         </p>
       </div>
 
@@ -146,7 +146,7 @@ export default function BaselineAssessmentPage() {
 
       <div className="flex items-center justify-between mb-4">
         <span className="text-sm text-gray-500 dark:text-gray-400">
-          Questions answered: {questionsAnswered}
+          {t("questionsAnswered", { count: questionsAnswered })}
         </span>
         {question && (
           <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-[#7C3AED]/10 text-[#7C3AED]">
@@ -219,7 +219,7 @@ export default function BaselineAssessmentPage() {
                 onChange={(e) => setSelectedAnswer(e.target.value)}
                 disabled={!!feedback}
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none text-lg"
-                placeholder="Type your answer..."
+                placeholder={t("typeAnswer")}
               />
             )}
 
@@ -231,7 +231,7 @@ export default function BaselineAssessmentPage() {
                 rightIcon={<ChevronRight size={18} />}
                 size="lg"
               >
-                Submit Answer
+                {t("submitAnswer")}
               </Button>
             </div>
           </CardBody>

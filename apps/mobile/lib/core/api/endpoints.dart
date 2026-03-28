@@ -190,4 +190,14 @@ class Endpoints {
   static const String billingPlans = '/billing/plans';
   static const String billingSubscriptions = '/billing/subscriptions';
   static const String billingAddons = '/billing/addons';
+
+  // ---------------------------------------------------------------------------
+  // i18n
+  // ---------------------------------------------------------------------------
+  static const String i18nLocales = '/i18n/locales';
+  static String i18nTranslations(String locale) => '/i18n/translations/$locale';
+  static String i18nTranslationsNamespace(String locale, String namespace) =>
+      '/i18n/translations/$locale/$namespace';
+  static String i18nExport(String locale) => '/i18n/export/$locale';
+  static const String i18nExportCoverage = '/i18n/export/coverage';
 }

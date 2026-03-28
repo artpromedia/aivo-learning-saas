@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:aivo_mobile/config/routes.dart';
 import 'package:aivo_mobile/config/theme.dart';
+import 'package:aivo_mobile/core/i18n/locale_provider.dart';
 
 // ---------------------------------------------------------------------------
 // Accessibility providers
@@ -37,6 +39,7 @@ class AivoApp extends ConsumerWidget {
     final router = ref.watch(routerProvider);
     final useDyslexicFont = ref.watch(dyslexicFontProvider);
     final functioningLevel = ref.watch(functioningLevelProvider);
+    final locale = ref.watch(localeProvider);
 
     return FunctioningLevelAdapter(
       level: functioningLevel,
@@ -47,6 +50,24 @@ class AivoApp extends ConsumerWidget {
         darkTheme: AivoTheme.dark(useDyslexicFont: useDyslexicFont),
         themeMode: themeMode,
         routerConfig: router,
+        locale: locale,
+        supportedLocales: const [
+          Locale('en'),
+          Locale('es'),
+          Locale('fr'),
+          Locale('ar'),
+          Locale('zh'),
+          Locale('pt'),
+          Locale('de'),
+          Locale('ja'),
+          Locale('ko'),
+          Locale('hi'),
+        ],
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
       ),
     );
   }

@@ -12,6 +12,7 @@ import {
   Lock,
   Sparkles,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -37,6 +38,7 @@ interface UploadResponse {
 }
 
 export default function HomeworkPage() {
+  const t = useTranslations("dashboard");
   const activeLearner = useLearnerStore((s) => s.activeLearner);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -148,9 +150,9 @@ export default function HomeworkPage() {
         <div className="flex items-center gap-3">
           <BookOpen size={32} />
           <div>
-            <h1 className="text-2xl font-bold">Homework Helper</h1>
+            <h1 className="text-2xl font-bold">{t("homework")}</h1>
             <p className="text-white/80 text-sm">
-              Upload homework and get step-by-step AI assistance.
+              {t("homeworkSubtitle")}
             </p>
           </div>
         </div>
@@ -227,11 +229,10 @@ export default function HomeworkPage() {
                   size={36}
                 />
                 <p className="text-base font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Upload your homework
+                  {t("dragDropHomework")}
                 </p>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Drag and drop or click to browse. Supports PDF and images (max
-                  10MB).
+                  {t("clickToBrowse")}
                 </p>
               </>
             )}
@@ -358,10 +359,10 @@ export default function HomeworkPage() {
           <CardBody className="text-center py-12">
             <BookOpen className="mx-auto mb-3 text-gray-400" size={48} />
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              No homework sessions yet
+              {t("noActiveHomework")}
             </h3>
             <p className="text-gray-500 dark:text-gray-400">
-              Upload your homework above to start getting AI-powered help.
+              {t("uploadFirstHomework")}
             </p>
           </CardBody>
         </Card>

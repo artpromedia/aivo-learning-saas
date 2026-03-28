@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Brain, Loader2, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardBody } from "@/components/ui/Card";
@@ -29,6 +30,7 @@ const levelColors: Record<string, string> = {
 
 export default function FunctioningLevelPage() {
   const router = useRouter();
+  const t = useTranslations("onboarding");
   const activeLearner = useLearnerStore((s) => s.activeLearner);
 
   const [loading, setLoading] = useState(true);
@@ -46,7 +48,7 @@ export default function FunctioningLevelPage() {
         );
         setResult(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to determine functioning level");
+        setError(err instanceof Error ? err.message : t("unableToDetermineLevel"));
       } finally {
         setLoading(false);
       }
@@ -89,7 +91,7 @@ export default function FunctioningLevelPage() {
             <div className="flex items-center justify-center py-12">
               <Loader2 className="text-[#7C3AED] animate-spin mr-3" size={32} />
               <p className="text-gray-500 dark:text-gray-400">
-                Determining functioning level...
+                {t("determiningLevel")}
               </p>
             </div>
           </CardBody>
@@ -105,11 +107,11 @@ export default function FunctioningLevelPage() {
           <Brain className="text-red-500" size={32} />
         </div>
         <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-          Unable to determine functioning level
+          {t("unableToDetermineLevel")}
         </h2>
         <p className="text-gray-500 dark:text-gray-400 mb-6">{error}</p>
         <Button variant="outline" onClick={() => window.location.reload()}>
-          Try Again
+          {t("tryAgain")}
         </Button>
       </div>
     );
@@ -122,11 +124,10 @@ export default function FunctioningLevelPage() {
           <Brain className="text-[#7C3AED]" size={32} />
         </div>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Functioning Level Determined
+          {t("functioningLevelDetermined")}
         </h1>
         <p className="mt-2 text-gray-500 dark:text-gray-400">
-          Based on the information provided, we&apos;ve identified the best learning approach for{" "}
-          {activeLearner?.name ?? "your child"}.
+          {t("functioningLevelDescription", { name: activeLearner?.name ?? t("yourChild") })}
         </p>
       </div>
 
@@ -149,7 +150,7 @@ export default function FunctioningLevelPage() {
             <Card>
               <CardBody>
                 <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-3">
-                  What This Means
+                  {t("whatThisMeans")}
                 </h3>
                 <ul className="space-y-2">
                   {result.recommendations.map((rec, i) => (
@@ -169,18 +170,18 @@ export default function FunctioningLevelPage() {
           <Card>
             <CardBody className="text-center">
               <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-                Assessment type:{" "}
+                {t("assessmentType")}{" "}
                 <span className="font-medium text-[#7C3AED]">
                   {result.assessmentType === "STANDARD"
-                    ? "Standard Multiple Choice"
-                    : "Picture-Based Interactive"}
+                    ? t("standardMultipleChoice")
+                    : t("pictureBasedInteractive")}
                 </span>
               </p>
               <p className="text-xs text-gray-400 dark:text-gray-500 mb-4">
-                Auto-redirecting to baseline assessment in {autoRedirectCountdown}s...
+                {t("autoRedirect", { seconds: autoRedirectCountdown })}
               </p>
               <Button onClick={handleContinue} rightIcon={<ArrowRight size={18} />}>
-                Continue to Assessment
+                {t("continueToAssessment")}
               </Button>
             </CardBody>
           </Card>

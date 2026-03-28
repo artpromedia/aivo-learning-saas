@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
+const SUPPORTED_LOCALES = ["en", "es", "fr", "ar", "zh", "pt", "de", "ja", "ko", "hi"];
+const DEFAULT_LOCALE = "en";
+
 const ROLE_REDIRECTS: Record<string, string> = {
   PARENT: "/parent",
   parent: "/parent",
@@ -30,8 +33,35 @@ const ROLE_ALLOWED_PREFIXES: Record<string, string[]> = {
   caregiver: ["/parent", "/learner", "/notifications"],
 };
 
+function detectLocale(request: NextRequest): string {
+  // 1. Explicit cookie preference
+  const cookieLocale = request.cookies.get("NEXT_LOCALE")?.value;
+  if (cookieLocale && SUPPORTED_LOCALES.includes(cookieLocale)) {
+    return cookieLocale;
+  }
+
+  // 2. Accept-Language header
+  const acceptLanguage = request.headers.get("accept-language") ?? "";
+  const preferred = acceptLanguage
+    .split(",")
+    .map((part) => part.split(";")[0].trim().split("-")[0])
+    .find((lang) => SUPPORTED_LOCALES.includes(lang));
+
+  if (preferred) {
+    return preferred;
+  }
+
+  // 3. Default
+  return DEFAULT_LOCALE;
+}
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const response = NextResponse.next();
+
+  // Detect and set locale
+  const locale = detectLocale(request);
+  response.headers.set("x-locale", locale);
 
   // Skip auth/onboarding/billing/marketing and static assets
   if (
@@ -46,13 +76,13 @@ export function middleware(request: NextRequest) {
     pathname === "/" ||
     pathname === "/favicon.ico"
   ) {
-    return NextResponse.next();
+    return response;
   }
 
   // Check for role cookie/header
   const roleCookie = request.cookies.get("user_role")?.value;
   if (!roleCookie) {
-    return NextResponse.next();
+    return response;
   }
 
   const role = roleCookie;
@@ -66,7 +96,7 @@ export function middleware(request: NextRequest) {
     pathname.startsWith("/notifications");
 
   if (!isDashboardRoute) {
-    return NextResponse.next();
+    return response;
   }
 
   // Check if role has access to this path
@@ -81,7 +111,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {

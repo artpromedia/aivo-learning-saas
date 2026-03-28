@@ -7,29 +7,33 @@ import { z } from "zod";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Lock, Eye, EyeOff, CheckCircle, Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { AivoLogo } from "@/components/brand/AivoLogo";
 import { Button } from "@/components/ui/Button";
 import { apiFetch } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
 
-const resetSchema = z
-  .object({
-    password: z
-      .string()
-      .min(8, "Password must be at least 8 characters")
-      .regex(/[A-Z]/, "Must contain at least one uppercase letter")
-      .regex(/[a-z]/, "Must contain at least one lowercase letter")
-      .regex(/[0-9]/, "Must contain at least one number"),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
+type ResetForm = z.infer<ReturnType<typeof createResetSchema>>;
 
-type ResetForm = z.infer<typeof resetSchema>;
+function createResetSchema(t: (key: string) => string) {
+  return z
+    .object({
+      password: z
+        .string()
+        .min(8, t("passwordMinLength"))
+        .regex(/[A-Z]/, t("passwordUppercase"))
+        .regex(/[a-z]/, t("passwordLowercase"))
+        .regex(/[0-9]/, t("passwordNumber")),
+      confirmPassword: z.string(),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: t("passwordsMismatch"),
+      path: ["confirmPassword"],
+    });
+}
 
 function ResetPasswordContent() {
+  const t = useTranslations("auth");
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
@@ -37,6 +41,8 @@ function ResetPasswordContent() {
   const [showPassword, setShowPassword] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+
+  const resetSchema = createResetSchema(t);
 
   const {
     register,
@@ -48,7 +54,7 @@ function ResetPasswordContent() {
 
   const onSubmit = async (data: ResetForm) => {
     if (!token) {
-      setServerError("Invalid or missing reset token.");
+      setServerError(t("invalidResetToken"));
       return;
     }
     setServerError(null);
@@ -62,7 +68,7 @@ function ResetPasswordContent() {
       setServerError(
         err instanceof Error
           ? err.message
-          : "Failed to reset password. The link may have expired.",
+          : t("resetFailed"),
       );
     }
   };
@@ -74,13 +80,13 @@ function ResetPasswordContent() {
           <AivoLogo size="lg" className="mx-auto mb-8" />
           <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-8">
             <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-              Invalid reset link
+              {t("invalidResetLink")}
             </h1>
             <p className="text-gray-500 dark:text-gray-400 mb-6">
-              This password reset link is invalid or has expired.
+              {t("resetLinkExpired")}
             </p>
             <Link href="/forgot-password">
-              <Button className="w-full">Request a new link</Button>
+              <Button className="w-full">{t("requestNewLink")}</Button>
             </Link>
           </div>
         </div>
@@ -103,25 +109,24 @@ function ResetPasswordContent() {
                 size={48}
               />
               <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                Password updated
+                {t("passwordUpdated")}
               </h1>
               <p className="text-gray-500 dark:text-gray-400 mb-6">
-                Your password has been successfully reset. You can now sign in
-                with your new password.
+                {t("passwordUpdatedDescription")}
               </p>
               <Link href="/login">
                 <Button className="w-full" size="lg">
-                  Sign in
+                  {t("signIn")}
                 </Button>
               </Link>
             </div>
           ) : (
             <>
               <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                Set new password
+                {t("setNewPassword")}
               </h1>
               <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm">
-                Enter your new password below.
+                {t("setNewPasswordSubtitle")}
               </p>
 
               {serverError && (
@@ -136,7 +141,7 @@ function ResetPasswordContent() {
                     htmlFor="password"
                     className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
                   >
-                    New password
+                    {t("newPassword")}
                   </label>
                   <div className="relative">
                     <Lock
@@ -149,7 +154,7 @@ function ResetPasswordContent() {
                       autoComplete="new-password"
                       {...register("password")}
                       className="w-full pl-10 pr-12 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-shadow"
-                      placeholder="Min. 8 characters"
+                      placeholder={t("passwordHint")}
                     />
                     <button
                       type="button"
@@ -172,7 +177,7 @@ function ResetPasswordContent() {
                     htmlFor="confirmPassword"
                     className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
                   >
-                    Confirm new password
+                    {t("confirmNewPassword")}
                   </label>
                   <div className="relative">
                     <Lock
@@ -185,7 +190,7 @@ function ResetPasswordContent() {
                       autoComplete="new-password"
                       {...register("confirmPassword")}
                       className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-shadow"
-                      placeholder="Confirm your password"
+                      placeholder={t("confirmPasswordPlaceholder")}
                     />
                   </div>
                   {errors.confirmPassword && (
@@ -201,7 +206,7 @@ function ResetPasswordContent() {
                   className="w-full"
                   size="lg"
                 >
-                  Reset password
+                  {t("resetPassword")}
                 </Button>
               </form>
             </>

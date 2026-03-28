@@ -2,6 +2,7 @@
 
 import React, { useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Upload, FileText, CheckCircle, Loader2, X, AlertCircle, SkipForward } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardBody } from "@/components/ui/Card";
@@ -20,6 +21,7 @@ interface ParsedIepData {
 
 export default function IepUploadPage() {
   const router = useRouter();
+  const t = useTranslations("onboarding");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [file, setFile] = useState<File | null>(null);
@@ -32,11 +34,11 @@ export default function IepUploadPage() {
 
   const handleFile = useCallback(async (f: File) => {
     if (!f.type.includes("pdf") && !f.name.endsWith(".pdf")) {
-      setError("Please upload a PDF file.");
+      setError(t("pdfOnly"));
       return;
     }
     if (f.size > 20 * 1024 * 1024) {
-      setError("File size must be under 20MB.");
+      setError(t("fileTooLarge"));
       return;
     }
 
@@ -59,7 +61,7 @@ export default function IepUploadPage() {
 
       if (!uploadRes.ok) {
         const body = await uploadRes.json().catch(() => ({}));
-        throw new Error(body.error ?? "Upload failed");
+        throw new Error(body.error ?? t("uploadFailed"));
       }
 
       const { id } = await uploadRes.json();
@@ -86,18 +88,18 @@ export default function IepUploadPage() {
             return;
           }
           if (statusRes.status === "error") {
-            throw new Error(statusRes.error ?? "Parsing failed");
+            throw new Error(statusRes.error ?? t("parsingFailed"));
           }
         } catch (err) {
           if (attempts === maxAttempts) throw err;
         }
       }
-      throw new Error("Parsing timed out. Please try again.");
+      throw new Error(t("parsingTimedOut"));
     } catch (err) {
       setStatus("error");
-      setError(err instanceof Error ? err.message : "Upload failed");
+      setError(err instanceof Error ? err.message : t("uploadFailed"));
     }
-  }, []);
+  }, [t]);
 
   const onDrop = useCallback(
     (e: React.DragEvent) => {
@@ -119,7 +121,7 @@ export default function IepUploadPage() {
       });
       router.push("/baseline-assessment");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to confirm IEP data");
+      setError(err instanceof Error ? err.message : t("failedToConfirmIep"));
     } finally {
       setIsConfirming(false);
     }
@@ -144,11 +146,10 @@ export default function IepUploadPage() {
           <FileText className="text-[#7C3AED]" size={32} />
         </div>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Upload IEP Document
+          {t("uploadIepDocument")}
         </h1>
         <p className="mt-2 text-gray-500 dark:text-gray-400">
-          Upload your child&apos;s IEP to help us better understand their needs.
-          This is optional.
+          {t("uploadIepSubtitle")}
         </p>
       </div>
 
@@ -181,10 +182,10 @@ export default function IepUploadPage() {
                 size={40}
               />
               <p className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Drag and drop your IEP here
+                {t("dragDropIep")}
               </p>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                or click to browse. PDF files up to 20MB.
+                {t("browseFiles")}
               </p>
               <input
                 ref={fileInputRef}
@@ -204,7 +205,7 @@ export default function IepUploadPage() {
                 className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 font-medium"
               >
                 <SkipForward size={16} />
-                Skip this step
+                {t("skipThisStep")}
               </button>
             </div>
           </CardBody>
@@ -219,12 +220,12 @@ export default function IepUploadPage() {
               size={48}
             />
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              {status === "uploading" ? "Uploading document..." : "Analyzing IEP..."}
+              {status === "uploading" ? t("uploadingDocument") : t("analyzingIep")}
             </h2>
             <p className="text-sm text-gray-500 dark:text-gray-400">
               {status === "uploading"
-                ? `Uploading ${file?.name}`
-                : "Our AI is reading and extracting key information from your child's IEP. This may take a minute."}
+                ? t("uploadingFile", { name: file?.name ?? "" })
+                : t("aiAnalyzingIep")}
             </p>
           </CardBody>
         </Card>
@@ -237,10 +238,10 @@ export default function IepUploadPage() {
               <CheckCircle className="text-green-500" size={24} />
               <div>
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  IEP Analyzed Successfully
+                  {t("iepAnalyzedSuccessfully")}
                 </h2>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Review the extracted information below. You can edit before confirming.
+                  {t("reviewExtractedInfo")}
                 </p>
               </div>
             </div>
@@ -249,7 +250,7 @@ export default function IepUploadPage() {
               {parsedData.goals.length > 0 && (
                 <div>
                   <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">
-                    IEP Goals
+                    {t("iepGoals")}
                   </h3>
                   <div className="space-y-2">
                     {parsedData.goals.map((goal, i) => (
@@ -272,7 +273,7 @@ export default function IepUploadPage() {
               {parsedData.accommodations.length > 0 && (
                 <div>
                   <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">
-                    Accommodations
+                    {t("accommodations")}
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {parsedData.accommodations.map((acc, i) => (
@@ -290,7 +291,7 @@ export default function IepUploadPage() {
               {parsedData.strengths.length > 0 && (
                 <div>
                   <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">
-                    Strengths
+                    {t("strengths")}
                   </h3>
                   <ul className="list-disc list-inside text-sm text-gray-600 dark:text-gray-400 space-y-1">
                     {parsedData.strengths.map((s, i) => (
@@ -303,14 +304,14 @@ export default function IepUploadPage() {
 
             <div className="flex items-center gap-3 mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
               <Button variant="ghost" onClick={resetUpload} leftIcon={<X size={16} />}>
-                Re-upload
+                {t("reUpload")}
               </Button>
               <div className="flex-1" />
               <Button variant="outline" onClick={handleSkip}>
-                Skip
+                {t("skip")}
               </Button>
               <Button onClick={handleConfirm} loading={isConfirming}>
-                Confirm & Continue
+                {t("confirmAndContinue")}
               </Button>
             </div>
           </CardBody>

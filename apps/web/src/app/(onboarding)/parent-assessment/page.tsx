@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { ClipboardList, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardBody } from "@/components/ui/Card";
@@ -12,90 +13,104 @@ import { useLearnerStore } from "@/stores/learner.store";
 
 interface Question {
   id: string;
-  text: string;
+  textKey: string;
   type: "single" | "multi" | "scale";
+  optionKeys?: string[];
   options?: string[];
   min?: number;
   max?: number;
 }
 
-const ASSESSMENT_STEPS: { title: string; description: string; questions: Question[] }[] = [
+interface AssessmentStep {
+  titleKey: string;
+  descriptionKey: string;
+  questions: Question[];
+}
+
+const ASSESSMENT_STEPS: AssessmentStep[] = [
   {
-    title: "Communication",
-    description: "Tell us about your child's communication style.",
+    titleKey: "communication",
+    descriptionKey: "communicationSubtitle",
     questions: [
       {
         id: "comm_verbal",
-        text: "How does your child primarily communicate?",
+        textKey: "howCommunicates",
         type: "single",
+        optionKeys: ["verbalSpeech", "signLanguage", "aacDevice", "gesturesPointing", "combinationMethods"],
         options: ["Verbal speech", "Sign language", "AAC device", "Gestures and pointing", "Combination of methods"],
       },
       {
         id: "comm_complexity",
-        text: "What is your child's typical sentence complexity?",
+        textKey: "sentenceComplexity",
         type: "single",
+        optionKeys: ["singleWords", "twoThreeWordPhrases", "simpleSentences", "complexSentences", "variesByContext"],
         options: ["Single words", "2-3 word phrases", "Simple sentences", "Complex sentences", "Varies by context"],
       },
     ],
   },
   {
-    title: "Sensory Preferences",
-    description: "Help us understand your child's sensory needs.",
+    titleKey: "sensoryPreferences",
+    descriptionKey: "sensorySubtitle",
     questions: [
       {
         id: "sensory_visual",
-        text: "How does your child respond to visual stimuli (bright lights, colors)?",
+        textKey: "visualStimuli",
         type: "scale",
         min: 1,
         max: 5,
       },
       {
         id: "sensory_audio",
-        text: "How does your child respond to sounds and noise?",
+        textKey: "soundsNoise",
         type: "scale",
         min: 1,
         max: 5,
       },
       {
         id: "sensory_preferences",
-        text: "Which sensory accommodations help your child? (Select all that apply)",
+        textKey: "sensoryAccommodations",
         type: "multi",
+        optionKeys: ["dimLighting", "noiseCanceling", "fidgetTools", "weightedBlanket", "visualSchedules", "quietSpace"],
         options: ["Dim lighting", "Noise-canceling headphones", "Fidget tools", "Weighted blanket", "Visual schedules", "Quiet space"],
       },
     ],
   },
   {
-    title: "Learning Style",
-    description: "Help us understand how your child learns best.",
+    titleKey: "learningStyle",
+    descriptionKey: "learningStyleSubtitle",
     questions: [
       {
         id: "learn_style",
-        text: "How does your child learn best?",
+        textKey: "howLearnsBest",
         type: "single",
+        optionKeys: ["visualLearning", "auditoryLearning", "kinestheticLearning", "readingWriting", "combinationLearning"],
         options: ["Visual (pictures, videos)", "Auditory (listening, songs)", "Kinesthetic (hands-on, movement)", "Reading/writing", "Combination"],
       },
       {
         id: "learn_attention",
-        text: "How long can your child typically focus on a single activity?",
+        textKey: "focusDuration",
         type: "single",
+        optionKeys: ["lessThan5Min", "fiveToTenMin", "tenToTwentyMin", "twentyToThirtyMin", "thirtyPlusMin"],
         options: ["Less than 5 minutes", "5-10 minutes", "10-20 minutes", "20-30 minutes", "30+ minutes"],
       },
     ],
   },
   {
-    title: "Interests & Motivators",
-    description: "What motivates and engages your child?",
+    titleKey: "interestsMotivators",
+    descriptionKey: "interestsSubtitle",
     questions: [
       {
         id: "interests",
-        text: "What topics is your child most interested in? (Select all that apply)",
+        textKey: "topicInterests",
         type: "multi",
+        optionKeys: ["animals", "spaceScience", "artMusic", "numbersMath", "storiesReading", "vehicles", "nature", "technology", "sports"],
         options: ["Animals", "Space & science", "Art & music", "Numbers & math", "Stories & reading", "Vehicles", "Nature", "Technology", "Sports"],
       },
       {
         id: "motivators",
-        text: "What motivates your child most?",
+        textKey: "motivationStyle",
         type: "single",
+        optionKeys: ["praiseEncouragement", "earningRewards", "completingCollections", "competitionChallenges", "freeChoiceTime"],
         options: ["Praise and encouragement", "Earning rewards/tokens", "Completing collections", "Competition/challenges", "Free choice time"],
       },
     ],
@@ -104,6 +119,7 @@ const ASSESSMENT_STEPS: { title: string; description: string; questions: Questio
 
 export default function ParentAssessmentPage() {
   const router = useRouter();
+  const t = useTranslations("onboarding");
   const activeLearner = useLearnerStore((s) => s.activeLearner);
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string | string[] | number>>({});
@@ -150,7 +166,7 @@ export default function ParentAssessmentPage() {
       });
       router.push("/iep-upload");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to submit assessment");
+      setError(err instanceof Error ? err.message : t("failedToSubmitAssessment"));
     } finally {
       setIsSubmitting(false);
     }
@@ -163,10 +179,10 @@ export default function ParentAssessmentPage() {
           <ClipboardList className="text-[#7C3AED]" size={32} />
         </div>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Parent Assessment
+          {t("parentAssessment")}
         </h1>
         <p className="mt-2 text-gray-500 dark:text-gray-400">
-          Help us understand your child so we can personalize their experience.
+          {t("parentAssessmentSubtitle")}
         </p>
       </div>
 
@@ -181,10 +197,10 @@ export default function ParentAssessmentPage() {
       <Card>
         <CardBody>
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
-            {step.title}
+            {t(step.titleKey)}
           </h2>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
-            {step.description}
+            {t(step.descriptionKey)}
           </p>
 
           {error && (
@@ -197,12 +213,12 @@ export default function ParentAssessmentPage() {
             {step.questions.map((q) => (
               <div key={q.id}>
                 <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                  {q.text}
+                  {t(q.textKey)}
                 </p>
 
-                {q.type === "single" && q.options && (
+                {q.type === "single" && q.options && q.optionKeys && (
                   <div className="space-y-2">
-                    {q.options.map((option) => (
+                    {q.options.map((option, idx) => (
                       <label
                         key={option}
                         className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
@@ -231,16 +247,16 @@ export default function ParentAssessmentPage() {
                           )}
                         </div>
                         <span className="text-sm text-gray-700 dark:text-gray-300">
-                          {option}
+                          {t(q.optionKeys![idx])}
                         </span>
                       </label>
                     ))}
                   </div>
                 )}
 
-                {q.type === "multi" && q.options && (
+                {q.type === "multi" && q.options && q.optionKeys && (
                   <div className="flex flex-wrap gap-2">
-                    {q.options.map((option) => {
+                    {q.options.map((option, idx) => {
                       const selected = ((answers[q.id] as string[]) ?? []).includes(option);
                       return (
                         <button
@@ -253,7 +269,7 @@ export default function ParentAssessmentPage() {
                               : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:border-[#7C3AED]"
                           }`}
                         >
-                          {option}
+                          {t(q.optionKeys![idx])}
                         </button>
                       );
                     })}
@@ -262,7 +278,7 @@ export default function ParentAssessmentPage() {
 
                 {q.type === "scale" && (
                   <div className="flex items-center gap-4">
-                    <span className="text-xs text-gray-400">Low sensitivity</span>
+                    <span className="text-xs text-gray-400">{t("lowSensitivity")}</span>
                     <div className="flex gap-2 flex-1 justify-center">
                       {Array.from({ length: (q.max ?? 5) - (q.min ?? 1) + 1 }).map((_, i) => {
                         const val = (q.min ?? 1) + i;
@@ -282,7 +298,7 @@ export default function ParentAssessmentPage() {
                         );
                       })}
                     </div>
-                    <span className="text-xs text-gray-400">High sensitivity</span>
+                    <span className="text-xs text-gray-400">{t("highSensitivity")}</span>
                   </div>
                 )}
               </div>
@@ -296,7 +312,7 @@ export default function ParentAssessmentPage() {
               disabled={isFirstStep}
               leftIcon={<ChevronLeft size={18} />}
             >
-              Back
+              {t("back")}
             </Button>
             <Button
               onClick={handleNext}
@@ -304,7 +320,7 @@ export default function ParentAssessmentPage() {
               loading={isSubmitting}
               rightIcon={!isLastStep ? <ChevronRight size={18} /> : undefined}
             >
-              {isLastStep ? "Submit" : "Next"}
+              {isLastStep ? t("submit") : t("next")}
             </Button>
           </div>
         </CardBody>

@@ -18,40 +18,41 @@ import {
   Compass,
   CreditCard,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { AivoLogo } from "@/components/brand/AivoLogo";
 import { useAuth } from "@/hooks/useAuth";
 import { useNotifications } from "@/hooks/useNotifications";
 
 interface NavItem {
   href: string;
-  label: string;
+  labelKey: string;
   icon: React.ReactNode;
 }
 
 const parentNav: NavItem[] = [
-  { href: "/parent", label: "Dashboard", icon: <Home size={20} /> },
-  { href: "/notifications", label: "Notifications", icon: <Bell size={20} /> },
-  { href: "/manage", label: "Subscription", icon: <CreditCard size={20} /> },
+  { href: "/parent", labelKey: "dashboard", icon: <Home size={20} /> },
+  { href: "/notifications", labelKey: "notifications", icon: <Bell size={20} /> },
+  { href: "/manage", labelKey: "subscription", icon: <CreditCard size={20} /> },
 ];
 
 const learnerNav: NavItem[] = [
-  { href: "/learner", label: "Home", icon: <Home size={20} /> },
-  { href: "/learner/quests", label: "Quests", icon: <Compass size={20} /> },
-  { href: "/learner/shop", label: "Shop", icon: <ShoppingBag size={20} /> },
-  { href: "/learner/badges", label: "Badges", icon: <Trophy size={20} /> },
+  { href: "/learner", labelKey: "home", icon: <Home size={20} /> },
+  { href: "/learner/quests", labelKey: "quests", icon: <Compass size={20} /> },
+  { href: "/learner/shop", labelKey: "shop", icon: <ShoppingBag size={20} /> },
+  { href: "/learner/badges", labelKey: "badges", icon: <Trophy size={20} /> },
 ];
 
 const teacherNav: NavItem[] = [
-  { href: "/teacher", label: "My Classrooms", icon: <Home size={20} /> },
-  { href: "/notifications", label: "Notifications", icon: <Bell size={20} /> },
+  { href: "/teacher", labelKey: "myClassrooms", icon: <Home size={20} /> },
+  { href: "/notifications", labelKey: "notifications", icon: <Bell size={20} /> },
 ];
 
 const districtAdminNav: NavItem[] = [
-  { href: "/admin/district", label: "Overview", icon: <Home size={20} /> },
-  { href: "/admin/district/teachers", label: "Teachers", icon: <Users size={20} /> },
-  { href: "/admin/district/classrooms", label: "Classrooms", icon: <BookOpen size={20} /> },
-  { href: "/admin/district/integrations", label: "Integrations", icon: <Settings size={20} /> },
-  { href: "/admin/district/licenses", label: "Licenses", icon: <CreditCard size={20} /> },
+  { href: "/admin/district", labelKey: "overview", icon: <Home size={20} /> },
+  { href: "/admin/district/teachers", labelKey: "teachers", icon: <Users size={20} /> },
+  { href: "/admin/district/classrooms", labelKey: "classrooms", icon: <BookOpen size={20} /> },
+  { href: "/admin/district/integrations", labelKey: "integrations", icon: <Settings size={20} /> },
+  { href: "/admin/district/licenses", labelKey: "licenses", icon: <CreditCard size={20} /> },
 ];
 
 export default function DashboardLayout({
@@ -59,6 +60,7 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const t = useTranslations("dashboard");
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const { unreadCount } = useNotifications();
@@ -104,8 +106,8 @@ export default function DashboardLayout({
                 }`}
               >
                 {item.icon}
-                <span>{item.label}</span>
-                {item.label === "Notifications" && unreadCount > 0 && (
+                <span>{t(item.labelKey)}</span>
+                {item.labelKey === "notifications" && unreadCount > 0 && (
                   <span className="ml-auto flex items-center justify-center w-5 h-5 rounded-full bg-red-500 text-white text-xs font-bold">
                     {unreadCount > 99 ? "99+" : unreadCount}
                   </span>
@@ -134,7 +136,7 @@ export default function DashboardLayout({
             className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-colors"
           >
             <LogOut size={20} />
-            Sign out
+            {t("signOut")}
           </button>
         </div>
       </aside>
@@ -177,7 +179,7 @@ export default function DashboardLayout({
                 }`}
               >
                 {item.icon}
-                <span>{item.label}</span>
+                <span>{t(item.labelKey)}</span>
               </Link>
             );
           })}

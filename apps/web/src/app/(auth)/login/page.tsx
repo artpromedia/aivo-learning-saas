@@ -7,22 +7,24 @@ import { z } from "zod";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { AivoLogo } from "@/components/brand/AivoLogo";
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/hooks/useAuth";
 
-const loginSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(1, "Password is required"),
-});
-
-type LoginForm = z.infer<typeof loginSchema>;
-
 export default function LoginPage() {
+  const t = useTranslations("auth");
   const router = useRouter();
   const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+
+  const loginSchema = z.object({
+    email: z.string().email(t("emailInvalid")),
+    password: z.string().min(1, t("passwordRequired")),
+  });
+
+  type LoginForm = z.infer<typeof loginSchema>;
 
   const {
     register,
@@ -43,7 +45,7 @@ export default function LoginPage() {
       }
     } catch (err) {
       setServerError(
-        err instanceof Error ? err.message : "Login failed. Please try again.",
+        err instanceof Error ? err.message : t("loginFailed"),
       );
     }
   };
@@ -59,10 +61,10 @@ export default function LoginPage() {
         <div className="flex flex-col items-center mb-8">
           <AivoLogo size="lg" />
           <h1 className="mt-4 text-2xl font-bold text-gray-900 dark:text-white">
-            Welcome back
+            {t("welcomeBack")}
           </h1>
           <p className="mt-1 text-gray-500 dark:text-gray-400">
-            Sign in to your AIVO account
+            {t("signInSubtitle")}
           </p>
         </div>
 
@@ -79,7 +81,7 @@ export default function LoginPage() {
                 htmlFor="email"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
               >
-                Email address
+                {t("emailAddress")}
               </label>
               <div className="relative">
                 <Mail
@@ -107,7 +109,7 @@ export default function LoginPage() {
                 htmlFor="password"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
               >
-                Password
+                {t("password")}
               </label>
               <div className="relative">
                 <Lock
@@ -120,13 +122,13 @@ export default function LoginPage() {
                   autoComplete="current-password"
                   {...register("password")}
                   className="w-full pl-10 pr-12 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-shadow"
-                  placeholder="Enter your password"
+                  placeholder={t("enterPassword")}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  aria-label={showPassword ? t("hidePassword") : t("showPassword")}
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -143,7 +145,7 @@ export default function LoginPage() {
                 href="/forgot-password"
                 className="text-sm text-[#7C3AED] hover:text-[#6B3FE8] font-medium"
               >
-                Forgot password?
+                {t("forgotPassword")}
               </Link>
             </div>
 
@@ -153,7 +155,7 @@ export default function LoginPage() {
               className="w-full"
               size="lg"
             >
-              Sign in
+              {t("signIn")}
             </Button>
           </form>
 
@@ -164,7 +166,7 @@ export default function LoginPage() {
               </div>
               <div className="relative flex justify-center text-sm">
                 <span className="px-3 bg-white dark:bg-gray-900 text-gray-500">
-                  Or continue with
+                  {t("orContinueWith")}
                 </span>
               </div>
             </div>
@@ -211,12 +213,12 @@ export default function LoginPage() {
         </div>
 
         <p className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
-          Don&apos;t have an account?{" "}
+          {t("noAccount")}{" "}
           <Link
             href="/register"
             className="text-[#7C3AED] hover:text-[#6B3FE8] font-semibold"
           >
-            Create account
+            {t("createAccount")}
           </Link>
         </p>
       </div>

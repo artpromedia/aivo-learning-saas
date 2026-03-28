@@ -8,6 +8,7 @@ import {
   AlertTriangle,
   GraduationCap,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -25,6 +26,7 @@ interface ClassroomSummary {
 }
 
 export default function TeacherDashboardPage() {
+  const t = useTranslations("dashboard");
   const { user } = useAuthStore();
   const [classrooms, setClassrooms] = useState<ClassroomSummary[]>([]);
   const [loading, setLoading] = useState(true);
@@ -39,7 +41,7 @@ export default function TeacherDashboardPage() {
         setClassrooms(data);
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "Failed to load classrooms",
+          err instanceof Error ? err.message : t("failedToLoadClassrooms"),
         );
       } finally {
         setLoading(false);
@@ -52,10 +54,9 @@ export default function TeacherDashboardPage() {
   return (
     <div>
       <PurpleGradientHeader className="rounded-xl mb-8">
-        <h1 className="text-2xl font-bold">My Classrooms</h1>
+        <h1 className="text-2xl font-bold">{t("myClassrooms")}</h1>
         <p className="mt-1 text-white/80">
-          Welcome back, {user?.name?.split(" ")[0] ?? "Teacher"}. Here is an
-          overview of your classrooms.
+          {t("teacherWelcomeBack", { name: user?.name?.split(" ")[0] ?? "Teacher" })}
         </p>
       </PurpleGradientHeader>
 
@@ -88,10 +89,10 @@ export default function TeacherDashboardPage() {
               <GraduationCap className="text-[#7C3AED]" size={32} />
             </div>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              No classrooms yet
+              {t("noClassroomsYet")}
             </h3>
             <p className="text-gray-500 dark:text-gray-400">
-              You have not been assigned to any classrooms.
+              {t("noClassroomsDescription")}
             </p>
           </CardBody>
         </Card>
@@ -127,7 +128,7 @@ export default function TeacherDashboardPage() {
                           {classroom.learnerCount}
                         </span>
                       </div>
-                      <span className="text-xs text-gray-500">Learners</span>
+                      <span className="text-xs text-gray-500">{t("learners")}</span>
                     </div>
                     <div className="text-center p-2 rounded-lg bg-gray-50 dark:bg-gray-800">
                       <div className="flex items-center justify-center gap-1 text-green-600">
@@ -136,7 +137,7 @@ export default function TeacherDashboardPage() {
                           {Math.round(classroom.avgMasteryPct)}%
                         </span>
                       </div>
-                      <span className="text-xs text-gray-500">Avg Mastery</span>
+                      <span className="text-xs text-gray-500">{t("avgMastery")}</span>
                     </div>
                     <div className="text-center p-2 rounded-lg bg-gray-50 dark:bg-gray-800">
                       <div className="flex items-center justify-center gap-1 text-amber-600">
@@ -145,7 +146,7 @@ export default function TeacherDashboardPage() {
                           {classroom.atRiskCount}
                         </span>
                       </div>
-                      <span className="text-xs text-gray-500">At Risk</span>
+                      <span className="text-xs text-gray-500">{t("atRisk")}</span>
                     </div>
                   </div>
                 </CardBody>

@@ -11,6 +11,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Card, CardBody, CardHeader } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -30,6 +31,7 @@ interface Plan {
 }
 
 function CheckoutContent() {
+  const t = useTranslations("billing");
   const router = useRouter();
   const searchParams = useSearchParams();
   const preselectedPlanId = searchParams.get("plan");
@@ -52,7 +54,7 @@ function CheckoutContent() {
           setSelectedPlan(recommended?.id ?? data[0].id);
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load plans");
+        setError(err instanceof Error ? err.message : t("failedToLoadPlans"));
       } finally {
         setLoading(false);
       }
@@ -75,7 +77,7 @@ function CheckoutContent() {
       );
       window.location.href = checkoutUrl;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to start checkout");
+      setError(err instanceof Error ? err.message : t("failedToStartCheckout"));
       setSubscribing(false);
     }
   };
@@ -100,7 +102,7 @@ function CheckoutContent() {
         className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-6"
       >
         <ArrowLeft size={16} />
-        Back to dashboard
+        {t("backToDashboard")}
       </Link>
 
       <div className="text-center mb-10">
@@ -108,10 +110,10 @@ function CheckoutContent() {
           <CreditCard className="text-[#7C3AED]" size={32} />
         </div>
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-          Choose Your Plan
+          {t("chooseYourPlan")}
         </h1>
         <p className="text-gray-500 dark:text-gray-400">
-          Unlock the full AIVO learning experience for your family.
+          {t("choosePlanSubtitle")}
         </p>
       </div>
 
@@ -136,7 +138,7 @@ function CheckoutContent() {
               <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                 <Badge className="bg-[#7C3AED] text-white px-3 py-1 flex items-center gap-1">
                   <Sparkles size={12} />
-                  Recommended
+                  {t("recommended")}
                 </Badge>
               </div>
             )}
@@ -152,12 +154,11 @@ function CheckoutContent() {
                   ${plan.price}
                 </span>
                 <span className="text-gray-500 dark:text-gray-400">
-                  /{plan.interval}
+                  {t("perInterval", { interval: plan.interval })}
                 </span>
               </div>
               <p className="text-xs text-gray-500 mb-6">
-                Up to {plan.maxLearners} learner
-                {plan.maxLearners > 1 ? "s" : ""}
+                {t("upToLearners", { count: plan.maxLearners })}
               </p>
               <ul className="space-y-2 text-left">
                 {plan.features.map((feature, i) => (
@@ -186,11 +187,11 @@ function CheckoutContent() {
           disabled={!selectedPlan}
           className="min-w-[240px]"
         >
-          Continue to Payment
+          {t("continueToPayment")}
         </Button>
         <div className="flex items-center justify-center gap-2 mt-4 text-xs text-gray-400">
           <Shield size={14} />
-          <span>Secure payment powered by Stripe. Cancel anytime.</span>
+          <span>{t("securePayment")}</span>
         </div>
       </div>
     </div>

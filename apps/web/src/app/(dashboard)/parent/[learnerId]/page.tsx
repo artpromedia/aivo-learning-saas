@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -42,6 +43,7 @@ interface ProgressData {
 }
 
 export default function ChildDashboardPage() {
+  const t = useTranslations("dashboard");
   const params = useParams();
   const learnerId = params.learnerId as string;
 
@@ -96,10 +98,10 @@ export default function ChildDashboardPage() {
   }
 
   const quickLinks = [
-    { href: `/parent/${learnerId}/brain`, label: "Brain Profile", icon: <Brain size={20} />, color: "text-[#7C3AED]" },
-    { href: `/parent/${learnerId}/recommendations`, label: "Recommendations", icon: <Lightbulb size={20} />, color: "text-amber-500" },
-    { href: `/parent/${learnerId}/gradebook`, label: "Gradebook", icon: <GraduationCap size={20} />, color: "text-[#38B2AC]" },
-    { href: `/parent/${learnerId}/tutors`, label: "Tutors", icon: <Bot size={20} />, color: "text-blue-500" },
+    { href: `/parent/${learnerId}/brain`, label: t("brainProfile"), icon: <Brain size={20} />, color: "text-[#7C3AED]" },
+    { href: `/parent/${learnerId}/recommendations`, label: t("recommendations"), icon: <Lightbulb size={20} />, color: "text-amber-500" },
+    { href: `/parent/${learnerId}/gradebook`, label: t("gradebook"), icon: <GraduationCap size={20} />, color: "text-[#38B2AC]" },
+    { href: `/parent/${learnerId}/tutors`, label: t("tutors"), icon: <Bot size={20} />, color: "text-blue-500" },
   ];
 
   return (
@@ -109,7 +111,7 @@ export default function ChildDashboardPage() {
         className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-4"
       >
         <ArrowLeft size={16} />
-        Back to all children
+        {t("backToAllChildren")}
       </Link>
 
       <PurpleGradientHeader className="rounded-xl mb-8">
@@ -128,7 +130,7 @@ export default function ChildDashboardPage() {
           <div>
             <h1 className="text-2xl font-bold">{learner?.name}</h1>
             <p className="text-white/80 text-sm">
-              {learner?.enrolledGrade ?? "Grade not set"} &middot;{" "}
+              {learner?.enrolledGrade ?? t("gradeNotSet")} &middot;{" "}
               {learner?.functioningLevel === "STANDARD"
                 ? "Standard"
                 : learner?.functioningLevel === "SUPPORTED"

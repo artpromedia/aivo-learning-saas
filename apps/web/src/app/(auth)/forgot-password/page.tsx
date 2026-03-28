@@ -6,21 +6,27 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Link from "next/link";
 import { Mail, ArrowLeft, CheckCircle } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { AivoLogo } from "@/components/brand/AivoLogo";
 import { Button } from "@/components/ui/Button";
 import { apiFetch } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
 
-const forgotSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-});
+type ForgotForm = z.infer<ReturnType<typeof createForgotSchema>>;
 
-type ForgotForm = z.infer<typeof forgotSchema>;
+function createForgotSchema(t: (key: string) => string) {
+  return z.object({
+    email: z.string().email(t("emailInvalid")),
+  });
+}
 
 export default function ForgotPasswordPage() {
+  const t = useTranslations("auth");
   const [sent, setSent] = useState(false);
   const [sentEmail, setSentEmail] = useState("");
   const [serverError, setServerError] = useState<string | null>(null);
+
+  const forgotSchema = createForgotSchema(t);
 
   const {
     register,
@@ -57,11 +63,10 @@ export default function ForgotPasswordPage() {
           {!sent ? (
             <>
               <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                Forgot your password?
+                {t("forgotYourPassword")}
               </h1>
               <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm">
-                Enter your email address and we&apos;ll send you a link to reset
-                your password.
+                {t("forgotPasswordSubtitle")}
               </p>
 
               {serverError && (
@@ -76,7 +81,7 @@ export default function ForgotPasswordPage() {
                     htmlFor="email"
                     className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
                   >
-                    Email address
+                    {t("emailAddress")}
                   </label>
                   <div className="relative">
                     <Mail
@@ -105,7 +110,7 @@ export default function ForgotPasswordPage() {
                   className="w-full"
                   size="lg"
                 >
-                  Send reset link
+                  {t("sendResetLink")}
                 </Button>
               </form>
             </>
@@ -116,17 +121,13 @@ export default function ForgotPasswordPage() {
                 size={48}
               />
               <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                Check your email
+                {t("checkYourEmail")}
               </h1>
               <p className="text-gray-500 dark:text-gray-400 mb-2 text-sm">
-                If an account exists for{" "}
-                <span className="font-semibold text-gray-900 dark:text-white">
-                  {sentEmail}
-                </span>
-                , you&apos;ll receive a password reset link shortly.
+                {t("resetEmailSentDescription", { email: sentEmail })}
               </p>
               <p className="text-xs text-gray-400 dark:text-gray-500 mb-6">
-                Don&apos;t forget to check your spam folder.
+                {t("checkSpamFolder")}
               </p>
             </div>
           )}
@@ -136,7 +137,7 @@ export default function ForgotPasswordPage() {
             className="mt-6 flex items-center justify-center gap-2 text-sm text-[#7C3AED] hover:text-[#6B3FE8] font-medium"
           >
             <ArrowLeft size={16} />
-            Back to sign in
+            {t("backToSignIn")}
           </Link>
         </div>
       </div>

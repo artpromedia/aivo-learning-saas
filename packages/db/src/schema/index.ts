@@ -54,3 +54,6 @@ export * from "./classrooms";
 
 // Data Lifecycle (compliance audit trail)
 export * from "./data-lifecycle";
+
+// i18n
+export * from "./i18n";

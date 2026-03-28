@@ -15,6 +15,7 @@ import {
   Trophy,
   Zap,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -33,6 +34,7 @@ interface ProfileStats {
 }
 
 export default function LearnerProfilePage() {
+  const t = useTranslations("dashboard");
   const router = useRouter();
   const activeLearner = useLearnerStore((s) => s.activeLearner);
   const updateLearner = useLearnerStore((s) => s.updateLearner);
@@ -57,7 +59,7 @@ export default function LearnerProfilePage() {
         setStats(data);
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "Failed to load profile stats",
+          err instanceof Error ? err.message : t("failedToLoadStats"),
         );
       } finally {
         setLoadingStats(false);
@@ -86,7 +88,7 @@ export default function LearnerProfilePage() {
       const { avatarUrl } = await res.json();
       updateLearner(activeLearner.id, { avatarUrl });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Upload failed");
+      setError(err instanceof Error ? err.message : t("uploadFailed"));
     } finally {
       setUploading(false);
     }
@@ -95,9 +97,9 @@ export default function LearnerProfilePage() {
   if (!activeLearner) {
     return (
       <div className="text-center py-16">
-        <p className="text-gray-500 mb-4">No learner selected.</p>
+        <p className="text-gray-500 mb-4">{t("noLearnerSelected")}</p>
         <Button variant="outline" onClick={() => router.push("/learner")}>
-          Go Home
+          {t("goHome")}
         </Button>
       </div>
     );
@@ -146,7 +148,7 @@ export default function LearnerProfilePage() {
         className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-4"
       >
         <ArrowLeft size={16} />
-        Back to Home
+        {t("backToHome")}
       </Link>
 
       {/* Profile Header */}
@@ -193,7 +195,7 @@ export default function LearnerProfilePage() {
           <div className="flex-1">
             <h1 className="text-2xl font-bold">{activeLearner.name}</h1>
             <p className="text-white/70 text-sm mt-0.5">
-              Member since {memberSince}
+              {t("memberSince", { date: memberSince })}
             </p>
             {level && (
               <div className="mt-2">
@@ -228,7 +230,7 @@ export default function LearnerProfilePage() {
 
       {/* Stats Grid */}
       <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-        Stats
+        {t("stats")}
       </h2>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
         <Card>
@@ -239,7 +241,7 @@ export default function LearnerProfilePage() {
             <p className="text-2xl font-bold text-gray-900 dark:text-white">
               {level?.level ?? 1}
             </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Level</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">{t("level")}</p>
           </CardBody>
         </Card>
 
@@ -252,7 +254,7 @@ export default function LearnerProfilePage() {
               {xp?.totalXp ?? 0}
             </p>
             <p className="text-xs text-gray-500 dark:text-gray-400">
-              Total XP
+              {t("totalXp")}
             </p>
           </CardBody>
         </Card>
@@ -266,7 +268,7 @@ export default function LearnerProfilePage() {
               {streak?.currentStreak ?? 0}
             </p>
             <p className="text-xs text-gray-500 dark:text-gray-400">
-              Day Streak
+              {t("dayStreak")}
             </p>
           </CardBody>
         </Card>
@@ -279,21 +281,21 @@ export default function LearnerProfilePage() {
             <p className="text-2xl font-bold text-gray-900 dark:text-white">
               {badges.length}
             </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Badges</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">{t("badgeCollection")}</p>
           </CardBody>
         </Card>
       </div>
 
       {/* Detailed Stats */}
       <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-        Activity
+        {t("activity")}
       </h2>
       <Card className="mb-8">
         <CardBody>
           <div className="grid grid-cols-2 gap-y-4 gap-x-6">
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-500 dark:text-gray-400">
-                Total Sessions
+                {t("totalSessions")}
               </span>
               <span className="text-sm font-semibold text-gray-900 dark:text-white">
                 {stats?.totalSessions ?? 0}
@@ -301,7 +303,7 @@ export default function LearnerProfilePage() {
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-500 dark:text-gray-400">
-                Quests Completed
+                {t("questsCompleted")}
               </span>
               <span className="text-sm font-semibold text-gray-900 dark:text-white">
                 {stats?.questsCompleted ?? 0}
@@ -309,7 +311,7 @@ export default function LearnerProfilePage() {
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-500 dark:text-gray-400">
-                Challenges Won
+                {t("challengesWon")}
               </span>
               <span className="text-sm font-semibold text-gray-900 dark:text-white">
                 {stats?.challengesWon ?? 0}
@@ -317,7 +319,7 @@ export default function LearnerProfilePage() {
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-500 dark:text-gray-400">
-                Homework Helped
+                {t("homeworkHelped")}
               </span>
               <span className="text-sm font-semibold text-gray-900 dark:text-white">
                 {stats?.homeworkHelped ?? 0}
@@ -325,7 +327,7 @@ export default function LearnerProfilePage() {
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-500 dark:text-gray-400">
-                Weekly XP
+                {t("weeklyXp")}
               </span>
               <span className="text-sm font-semibold text-[#7C3AED]">
                 {xp?.weeklyXp ?? 0}
@@ -333,10 +335,10 @@ export default function LearnerProfilePage() {
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-500 dark:text-gray-400">
-                Longest Streak
+                {t("longestStreak")}
               </span>
               <span className="text-sm font-semibold text-orange-500">
-                {streak?.longestStreak ?? 0} days
+                {streak?.longestStreak ?? 0} {t("days")}
               </span>
             </div>
           </div>
@@ -346,14 +348,14 @@ export default function LearnerProfilePage() {
       {/* Recent Badges */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-          Recent Badges
+          {t("recentBadges")}
         </h2>
         {badges.length > 0 && (
           <Link
             href="/learner/badges"
             className="text-sm text-[#7C3AED] hover:text-[#6B3FE8] font-medium"
           >
-            View All
+            {t("viewAll")}
           </Link>
         )}
       </div>
@@ -363,10 +365,10 @@ export default function LearnerProfilePage() {
           <CardBody className="text-center py-10">
             <Trophy className="mx-auto mb-3 text-gray-300 dark:text-gray-600" size={40} />
             <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-1">
-              No badges yet
+              {t("noBadgesYet")}
             </h3>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Complete quests and challenges to earn your first badge!
+              {t("earnFirstBadge")}
             </p>
           </CardBody>
         </Card>
@@ -406,7 +408,7 @@ export default function LearnerProfilePage() {
           leftIcon={<Edit3 size={16} />}
           loading={uploading}
         >
-          Change Avatar
+          {t("changeAvatar")}
         </Button>
       </div>
     </div>

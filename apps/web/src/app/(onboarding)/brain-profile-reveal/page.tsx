@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslations } from "next-intl";
 import {
   Brain,
   Sparkles,
@@ -27,36 +28,12 @@ import { API_ROUTES } from "@/lib/api-routes";
 
 /** XAI pipeline steps shown to the parent during profile building */
 const XAI_STEPS = [
-  {
-    icon: BarChart3,
-    title: "Analyzing assessment results",
-    detail: "Reviewing each response for accuracy, speed, and confidence patterns to understand current skill levels across subjects.",
-  },
-  {
-    icon: Search,
-    title: "Mapping learning patterns",
-    detail: "Identifying how your child approaches different question types — whether they favor visual, logical, or step-by-step reasoning.",
-  },
-  {
-    icon: Puzzle,
-    title: "Identifying strengths & growth areas",
-    detail: "Pinpointing subjects and skills where your child excels, and areas where targeted support will make the biggest difference.",
-  },
-  {
-    icon: Shield,
-    title: "Setting support level",
-    detail: "Determining the right level of scaffolding — from high independence to structured guidance — so lessons match your child's needs.",
-  },
-  {
-    icon: BookOpen,
-    title: "Building personalized curriculum",
-    detail: "Selecting grade-appropriate content and adaptive difficulty so your child starts at the right level and progresses at their own pace.",
-  },
-  {
-    icon: Lightbulb,
-    title: "Generating recommendations",
-    detail: "Creating a tailored set of first activities, accommodations, and learning strategies based on everything we've learned.",
-  },
+  { icon: BarChart3, titleKey: "analyzingResults", detailKey: "analyzingResultsDescription" },
+  { icon: Search, titleKey: "mappingPatterns", detailKey: "mappingPatternsDescription" },
+  { icon: Puzzle, titleKey: "identifyingStrengths", detailKey: "identifyingStrengthsDescription" },
+  { icon: Shield, titleKey: "settingSupportLevel", detailKey: "settingSupportLevelDescription" },
+  { icon: BookOpen, titleKey: "buildingCurriculum", detailKey: "buildingCurriculumDescription" },
+  { icon: Lightbulb, titleKey: "generatingRecommendations", detailKey: "generatingRecommendationsDescription" },
 ];
 
 type RevealPhase = "building" | "revealing" | "revealed";
@@ -64,6 +41,7 @@ type RevealPhase = "building" | "revealing" | "revealed";
 export default function BrainProfileRevealPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations("onboarding");
   const activeLearner = useLearnerStore((s) => s.activeLearner);
   const learnerId = activeLearner?.id ?? searchParams.get("learnerId");
   const childName = activeLearner?.name ?? "your child";
@@ -164,7 +142,7 @@ export default function BrainProfileRevealPage() {
       await approve();
       router.push("/complete");
     } catch (err) {
-      setActionError(err instanceof Error ? err.message : "Failed to approve");
+      setActionError(err instanceof Error ? err.message : t("failedToApprove"));
     }
   };
 
@@ -174,7 +152,7 @@ export default function BrainProfileRevealPage() {
       await decline();
       router.push("/complete");
     } catch (err) {
-      setActionError(err instanceof Error ? err.message : "Failed to decline");
+      setActionError(err instanceof Error ? err.message : t("failedToDecline"));
     }
   };
 
@@ -187,7 +165,7 @@ export default function BrainProfileRevealPage() {
       setShowInsightInput(false);
       router.push("/complete");
     } catch (err) {
-      setActionError(err instanceof Error ? err.message : "Failed to add insights");
+      setActionError(err instanceof Error ? err.message : t("failedToAddInsights"));
     }
   };
 
@@ -196,7 +174,7 @@ export default function BrainProfileRevealPage() {
       <div className="text-center py-16">
         <Loader2 className="mx-auto mb-4 text-[#7C3AED] animate-spin" size={48} />
         <p className="text-gray-500 dark:text-gray-400">
-          Loading...
+          {t("loading")}
         </p>
       </div>
     );
@@ -209,13 +187,13 @@ export default function BrainProfileRevealPage() {
           <Brain className="text-red-500" size={32} />
         </div>
         <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-          Unable to load brain profile
+          {t("unableToLoadBrainProfile")}
         </h2>
         <p className="text-gray-500 dark:text-gray-400 mb-4">
           {error.message}
         </p>
         <Button variant="outline" onClick={() => globalThis.location.reload()}>
-          Try again
+          {t("tryAgain")}
         </Button>
       </div>
     );
@@ -242,11 +220,10 @@ export default function BrainProfileRevealPage() {
                 <Brain className="text-white" size={40} />
               </motion.div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                Building {childName}&apos;s Brain Profile
+                {t("buildingBrainProfile", { childName })}
               </h1>
               <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto">
-                Our AI is analyzing assessment data to create a personalized learning model.
-                Here&apos;s what&apos;s happening behind the scenes:
+                {t("buildingBrainProfileDescription")}
               </p>
             </div>
 
@@ -304,7 +281,7 @@ export default function BrainProfileRevealPage() {
 
                 return (
                   <motion.div
-                    key={step.title}
+                    key={step.titleKey}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{
                       opacity: isPending ? 0.4 : 1,
@@ -322,7 +299,7 @@ export default function BrainProfileRevealPage() {
                       </div>
                       <div className="min-w-0">
                         <p className={`font-medium text-sm ${titleClass}`}>
-                          {step.title}
+                          {t(step.titleKey)}
                         </p>
                         <AnimatePresence>
                           {isActive && (
@@ -332,7 +309,7 @@ export default function BrainProfileRevealPage() {
                               exit={{ opacity: 0, height: 0 }}
                               className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed"
                             >
-                              {step.detail}
+                              {t(step.detailKey)}
                             </motion.p>
                           )}
                         </AnimatePresence>
@@ -346,7 +323,7 @@ export default function BrainProfileRevealPage() {
             {/* Progress bar */}
             <div className="max-w-lg mx-auto mt-8">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs text-gray-400 dark:text-gray-500">Progress</span>
+                <span className="text-xs text-gray-400 dark:text-gray-500">{t("progress")}</span>
                 <span className="text-xs font-medium text-[#7C3AED]">
                   {Math.round(((activeStep + 1) / XAI_STEPS.length) * 100)}%
                 </span>
@@ -366,9 +343,7 @@ export default function BrainProfileRevealPage() {
               <div className="flex items-start gap-3 p-3 rounded-lg bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/30">
                 <Shield className="text-blue-500 shrink-0 mt-0.5" size={16} />
                 <p className="text-xs text-blue-700 dark:text-blue-400 leading-relaxed">
-                  <span className="font-medium">Transparent AI:</span> We never use a black box.
-                  Every recommendation is traceable to your child&apos;s assessment data, and you
-                  can review, approve, or adjust the profile before any learning begins.
+                  {t("transparentAi")}
                 </p>
               </div>
             </div>
@@ -392,7 +367,7 @@ export default function BrainProfileRevealPage() {
               <Sparkles className="text-white" size={48} />
             </motion.div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Profile ready!
+              {t("profileReady")}
             </h1>
           </motion.div>
         )}

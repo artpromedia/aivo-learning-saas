@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Trophy, Loader2, RefreshCw } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -19,6 +20,7 @@ const CATEGORY_ICONS: Record<string, string> = {
 };
 
 export default function BadgesPage() {
+  const t = useTranslations("dashboard");
   const activeLearner = useLearnerStore((s) => s.activeLearner);
   const { badges, isLoading, error } = useEngagement(activeLearner?.id);
 
@@ -59,10 +61,9 @@ export default function BadgesPage() {
           <div className="flex items-center gap-3">
             <Trophy size={32} />
             <div>
-              <h1 className="text-2xl font-bold">Badge Collection</h1>
+              <h1 className="text-2xl font-bold">{t("badgeCollection")}</h1>
               <p className="text-white/80 text-sm">
-                {badges.length} badge{badges.length !== 1 ? "s" : ""} earned so
-                far. Keep learning to unlock more!
+                {t("badgesEarned", { count: badges.length })}
               </p>
             </div>
           </div>
@@ -74,10 +75,10 @@ export default function BadgesPage() {
           <CardBody className="text-center py-12">
             <Trophy className="mx-auto mb-3 text-gray-400" size={48} />
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              No badges yet
+              {t("noBadgesYet")}
             </h3>
             <p className="text-gray-500 dark:text-gray-400">
-              Complete lessons, maintain streaks, and explore to earn badges.
+              {t("earnBadgesDescription")}
             </p>
           </CardBody>
         </Card>

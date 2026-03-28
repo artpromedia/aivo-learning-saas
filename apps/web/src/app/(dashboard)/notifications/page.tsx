@@ -12,6 +12,7 @@ import {
   Loader2,
   RefreshCw,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -42,6 +43,7 @@ const typeConfig: Record<
 };
 
 export default function NotificationsPage() {
+  const t = useTranslations("dashboard");
   const {
     notifications,
     unreadCount,
@@ -73,7 +75,7 @@ export default function NotificationsPage() {
           onClick={() => window.location.reload()}
           leftIcon={<RefreshCw size={16} />}
         >
-          Retry
+          {t("retry")}
         </Button>
       </div>
     );
@@ -86,11 +88,11 @@ export default function NotificationsPage() {
           <div className="flex items-center gap-3">
             <Bell size={32} />
             <div>
-              <h1 className="text-2xl font-bold">Notifications</h1>
+              <h1 className="text-2xl font-bold">{t("notifications")}</h1>
               <p className="text-white/80 text-sm">
                 {unreadCount > 0
-                  ? `${unreadCount} unread notification${unreadCount !== 1 ? "s" : ""}`
-                  : "All caught up!"}
+                  ? t("unreadNotifications", { count: unreadCount })
+                  : t("allCaughtUp")}
               </p>
             </div>
           </div>
@@ -102,7 +104,7 @@ export default function NotificationsPage() {
               leftIcon={<CheckCheck size={16} />}
               className="bg-white/20 hover:bg-white/30 text-white"
             >
-              Mark All Read
+              {t("markAllRead")}
             </Button>
           )}
         </div>
@@ -113,11 +115,10 @@ export default function NotificationsPage() {
           <CardBody className="text-center py-12">
             <Bell className="mx-auto mb-3 text-gray-400" size={48} />
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              No notifications
+              {t("noNotifications")}
             </h3>
             <p className="text-gray-500 dark:text-gray-400">
-              You&apos;ll see notifications here about learning progress,
-              recommendations, and more.
+              {t("noNotificationsDescription")}
             </p>
           </CardBody>
         </Card>

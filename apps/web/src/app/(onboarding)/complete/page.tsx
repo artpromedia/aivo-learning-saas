@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { PartyPopper, Rocket } from "lucide-react";
 import { Button } from "@/components/ui/Button";
@@ -35,6 +36,7 @@ function ConfettiPiece({ delay, x }: { delay: number; x: number }) {
 
 export default function OnboardingCompletePage() {
   const router = useRouter();
+  const t = useTranslations("onboarding");
   const activeLearner = useLearnerStore((s) => s.activeLearner);
   const [isCompleting, setIsCompleting] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -44,7 +46,7 @@ export default function OnboardingCompletePage() {
       try {
         await apiFetch(API_ROUTES.ONBOARDING.COMPLETE, { method: "POST" });
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to complete onboarding");
+        setError(err instanceof Error ? err.message : t("failedToComplete"));
       } finally {
         setIsCompleting(false);
       }
@@ -88,7 +90,7 @@ export default function OnboardingCompletePage() {
           transition={{ delay: 0.7 }}
           className="text-3xl font-bold text-gray-900 dark:text-white mb-3"
         >
-          You&apos;re all set!
+          {t("youreAllSet")}
         </motion.h1>
 
         <motion.p
@@ -98,8 +100,8 @@ export default function OnboardingCompletePage() {
           className="text-lg text-gray-500 dark:text-gray-400 mb-2"
         >
           {activeLearner?.name
-            ? `${activeLearner.name}'s personalized learning journey is ready.`
-            : "Your child's personalized learning journey is ready."}
+            ? t("childJourneyReady", { name: activeLearner.name })
+            : t("genericJourneyReady")}
         </motion.p>
 
         <motion.p
@@ -108,8 +110,7 @@ export default function OnboardingCompletePage() {
           transition={{ delay: 1.1 }}
           className="text-sm text-gray-400 dark:text-gray-500 mb-8"
         >
-          We&apos;ve customized the curriculum, selected AI tutors, and prepared
-          an adaptive learning path based on everything you&apos;ve shared.
+          {t("journeyReadyDescription")}
         </motion.p>
 
         {error && (
@@ -131,7 +132,7 @@ export default function OnboardingCompletePage() {
             rightIcon={<Rocket size={20} />}
             className="min-w-[200px]"
           >
-            Go to Dashboard
+            {t("goToDashboard")}
           </Button>
         </motion.div>
       </motion.div>
