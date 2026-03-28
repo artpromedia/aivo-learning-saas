@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { Card, CardBody, CardHeader } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 import { Modal } from "@/components/ui/Modal";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
@@ -31,6 +32,20 @@ interface LearnerSettings {
   shareWithCollaborators: boolean;
   allowAnalytics: boolean;
   dataRetentionMonths: number;
+}
+
+interface ExportHistoryEntry {
+  id: string;
+  status: "processing" | "ready" | "failed" | "expired";
+  createdAt: string;
+  downloadUrl?: string;
+  expiresAt?: string;
+}
+
+interface SubscriptionStatus {
+  status: "ACTIVE" | "GRACE_PERIOD" | "CANCELLED" | "EXPIRED";
+  gracePeriodEndsAt?: string;
+  subscriptionId?: string;
 }
 
 export default function LearnerSettingsPage() {
@@ -61,6 +76,17 @@ export default function LearnerSettingsPage() {
   const [deletingAllData, setDeletingAllData] = useState(false);
   const [deletePassword, setDeletePassword] = useState("");
   const [deletePasswordVisible, setDeletePasswordVisible] = useState(false);
+  const [deleteConfirmName, setDeleteConfirmName] = useState("");
+
+  // Export history
+  const [exportHistory, setExportHistory] = useState<ExportHistoryEntry[]>([]);
+
+  // Subscription / reactivation state
+  const [subscriptionStatus, setSubscriptionStatus] = useState<SubscriptionStatus | null>(null);
+  const [reactivating, setReactivating] = useState(false);
+
+  // Learner name for confirmation
+  const [learnerName, setLearnerName] = useState("");
 
   const stopPolling = useCallback(() => {
     if (pollRef.current) {
@@ -125,7 +151,7 @@ export default function LearnerSettingsPage() {
   };
 
   const handleDeleteAllData = async () => {
-    if (!deletePassword) return;
+    if (!deletePassword || deleteConfirmName !== learnerName) return;
     setDeletingAllData(true);
     setError(null);
     try {
@@ -141,13 +167,50 @@ export default function LearnerSettingsPage() {
     }
   };
 
+  const handleReactivate = async () => {
+    if (!subscriptionStatus?.subscriptionId) return;
+    setReactivating(true);
+    setError(null);
+    try {
+      await apiFetch(`/api/billing/subscriptions/${subscriptionStatus.subscriptionId}/reactivate`, {
+        method: "POST",
+      });
+      setSubscriptionStatus({ ...subscriptionStatus, status: "ACTIVE", gracePeriodEndsAt: undefined });
+      setSuccessMsg("Subscription reactivated successfully. All data has been preserved.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to reactivate subscription");
+    } finally {
+      setReactivating(false);
+    }
+  };
+
   useEffect(() => {
     async function fetchSettings() {
       try {
-        const result = await apiFetch<LearnerSettings>(
-          `/api/learners/${learnerId}/settings`,
-        );
-        setSettings(result);
+        const [settingsResult, historyResult, subResult, learnerResult] = await Promise.allSettled([
+          apiFetch<LearnerSettings>(`/api/learners/${learnerId}/settings`),
+          apiFetch<{ exports: ExportHistoryEntry[] }>(`/api/family/learners/${learnerId}/export/history`),
+          apiFetch<SubscriptionStatus>(`/api/billing/subscription/status`),
+          apiFetch<{ name: string }>(`/api/learners/${learnerId}`),
+        ]);
+
+        if (settingsResult.status === "fulfilled") {
+          setSettings(settingsResult.value);
+        } else {
+          setError("Failed to load settings");
+        }
+
+        if (historyResult.status === "fulfilled") {
+          setExportHistory(historyResult.value.exports ?? []);
+        }
+
+        if (subResult.status === "fulfilled") {
+          setSubscriptionStatus(subResult.value);
+        }
+
+        if (learnerResult.status === "fulfilled") {
+          setLearnerName(learnerResult.value.name ?? "");
+        }
       } catch (err) {
         setError(
           err instanceof Error ? err.message : "Failed to load settings",
@@ -272,6 +335,42 @@ export default function LearnerSettingsPage() {
       {successMsg && (
         <div className="mb-4 p-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 text-sm">
           {successMsg}
+        </div>
+      )}
+
+      {subscriptionStatus?.status === "GRACE_PERIOD" && (
+        <div className="mb-6 p-4 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
+          <div className="flex items-start gap-3">
+            <AlertTriangle size={20} className="text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-sm font-medium text-amber-800 dark:text-amber-300">
+                Your subscription is cancelled. Your data will be deleted on{" "}
+                {subscriptionStatus.gracePeriodEndsAt
+                  ? new Date(subscriptionStatus.gracePeriodEndsAt).toLocaleDateString()
+                  : "the grace period end date"}.
+              </p>
+              <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
+                Resubscribe now to keep all Brain data intact, or export your data before the deadline.
+              </p>
+              <div className="flex gap-3 mt-3">
+                <Button
+                  onClick={handleReactivate}
+                  loading={reactivating}
+                  size="sm"
+                >
+                  Resubscribe Now
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleBrainExport}
+                  leftIcon={<Download size={14} />}
+                >
+                  Export Brain Data
+                </Button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
@@ -499,6 +598,66 @@ export default function LearnerSettingsPage() {
             </CardBody>
           </Card>
 
+          {/* Export History */}
+          {exportHistory.length > 0 && (
+            <Card>
+              <CardHeader>
+                <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                  <Clock size={18} className="text-[#7C3AED]" />
+                  Export History
+                </h3>
+              </CardHeader>
+              <CardBody>
+                <div className="space-y-3">
+                  {exportHistory.map((entry) => (
+                    <div
+                      key={entry.id}
+                      className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-lg"
+                    >
+                      <div className="flex items-center gap-3">
+                        <Badge
+                          variant={
+                            entry.status === "ready"
+                              ? "success"
+                              : entry.status === "failed"
+                                ? "error"
+                                : entry.status === "expired"
+                                  ? "secondary"
+                                  : "warning"
+                          }
+                        >
+                          {entry.status}
+                        </Badge>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                          {new Date(entry.createdAt).toLocaleDateString()} at{" "}
+                          {new Date(entry.createdAt).toLocaleTimeString()}
+                        </span>
+                      </div>
+                      {entry.status === "ready" && entry.downloadUrl && (
+                        <a
+                          href={entry.downloadUrl}
+                          download
+                          className="text-sm text-[#7C3AED] hover:text-[#6D28D9] font-medium flex items-center gap-1"
+                        >
+                          <Download size={14} />
+                          Download
+                          {entry.expiresAt && (
+                            <span className="text-xs text-gray-400 ml-1">
+                              (expires {new Date(entry.expiresAt).toLocaleDateString()})
+                            </span>
+                          )}
+                        </a>
+                      )}
+                      {entry.status === "expired" && (
+                        <span className="text-xs text-gray-400">Link expired</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </CardBody>
+            </Card>
+          )}
+
           {/* Danger Zone */}
           <Card className="border-red-200 dark:border-red-800">
             <CardHeader>
@@ -531,27 +690,30 @@ export default function LearnerSettingsPage() {
               </h3>
             </CardHeader>
             <CardBody>
-              <div className="flex items-start gap-3 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 mb-4">
-                <AlertTriangle size={20} className="text-red-500 shrink-0 mt-0.5" />
-                <div className="text-sm text-red-700 dark:text-red-300">
-                  <p className="font-medium mb-1">Warning: This will permanently delete all data</p>
-                  <p>
-                    This includes the brain profile, all learning sessions, progress history,
-                    IEP documents, analytics, and any AI-generated insights. This data cannot
-                    be recovered after deletion. We recommend exporting your brain data first.
-                  </p>
-                </div>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                Permanently delete <strong>ALL</strong> data for {learnerName || "this learner"}. This action cannot be undone.
+              </p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
+                This will delete: Brain state, all snapshots, session history, mastery data,
+                IEP documents, tutor sessions, homework history, gamification data, and all recommendations.
+              </p>
+              <div className="flex items-start gap-3 p-4 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 mb-4">
+                <Shield size={18} className="text-amber-600 shrink-0 mt-0.5" />
+                <p className="text-sm text-amber-700 dark:text-amber-300">
+                  A compliance audit record will be retained per GDPR Article 17(3). The user record will be anonymized for billing audit purposes.
+                </p>
               </div>
               <Button
                 variant="destructive"
                 onClick={() => {
                   setDeletePassword("");
                   setDeletePasswordVisible(false);
+                  setDeleteConfirmName("");
                   setShowDeleteAllModal(true);
                 }}
                 leftIcon={<Trash2 size={16} />}
               >
-                Delete All Data
+                Delete All Data for {learnerName || "Learner"}
               </Button>
             </CardBody>
           </Card>
@@ -590,6 +752,7 @@ export default function LearnerSettingsPage() {
           if (!deletingAllData) {
             setShowDeleteAllModal(false);
             setDeletePassword("");
+            setDeleteConfirmName("");
           }
         }}
         title="Delete All Data"
@@ -600,6 +763,7 @@ export default function LearnerSettingsPage() {
               onClick={() => {
                 setShowDeleteAllModal(false);
                 setDeletePassword("");
+                setDeleteConfirmName("");
               }}
               disabled={deletingAllData}
             >
@@ -609,7 +773,7 @@ export default function LearnerSettingsPage() {
               variant="destructive"
               onClick={handleDeleteAllData}
               loading={deletingAllData}
-              disabled={!deletePassword}
+              disabled={!deletePassword || deleteConfirmName !== learnerName}
             >
               Permanently Delete All Data
             </Button>
@@ -623,6 +787,24 @@ export default function LearnerSettingsPage() {
               This action cannot be undone. All brain data, learning history, and
               associated records will be permanently destroyed.
             </p>
+          </div>
+
+          <div>
+            <label
+              htmlFor="delete-confirm-name"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+            >
+              Type <strong>{learnerName}</strong> to confirm
+            </label>
+            <input
+              id="delete-confirm-name"
+              type="text"
+              value={deleteConfirmName}
+              onChange={(e) => setDeleteConfirmName(e.target.value)}
+              placeholder={learnerName}
+              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none"
+              autoComplete="off"
+            />
           </div>
 
           <div>

@@ -1,14 +1,14 @@
 import type { FastifyInstance } from "fastify";
 import cron from "node-cron";
 import { and, eq, lt } from "drizzle-orm";
-import { subscriptions, tutorSubscriptions } from "@aivo/db";
-import { SubscriptionService } from "../services/subscription.service.js";
+import { subscriptions, tutorSubscriptions, dataLifecycleEvents } from "@aivo/db";
 import { AddonService } from "../services/addon.service.js";
 import { StripeService } from "../services/stripe.service.js";
+import { publishEvent } from "@aivo/events";
 
 export function setupGracePeriodExpiryCron(app: FastifyInstance): cron.ScheduledTask {
-  // Daily at midnight UTC
-  const task = cron.schedule("0 0 * * *", async () => {
+  // Hourly — check for expired grace periods
+  const task = cron.schedule("0 * * * *", async () => {
     app.log.info("Starting grace period expiry cron");
 
     const now = new Date();
@@ -40,7 +40,24 @@ export function setupGracePeriodExpiryCron(app: FastifyInstance): cron.Scheduled
             .set({ status: "EXPIRED", updatedAt: now })
             .where(eq(subscriptions.id, sub.id));
 
-          app.log.info({ subscriptionId: sub.id, tenantId: sub.tenantId }, "Subscription grace period expired");
+          // Trigger data deletion via brain-svc
+          await publishEvent(app.nats, "billing.subscription.grace.expired", {
+            tenantId: sub.tenantId,
+            subscriptionId: sub.id,
+          });
+
+          // Log lifecycle event
+          await app.db.insert(dataLifecycleEvents).values({
+            learnerId: sub.tenantId,
+            eventType: "DATA_DELETION_STARTED",
+            metadata: {
+              subscriptionId: sub.id,
+              tenantId: sub.tenantId,
+              reason: "grace_period_expired",
+            },
+          });
+
+          app.log.info({ subscriptionId: sub.id, tenantId: sub.tenantId }, "Subscription grace period expired, data deletion triggered");
         } catch (err) {
           app.log.error({ err, subscriptionId: sub.id }, "Failed to expire subscription");
         }
@@ -75,6 +92,6 @@ export function setupGracePeriodExpiryCron(app: FastifyInstance): cron.Scheduled
     }
   });
 
-  app.log.info("Grace period expiry cron scheduled (daily midnight UTC)");
+  app.log.info("Grace period expiry cron scheduled (hourly)");
   return task;
 }

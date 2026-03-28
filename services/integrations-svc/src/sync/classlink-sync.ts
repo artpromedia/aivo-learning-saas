@@ -109,8 +109,118 @@ export class ClassLinkSync {
     }
   }
 
-  private async fetchOneRosterUsers(baseUrl: string, accessToken: string, role: "student" | "teacher"): Promise<(SisStudent | SisTeacher)[]> {
-    const url = `${baseUrl}/ims/oneroster/v1p2/users?filter=role='${role}'`;
+  async deltaSync(
+    connectionId: string,
+    tenantId: string,
+    accessToken: string,
+    baseUrl: string,
+    lastSyncTimestamp: string,
+  ): Promise<string> {
+    const [syncLog] = await this.app.db
+      .insert(syncLogs)
+      .values({ sisConnectionId: connectionId, status: "IN_PROGRESS", syncType: "DELTA" })
+      .returning();
+
+    try {
+      const students = await this.fetchOneRosterUsers(
+        baseUrl,
+        accessToken,
+        "student",
+        `dateLastModified>'${lastSyncTimestamp}'`,
+      );
+
+      const changes = this.deltaDetector.detectChanges([], students as SisStudent[]);
+
+      let studentsAdded = 0;
+      let studentsUpdated = 0;
+      const errors: Array<{ item: string; error: string }> = [];
+
+      for (const student of changes.added) {
+        try {
+          const { learner } = this.mapper.mapStudent(student);
+          let parentId: string | undefined;
+          if (learner.parentEmail) {
+            const existingParent = await this.app.identityClient.findUserByEmail(learner.parentEmail);
+            if (existingParent) {
+              parentId = existingParent.id;
+            } else {
+              const parent = await this.app.identityClient.createUser({
+                tenantId,
+                email: learner.parentEmail,
+                name: learner.parentName ?? learner.name + "'s Parent",
+                role: "PARENT",
+                status: "INVITED",
+              });
+              parentId = parent.id;
+              await this.app.identityClient.sendInvitation(parent.id, "system");
+            }
+          }
+          if (parentId) {
+            await this.app.identityClient.createLearner({
+              tenantId,
+              parentId,
+              name: learner.name,
+              enrolledGrade: learner.enrolledGrade,
+              schoolName: learner.schoolName,
+            });
+          }
+          studentsAdded++;
+        } catch (err) {
+          errors.push({ item: `student:${student.sisId}`, error: (err as Error).message });
+        }
+      }
+
+      for (const student of changes.updated) {
+        try {
+          const { learner } = this.mapper.mapStudent(student);
+          const existing = await this.app.identityClient.findLearnerBySisId(student.sisId, tenantId);
+          if (existing) {
+            await this.app.identityClient.updateLearner(existing.id, {
+              name: learner.name,
+              enrolledGrade: learner.enrolledGrade,
+              schoolName: learner.schoolName,
+            });
+            studentsUpdated++;
+          }
+        } catch (err) {
+          errors.push({ item: `student:${student.sisId}`, error: (err as Error).message });
+        }
+      }
+
+      await this.app.db
+        .update(syncLogs)
+        .set({ status: "COMPLETED", studentsAdded, studentsUpdated, errors, completedAt: new Date() })
+        .where(eq(syncLogs.id, syncLog.id));
+
+      await this.app.db
+        .update(sisConnections)
+        .set({ lastSyncAt: new Date(), lastSyncStatus: "COMPLETED", updatedAt: new Date() })
+        .where(eq(sisConnections.id, connectionId));
+
+      await publishEvent(this.app.nats, "integrations.roster.synced", {
+        tenantId,
+        provider: "CLASSLINK" as const,
+        studentsAdded,
+        studentsUpdated,
+        studentsDeleted: 0,
+        teachersAdded: 0,
+      });
+
+      return syncLog.id;
+    } catch (err) {
+      await this.app.db
+        .update(syncLogs)
+        .set({ status: "FAILED", errors: [{ error: (err as Error).message }], completedAt: new Date() })
+        .where(eq(syncLogs.id, syncLog.id));
+      throw err;
+    }
+  }
+
+  private async fetchOneRosterUsers(baseUrl: string, accessToken: string, role: "student" | "teacher", filter?: string): Promise<(SisStudent | SisTeacher)[]> {
+    let url = `${baseUrl}/ims/oneroster/v1p2/users?filter=role='${role}'`;
+    if (filter) {
+      url += ` AND ${filter}`;
+    }
     const response = await fetch(url, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });

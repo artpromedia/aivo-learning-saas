@@ -60,6 +60,14 @@ export class CleverSync {
       }
 
       // Sync students with parent invitations
+      const newParentNotifications: Array<{
+        parentEmail: string;
+        parentName: string;
+        learnerName: string;
+        schoolName: string;
+        isExisting: boolean;
+      }> = [];
+
       for (const student of students) {
         try {
           const { user, learner } = this.mapper.mapStudent(student);
@@ -68,10 +76,12 @@ export class CleverSync {
           if (!existing) {
             // Create parent account if parent email provided
             let parentId: string | undefined;
+            let isExistingParent = false;
             if (learner.parentEmail) {
               const existingParent = await this.app.identityClient.findUserByEmail(learner.parentEmail);
               if (existingParent) {
                 parentId = existingParent.id;
+                isExistingParent = true;
               } else {
                 const parent = await this.app.identityClient.createUser({
                   tenantId,
@@ -83,6 +93,14 @@ export class CleverSync {
                 parentId = parent.id;
                 await this.app.identityClient.sendInvitation(parent.id, "system");
               }
+
+              newParentNotifications.push({
+                parentEmail: learner.parentEmail,
+                parentName: learner.parentName ?? learner.name + "'s Parent",
+                learnerName: learner.name,
+                schoolName: learner.schoolName ?? "",
+                isExisting: isExistingParent,
+              });
             }
 
             if (parentId) {
@@ -98,6 +116,24 @@ export class CleverSync {
           }
         } catch (err) {
           errors.push({ item: `student:${student.sisId}`, error: (err as Error).message });
+        }
+      }
+
+      // Notify parents of SIS enrollment
+      for (const notification of newParentNotifications) {
+        try {
+          await publishEvent(this.app.nats, "comms.email.send", {
+            to: notification.parentEmail,
+            template: "sis_enrollment_notification",
+            data: {
+              parentName: notification.parentName,
+              learnerName: notification.learnerName,
+              schoolName: notification.schoolName,
+              isExistingParent: notification.isExisting,
+            },
+          });
+        } catch (err) {
+          this.app.log.error({ err, email: notification.parentEmail }, "Failed to send SIS enrollment notification");
         }
       }
 

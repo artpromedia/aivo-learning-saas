@@ -41,7 +41,16 @@ async def lifespan(app: FastAPI):
     except Exception:
         logger.warning("NATS connection failed — running without events", exc_info=True)
 
+    # Start episodic archival cron (background task)
+    import asyncio
+    from brain_svc.cron.episodic_archival import start_archival_loop
+    archival_task = asyncio.create_task(start_archival_loop())
+    logger.info("Episodic archival cron started")
+
     yield
+
+    # Cancel archival cron on shutdown
+    archival_task.cancel()
 
     # Shutdown
     logger.info("brain-svc shutting down")

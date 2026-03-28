@@ -51,6 +51,9 @@ import { csvUploadRoute } from "./routes/csv/upload.js";
 import { csvTemplateRoute } from "./routes/csv/template.js";
 import { csvJobStatusRoute } from "./routes/csv/status.js";
 
+// Routes — Learner enrichment
+import { iepUploadRoute } from "./routes/learners/iep-upload.js";
+
 // Events
 import { setupSubscribers } from "./events/subscribers.js";
 
@@ -141,6 +144,9 @@ export async function buildApp() {
   await app.register(csvUploadRoute);
   await app.register(csvTemplateRoute);
   await app.register(csvJobStatusRoute);
+
+  // Learner enrichment
+  await app.register(iepUploadRoute);
 
   // Event subscribers
   await setupSubscribers(app);

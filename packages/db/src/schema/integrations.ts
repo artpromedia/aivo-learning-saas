@@ -205,6 +205,31 @@ export const csvImportJobs = pgTable(
   ],
 );
 
+// ─── Sync Log Details ──────────────────────────────────────────────────────────
+
+export const syncLogDetails = pgTable(
+  "sync_log_details",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    syncLogId: uuid("sync_log_id")
+      .notNull()
+      .references(() => syncLogs.id, { onDelete: "cascade" }),
+    entityType: varchar("entity_type", { length: 64 }).notNull(),
+    entityId: uuid("entity_id"),
+    sisId: varchar("sis_id", { length: 255 }).notNull(),
+    action: varchar("action", { length: 32 }).notNull(),
+    oldValues: jsonb("old_values"),
+    newValues: jsonb("new_values"),
+    error: text("error"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    index("sync_log_details_sync_log_id_idx").on(t.syncLogId),
+    index("sync_log_details_entity_type_idx").on(t.entityType),
+    index("sync_log_details_sis_id_idx").on(t.sisId),
+  ],
+);
+
 // ─── Relations ──────────────────────────────────────────────────────────────────
 
 export const sisConnectionsRelations = relations(sisConnections, ({ one, many }) => ({
@@ -212,8 +237,13 @@ export const sisConnectionsRelations = relations(sisConnections, ({ one, many })
   syncLogs: many(syncLogs),
 }));
 
-export const syncLogsRelations = relations(syncLogs, ({ one }) => ({
+export const syncLogsRelations = relations(syncLogs, ({ one, many }) => ({
   sisConnection: one(sisConnections, { fields: [syncLogs.sisConnectionId], references: [sisConnections.id] }),
+  details: many(syncLogDetails),
+}));
+
+export const syncLogDetailsRelations = relations(syncLogDetails, ({ one }) => ({
+  syncLog: one(syncLogs, { fields: [syncLogDetails.syncLogId], references: [syncLogs.id] }),
 }));
 
 export const ltiPlatformsRelations = relations(ltiPlatforms, ({ one }) => ({

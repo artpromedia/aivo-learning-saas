@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useState, useCallback } from "react";
-import { RefreshCw, CheckCircle, XCircle, Clock, Link2 } from "lucide-react";
+import Link from "next/link";
+import { RefreshCw, CheckCircle, XCircle, Clock, Link2, Key, Webhook, FileSearch } from "lucide-react";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -122,6 +123,49 @@ export default function IntegrationsPage() {
         </div>
       ) : data ? (
         <div className="space-y-6">
+          {/* Quick navigation */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Link href="/admin/district/integrations/lti">
+              <Card className="hover:border-[#7C3AED] transition-colors cursor-pointer">
+                <CardBody className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-[#7C3AED]/10 flex items-center justify-center">
+                    <Key size={20} className="text-[#7C3AED]" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900 dark:text-white">LTI Configuration</p>
+                    <p className="text-xs text-gray-500">Manage LTI 1.3 platforms</p>
+                  </div>
+                </CardBody>
+              </Card>
+            </Link>
+            <Link href="/admin/district/integrations/webhooks">
+              <Card className="hover:border-[#7C3AED] transition-colors cursor-pointer">
+                <CardBody className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-[#7C3AED]/10 flex items-center justify-center">
+                    <Webhook size={20} className="text-[#7C3AED]" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900 dark:text-white">Outbound Webhooks</p>
+                    <p className="text-xs text-gray-500">Endpoints & delivery logs</p>
+                  </div>
+                </CardBody>
+              </Card>
+            </Link>
+            <Link href={`/admin/district/integrations/sync?id=${data.syncHistory[0]?.id ?? ""}`}>
+              <Card className="hover:border-[#7C3AED] transition-colors cursor-pointer">
+                <CardBody className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-[#7C3AED]/10 flex items-center justify-center">
+                    <FileSearch size={20} className="text-[#7C3AED]" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900 dark:text-white">Sync Error Dashboard</p>
+                    <p className="text-xs text-gray-500">Drill into sync details</p>
+                  </div>
+                </CardBody>
+              </Card>
+            </Link>
+          </div>
+
           <Card>
             <CardBody>
               <div className="flex items-start gap-4">
@@ -183,9 +227,10 @@ export default function IntegrationsPage() {
               ) : (
                 <div className="space-y-3">
                   {data.syncHistory.map((entry) => (
-                    <div
+                    <Link
                       key={entry.id}
-                      className="flex items-center gap-4 p-3 border border-gray-200 dark:border-gray-700 rounded-lg"
+                      href={`/admin/district/integrations/sync?id=${entry.id}`}
+                      className="flex items-center gap-4 p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-[#7C3AED] transition-colors"
                     >
                       {statusIcon(entry.status)}
                       <div className="flex-1 min-w-0">
@@ -211,7 +256,7 @@ export default function IntegrationsPage() {
                           Completed: {formatDate(entry.completedAt)}
                         </span>
                       )}
-                    </div>
+                    </Link>
                   ))}
                 </div>
               )}
