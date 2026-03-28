@@ -5,7 +5,7 @@ import { API_ROUTES } from "@/lib/api-routes";
 export interface BrainProfile {
   id: string;
   learnerId: string;
-  functioningLevel: "level1" | "level2" | "level3";
+  functioningLevel: "STANDARD" | "SUPPORTED" | "LOW_VERBAL" | "NON_VERBAL" | "PRE_SYMBOLIC";
   strengths: string[];
   challenges: string[];
   learningStyle: string;

@@ -12,65 +12,76 @@ class TestKnowledgeBase:
     def test_seed_data_exists(self):
         assert len(CURRICULUM_STANDARDS) > 10
 
-    def test_search_math(self):
+    @pytest.mark.asyncio
+    async def test_search_math(self):
         kb = KnowledgeBase()
-        results = kb.search("fractions", subject="MATH")
+        results = await kb.search("fractions", subject="MATH")
         assert len(results) > 0
         assert all(r.subject == "MATH" for r in results)
 
-    def test_search_ela(self):
+    @pytest.mark.asyncio
+    async def test_search_ela(self):
         kb = KnowledgeBase()
-        results = kb.search("reading comprehension", subject="ELA")
+        results = await kb.search("reading comprehension", subject="ELA")
         assert len(results) > 0
 
-    def test_search_with_grade_band(self):
+    @pytest.mark.asyncio
+    async def test_search_with_grade_band(self):
         kb = KnowledgeBase()
-        results = kb.search("counting", subject="MATH", grade_band="K-2")
+        results = await kb.search("counting", subject="MATH", grade_band="K-2")
         assert len(results) > 0
         assert all(r.grade_band == "K-2" for r in results)
 
-    def test_search_science(self):
+    @pytest.mark.asyncio
+    async def test_search_science(self):
         kb = KnowledgeBase()
-        results = kb.search("investigation", subject="SCIENCE")
+        results = await kb.search("investigation", subject="SCIENCE")
         assert len(results) > 0
 
-    def test_search_no_results(self):
+    @pytest.mark.asyncio
+    async def test_search_no_results(self):
         kb = KnowledgeBase()
-        results = kb.search("quantum entanglement", subject="MATH", grade_band="K-2")
+        results = await kb.search("quantum entanglement", subject="MATH", grade_band="K-2")
         assert len(results) == 0
 
-    def test_search_top_k(self):
+    @pytest.mark.asyncio
+    async def test_search_top_k(self):
         kb = KnowledgeBase()
-        results = kb.search("math", top_k=3)
+        results = await kb.search("math", top_k=3)
         assert len(results) <= 3
 
-    def test_search_domain_match(self):
+    @pytest.mark.asyncio
+    async def test_search_domain_match(self):
         kb = KnowledgeBase()
-        results = kb.search("algebra", subject="MATH")
+        results = await kb.search("algebra", subject="MATH")
         assert len(results) > 0
         assert any(r.domain == "algebra" for r in results)
 
 
 class TestCurriculumRetriever:
-    def test_retrieve_math_k2(self):
+    @pytest.mark.asyncio
+    async def test_retrieve_math_k2(self):
         retriever = CurriculumRetriever()
-        standards = retriever.retrieve("counting", "MATH", grade=1)
+        standards = await retriever.retrieve("counting", "MATH", grade=1)
         assert len(standards) > 0
         assert any("Count" in s for s in standards)
 
-    def test_retrieve_ela_35(self):
+    @pytest.mark.asyncio
+    async def test_retrieve_ela_35(self):
         retriever = CurriculumRetriever()
-        standards = retriever.retrieve("reading comprehension", "ELA", grade=4)
+        standards = await retriever.retrieve("reading comprehension", "ELA", grade=4)
         assert len(standards) > 0
 
-    def test_retrieve_fallback_no_grade(self):
+    @pytest.mark.asyncio
+    async def test_retrieve_fallback_no_grade(self):
         retriever = CurriculumRetriever()
-        standards = retriever.retrieve("algebra", "MATH", grade=7)
+        standards = await retriever.retrieve("algebra", "MATH", grade=7)
         assert len(standards) > 0
 
-    def test_retrieve_returns_formatted_strings(self):
+    @pytest.mark.asyncio
+    async def test_retrieve_returns_formatted_strings(self):
         retriever = CurriculumRetriever()
-        standards = retriever.retrieve("counting", "MATH", grade=1)
+        standards = await retriever.retrieve("counting", "MATH", grade=1)
         for s in standards:
             assert "[CC." in s or "[NGSS." in s
             assert "Grade band:" in s

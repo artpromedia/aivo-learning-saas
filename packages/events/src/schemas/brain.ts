@@ -38,6 +38,7 @@ export const BrainSnapshotCreatedSchema = z.object({
     "TUTOR_ADDON_DEACTIVATED",
     "FUNCTIONING_LEVEL_CHANGE",
     "IEP_UPDATE",
+    "ROLLBACK",
   ]),
 });
 export type BrainSnapshotCreated = z.infer<typeof BrainSnapshotCreatedSchema>;
@@ -105,6 +106,32 @@ export const BrainRegressionDetectedSchema = z.object({
 });
 export type BrainRegressionDetected = z.infer<typeof BrainRegressionDetectedSchema>;
 
+// ─── brain.upgraded ────────────────────────────────────────────────────────────
+export const BrainUpgradedSchema = z.object({
+  learnerId: z.string().uuid(),
+  brainStateId: z.string().uuid(),
+  previousVersion: z.string(),
+  newVersion: z.string(),
+});
+export type BrainUpgraded = z.infer<typeof BrainUpgradedSchema>;
+
+// ─── brain.upgrade.batch.completed ─────────────────────────────────────────────
+export const BrainUpgradeBatchCompletedSchema = z.object({
+  version: z.string(),
+  totalUpgraded: z.number(),
+  totalFailed: z.number(),
+  durationMs: z.number(),
+});
+export type BrainUpgradeBatchCompleted = z.infer<typeof BrainUpgradeBatchCompletedSchema>;
+
+// ─── brain.snapshot.restored ───────────────────────────────────────────────────
+export const BrainSnapshotRestoredSchema = z.object({
+  learnerId: z.string().uuid(),
+  snapshotId: z.string().uuid(),
+  restoredBy: z.string().uuid(),
+});
+export type BrainSnapshotRestored = z.infer<typeof BrainSnapshotRestoredSchema>;
+
 export const BRAIN_SUBJECTS = {
   "brain.cloned": "aivo.brain.cloned",
   "brain.updated": "aivo.brain.updated",
@@ -115,6 +142,9 @@ export const BRAIN_SUBJECTS = {
   "brain.iep_goal.met": "aivo.brain.iep_goal.met",
   "brain.functioning_level.changed": "aivo.brain.functioning_level.changed",
   "brain.regression.detected": "aivo.brain.regression.detected",
+  "brain.upgraded": "aivo.brain.upgraded",
+  "brain.upgrade.batch.completed": "aivo.brain.upgrade.batch.completed",
+  "brain.snapshot.restored": "aivo.brain.snapshot.restored",
 } as const;
 
 export const BRAIN_SCHEMAS = {
@@ -127,4 +157,7 @@ export const BRAIN_SCHEMAS = {
   "brain.iep_goal.met": BrainIepGoalMetSchema,
   "brain.functioning_level.changed": BrainFunctioningLevelChangedSchema,
   "brain.regression.detected": BrainRegressionDetectedSchema,
+  "brain.upgraded": BrainUpgradedSchema,
+  "brain.upgrade.batch.completed": BrainUpgradeBatchCompletedSchema,
+  "brain.snapshot.restored": BrainSnapshotRestoredSchema,
 } as const;

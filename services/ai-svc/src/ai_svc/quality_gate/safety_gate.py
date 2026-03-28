@@ -28,6 +28,16 @@ _AGE_INAPPROPRIATE = [
 
 _COMPILED_AGE = [re.compile(p, re.IGNORECASE) for p in _AGE_INAPPROPRIATE]
 
+# PII detection patterns
+_PII_PATTERNS = [
+    (r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b", "email address"),
+    (r"\b\d{3}[-.\s]?\d{2}[-.\s]?\d{4}\b", "SSN"),
+    (r"\b(?:\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}\b", "phone number"),
+    (r"\b[A-Z][a-z]+\s+(?:[A-Z]\.?\s+)?[A-Z][a-z]{2,}\b", "full name"),
+]
+
+_COMPILED_PII = [(re.compile(p, re.IGNORECASE if label == "email address" else 0), label) for p, label in _PII_PATTERNS]
+
 
 def check_safety(content: str) -> GateResult:
     """Check content for harmful or age-inappropriate material.
@@ -54,6 +64,17 @@ def check_safety(content: str) -> GateResult:
                 passed=False,
                 details=f"Age-inappropriate content detected near '{match.group()}'",
                 metadata={"trigger": match.group()},
+            )
+
+    # Check for PII
+    for pattern, label in _COMPILED_PII:
+        match = pattern.search(content)
+        if match:
+            return GateResult(
+                name="safety",
+                passed=False,
+                details=f"PII detected: {label} found near '{match.group()}'",
+                metadata={"trigger": match.group(), "pii_type": label},
             )
 
     return GateResult(

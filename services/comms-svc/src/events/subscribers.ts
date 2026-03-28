@@ -113,12 +113,26 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
     });
   } catch { app.log.warn("Could not subscribe to brain.cloned"); }
 
-  // ─── brain.recommendation.created → in-app + push ─────────────────────────
+  // ─── brain.recommendation.created → in-app + push + regression email ───────
   try {
     await subscribeEvent(nc, "brain.recommendation.created", BRAIN_SCHEMAS["brain.recommendation.created"], async (data) => {
       try {
         const result = await getLearnerWithParent(app, data.learnerId);
         if (!result) return;
+
+        // Send regression rollback email if this is a REGRESSION_ROLLBACK_OFFER
+        if (data.type === "REGRESSION_ROLLBACK_OFFER") {
+          const rollbackUrl = `${config.APP_URL}/parent/${result.learner.id}/brain/rollback`;
+          await emailService.sendTemplate("regression_rollback_offer", result.parent.email, result.parent.id, {
+            userName: result.parent.name,
+            learnerName: result.learner.name,
+            domains: data.type.replace(/_/g, " "),
+            dropSummary: "One or more learning domains have dropped 15% or more since the recent upgrade.",
+            rollbackUrl,
+            appUrl: config.APP_URL,
+          });
+          app.log.info({ learnerId: data.learnerId }, "Regression rollback offer email sent");
+        }
 
         await notificationService.create({
           userId: result.parent.id,

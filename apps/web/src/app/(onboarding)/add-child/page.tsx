@@ -58,7 +58,7 @@ export default function AddChildPage() {
         name: string;
         dateOfBirth: string;
         avatarUrl?: string;
-        functioningLevel: "level1" | "level2" | "level3";
+        functioningLevel: "STANDARD" | "SUPPORTED" | "LOW_VERBAL" | "NON_VERBAL" | "PRE_SYMBOLIC";
         preferences: Record<string, unknown>;
       }>(API_ROUTES.LEARNER.CREATE, {
         method: "POST",

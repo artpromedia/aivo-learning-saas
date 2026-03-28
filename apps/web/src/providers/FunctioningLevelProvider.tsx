@@ -18,37 +18,63 @@ interface FunctioningLevelConfig {
   maxChoices: number;
   /** Whether audio cues are enabled */
   audioCues: boolean;
+  /** Whether picture-based communication support is enabled */
+  pictureSupport?: boolean;
+  /** Whether a communication partner assists the learner */
+  partnerAssisted?: boolean;
+  /** Whether the session is adult-directed (learner does not interact with text) */
+  adultDirected?: boolean;
 }
 
 const defaults: Record<FunctioningLevel, FunctioningLevelConfig> = {
-  level1: {
-    level: "level1",
+  STANDARD: {
+    level: "STANDARD",
     reduceAnimations: false,
-    fontScale: 1,
+    fontScale: 1.0,
     simplifiedUi: false,
     maxChoices: 4,
     audioCues: true,
   },
-  level2: {
-    level: "level2",
+  SUPPORTED: {
+    level: "SUPPORTED",
     reduceAnimations: false,
     fontScale: 1.15,
     simplifiedUi: false,
     maxChoices: 3,
     audioCues: true,
   },
-  level3: {
-    level: "level3",
+  LOW_VERBAL: {
+    level: "LOW_VERBAL",
     reduceAnimations: true,
     fontScale: 1.3,
     simplifiedUi: true,
     maxChoices: 2,
     audioCues: true,
+    pictureSupport: true,
+  },
+  NON_VERBAL: {
+    level: "NON_VERBAL",
+    reduceAnimations: true,
+    fontScale: 1.3,
+    simplifiedUi: true,
+    maxChoices: 1,
+    audioCues: true,
+    pictureSupport: true,
+    partnerAssisted: true,
+  },
+  PRE_SYMBOLIC: {
+    level: "PRE_SYMBOLIC",
+    reduceAnimations: true,
+    fontScale: 1.0,
+    simplifiedUi: true,
+    maxChoices: 0,
+    audioCues: true,
+    adultDirected: true,
   },
 };
 
 const FunctioningLevelContext = createContext<FunctioningLevelConfig>(
-  defaults.level1,
+  defaults.STANDARD,
 );
 
 export function useFunctioningLevel() {
@@ -63,7 +89,7 @@ export function FunctioningLevelProvider({
   const activeLearner = useLearnerStore((s) => s.activeLearner);
 
   const config = useMemo<FunctioningLevelConfig>(() => {
-    const level = activeLearner?.functioningLevel ?? "level1";
+    const level = activeLearner?.functioningLevel ?? "STANDARD";
     const base = defaults[level];
 
     // Apply learner-specific preference overrides

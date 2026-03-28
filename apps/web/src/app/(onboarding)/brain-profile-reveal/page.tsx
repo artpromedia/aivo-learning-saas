@@ -193,11 +193,15 @@ export default function BrainProfileRevealPage() {
                       Functioning Level
                     </h3>
                     <Badge>
-                      {profile.functioningLevel === "level1"
-                        ? "Level 1 - High Independence"
-                        : profile.functioningLevel === "level2"
-                          ? "Level 2 - Moderate Support"
-                          : "Level 3 - Substantial Support"}
+                      {profile.functioningLevel === "STANDARD"
+                        ? "Standard"
+                        : profile.functioningLevel === "SUPPORTED"
+                          ? "Supported"
+                          : profile.functioningLevel === "LOW_VERBAL"
+                            ? "Low Verbal"
+                            : profile.functioningLevel === "NON_VERBAL"
+                              ? "Non-Verbal"
+                              : "Pre-Symbolic"}
                     </Badge>
                   </div>
                   <p className="text-sm text-gray-500 dark:text-gray-400">

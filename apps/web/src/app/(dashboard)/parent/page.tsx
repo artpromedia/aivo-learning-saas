@@ -16,7 +16,7 @@ interface LearnerSummary {
   id: string;
   name: string;
   avatarUrl?: string;
-  functioningLevel: "level1" | "level2" | "level3";
+  functioningLevel: "STANDARD" | "SUPPORTED" | "LOW_VERBAL" | "NON_VERBAL" | "PRE_SYMBOLIC";
   currentStreak: number;
   totalXp: number;
   level: number;
@@ -47,12 +47,16 @@ export default function ParentDashboardPage() {
 
   const levelLabel = (fl: string) => {
     switch (fl) {
-      case "level1":
-        return "Level 1";
-      case "level2":
-        return "Level 2";
-      case "level3":
-        return "Level 3";
+      case "STANDARD":
+        return "Standard";
+      case "SUPPORTED":
+        return "Supported";
+      case "LOW_VERBAL":
+        return "Low Verbal";
+      case "NON_VERBAL":
+        return "Non-Verbal";
+      case "PRE_SYMBOLIC":
+        return "Pre-Symbolic";
       default:
         return fl;
     }

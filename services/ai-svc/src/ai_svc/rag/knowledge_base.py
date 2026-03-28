@@ -1,14 +1,51 @@
-"""Curriculum knowledge base backed by pgvector."""
+"""Curriculum knowledge base backed by pgvector with keyword fallback."""
 
 from __future__ import annotations
 
 import logging
+import uuid
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from typing import Any
+
+from pgvector.sqlalchemy import Vector
+from sqlalchemy import Column, DateTime, String, Text, text
+from sqlalchemy.dialects.postgresql import JSONB, UUID
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import DeclarativeBase
 
 logger = logging.getLogger(__name__)
 
-# Seed curriculum standards data
+
+# ---------------------------------------------------------------------------
+# SQLAlchemy model
+# ---------------------------------------------------------------------------
+
+class _Base(DeclarativeBase):
+    pass
+
+
+class Embedding(_Base):
+    """pgvector-backed embedding row."""
+
+    __tablename__ = "embeddings"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    collection = Column(String(128), nullable=False, index=True)
+    content = Column(Text, nullable=False)
+    metadata_ = Column("metadata", JSONB, nullable=False, server_default=text("'{}'::jsonb"))
+    embedding = Column(Vector(1536), nullable=False)
+    created_at = Column(
+        DateTime(timezone=True),
+        nullable=False,
+        default=lambda: datetime.now(timezone.utc),
+    )
+
+
+# ---------------------------------------------------------------------------
+# Seed curriculum standards (in-memory fallback)
+# ---------------------------------------------------------------------------
+
 CURRICULUM_STANDARDS: list[dict[str, str]] = [
     # Common Core Math K-2
     {"id": "CC.MATH.K.1", "subject": "MATH", "grade_band": "K-2", "standard": "Count to 100 by ones and by tens", "domain": "counting"},
@@ -58,36 +95,117 @@ class StandardMatch:
 
 
 class KnowledgeBase:
-    """In-memory curriculum knowledge base with keyword matching.
+    """Curriculum knowledge base with pgvector cosine-similarity search
+    and in-memory keyword fallback.
 
-    For production, this would use pgvector for semantic search.
-    The keyword-based approach provides a working implementation
-    without requiring external embedding services.
+    When an async database session is provided, ``search`` performs a real
+    cosine-similarity query against the ``embeddings`` table.  Without a
+    session it falls back to the keyword-overlap approach using the
+    ``CURRICULUM_STANDARDS`` seed data.
     """
 
     def __init__(self) -> None:
         self._standards = CURRICULUM_STANDARDS
 
-    def search(
+    # ------------------------------------------------------------------
+    # pgvector search
+    # ------------------------------------------------------------------
+
+    async def search(
+        self,
+        query: str,
+        subject: str | None = None,
+        grade_band: str | None = None,
+        top_k: int = 5,
+        session: AsyncSession | None = None,
+        query_embedding: list[float] | None = None,
+    ) -> list[StandardMatch]:
+        """Search for relevant curriculum standards.
+
+        If *session* and *query_embedding* are provided, uses pgvector
+        cosine-similarity search.  Otherwise falls back to keyword search.
+        """
+        if session is not None and query_embedding is not None:
+            return await self._vector_search(
+                session=session,
+                query_embedding=query_embedding,
+                subject=subject,
+                grade_band=grade_band,
+                top_k=top_k,
+            )
+        return self._keyword_search(query, subject, grade_band, top_k)
+
+    async def _vector_search(
+        self,
+        session: AsyncSession,
+        query_embedding: list[float],
+        subject: str | None,
+        grade_band: str | None,
+        top_k: int,
+    ) -> list[StandardMatch]:
+        """Cosine-similarity search via pgvector."""
+        from sqlalchemy import select, func
+
+        distance = Embedding.embedding.cosine_distance(query_embedding).label("distance")
+        stmt = (
+            select(Embedding, distance)
+            .where(Embedding.collection == "curriculum_standards")
+            .order_by(distance)
+            .limit(top_k)
+        )
+
+        if subject:
+            stmt = stmt.where(
+                Embedding.metadata_["subject"].astext == subject.upper()
+            )
+        if grade_band:
+            stmt = stmt.where(
+                Embedding.metadata_["grade_band"].astext == grade_band
+            )
+
+        result = await session.execute(stmt)
+        rows = result.all()
+
+        matches: list[StandardMatch] = []
+        for row in rows:
+            emb: Embedding = row[0]
+            dist: float = row[1]
+            meta = emb.metadata_ or {}
+            matches.append(
+                StandardMatch(
+                    id=meta.get("id", str(emb.id)),
+                    standard=emb.content,
+                    subject=meta.get("subject", ""),
+                    grade_band=meta.get("grade_band", ""),
+                    domain=meta.get("domain", ""),
+                    score=1.0 - dist,  # cosine similarity = 1 - cosine distance
+                )
+            )
+
+        return matches
+
+    # ------------------------------------------------------------------
+    # In-memory keyword fallback
+    # ------------------------------------------------------------------
+
+    def _keyword_search(
         self,
         query: str,
         subject: str | None = None,
         grade_band: str | None = None,
         top_k: int = 5,
     ) -> list[StandardMatch]:
-        """Search for relevant curriculum standards."""
+        """Keyword-overlap search over seed data."""
         results: list[StandardMatch] = []
         query_lower = query.lower()
         query_words = set(query_lower.split())
 
         for std in self._standards:
-            # Filter by subject/grade_band if specified
             if subject and std["subject"] != subject.upper():
                 continue
             if grade_band and std["grade_band"] != grade_band:
                 continue
 
-            # Score by keyword overlap
             std_words = set(std["standard"].lower().split())
             std_words.update(std["domain"].lower().split("_"))
             overlap = len(query_words & std_words)
@@ -104,3 +222,55 @@ class KnowledgeBase:
 
         results.sort(key=lambda x: x.score, reverse=True)
         return results[:top_k]
+
+    # ------------------------------------------------------------------
+    # Write helpers
+    # ------------------------------------------------------------------
+
+    async def store_embedding(
+        self,
+        session: AsyncSession,
+        content: str,
+        embedding: list[float],
+        collection: str = "curriculum_standards",
+        metadata: dict[str, Any] | None = None,
+    ) -> Embedding:
+        """Insert a single embedding row and return it."""
+        row = Embedding(
+            id=uuid.uuid4(),
+            collection=collection,
+            content=content,
+            metadata_=metadata or {},
+            embedding=embedding,
+        )
+        session.add(row)
+        await session.flush()
+        return row
+
+    async def batch_store_embeddings(
+        self,
+        session: AsyncSession,
+        items: list[dict[str, Any]],
+        collection: str = "curriculum_standards",
+    ) -> int:
+        """Bulk-insert embeddings.
+
+        Each item in *items* must contain ``content``, ``embedding``, and
+        optionally ``metadata``.
+
+        Returns the number of rows inserted.
+        """
+        rows: list[Embedding] = []
+        for item in items:
+            rows.append(
+                Embedding(
+                    id=uuid.uuid4(),
+                    collection=collection,
+                    content=item["content"],
+                    metadata_=item.get("metadata", {}),
+                    embedding=item["embedding"],
+                )
+            )
+        session.add_all(rows)
+        await session.flush()
+        return len(rows)

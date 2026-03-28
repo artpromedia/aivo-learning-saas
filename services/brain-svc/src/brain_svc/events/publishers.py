@@ -128,3 +128,43 @@ async def publish_regression_detected(
         "learnerId": learner_id,
         "regressions": regressions,
     })
+
+
+async def publish_brain_upgraded(
+    learner_id: str,
+    brain_state_id: str,
+    previous_version: str,
+    new_version: str,
+) -> None:
+    await publish_event("aivo.brain.upgraded", {
+        "learnerId": learner_id,
+        "brainStateId": brain_state_id,
+        "previousVersion": previous_version,
+        "newVersion": new_version,
+    })
+
+
+async def publish_upgrade_batch_completed(
+    version: str,
+    total_upgraded: int,
+    total_failed: int,
+    duration_ms: int,
+) -> None:
+    await publish_event("aivo.brain.upgrade.batch.completed", {
+        "version": version,
+        "totalUpgraded": total_upgraded,
+        "totalFailed": total_failed,
+        "durationMs": duration_ms,
+    })
+
+
+async def publish_snapshot_restored(
+    learner_id: str,
+    snapshot_id: str,
+    restored_by: str,
+) -> None:
+    await publish_event("aivo.brain.snapshot.restored", {
+        "learnerId": learner_id,
+        "snapshotId": snapshot_id,
+        "restoredBy": restored_by,
+    })

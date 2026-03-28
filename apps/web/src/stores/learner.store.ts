@@ -5,7 +5,7 @@ export interface Learner {
   name: string;
   avatarUrl?: string;
   dateOfBirth: string;
-  functioningLevel: "level1" | "level2" | "level3";
+  functioningLevel: "STANDARD" | "SUPPORTED" | "LOW_VERBAL" | "NON_VERBAL" | "PRE_SYMBOLIC";
   preferences: {
     theme?: string;
     reduceAnimations?: boolean;
