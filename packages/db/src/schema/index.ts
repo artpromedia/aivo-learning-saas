@@ -57,3 +57,6 @@ export * from "./data-lifecycle";
 
 // i18n
 export * from "./i18n";
+
+// Research
+export * from "./research";

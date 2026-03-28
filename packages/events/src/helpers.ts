@@ -14,6 +14,8 @@ import {
   IDENTITY_SCHEMAS,
   ADMIN_SCHEMAS,
   INTEGRATIONS_SCHEMAS,
+  RESEARCH_SCHEMAS,
+  FEATURE_FLAG_SCHEMAS,
 } from "./schemas/index.js";
 
 const sc = StringCodec();
@@ -30,6 +32,8 @@ const ALL_SCHEMAS: Record<string, z.ZodType> = {
   ...IDENTITY_SCHEMAS,
   ...ADMIN_SCHEMAS,
   ...INTEGRATIONS_SCHEMAS,
+  ...RESEARCH_SCHEMAS,
+  ...FEATURE_FLAG_SCHEMAS,
 };
 
 function getSchema(eventName: string): z.ZodType {

@@ -11,11 +11,20 @@
     "test:collaboration": "playwright test --project=module-3b-collaboration",
     "test:gamification": "playwright test --project=module-4a-gamification",
     "test:report": "playwright show-report",
+    "test:content-gen": "playwright test --project=module-2a-content-gen",
+    "test:avatar-shop": "playwright test --project=module-4b-avatar-shop",
+    "test:enterprise": "playwright test --project=module-5a-enterprise",
+    "test:integration": "playwright test --project=integration",
+    "gate": "tsx scripts/module-gate.ts",
+    "gate:stubs": "tsx scripts/stub-audit.ts",
+    "gate:routes": "tsx scripts/route-verifier.ts",
+    "gate:deps": "tsx scripts/dependency-check.ts",
     "services:up": "docker compose -f docker-compose.test.yml up -d --wait",
     "services:down": "docker compose -f docker-compose.test.yml down -v"
   },
   "devDependencies": {
     "@playwright/test": "^1.50.0",
-    "@axe-core/playwright": "^4.10.0"
+    "@axe-core/playwright": "^4.10.0",
+    "tsx": "^4.7.0"
   }
 }

@@ -10,3 +10,5 @@ export * from "./comms.js";
 export * from "./identity.js";
 export * from "./admin.js";
 export * from "./integrations.js";
+export * from "./research.js";
+export * from "./feature-flags.js";
