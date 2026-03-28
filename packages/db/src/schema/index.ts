@@ -51,3 +51,6 @@ export * from "./integrations";
 
 // Classrooms
 export * from "./classrooms";
+
+// Data Lifecycle (compliance audit trail)
+export * from "./data-lifecycle";

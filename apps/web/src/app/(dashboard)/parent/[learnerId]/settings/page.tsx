@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -14,6 +14,10 @@ import {
   Eye,
   EyeOff,
   Save,
+  Brain,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
 } from "lucide-react";
 import { Card, CardBody, CardHeader } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -42,6 +46,100 @@ export default function LearnerSettingsPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [exporting, setExporting] = useState(false);
+
+  // Brain data export states
+  const [brainExportLoading, setBrainExportLoading] = useState(false);
+  const [brainExportStatus, setBrainExportStatus] = useState<
+    "idle" | "processing" | "ready" | "error"
+  >("idle");
+  const [brainExportDownloadUrl, setBrainExportDownloadUrl] = useState<string | null>(null);
+  const [brainExportExpiresAt, setBrainExportExpiresAt] = useState<string | null>(null);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Delete all data states
+  const [showDeleteAllModal, setShowDeleteAllModal] = useState(false);
+  const [deletingAllData, setDeletingAllData] = useState(false);
+  const [deletePassword, setDeletePassword] = useState("");
+  const [deletePasswordVisible, setDeletePasswordVisible] = useState(false);
+
+  const stopPolling = useCallback(() => {
+    if (pollRef.current) {
+      clearInterval(pollRef.current);
+      pollRef.current = null;
+    }
+  }, []);
+
+  const pollExportStatus = useCallback(() => {
+    stopPolling();
+    pollRef.current = setInterval(async () => {
+      try {
+        const result = await apiFetch<{
+          status: "processing" | "ready" | "error";
+          downloadUrl?: string;
+          expiresAt?: string;
+          error?: string;
+        }>(`/api/family/learners/${learnerId}/export/status`);
+
+        if (result.status === "ready" && result.downloadUrl) {
+          setBrainExportStatus("ready");
+          setBrainExportDownloadUrl(result.downloadUrl);
+          setBrainExportExpiresAt(result.expiresAt ?? null);
+          setBrainExportLoading(false);
+          stopPolling();
+        } else if (result.status === "error") {
+          setBrainExportStatus("error");
+          setBrainExportLoading(false);
+          setError(result.error ?? "Export failed");
+          stopPolling();
+        }
+      } catch {
+        setBrainExportStatus("error");
+        setBrainExportLoading(false);
+        setError("Failed to check export status");
+        stopPolling();
+      }
+    }, 3000);
+  }, [learnerId, stopPolling]);
+
+  // Cleanup polling on unmount
+  useEffect(() => {
+    return () => stopPolling();
+  }, [stopPolling]);
+
+  const handleBrainExport = async () => {
+    setBrainExportLoading(true);
+    setBrainExportStatus("processing");
+    setBrainExportDownloadUrl(null);
+    setBrainExportExpiresAt(null);
+    setError(null);
+    try {
+      await apiFetch(`/api/family/learners/${learnerId}/export`, {
+        method: "POST",
+      });
+      pollExportStatus();
+    } catch (err) {
+      setBrainExportStatus("error");
+      setBrainExportLoading(false);
+      setError(err instanceof Error ? err.message : "Failed to start export");
+    }
+  };
+
+  const handleDeleteAllData = async () => {
+    if (!deletePassword) return;
+    setDeletingAllData(true);
+    setError(null);
+    try {
+      await apiFetch(`/api/family/learners/${learnerId}/delete-all-data`, {
+        method: "POST",
+        body: JSON.stringify({ password: deletePassword }),
+      });
+      setShowDeleteAllModal(false);
+      router.push("/parent?message=All+learner+data+has+been+deleted+successfully");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete data");
+      setDeletingAllData(false);
+    }
+  };
 
   useEffect(() => {
     async function fetchSettings() {
@@ -306,6 +404,101 @@ export default function LearnerSettingsPage() {
             </CardBody>
           </Card>
 
+          {/* Export Brain Data */}
+          <Card>
+            <CardHeader>
+              <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                <Brain size={18} className="text-[#7C3AED]" />
+                Export Brain Data
+              </h3>
+            </CardHeader>
+            <CardBody>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                Export a complete copy of this learner&apos;s brain profile data, including
+                neural adaptations, learning patterns, and AI model weights. The export
+                is generated asynchronously and a download link will appear when ready.
+              </p>
+
+              {brainExportStatus === "idle" && (
+                <Button
+                  variant="outline"
+                  onClick={handleBrainExport}
+                  leftIcon={<Brain size={16} />}
+                >
+                  Export Brain Data
+                </Button>
+              )}
+
+              {brainExportStatus === "processing" && (
+                <div className="flex items-center gap-3 p-4 rounded-lg bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800">
+                  <Loader2 size={20} className="text-[#7C3AED] animate-spin" />
+                  <div>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                      Generating brain data export...
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      This may take a few minutes. You can leave this page and come back.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {brainExportStatus === "ready" && brainExportDownloadUrl && (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3 p-4 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
+                    <CheckCircle size={20} className="text-green-600 dark:text-green-400" />
+                    <div>
+                      <p className="text-sm font-medium text-green-800 dark:text-green-300">
+                        Brain data export is ready!
+                      </p>
+                      {brainExportExpiresAt && (
+                        <p className="text-xs text-green-600 dark:text-green-400 flex items-center gap-1 mt-1">
+                          <Clock size={12} />
+                          Download link expires in 72 hours (
+                          {new Date(brainExportExpiresAt).toLocaleDateString()})
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <a
+                    href={brainExportDownloadUrl}
+                    download
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#7C3AED] text-white text-sm font-medium hover:bg-[#6D28D9] transition-colors"
+                  >
+                    <Download size={16} />
+                    Download Brain Data
+                  </a>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleBrainExport}
+                    className="ml-2"
+                  >
+                    Generate New Export
+                  </Button>
+                </div>
+              )}
+
+              {brainExportStatus === "error" && (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
+                    <AlertTriangle size={20} className="text-red-600 dark:text-red-400" />
+                    <p className="text-sm font-medium text-red-800 dark:text-red-300">
+                      Export failed. Please try again.
+                    </p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    onClick={handleBrainExport}
+                    leftIcon={<RefreshCw size={16} />}
+                  >
+                    Retry Export
+                  </Button>
+                </div>
+              )}
+            </CardBody>
+          </Card>
+
           {/* Danger Zone */}
           <Card className="border-red-200 dark:border-red-800">
             <CardHeader>
@@ -325,6 +518,40 @@ export default function LearnerSettingsPage() {
                 leftIcon={<Trash2 size={16} />}
               >
                 Delete Learner Account
+              </Button>
+            </CardBody>
+          </Card>
+
+          {/* Delete All Data */}
+          <Card className="border-2 border-red-300 dark:border-red-700">
+            <CardHeader className="bg-red-50 dark:bg-red-900/10">
+              <h3 className="font-semibold text-red-600 dark:text-red-400 flex items-center gap-2">
+                <AlertTriangle size={18} />
+                Delete All Data
+              </h3>
+            </CardHeader>
+            <CardBody>
+              <div className="flex items-start gap-3 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 mb-4">
+                <AlertTriangle size={20} className="text-red-500 shrink-0 mt-0.5" />
+                <div className="text-sm text-red-700 dark:text-red-300">
+                  <p className="font-medium mb-1">Warning: This will permanently delete all data</p>
+                  <p>
+                    This includes the brain profile, all learning sessions, progress history,
+                    IEP documents, analytics, and any AI-generated insights. This data cannot
+                    be recovered after deletion. We recommend exporting your brain data first.
+                  </p>
+                </div>
+              </div>
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  setDeletePassword("");
+                  setDeletePasswordVisible(false);
+                  setShowDeleteAllModal(true);
+                }}
+                leftIcon={<Trash2 size={16} />}
+              >
+                Delete All Data
               </Button>
             </CardBody>
           </Card>
@@ -355,6 +582,76 @@ export default function LearnerSettingsPage() {
           including brain profile, learning history, IEP documents, and progress
           will be permanently removed. This action cannot be undone.
         </p>
+      </Modal>
+
+      <Modal
+        open={showDeleteAllModal}
+        onClose={() => {
+          if (!deletingAllData) {
+            setShowDeleteAllModal(false);
+            setDeletePassword("");
+          }
+        }}
+        title="Delete All Data"
+        footer={
+          <div className="flex justify-end gap-2">
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setShowDeleteAllModal(false);
+                setDeletePassword("");
+              }}
+              disabled={deletingAllData}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeleteAllData}
+              loading={deletingAllData}
+              disabled={!deletePassword}
+            >
+              Permanently Delete All Data
+            </Button>
+          </div>
+        }
+      >
+        <div className="space-y-4">
+          <div className="flex items-start gap-3 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
+            <AlertTriangle size={18} className="text-red-500 shrink-0 mt-0.5" />
+            <p className="text-sm text-red-700 dark:text-red-300 font-medium">
+              This action cannot be undone. All brain data, learning history, and
+              associated records will be permanently destroyed.
+            </p>
+          </div>
+
+          <div>
+            <label
+              htmlFor="delete-confirm-password"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+            >
+              Enter your password to confirm
+            </label>
+            <div className="relative">
+              <input
+                id="delete-confirm-password"
+                type={deletePasswordVisible ? "text" : "password"}
+                value={deletePassword}
+                onChange={(e) => setDeletePassword(e.target.value)}
+                placeholder="Enter your account password"
+                className="w-full px-4 py-2.5 pr-10 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none"
+                autoComplete="current-password"
+              />
+              <button
+                type="button"
+                onClick={() => setDeletePasswordVisible(!deletePasswordVisible)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                {deletePasswordVisible ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+          </div>
+        </div>
       </Modal>
     </div>
   );

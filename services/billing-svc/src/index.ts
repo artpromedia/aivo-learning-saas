@@ -48,6 +48,8 @@ import { setupSubscribers } from "./events/subscribers.js";
 
 // Cron
 import { setupGracePeriodExpiryCron } from "./cron/grace-period-expiry.js";
+import { setupGracePeriodWarningCron } from "./cron/grace-period-warning.js";
+import { setupDataDeletionTriggerCron } from "./cron/data-deletion-trigger.js";
 import { setupDunningRetryCron } from "./cron/dunning-retry.js";
 
 export async function buildApp() {
@@ -124,6 +126,8 @@ export async function buildApp() {
   // Set up cron jobs
   const cronTasks = [
     setupGracePeriodExpiryCron(app),
+    setupGracePeriodWarningCron(app),
+    setupDataDeletionTriggerCron(app),
     setupDunningRetryCron(app),
   ];
 

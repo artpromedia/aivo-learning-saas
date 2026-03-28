@@ -39,6 +39,8 @@ import { subscriptionOverviewRoute } from "./routes/subscriptions/overview.js";
 import { getSettingsRoute } from "./routes/settings/get.js";
 import { updateSettingsRoute } from "./routes/settings/update.js";
 import { privacySettingsRoute } from "./routes/settings/privacy.js";
+import { dataExportRoute } from "./routes/settings/data-export.js";
+import { deleteAllDataRoute } from "./routes/settings/delete-data.js";
 
 // Events
 import { setupSubscribers } from "./events/subscribers.js";
@@ -117,6 +119,10 @@ export async function buildApp() {
   await app.register(getSettingsRoute);
   await app.register(updateSettingsRoute);
   await app.register(privacySettingsRoute);
+
+  // Data Lifecycle
+  await app.register(dataExportRoute);
+  await app.register(deleteAllDataRoute);
 
   // NATS subscribers
   try {

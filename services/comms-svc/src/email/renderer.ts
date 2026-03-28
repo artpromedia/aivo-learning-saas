@@ -20,6 +20,10 @@ import { streakBrokenTemplate, type StreakBrokenData } from "./templates/streak-
 import { badgeEarnedTemplate, type BadgeEarnedData } from "./templates/badge-earned.js";
 import { weeklyProgressDigestTemplate, type WeeklyProgressDigestData } from "./templates/weekly-progress-digest.js";
 import { teacherInsightTemplate, type TeacherInsightData } from "./templates/teacher-insight.js";
+import { gracePeriodStartedTemplate, type GracePeriodStartedData } from "./templates/grace-period-started.js";
+import { gracePeriodWarningTemplate, type GracePeriodWarningData } from "./templates/grace-period-warning.js";
+import { exportReadyTemplate, type ExportReadyData } from "./templates/export-ready.js";
+import { dataDeletionConfirmationTemplate, type DataDeletionConfirmationData } from "./templates/data-deletion-confirmation.js";
 
 export type TemplateSlug =
   | "welcome"
@@ -43,7 +47,11 @@ export type TemplateSlug =
   | "streak_broken"
   | "badge_earned"
   | "weekly_progress_digest"
-  | "teacher_insight";
+  | "teacher_insight"
+  | "grace_period_started"
+  | "grace_period_warning"
+  | "export_ready"
+  | "data_deletion_confirmation";
 
 export type TemplateDataMap = {
   welcome: WelcomeData;
@@ -68,6 +76,10 @@ export type TemplateDataMap = {
   badge_earned: BadgeEarnedData;
   weekly_progress_digest: WeeklyProgressDigestData;
   teacher_insight: TeacherInsightData;
+  grace_period_started: GracePeriodStartedData;
+  grace_period_warning: GracePeriodWarningData;
+  export_ready: ExportReadyData;
+  data_deletion_confirmation: DataDeletionConfirmationData;
 };
 
 const templateRenderers: { [K in TemplateSlug]: (data: TemplateDataMap[K]) => { subject: string; html: string } } = {
@@ -93,6 +105,10 @@ const templateRenderers: { [K in TemplateSlug]: (data: TemplateDataMap[K]) => { 
   badge_earned: badgeEarnedTemplate,
   weekly_progress_digest: weeklyProgressDigestTemplate,
   teacher_insight: teacherInsightTemplate,
+  grace_period_started: gracePeriodStartedTemplate,
+  grace_period_warning: gracePeriodWarningTemplate,
+  export_ready: exportReadyTemplate,
+  data_deletion_confirmation: dataDeletionConfirmationTemplate,
 };
 
 export function renderTemplate<T extends TemplateSlug>(

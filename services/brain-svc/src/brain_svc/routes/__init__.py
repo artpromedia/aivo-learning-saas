@@ -10,6 +10,7 @@ from brain_svc.routes.mastery import router as mastery_router
 from brain_svc.routes.recommendations import router as recommendations_router
 from brain_svc.routes.tutor_registry import router as tutor_registry_router
 from brain_svc.routes.versioning import router as versioning_router
+from brain_svc.routes.data_lifecycle import router as data_lifecycle_router
 
 all_routers = [
     health_router,
@@ -22,4 +23,5 @@ all_routers = [
     tutor_registry_router,
     functional_router,
     versioning_router,
+    data_lifecycle_router,
 ]
