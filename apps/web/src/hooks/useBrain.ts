@@ -57,6 +57,7 @@ export function useBrain(learnerId: string | undefined) {
     isLoading: profileQuery.isLoading,
     error: profileQuery.error,
     approve: approveMutation.mutateAsync,
+    refetch: profileQuery.refetch,
     decline: declineMutation.mutateAsync,
     addInsights: addInsightsMutation.mutateAsync,
     isApproving: approveMutation.isPending,

@@ -75,6 +75,7 @@ export default function BrainProfileRevealPage() {
     approve,
     decline,
     addInsights,
+    refetch,
     isApproving,
     isDeclining,
   } = useBrain(learnerId ?? undefined);
@@ -129,9 +130,8 @@ export default function BrainProfileRevealPage() {
       try {
         const p = await apiFetch(API_ROUTES.BRAIN.PROFILE(learnerId));
         if (p) {
-          // Profile is ready — force a refetch via React Query
-          globalThis.dispatchEvent(new Event("brain-profile-ready"));
           clearInterval(pollInterval);
+          refetch();
         }
       } catch {
         // Still waiting
@@ -139,7 +139,7 @@ export default function BrainProfileRevealPage() {
     }, 3000);
 
     return () => clearInterval(pollInterval);
-  }, [profile, learnerId, phase]);
+  }, [profile, learnerId, phase, refetch]);
 
   // Transition from building → revealing → revealed once profile arrives
   useEffect(() => {
