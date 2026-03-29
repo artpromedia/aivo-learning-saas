@@ -36,12 +36,12 @@ async function waitForService(
 async function runMigrations(): Promise<void> {
   console.log('[setup] Running database migrations...');
   try {
-    execSync('pnpm --filter identity-svc exec drizzle-kit push', {
+    execSync('pnpm --filter @aivo/db db:push', {
       cwd: process.env.PROJECT_ROOT || path.resolve(__dirname, '..'),
-      stdio: 'pipe',
+      stdio: ['pipe', 'inherit', 'inherit'],
       env: {
         ...process.env,
-        DATABASE_URL: 'postgresql://aivo:aivo_test@localhost:5433/aivo_test',
+        DATABASE_URL: process.env.DATABASE_URL || 'postgresql://aivo:aivo_test@localhost:5433/aivo_test',
       },
     });
     console.log('  [ok] Migrations complete');
