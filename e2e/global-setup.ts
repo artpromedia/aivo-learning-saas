@@ -1,5 +1,6 @@
 import { FullConfig } from '@playwright/test';
 import { execSync } from 'node:child_process';
+import path from 'node:path';
 
 const API_BASE = process.env.API_BASE_URL || 'http://localhost:3101';
 const MAX_RETRIES = 30;
@@ -28,7 +29,7 @@ async function runMigrations(): Promise<void> {
   console.log('[setup] Running database migrations...');
   try {
     execSync('pnpm --filter identity-svc exec drizzle-kit push', {
-      cwd: process.env.PROJECT_ROOT || new URL('..', import.meta.url).pathname,
+      cwd: process.env.PROJECT_ROOT || path.resolve(__dirname, '..'),
       stdio: 'pipe',
       env: {
         ...process.env,
