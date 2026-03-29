@@ -8,7 +8,6 @@ import 'package:aivo_mobile/config/theme.dart';
 import 'package:aivo_mobile/core/api/api_client.dart';
 import 'package:aivo_mobile/core/api/endpoints.dart';
 import 'package:aivo_mobile/core/auth/auth_provider.dart';
-import 'package:aivo_mobile/core/auth/auth_service.dart';
 
 // ---------------------------------------------------------------------------
 // Badge model
@@ -224,10 +223,10 @@ class BadgeCollectionScreen extends ConsumerWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(Icons.emoji_events,
-                            size: 48, color: colorScheme.outline),
+                            size: 48, color: colorScheme.outline,),
                         const SizedBox(height: 16),
                         Text('No badges in this category',
-                            style: theme.textTheme.bodyLarge),
+                            style: theme.textTheme.bodyLarge,),
                       ],
                     ),
                   );
@@ -331,7 +330,7 @@ class _BadgeTile extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Badge icon placeholder
+                // Badge icon display
                 Container(
                   width: 48,
                   height: 48,
@@ -404,7 +403,7 @@ class _BadgeTile extends StatelessWidget {
   }
 
   void _showBadgeDetail(
-      BuildContext context, ThemeData theme, ColorScheme colorScheme) {
+      BuildContext context, ThemeData theme, ColorScheme colorScheme,) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -525,8 +524,8 @@ class _BadgeTile extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.check_circle,
-                        color: AivoColors.questGreen, size: 20),
+                    const Icon(Icons.check_circle,
+                        color: AivoColors.questGreen, size: 20,),
                     const SizedBox(width: 8),
                     Text(
                       'Earned on ${DateFormat('MMM d, y').format(badge.earnedAt!)}',

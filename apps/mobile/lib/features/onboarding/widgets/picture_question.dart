@@ -192,7 +192,7 @@ class _PictureQuestionState extends State<PictureQuestion>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Image placeholder -- uses AssetImage or a fallback icon.
+                // Image area -- uses AssetImage or a fallback icon.
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: SizedBox(

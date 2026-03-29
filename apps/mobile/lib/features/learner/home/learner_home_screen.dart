@@ -13,7 +13,6 @@ import 'package:aivo_mobile/core/accessibility/switch_scan_controller.dart';
 import 'package:aivo_mobile/core/api/api_client.dart';
 import 'package:aivo_mobile/core/api/endpoints.dart';
 import 'package:aivo_mobile/core/auth/auth_provider.dart';
-import 'package:aivo_mobile/core/auth/auth_service.dart';
 import 'package:aivo_mobile/core/connectivity/connectivity_provider.dart';
 import 'package:aivo_mobile/core/connectivity/sync_manager.dart';
 import 'package:aivo_mobile/config/theme.dart';
@@ -244,7 +243,7 @@ class _LearnerHomeScreenState extends ConsumerState<LearnerHomeScreen> {
     final isOnline = ref.watch(isOnlineProvider);
     final isNonVerbal = ref.watch(isNonVerbalOrBelowProvider);
 
-    // PRE_SYMBOLIC: parent-only mode, show minimal placeholder
+    // PRE_SYMBOLIC: parent-only mode, show minimal fallback UI
     if (level == FunctioningLevel.preSymbolic) {
       return Scaffold(
         body: Center(
@@ -603,7 +602,7 @@ class _HomeBody extends ConsumerWidget {
               padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
               child: Row(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.replay_circle_filled,
                     size: 20,
                     color: AivoColors.secondary,
@@ -710,7 +709,7 @@ class _HomeBody extends ConsumerWidget {
                   label: 'No lessons scheduled for today',
                   child: Column(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.check_circle_outline,
                         size: 48,
                         color: AivoColors.secondary,
@@ -821,7 +820,7 @@ class _XpStreakBar extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.star_rounded, size: 16, color: AivoColors.xpGold),
+                      const Icon(Icons.star_rounded, size: 16, color: AivoColors.xpGold),
                       const SizedBox(width: 4),
                       Text(
                         '${engagement.currentXp} / ${engagement.levelXp} XP',
@@ -944,13 +943,13 @@ class _DailyChallengeCard extends ConsumerWidget {
               Row(
                 children: [
                   if (challenge.isCompleted)
-                    Icon(
+                    const Icon(
                       Icons.check_circle,
                       size: 20,
                       color: AivoColors.secondary,
                     )
                   else
-                    Icon(
+                    const Icon(
                       Icons.bolt_rounded,
                       size: 20,
                       color: AivoColors.xpGold,
@@ -959,14 +958,14 @@ class _DailyChallengeCard extends ConsumerWidget {
                   if (!challenge.isCompleted)
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
+                          horizontal: 8, vertical: 4,),
                       decoration: BoxDecoration(
                         color: AivoColors.xpGold.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
                         '+${challenge.xpReward} XP',
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: AivoColors.xpGold,
                           fontWeight: FontWeight.w700,
                           fontSize: 12,
