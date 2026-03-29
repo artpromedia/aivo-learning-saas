@@ -140,7 +140,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.AIVO_GHCR_PUSH }}
 
       - name: Login to Docker Hub (optional)
         uses: docker/login-action@v3
@@ -222,7 +222,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.AIVO_GHCR_PUSH }}
 
       - name: Login to Docker Hub (optional)
         uses: docker/login-action@v3
@@ -304,7 +304,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.AIVO_GHCR_PUSH }}
 
       - name: Login to Docker Hub (optional)
         uses: docker/login-action@v3
@@ -412,7 +412,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.AIVO_GHCR_PUSH }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -480,7 +480,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.AIVO_GHCR_PUSH }}
 
       - name: Verify pushed images
         run: |
@@ -816,7 +816,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.AIVO_GHCR_PUSH }}
 
       - name: Re-tag image for release
         run: |
