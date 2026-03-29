@@ -407,6 +407,7 @@ jobs:
             type=sha,prefix=sha-,format=short
 
       - name: Build and push
+        id: build
         uses: docker/build-push-action@v6
         with:
           context: infra/backup-agent
@@ -416,8 +417,11 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha,scope=backup-agent
           cache-to: type=gha,scope=backup-agent,mode=max
+          provenance: true
+          sbom: true
 
       - name: Trivy vulnerability scan
+        if: steps.build.outcome == 'success'
         uses: aquasecurity/trivy-action@0.35.0
         with:
           image-ref: ${{ env.IMAGE_PREFIX }}/backup-agent:${{ needs.resolve.outputs.version }}
@@ -428,7 +432,7 @@ jobs:
 
       - name: Upload Trivy SARIF
         uses: github/codeql-action/upload-sarif@v4
-        if: always()
+        if: always() && steps.build.outcome == 'success'
         with:
           sarif_file: trivy-backup-agent.sarif
           category: trivy-backup-agent
