@@ -30,7 +30,7 @@ test.describe('Integration: Brain Upgrade Lifecycle', () => {
       headers: { Authorization: `Bearer ${parent.token}` },
     });
     expect(preContextRes.ok()).toBeTruthy();
-    const preContext = await preContextRes.json();
+    const _preContext = await preContextRes.json();
 
     const snapshotRes = await page.request.post(`${BRAIN_API}/brain/profiles/${brainState.brainId}/snapshots`, {
       headers: { Authorization: `Bearer ${parent.token}` },

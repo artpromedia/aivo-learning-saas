@@ -1,4 +1,4 @@
-import { APIRequestContext, request } from '@playwright/test';
+import { request } from '@playwright/test';
 
 const BRAIN_API = process.env.BRAIN_API_URL || 'http://localhost:3102';
 

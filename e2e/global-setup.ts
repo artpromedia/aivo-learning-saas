@@ -36,7 +36,7 @@ async function runMigrations(): Promise<void> {
       },
     });
     console.log('  [ok] Migrations complete');
-  } catch (error) {
+  } catch {
     console.warn('  [warn] Migration command failed, services may handle their own migrations');
   }
 }
@@ -66,7 +66,7 @@ async function seedTestFixtures(): Promise<void> {
   }
 }
 
-async function globalSetup(config: FullConfig): Promise<void> {
+async function globalSetup(_config: FullConfig): Promise<void> {
   console.log('\n=== AIVO E2E Global Setup ===\n');
 
   // Wait for infrastructure services

@@ -65,7 +65,7 @@ export function getUtmParams(): UtmParams {
 /**
  * Attach UTM parameters to any form submission payload.
  */
-export function attachUtmToPayload<T extends Record<string, unknown>>(
+export function attachUtmToPayload<T extends object>(
   payload: T,
 ): T & { utmParams: UtmParams } {
   return { ...payload, utmParams: getUtmParams() };

@@ -31,7 +31,7 @@ async function csrfProtection(app: FastifyInstance) {
         sameSite: "strict",
         maxAge: 86400,
       });
-      (request as any)._csrfToken = token;
+      // Token is primarily stored as cookie; request decoration is optional.
     }
   });
 

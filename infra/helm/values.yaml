@@ -326,6 +326,47 @@ ai-svc:
   env:
     PYTHONUNBUFFERED: "1"
 
+brain-svc:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: ghcr.io/artpromedia/brain-svc
+    tag: latest
+  port: 3002
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+  healthCheck:
+    path: /health
+    port: 3002
+  env:
+    PYTHONUNBUFFERED: "1"
+
+assessment-svc:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: ghcr.io/artpromedia/assessment-svc
+    tag: latest
+  port: 3012
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  healthCheck:
+    path: /health
+    port: 3012
+  env:
+    NODE_ENV: production
+    PORT: "3012"
+
 web:
   enabled: true
   replicaCount: 2

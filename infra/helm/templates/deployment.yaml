@@ -2,7 +2,8 @@
 {{- $services := list
   "identity-svc" "billing-svc" "family-svc" "integrations-svc" "admin-svc"
   "learning-svc" "engagement-svc" "comms-svc" "i18n-svc" "tutor-svc"
-  "status-page-svc" "research-svc" "ai-svc" "web" "marketing" "research-worker"
+  "status-page-svc" "research-svc" "ai-svc" "brain-svc" "assessment-svc"
+  "web" "marketing" "research-worker"
 -}}
 {{- range $svc := $services }}
 {{- $svcValues := index $.Values $svc | default dict }}
@@ -77,5 +78,13 @@ spec:
             {{- end }}
       imagePullSecrets:
         - name: ghcr-pull-secret
+      {{- if $svcValues.nodeSelector }}
+      nodeSelector:
+        {{- toYaml $svcValues.nodeSelector | nindent 8 }}
+      {{- end }}
+      {{- if $svcValues.tolerations }}
+      tolerations:
+        {{- toYaml $svcValues.tolerations | nindent 8 }}
+      {{- end }}
 {{- end }}
 {{- end }}

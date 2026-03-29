@@ -11,6 +11,7 @@ export default tseslint.config(
       "**/.next/**",
       "**/out/**",
       "**/coverage/**",
+      "**/.venv/**",
       "**/*.config.{js,mjs,ts}",
       "**/vitest.setup.ts",
       "**/lighthouserc.js",

@@ -1,22 +1,20 @@
 import { test, expect } from '@playwright/test';
 import { createTestParent, type TestUser } from '../../fixtures/auth.fixture';
 import { createTestLearner, type TestLearner } from '../../fixtures/learner.fixture';
-import { getPreClonedBrainState, type BrainState } from '../../fixtures/brain.fixture';
+import { getPreClonedBrainState } from '../../fixtures/brain.fixture';
 import { createFullSubscriptionWithTutors } from '../../fixtures/subscription.fixture';
 import { coverageTracker } from '../../helpers/coverage-tracker';
 
 const API_BASE = process.env.API_BASE_URL || 'http://localhost:3101';
-const BRAIN_API = process.env.BRAIN_API_URL || 'http://localhost:3102';
 
 test.describe('Module 2b: Tutor Session', () => {
   let parent: TestUser;
   let learner: TestLearner;
-  let brainState: BrainState;
 
   test.beforeAll(async () => {
     parent = await createTestParent();
     learner = await createTestLearner(parent.token, 3);
-    brainState = await getPreClonedBrainState(parent.token, learner.id);
+    await getPreClonedBrainState(parent.token, learner.id);
     await createFullSubscriptionWithTutors(parent.token, learner.id, ['math']);
   });
 

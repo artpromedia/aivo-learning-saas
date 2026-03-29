@@ -5,7 +5,6 @@ import { createBrainProfile, waitForBrainReady, approveBrain } from '../fixtures
 import { coverageTracker } from '../helpers/coverage-tracker';
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
-const API_BASE = process.env.API_BASE_URL || 'http://localhost:3101';
 const BRAIN_API = process.env.BRAIN_API_URL || 'http://localhost:3102';
 
 test.describe('Module 1b: Brain Profile', () => {
@@ -49,12 +48,12 @@ test.describe('Module 1b: Brain Profile', () => {
     // Create and wait for brain to be ready
     const brain = await createBrainProfile(parent.token, learner.id);
 
-    let readyBrain;
+    let _readyBrain;
     try {
-      readyBrain = await waitForBrainReady(parent.token, brain.brainId, 20_000);
+      _readyBrain = await waitForBrainReady(parent.token, brain.brainId, 20_000);
     } catch {
       // Brain may not reach ready state in test; continue with pending state
-      readyBrain = brain;
+      _readyBrain = brain;
     }
 
     // Login and navigate to brain reveal page

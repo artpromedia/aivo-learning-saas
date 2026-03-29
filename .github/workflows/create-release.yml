@@ -26,7 +26,7 @@ env:
   ALL_SERVICES: >-
     identity-svc,billing-svc,family-svc,integrations-svc,admin-svc,
     learning-svc,engagement-svc,comms-svc,i18n-svc,tutor-svc,
-    status-page-svc,research-svc,ai-svc,web,marketing
+    status-page-svc,research-svc,assessment-svc,ai-svc,brain-svc,web,marketing
 
 jobs:
   # ─────────────────────────────────────────────
@@ -104,7 +104,7 @@ jobs:
 
           SERVICES="identity-svc billing-svc family-svc integrations-svc admin-svc \
             learning-svc engagement-svc comms-svc i18n-svc tutor-svc \
-            status-page-svc research-svc ai-svc web marketing"
+            status-page-svc research-svc assessment-svc ai-svc brain-svc web marketing"
 
           MISSING=0
           for svc in $SERVICES; do
@@ -149,7 +149,9 @@ jobs:
           - tutor-svc
           - status-page-svc
           - research-svc
+          - assessment-svc
           - ai-svc
+          - brain-svc
           - web
           - marketing
 
@@ -225,7 +227,7 @@ jobs:
 
           ### Docker Images
 
-          All 15 service images re-tagged as \`${VERSION}\` on GHCR:
+          All 17 service images re-tagged as \`${VERSION}\` on GHCR:
 
           | Service | Image |
           |---------|-------|
@@ -241,7 +243,9 @@ jobs:
           | tutor-svc | \`${{ env.IMAGE_PREFIX }}/tutor-svc:${VERSION}\` |
           | status-page-svc | \`${{ env.IMAGE_PREFIX }}/status-page-svc:${VERSION}\` |
           | research-svc | \`${{ env.IMAGE_PREFIX }}/research-svc:${VERSION}\` |
+          | assessment-svc | \`${{ env.IMAGE_PREFIX }}/assessment-svc:${VERSION}\` |
           | ai-svc | \`${{ env.IMAGE_PREFIX }}/ai-svc:${VERSION}\` |
+          | brain-svc | \`${{ env.IMAGE_PREFIX }}/brain-svc:${VERSION}\` |
           | web | \`${{ env.IMAGE_PREFIX }}/web:${VERSION}\` |
           | marketing | \`${{ env.IMAGE_PREFIX }}/marketing:${VERSION}\` |
           EOMD

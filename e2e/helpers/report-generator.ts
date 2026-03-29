@@ -1,7 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { generateCoverageMatrix, getCoveragePercentage, getKnownRoutes } from './route-matrix';
-import type { CoverageMatrix } from './route-matrix';
 
 const REPORTS_DIR = path.resolve(__dirname, '..', 'reports');
 

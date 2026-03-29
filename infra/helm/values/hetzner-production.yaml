@@ -1,6 +1,6 @@
 # ─────────────────────────────────────────────
-# AIVO Learning Platform — Hetzner Dedicated Servers (Staging)
-# Applied via: helm upgrade -f infra/helm/values/hetzner.yaml
+# AIVO Learning Platform — Hetzner Dedicated Servers (Production)
+# Applied via: helm upgrade -f infra/helm/values/hetzner-production.yaml
 #
 # Infrastructure (all HEL1, vSwitch 10.0.0.0/24):
 #   Server 1 (DB)   10.0.0.1  Xeon W-2145 / 128GB ECC / 2×1.92TB DC SSD
@@ -10,15 +10,15 @@
 # ─────────────────────────────────────────────
 
 global:
-  environment: staging
-  domain: staging.aivo.app
+  environment: production
+  domain: aivo.ai
   tlsEnabled: true
 
   # PostgreSQL via PgBouncer on Server 1 (vSwitch)
   database:
     host: "10.0.0.1"
     port: 6432
-    name: aivo_staging
+    name: aivo_prod
     sslMode: disable        # vSwitch is private L2, no TLS needed
 
   # Redis 7 on Server 1 (vSwitch)
@@ -28,72 +28,82 @@ global:
 
   # NATS inside K3s cluster
   nats:
-    url: nats://nats.aivo-staging.svc.cluster.local:4222
+    url: nats://nats.aivo.svc.cluster.local:4222
     jetstream: true
 
-  # MinIO on Server 3 (i7-8700, 3rd SSD — internal storage)
+  # Cloudflare R2 for user-facing assets (zero egress)
   objectStorage:
-    endpoint: http://10.0.0.3:9000
-    bucket: aivo-staging-assets
-    region: us-east-1
+    endpoint: https://YOUR_ACCOUNT_ID.r2.cloudflarestorage.com
+    bucket: aivo-content-assets
+    region: auto
 
 # ─────────────────────────────────────────────
-# Hetzner-specific resource tuning
-# Staging uses smaller instances than production
+# Production resource tuning
+# Higher replicas for critical services, spread across App1 + App2
 # ─────────────────────────────────────────────
 
 identity-svc:
-  replicaCount: 1
+  replicaCount: 2
   resources:
     requests:
-      cpu: 50m
-      memory: 128Mi
-    limits:
-      cpu: 250m
+      cpu: 200m
       memory: 384Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
 
 billing-svc:
-  replicaCount: 1
+  replicaCount: 2
   resources:
     requests:
-      cpu: 50m
-      memory: 128Mi
+      cpu: 100m
+      memory: 256Mi
     limits:
-      cpu: 250m
-      memory: 384Mi
+      cpu: 500m
+      memory: 512Mi
 
 family-svc:
-  replicaCount: 1
+  replicaCount: 2
   resources:
     requests:
-      cpu: 50m
-      memory: 128Mi
+      cpu: 100m
+      memory: 256Mi
     limits:
-      cpu: 250m
-      memory: 384Mi
+      cpu: 500m
+      memory: 512Mi
 
 integrations-svc:
   replicaCount: 1
   resources:
     requests:
-      cpu: 50m
-      memory: 128Mi
-    limits:
-      cpu: 250m
+      cpu: 100m
       memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
 
 admin-svc:
   replicaCount: 1
   resources:
     requests:
-      cpu: 50m
-      memory: 128Mi
-    limits:
-      cpu: 250m
+      cpu: 100m
       memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
 
 learning-svc:
-  replicaCount: 1
+  replicaCount: 2
+  resources:
+    requests:
+      cpu: 200m
+      memory: 384Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+
+engagement-svc:
+  replicaCount: 2
   resources:
     requests:
       cpu: 100m
@@ -101,38 +111,48 @@ learning-svc:
     limits:
       cpu: 500m
       memory: 512Mi
-
-engagement-svc:
-  replicaCount: 1
-  resources:
-    requests:
-      cpu: 50m
-      memory: 128Mi
-    limits:
-      cpu: 250m
-      memory: 384Mi
 
 comms-svc:
   replicaCount: 1
   resources:
     requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+i18n-svc:
+  replicaCount: 1
+  resources:
+    requests:
       cpu: 50m
       memory: 128Mi
     limits:
       cpu: 250m
       memory: 256Mi
 
-i18n-svc:
+tutor-svc:
+  replicaCount: 2
+  resources:
+    requests:
+      cpu: 200m
+      memory: 384Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+
+status-page-svc:
   replicaCount: 1
   resources:
     requests:
-      cpu: 25m
-      memory: 64Mi
-    limits:
-      cpu: 125m
+      cpu: 50m
       memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
 
-tutor-svc:
+research-svc:
   replicaCount: 1
   resources:
     requests:
@@ -142,27 +162,17 @@ tutor-svc:
       cpu: 500m
       memory: 512Mi
 
-status-page-svc:
-  replicaCount: 1
-  resources:
-    requests:
-      cpu: 25m
-      memory: 64Mi
-    limits:
-      cpu: 125m
-      memory: 128Mi
-
-research-svc:
-  replicaCount: 1
-  resources:
-    requests:
-      cpu: 50m
-      memory: 128Mi
-    limits:
-      cpu: 250m
-      memory: 384Mi
-
 research-worker:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+
+assessment-svc:
   replicaCount: 1
   resources:
     requests:
@@ -173,14 +183,14 @@ research-worker:
       memory: 512Mi
 
 ai-svc:
-  replicaCount: 1
+  replicaCount: 2
   resources:
     requests:
-      cpu: 250m
-      memory: 512Mi
+      cpu: 500m
+      memory: 1Gi
     limits:
-      cpu: 1000m
-      memory: 2Gi
+      cpu: 2000m
+      memory: 4Gi
   nodeSelector:
     role: ml
 
@@ -188,25 +198,25 @@ brain-svc:
   replicaCount: 1
   resources:
     requests:
-      cpu: 200m
-      memory: 512Mi
+      cpu: 500m
+      memory: 1Gi
     limits:
-      cpu: 1000m
-      memory: 2Gi
+      cpu: 2000m
+      memory: 4Gi
   nodeSelector:
     role: ml
 
-assessment-svc:
-  replicaCount: 1
+web:
+  replicaCount: 2
   resources:
     requests:
-      cpu: 50m
-      memory: 128Mi
-    limits:
-      cpu: 250m
+      cpu: 200m
       memory: 384Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
 
-web:
+marketing:
   replicaCount: 1
   resources:
     requests:
@@ -216,18 +226,10 @@ web:
       cpu: 500m
       memory: 512Mi
 
-marketing:
-  replicaCount: 1
-  resources:
-    requests:
-      cpu: 50m
-      memory: 128Mi
-    limits:
-      cpu: 250m
-      memory: 256Mi
-
 # ─────────────────────────────────────────────
-# Ingress — Hetzner with nginx + cert-manager
+# Ingress — Production domains via Cloudflare → Hetzner
+# Cloudflare handles SSL termination (Full Strict mode),
+# cert-manager issues origin certs for the K3s ingress.
 # ─────────────────────────────────────────────
 
 ingress:
@@ -237,12 +239,17 @@ ingress:
     cert-manager.io/cluster-issuer: letsencrypt-prod
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+    nginx.ingress.kubernetes.io/rate-limit-window: "1m"
+    nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
   hosts:
-    - host: staging.aivo.app
+    - host: app.aivo.ai
       paths:
         - path: /
           service: web
-    - host: api.staging.aivo.app
+    - host: api.aivo.ai
       paths:
         - path: /auth
           service: identity-svc
@@ -272,13 +279,18 @@ ingress:
           service: assessment-svc
         - path: /research
           service: research-svc
-    - host: status.staging.aivo.app
+    - host: status.aivo.ai
       paths:
         - path: /
           service: status-page-svc
+    - host: aivo.ai
+      paths:
+        - path: /
+          service: marketing
   tls:
-    - secretName: aivo-staging-tls
+    - secretName: aivo-production-tls
       hosts:
-        - staging.aivo.app
-        - api.staging.aivo.app
-        - status.staging.aivo.app
+        - aivo.ai
+        - app.aivo.ai
+        - api.aivo.ai
+        - status.aivo.ai

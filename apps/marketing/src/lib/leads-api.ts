@@ -11,7 +11,7 @@ import { attachUtmToPayload } from "./utm";
 const ADMIN_API_URL =
   process.env.NEXT_PUBLIC_ADMIN_API_URL ?? "https://api.aivolearning.com";
 
-interface LeadPayload {
+interface LeadPayload extends Record<string, unknown> {
   organizationName?: string;
   contactName: string;
   contactEmail: string;

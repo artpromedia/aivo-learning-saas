@@ -1,14 +1,27 @@
 import { describe, it, expect, beforeEach } from "vitest";
 
+type MockStorage = {
+  _store: Record<string, string>;
+  getItem: (key: string) => string | null;
+  setItem: (key: string, val: string) => void;
+};
+
+type TestGlobals = typeof globalThis & {
+  window: Record<string, unknown>;
+  sessionStorage: MockStorage;
+  crypto: { randomUUID: () => string };
+};
+
 describe("A/B Testing", () => {
   beforeEach(() => {
-    (globalThis as any).window = {};
-    (globalThis as any).sessionStorage = {
+    const g = globalThis as TestGlobals;
+    g.window = {};
+    g.sessionStorage = {
       _store: {} as Record<string, string>,
       getItem(key: string) { return this._store[key] ?? null; },
       setItem(key: string, val: string) { this._store[key] = val; },
     };
-    (globalThis as any).crypto = {
+    g.crypto = {
       randomUUID: () => "test-uuid-12345",
     };
   });

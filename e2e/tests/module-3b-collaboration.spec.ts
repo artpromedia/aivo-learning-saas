@@ -2,7 +2,6 @@ import { test, expect } from '@playwright/test';
 import {
   createTestParent,
   createTestTeacher,
-  authenticateAs,
   type TestUser,
 } from '../fixtures/auth.fixture';
 import { createTestLearner, type TestLearner } from '../fixtures/learner.fixture';

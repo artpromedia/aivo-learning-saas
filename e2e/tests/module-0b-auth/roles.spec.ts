@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { authenticateAs, type TestUser } from '../../fixtures/auth.fixture';
+import { authenticateAs } from '../../fixtures/auth.fixture';
 import { coverageTracker } from '../../helpers/coverage-tracker';
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';

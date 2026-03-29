@@ -34,7 +34,7 @@ env:
   ALL_SERVICES: >-
     identity-svc,billing-svc,family-svc,integrations-svc,admin-svc,
     learning-svc,engagement-svc,comms-svc,i18n-svc,tutor-svc,
-    status-page-svc,research-svc,ai-svc,web,marketing
+    status-page-svc,research-svc,assessment-svc,ai-svc,brain-svc,web,marketing
 
 jobs:
   # ═════════════════════════════════════════════
@@ -72,7 +72,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_TOKEN || secrets.GITHUB_TOKEN }}
 
-      - name: Verify all 15 images exist
+      - name: Verify all service images exist
         run: |
           VERSION="${{ steps.version.outputs.version }}"
           echo "Verifying images with tag: $VERSION"
@@ -80,7 +80,7 @@ jobs:
 
           SERVICES="identity-svc billing-svc family-svc integrations-svc admin-svc \
             learning-svc engagement-svc comms-svc i18n-svc tutor-svc \
-            status-page-svc research-svc ai-svc web marketing"
+            status-page-svc research-svc assessment-svc ai-svc brain-svc web marketing"
 
           MISSING=0
           for svc in $SERVICES; do
@@ -99,7 +99,7 @@ jobs:
             echo "Ensure all images are tagged via create-release.yml before deploying"
             exit 1
           fi
-          echo "All 15 images verified for tag $VERSION"
+          echo "All service images verified for tag $VERSION"
 
   # ═════════════════════════════════════════════
   # Stage 2: Manual Approval Gate
@@ -211,6 +211,14 @@ jobs:
             image:
               repository: ${IMAGE_PREFIX}/ai-svc
               tag: "${VERSION}"
+          brain-svc:
+            image:
+              repository: ${IMAGE_PREFIX}/brain-svc
+              tag: "${VERSION}"
+          assessment-svc:
+            image:
+              repository: ${IMAGE_PREFIX}/assessment-svc
+              tag: "${VERSION}"
           web:
             image:
               repository: ${IMAGE_PREFIX}/web
@@ -224,7 +232,7 @@ jobs:
       - name: Helm deploy (canary)
         run: |
           helm upgrade --install aivolearning infra/helm \
-            -f infra/helm/values/hetzner.yaml \
+            -f infra/helm/values/hetzner-production.yaml \
             -f /tmp/image-tags.yaml \
             -n aivo \
             --timeout 10m \
@@ -382,6 +390,14 @@ jobs:
             image:
               repository: ${IMAGE_PREFIX}/ai-svc
               tag: "${VERSION}"
+          brain-svc:
+            image:
+              repository: ${IMAGE_PREFIX}/brain-svc
+              tag: "${VERSION}"
+          assessment-svc:
+            image:
+              repository: ${IMAGE_PREFIX}/assessment-svc
+              tag: "${VERSION}"
           web:
             image:
               repository: ${IMAGE_PREFIX}/web
@@ -395,7 +411,7 @@ jobs:
       - name: Helm upgrade (production — atomic)
         run: |
           helm upgrade --install aivolearning infra/helm \
-            -f infra/helm/values/hetzner.yaml \
+            -f infra/helm/values/hetzner-production.yaml \
             -f /tmp/image-tags.yaml \
             -n aivo \
             --atomic \
@@ -407,7 +423,8 @@ jobs:
           SERVICES=(
             identity-svc billing-svc family-svc integrations-svc admin-svc
             learning-svc engagement-svc comms-svc i18n-svc tutor-svc
-            status-page-svc research-svc research-worker ai-svc web marketing
+            status-page-svc research-svc research-worker assessment-svc
+            ai-svc brain-svc web marketing
           )
 
           FAILED=0
@@ -458,7 +475,8 @@ jobs:
           SERVICES=(
             identity-svc billing-svc family-svc integrations-svc admin-svc
             learning-svc engagement-svc comms-svc i18n-svc tutor-svc
-            status-page-svc research-svc research-worker ai-svc web marketing
+            status-page-svc research-svc research-worker assessment-svc
+            ai-svc brain-svc web marketing
           )
 
           FAIL=0

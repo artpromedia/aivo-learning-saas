@@ -1,10 +1,10 @@
-import type { FastifyInstance } from "fastify";
+import type { FastifyInstance, FastifyRequest } from "fastify";
 import fp from "fastify-plugin";
 
 export interface RateLimitTier {
   max: number;
   timeWindow: string;
-  keyGenerator?: (request: any) => string;
+  keyGenerator?: (request: FastifyRequest) => string;
 }
 
 export const RATE_LIMIT_TIERS = {

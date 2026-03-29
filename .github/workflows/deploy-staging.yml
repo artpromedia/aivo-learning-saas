@@ -1,8 +1,8 @@
-name: Deploy Staging
+name: Deploy Hetzner Staging
 
 on:
   push:
-    branches: [main, develop]
+    branches: [master, main]
   workflow_dispatch:
     inputs:
       services:
@@ -28,9 +28,9 @@ env:
   ALL_SERVICES: >-
     identity-svc,billing-svc,family-svc,integrations-svc,admin-svc,
     learning-svc,engagement-svc,comms-svc,i18n-svc,tutor-svc,
-    status-page-svc,research-svc,ai-svc,web,marketing
-  NODE_VERSION: "22.22.1"
-  PNPM_VERSION: "10.32.1"
+    status-page-svc,research-svc,assessment-svc,ai-svc,brain-svc,web,marketing
+  NODE_VERSION: "22"
+  PNPM_VERSION: "10.6.5"
 
 jobs:
   # ═════════════════════════════════════════════
@@ -635,6 +635,16 @@ jobs:
               repository: ${IMAGE_PREFIX}/ai-svc
               tag: "${VERSION}"
 
+          brain-svc:
+            image:
+              repository: ${IMAGE_PREFIX}/brain-svc
+              tag: "${VERSION}"
+
+          assessment-svc:
+            image:
+              repository: ${IMAGE_PREFIX}/assessment-svc
+              tag: "${VERSION}"
+
           web:
             image:
               repository: ${IMAGE_PREFIX}/web
@@ -663,7 +673,8 @@ jobs:
           SERVICES=(
             identity-svc billing-svc family-svc integrations-svc admin-svc
             learning-svc engagement-svc comms-svc i18n-svc tutor-svc
-            status-page-svc research-svc research-worker ai-svc web marketing
+            status-page-svc research-svc research-worker assessment-svc
+            ai-svc brain-svc web marketing
           )
 
           FAILED=0
@@ -768,7 +779,9 @@ jobs:
           - tutor-svc
           - status-page-svc
           - research-svc
+          - assessment-svc
           - ai-svc
+          - brain-svc
           - web
           - marketing
 

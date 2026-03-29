@@ -39,7 +39,7 @@ async function flushRedis(): Promise<void> {
   }
 }
 
-async function globalTeardown(config: FullConfig): Promise<void> {
+async function globalTeardown(_config: FullConfig): Promise<void> {
   console.log('\n=== AIVO E2E Global Teardown ===\n');
 
   await cleanupTestData();

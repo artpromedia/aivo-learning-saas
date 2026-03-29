@@ -72,12 +72,12 @@ test.describe('Module 2b: Tutors', () => {
     await coverageTracker.attach(page);
 
     // Ensure math tutor exists
-    let mathTutor: TutorAddOn;
+    let _mathTutor: TutorAddOn;
     try {
-      mathTutor = await addTutorSubscription(parent.token, learner.id, 'math');
+      _mathTutor = await addTutorSubscription(parent.token, learner.id, 'math');
     } catch {
       // May already exist
-      mathTutor = { subject: 'math', tutorId: 'existing', status: 'active' };
+      _mathTutor = { subject: 'math', tutorId: 'existing', status: 'active' };
     }
 
     // Start a tutor session via API

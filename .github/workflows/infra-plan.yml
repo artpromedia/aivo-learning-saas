@@ -2,7 +2,7 @@ name: Infrastructure Plan
 
 on:
   pull_request:
-    branches: [main, develop]
+    branches: [master, main]
     paths:
       - "infra/terraform/**"
   workflow_dispatch:

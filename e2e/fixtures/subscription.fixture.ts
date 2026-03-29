@@ -1,4 +1,4 @@
-import { APIRequestContext, request } from '@playwright/test';
+import { request } from '@playwright/test';
 
 const API_BASE = process.env.API_BASE_URL || 'http://localhost:3101';
 

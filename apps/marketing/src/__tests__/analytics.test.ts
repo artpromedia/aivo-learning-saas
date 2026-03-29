@@ -1,23 +1,45 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
+type MockStorage = {
+  _store: Record<string, string>;
+  getItem: (key: string) => string | null;
+  setItem: (key: string, val: string) => void;
+};
+
+type TestWindow = {
+  plausible?: ReturnType<typeof vi.fn>;
+  location?: { search: string; pathname: string };
+  sessionStorage?: MockStorage;
+  document?: { referrer: string };
+};
+
+type TestGlobals = typeof globalThis & {
+  window: TestWindow;
+  document: { referrer: string };
+  sessionStorage: MockStorage;
+};
+
 describe("Analytics Event Tracking", () => {
   beforeEach(() => {
-    (globalThis as any).window = {
+    const g = globalThis as TestGlobals;
+    g.window = {
       plausible: vi.fn(),
     };
   });
 
   it("should call plausible with event name and props", async () => {
+    const g = globalThis as TestGlobals;
     const { trackEvent } = await import("../lib/analytics");
     trackEvent("Test Event", { key: "value" });
-    expect((globalThis as any).window.plausible).toHaveBeenCalledWith(
+    expect(g.window.plausible).toHaveBeenCalledWith(
       "Test Event",
       { props: { key: "value" } },
     );
   });
 
   it("should handle missing plausible gracefully", async () => {
-    (globalThis as any).window = {};
+    const g = globalThis as TestGlobals;
+    g.window = {};
     const { trackEvent } = await import("../lib/analytics");
     expect(() => trackEvent("Test Event")).not.toThrow();
   });
@@ -25,7 +47,8 @@ describe("Analytics Event Tracking", () => {
 
 describe("UTM Attribution", () => {
   beforeEach(() => {
-    (globalThis as any).window = {
+    const g = globalThis as TestGlobals;
+    g.window = {
       location: { search: "?utm_source=google&utm_medium=cpc&utm_campaign=spring2026", pathname: "/pricing" },
       sessionStorage: {
         _store: {} as Record<string, string>,
@@ -34,8 +57,8 @@ describe("UTM Attribution", () => {
       },
       document: { referrer: "https://google.com" },
     };
-    (globalThis as any).document = { referrer: "https://google.com" };
-    (globalThis as any).sessionStorage = (globalThis as any).window.sessionStorage;
+    g.document = { referrer: "https://google.com" };
+    g.sessionStorage = g.window.sessionStorage as MockStorage;
   });
 
   it("should capture UTM params from URL", async () => {
@@ -48,9 +71,10 @@ describe("UTM Attribution", () => {
   });
 
   it("should persist UTM params in sessionStorage", async () => {
+    const g = globalThis as TestGlobals;
     const { captureUtmParams } = await import("../lib/utm");
     captureUtmParams();
-    const stored = (globalThis as any).window.sessionStorage.getItem("aivo_utm");
+    const stored = g.window.sessionStorage?.getItem("aivo_utm") ?? null;
     expect(stored).toBeTruthy();
     const parsed = JSON.parse(stored);
     expect(parsed.utm_source).toBe("google");

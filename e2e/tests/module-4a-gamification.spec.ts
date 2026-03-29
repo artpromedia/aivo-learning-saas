@@ -126,7 +126,7 @@ test.describe('Module 4a: Gamification', () => {
     await page.goto(`${BASE_URL}/dashboard/learners/${learner.id}`);
 
     // Dashboard should show XP/streak indicators
-    const hasGamification =
+    const _hasGamification =
       (await page.getByText(/xp|points|streak|level/i).first().isVisible({ timeout: 5_000 }).catch(() => false)) ||
       (await page.locator('[data-testid*="xp"], [data-testid*="streak"], [class*="xp"], [class*="streak"]').count()) > 0;
 

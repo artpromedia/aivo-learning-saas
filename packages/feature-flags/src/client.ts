@@ -3,7 +3,7 @@ import type { NatsConnection, Subscription } from "nats";
 import { StringCodec } from "nats";
 import { FlagCache } from "./cache.js";
 import { evaluateFlag } from "./evaluator.js";
-import type { EvalContext, FlagChangeEvent, FlagDefinition } from "./types.js";
+import type { EvalContext, FlagChangeEvent } from "./types.js";
 
 const sc = StringCodec();
 

@@ -4,7 +4,6 @@ import { createTestLearner, type TestLearner } from '../../fixtures/learner.fixt
 import { getPreClonedBrainState } from '../../fixtures/brain.fixture';
 import { coverageTracker } from '../../helpers/coverage-tracker';
 
-const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
 const API_BASE = process.env.API_BASE_URL || 'http://localhost:3101';
 
 test.describe('Module 3b: Teacher Collaboration', () => {

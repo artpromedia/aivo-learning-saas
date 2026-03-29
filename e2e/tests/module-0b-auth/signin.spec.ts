@@ -78,7 +78,7 @@ test.describe('Module 0b: Sign In', () => {
     await page.getByRole('button', { name: /sign in|log in/i }).click();
     await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
 
-    const urlBeforeRefresh = page.url();
+    const _urlBeforeRefresh = page.url();
 
     await page.reload();
 

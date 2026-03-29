@@ -44,16 +44,16 @@ test.describe('Integration: Homework Lifecycle', () => {
     const homeworkId = uploadData.homeworkId || uploadData.id;
     expect(homeworkId).toBeTruthy();
 
-    let hwStatus: { homeworkId: string; status: string } | null = null;
+    let _hwStatus: { homeworkId: string; status: string } | null = null;
     try {
-      hwStatus = await waitForHomeworkProcessed(parent.token, homeworkId, { timeoutMs: 30_000 });
+      _hwStatus = await waitForHomeworkProcessed(parent.token, homeworkId, { timeoutMs: 30_000 });
     } catch {
       const hwRes = await page.request.get(`${API_BASE}/learning/homework/${homeworkId}`, {
         headers: { Authorization: `Bearer ${parent.token}` },
       });
       if (hwRes.ok()) {
         const hwData = await hwRes.json();
-        hwStatus = { homeworkId, status: hwData.status || 'unknown' };
+        _hwStatus = { homeworkId, status: hwData.status || 'unknown' };
       }
     }
 
