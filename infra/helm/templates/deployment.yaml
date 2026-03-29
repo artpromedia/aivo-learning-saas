@@ -72,6 +72,25 @@ spec:
               value: "redis://{{ $global.redis.host }}:{{ $global.redis.port }}"
             - name: NATS_URL
               value: {{ $global.nats.url | quote }}
+            {{- if not (has $svc (list "web" "marketing")) }}
+            - name: JWT_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $global.jwtSecretName | default "jwt-secrets" }}
+                  key: jwt-public-key
+            {{- end }}
+            {{- if eq $svc "identity-svc" }}
+            - name: JWT_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $global.jwtSecretName | default "jwt-secrets" }}
+                  key: jwt-private-key
+            - name: AUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: identity-secrets
+                  key: auth-secret
+            {{- end }}
             {{- if $svcValues.env }}
             {{- range $key, $value := $svcValues.env }}
             - name: {{ $key }}

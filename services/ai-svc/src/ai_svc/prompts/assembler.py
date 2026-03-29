@@ -17,6 +17,9 @@ from ai_svc.prompts.functioning_level_rules import get_content_rules_prompt
 logger = logging.getLogger(__name__)
 
 
+class PromptAssembler:
+    """3-layer prompt assembly engine."""
+
     # Locale code → full language name mapping for prompt instructions
     LOCALE_NAMES: dict[str, str] = {
         "en": "English",
