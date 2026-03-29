@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, type ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { events } from "@/lib/analytics";
+import { DashboardMockup } from "./dashboard-mockup";
 
 interface Slide {
   image: string;
@@ -12,6 +13,8 @@ interface Slide {
   subheadline: string;
   cta: { label: string; href: string; event: string };
   ctaSecondary?: { label: string; href: string; event: string };
+  /** Optional component rendered beside the text (split layout) */
+  visual?: ReactNode;
 }
 
 const slides: Slide[] = [
@@ -40,19 +43,20 @@ const slides: Slide[] = [
   },
   {
     image: "/hero/slide-3.jpg",
-    headline: "Trusted by Educators Worldwide",
+    headline: "Track Progress in Real Time",
     subheadline:
-      "Teachers and districts across the country rely on AIVO to close learning gaps, boost engagement, and deliver measurable outcomes.",
+      "A beautiful learner dashboard gives students, parents, and teachers instant visibility into progress, streaks, and AI-powered recommendations.",
     cta: {
-      label: "Explore Features",
-      href: "#features",
-      event: "hero-features",
+      label: "Get Started Free",
+      href: "/get-started",
+      event: "hero-dashboard",
     },
     ctaSecondary: {
       label: "View Case Studies",
       href: "/case-studies",
       event: "hero-cases",
     },
+    visual: <DashboardMockup />,
   },
 ];
 
@@ -82,6 +86,7 @@ export function Hero() {
   }, [next]);
 
   const slide = slides[current];
+  const hasSplitLayout = !!slide.visual;
 
   const slideVariants = {
     enter: (dir: number) => ({ x: dir > 0 ? "100%" : "-100%", opacity: 0 }),
@@ -103,14 +108,12 @@ export function Hero() {
           transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
           className="absolute inset-0"
         >
-          {/* Placeholder gradient — replace with <Image> when photos are ready */}
+          {/* Photo background — loads over the gradient */}
           <div
             className="absolute inset-0 bg-cover bg-center"
-            style={{
-              backgroundImage: `url(${slide.image})`,
-            }}
+            style={{ backgroundImage: `url(${slide.image})` }}
           />
-          {/* Fallback gradient (shows while image loads or if missing) */}
+          {/* Fallback gradient */}
           <div
             className="absolute inset-0"
             style={{
@@ -119,10 +122,10 @@ export function Hero() {
                   ? "linear-gradient(135deg, #7c3aed 0%, #5b21b6 40%, #0d95a8 80%, #14b8c8 100%)"
                   : current === 1
                     ? "linear-gradient(135deg, #0d95a8 0%, #14b8c8 40%, #5b21b6 80%, #7c3aed 100%)"
-                    : "linear-gradient(135deg, #5b21b6 0%, #7c3aed 40%, #14b8c8 80%, #0d95a8 100%)",
+                    : "linear-gradient(135deg, #1a1a2e 0%, #2d1b69 30%, #1a1a2e 70%, #0d3d47 100%)",
             }}
           />
-          {/* Dark overlay for text readability */}
+          {/* Dark overlay */}
           <div className="absolute inset-0 bg-black/30" />
         </motion.div>
       </AnimatePresence>
@@ -135,7 +138,7 @@ export function Hero() {
 
       {/* Content */}
       <div className="relative z-10 flex items-center justify-center h-full">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8">
           <AnimatePresence mode="wait">
             <motion.div
               key={current}
@@ -143,49 +146,99 @@ export function Hero() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5, ease: "easeOut" }}
+              className={cn(
+                hasSplitLayout
+                  ? "flex flex-col lg:flex-row items-center gap-10 lg:gap-16"
+                  : "text-center",
+              )}
             >
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight">
-                {slide.headline}
-              </h1>
-
-              <p className="mt-6 text-lg sm:text-xl text-white/90 max-w-3xl mx-auto">
-                {slide.subheadline}
-              </p>
-
-              <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link
-                  href={slide.cta.href}
-                  onClick={() => events.signupClick(slide.cta.event)}
+              {/* Text column */}
+              <div
+                className={cn(
+                  hasSplitLayout
+                    ? "flex-1 text-center lg:text-left"
+                    : "max-w-5xl mx-auto",
+                )}
+              >
+                <h1
                   className={cn(
-                    "inline-flex items-center justify-center rounded-lg px-8 py-4",
-                    "bg-white text-aivo-purple-600 font-semibold text-lg",
-                    "hover:bg-white/90 transition-all duration-200",
-                    "shadow-lg hover:shadow-xl hover:-translate-y-0.5",
+                    "text-4xl sm:text-5xl font-extrabold text-white leading-tight",
+                    !hasSplitLayout && "lg:text-6xl",
                   )}
                 >
-                  {slide.cta.label}
-                </Link>
-                {slide.ctaSecondary && (
+                  {slide.headline}
+                </h1>
+
+                <p
+                  className={cn(
+                    "mt-6 text-lg sm:text-xl text-white/90",
+                    hasSplitLayout ? "max-w-lg" : "max-w-3xl mx-auto",
+                  )}
+                >
+                  {slide.subheadline}
+                </p>
+
+                <div
+                  className={cn(
+                    "mt-10 flex flex-col sm:flex-row items-center gap-4",
+                    hasSplitLayout
+                      ? "justify-center lg:justify-start"
+                      : "justify-center",
+                  )}
+                >
                   <Link
-                    href={slide.ctaSecondary.href}
-                    onClick={() =>
-                      events.signupClick(slide.ctaSecondary!.event)
-                    }
+                    href={slide.cta.href}
+                    onClick={() => events.signupClick(slide.cta.event)}
                     className={cn(
                       "inline-flex items-center justify-center rounded-lg px-8 py-4",
-                      "border-2 border-white text-white font-semibold text-lg",
-                      "hover:bg-white/10 transition-all duration-200",
+                      "bg-white text-aivo-purple-600 font-semibold text-lg",
+                      "hover:bg-white/90 transition-all duration-200",
+                      "shadow-lg hover:shadow-xl hover:-translate-y-0.5",
                     )}
                   >
-                    {slide.ctaSecondary.label}
+                    {slide.cta.label}
                   </Link>
-                )}
+                  {slide.ctaSecondary && (
+                    <Link
+                      href={slide.ctaSecondary.href}
+                      onClick={() =>
+                        events.signupClick(slide.ctaSecondary!.event)
+                      }
+                      className={cn(
+                        "inline-flex items-center justify-center rounded-lg px-8 py-4",
+                        "border-2 border-white text-white font-semibold text-lg",
+                        "hover:bg-white/10 transition-all duration-200",
+                      )}
+                    >
+                      {slide.ctaSecondary.label}
+                    </Link>
+                  )}
+                </div>
               </div>
+
+              {/* Visual column (slide 3 dashboard) */}
+              {hasSplitLayout && (
+                <motion.div
+                  className="flex-1 w-full max-w-xl hidden md:block"
+                  initial={{ opacity: 0, x: 60, scale: 0.95 }}
+                  animate={{ opacity: 1, x: 0, scale: 1 }}
+                  transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
+                >
+                  {slide.visual}
+                </motion.div>
+              )}
             </motion.div>
           </AnimatePresence>
 
           {/* Navigation dots */}
-          <div className="mt-12 flex items-center justify-center gap-3">
+          <div
+            className={cn(
+              "flex items-center gap-3 mt-12",
+              hasSplitLayout
+                ? "justify-center lg:justify-start"
+                : "justify-center",
+            )}
+          >
             {slides.map((_, i) => (
               <button
                 key={i}
