@@ -277,7 +277,7 @@ export default function HomeworkPage() {
                         <Badge variant="secondary">
                           {assignment.subject}
                         </Badge>
-                        <Badge variant="outline">
+                        <Badge variant="secondary">
                           {assignment.homeworkMode}
                         </Badge>
                         <span>

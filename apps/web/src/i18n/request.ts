@@ -1,8 +1,9 @@
 import { getRequestConfig } from "next-intl/server";
+import type { AbstractIntlMessages } from "next-intl";
 import { cookies, headers } from "next/headers";
 import { defaultLocale, getI18nServiceUrl, locales, type Locale } from "./config";
 
-function toNestedMessages(flatMessages: Record<string, string>): Record<string, unknown> {
+function toNestedMessages(flatMessages: Record<string, string>): AbstractIntlMessages {
   const nested: Record<string, unknown> = {};
 
   for (const [flatKey, value] of Object.entries(flatMessages)) {
@@ -25,7 +26,7 @@ function toNestedMessages(flatMessages: Record<string, string>): Record<string, 
     }
   }
 
-  return nested;
+  return nested as AbstractIntlMessages;
 }
 
 async function fetchTranslations(locale: string): Promise<Record<string, string>> {

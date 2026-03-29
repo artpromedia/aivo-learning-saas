@@ -110,7 +110,7 @@ export class LtiService {
     );
   }
 
-  getJwks(): object {
+  async getJwks(): Promise<object> {
     const config = getConfig();
     if (!config.LTI_PUBLIC_KEY) {
       return { keys: [] };
