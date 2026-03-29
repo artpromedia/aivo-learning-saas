@@ -117,8 +117,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Install E2E dependencies
+        run: cd e2e && pnpm install
+
       - name: Install Playwright
-        run: cd e2e && npx playwright install --with-deps chromium
+        run: cd e2e && pnpm exec playwright install --with-deps chromium
 
       - name: Run E2E tests
         env:
@@ -126,7 +129,7 @@ jobs:
           REDIS_URL: redis://localhost:6380
           NATS_URL: nats://localhost:4223
           NODE_ENV: test
-        run: cd e2e && npx playwright test --reporter=json --output=coverage-reports/
+        run: cd e2e && pnpm exec playwright test --reporter=json --output=coverage-reports/
 
       - name: Upload E2E coverage reports
         if: always()
