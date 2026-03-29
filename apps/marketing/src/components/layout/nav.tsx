@@ -4,9 +4,13 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { navLinks } from "@/content/nav";
+import { useTranslations } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { LocaleSwitcher } from "./locale-switcher";
 
 export function Nav() {
+  // messages shape: { nav: { features, pricing, about, blog, howItWorks, tutors, login, getStarted } }
+  const messages = useTranslations();
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -29,6 +33,7 @@ export function Nav() {
     };
   }, [isOpen]);
 
+  // Wait for translations to load
   return (
     <header
       className={cn(
@@ -77,13 +82,14 @@ export function Nav() {
                     : "text-white/90 hover:text-white",
                 )}
               >
-                {link.label}
+                {messages?.nav?.[link.i18nKey] ?? link.label}
               </Link>
             ))}
           </div>
 
           {/* Desktop CTA */}
           <div className="hidden lg:flex items-center gap-4">
+            <LocaleSwitcher variant={isScrolled ? "dark" : "light"} />
             <Link
               href="/login"
               className={cn(
@@ -93,7 +99,7 @@ export function Nav() {
                   : "text-white/90 hover:text-white",
               )}
             >
-              Log In
+              {messages?.nav?.login ?? "Log In"}
             </Link>
             <Link
               href="/get-started"
@@ -104,7 +110,7 @@ export function Nav() {
                   : "bg-white text-aivo-purple-600 hover:bg-white/90",
               )}
             >
-              Get Started Free
+              {messages?.nav?.getStarted ?? "Get Started Free"}
             </Link>
           </div>
 
@@ -134,16 +140,19 @@ export function Nav() {
                 onClick={() => setIsOpen(false)}
                 className="block px-4 py-3 text-base font-medium text-aivo-navy-700 hover:bg-aivo-purple-50 hover:text-aivo-purple-600 rounded-lg transition-colors"
               >
-                {link.label}
+                {messages?.nav?.[link.i18nKey] ?? link.label}
               </Link>
             ))}
             <hr className="my-4 border-aivo-navy-100" />
+            <div className="px-4">
+              <LocaleSwitcher variant="dark" />
+            </div>
             <Link
               href="/login"
               onClick={() => setIsOpen(false)}
               className="block px-4 py-3 text-base font-medium text-aivo-navy-700 hover:bg-aivo-purple-50 rounded-lg"
             >
-              Log In
+              {messages?.nav?.login ?? "Log In"}
             </Link>
             <div className="px-4 pt-2">
               <Link
@@ -151,7 +160,7 @@ export function Nav() {
                 onClick={() => setIsOpen(false)}
                 className="block w-full text-center rounded-lg bg-aivo-purple-600 px-5 py-3 text-sm font-semibold text-white hover:bg-aivo-purple-700 transition-colors"
               >
-                Get Started Free
+                {messages?.nav?.getStarted ?? "Get Started Free"}
               </Link>
             </div>
           </nav>

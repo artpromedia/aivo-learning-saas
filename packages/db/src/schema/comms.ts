@@ -75,6 +75,20 @@ export const notificationPreferences = pgTable(
   ],
 );
 
+// ─── Newsletter Subscribers ──────────────────────────────────────────────────
+export const newsletterSubscribers = pgTable(
+  "newsletter_subscribers",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    email: varchar("email", { length: 320 }).notNull(),
+    subscribedAt: timestamp("subscribed_at", { withTimezone: true }).notNull().defaultNow(),
+    unsubscribedAt: timestamp("unsubscribed_at", { withTimezone: true }),
+  },
+  (t) => [
+    uniqueIndex("newsletter_subscribers_email_idx").on(t.email),
+  ],
+);
+
 // ─── Relations ──────────────────────────────────────────────────────────────
 export const notificationsRelations = relations(notifications, ({ one }) => ({
   user: one(users, { fields: [notifications.userId], references: [users.id] }),

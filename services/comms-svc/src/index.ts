@@ -25,6 +25,7 @@ import { preferencesRoute } from "./routes/notifications/preferences.js";
 import { registerPushRoute } from "./routes/push/register.js";
 import { unregisterPushRoute } from "./routes/push/unregister.js";
 import { websocketRoute } from "./routes/websocket/connect.js";
+import { newsletterSubscribeRoute } from "./routes/newsletter/subscribe.js";
 
 // Events
 import { setupSubscribers } from "./events/subscribers.js";
@@ -101,6 +102,7 @@ export async function buildApp() {
   await app.register(registerPushRoute);
   await app.register(unregisterPushRoute);
   await app.register(websocketRoute);
+  await app.register(newsletterSubscribeRoute);
 
   // Set up NATS event subscribers
   await setupSubscribers(app);

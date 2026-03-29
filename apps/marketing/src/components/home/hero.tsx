@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect, useCallback, type ReactNode } from "react";
+import { useState, useEffect, useCallback, useMemo, type ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { events } from "@/lib/analytics";
 import { DashboardMockup } from "./dashboard-mockup";
 import { AppStoreButtons } from "@/components/shared/app-store-buttons";
+import { useTranslations, type Messages } from "@/lib/i18n";
 
 interface Slide {
   image: string;
@@ -18,52 +19,37 @@ interface Slide {
   visual?: ReactNode;
 }
 
-const slides: Slide[] = [
-  {
-    image: "/hero/slide-1.png",
-    headline: "AI-Powered Learning That Adapts to Every Student",
-    subheadline:
-      "No Learner Left Behind. Personalized education powered by Brain Clone AI technology that creates a unique learning profile for every student.",
-    cta: { label: "Get Started Free", href: "/get-started", event: "hero" },
-    ctaSecondary: {
-      label: "Request a Demo",
-      href: "/demo",
-      event: "hero-demo",
+function buildSlides(t: Messages | null): Slide[] {
+  return [
+    {
+      image: "/hero/slide-1.png",
+      headline: t?.hero?.headline ?? "AI-Powered Learning That Adapts to Every Student",
+      subheadline: t?.hero?.subheadline ?? "No Learner Left Behind. Personalized education powered by Brain Clone AI technology that creates a unique learning profile for every student.",
+      cta: { label: t?.hero?.cta ?? "Get Started Free", href: "/get-started", event: "hero" },
+      ctaSecondary: { label: t?.hero?.ctaSecondary ?? "Request a Demo", href: "/demo", event: "hero-demo" },
     },
-  },
-  {
-    image: "/hero/slide-2.png",
-    headline: "Personalized Paths for Every Learner",
-    subheadline:
-      "Our AI adapts in real time, identifying strengths and gaps to create a custom curriculum that keeps students engaged and on track.",
-    cta: {
-      label: "See How It Works",
-      href: "#how-it-works",
-      event: "hero-how",
+    {
+      image: "/hero/slide-2.png",
+      headline: t?.hero?.slide2Headline ?? "Personalized Paths for Every Learner",
+      subheadline: t?.hero?.slide2Subheadline ?? "Our AI adapts in real time, identifying strengths and gaps to create a custom curriculum that keeps students engaged and on track.",
+      cta: { label: t?.hero?.slide2Cta ?? "See How It Works", href: "#how-it-works", event: "hero-how" },
     },
-  },
-  {
-    image: "/hero/slide-3.png",
-    headline: "Track Progress in Real Time",
-    subheadline:
-      "A beautiful learner dashboard gives students, parents, and teachers instant visibility into progress, streaks, and AI-powered recommendations.",
-    cta: {
-      label: "Get Started Free",
-      href: "/get-started",
-      event: "hero-dashboard",
+    {
+      image: "/hero/slide-3.png",
+      headline: t?.hero?.slide3Headline ?? "Track Progress in Real Time",
+      subheadline: t?.hero?.slide3Subheadline ?? "A beautiful learner dashboard gives students, parents, and teachers instant visibility into progress, streaks, and AI-powered recommendations.",
+      cta: { label: t?.hero?.slide3Cta ?? "Get Started Free", href: "/get-started", event: "hero-dashboard" },
+      ctaSecondary: { label: t?.hero?.slide3CtaSecondary ?? "View Case Studies", href: "/case-studies", event: "hero-cases" },
+      visual: <DashboardMockup />,
     },
-    ctaSecondary: {
-      label: "View Case Studies",
-      href: "/case-studies",
-      event: "hero-cases",
-    },
-    visual: <DashboardMockup />,
-  },
-];
+  ];
+}
 
 const AUTOPLAY_MS = 6000;
 
 export function Hero() {
+  const messages = useTranslations();
+  const slides = useMemo(() => buildSlides(messages), [messages]);
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(1);
 
@@ -163,8 +149,8 @@ export function Hero() {
               >
                 <h1
                   className={cn(
-                    "text-4xl sm:text-5xl font-extrabold text-white leading-tight",
-                    !hasSplitLayout && "lg:text-6xl",
+                    "text-5xl sm:text-6xl font-extrabold text-white leading-tight",
+                    !hasSplitLayout && "lg:text-7xl",
                   )}
                 >
                   {slide.headline}
@@ -172,7 +158,7 @@ export function Hero() {
 
                 <p
                   className={cn(
-                    "mt-6 text-lg sm:text-xl text-white/90",
+                    "mt-6 text-xl sm:text-2xl text-white/90 leading-relaxed",
                     hasSplitLayout ? "max-w-lg" : "max-w-3xl mx-auto",
                   )}
                 >

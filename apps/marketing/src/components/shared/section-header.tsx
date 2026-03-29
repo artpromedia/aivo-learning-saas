@@ -23,11 +23,11 @@ export function SectionHeader({
       transition={{ duration: 0.5 }}
       className={`mb-12 ${align === "center" ? "text-center" : "text-left"} ${className}`}
     >
-      <h2 className="text-3xl font-bold tracking-tight text-aivo-navy-800 sm:text-4xl">
+      <h2 className="text-4xl font-bold tracking-tight text-aivo-navy-800 sm:text-5xl">
         {title}
       </h2>
       {subtitle && (
-        <p className="mt-4 text-lg text-aivo-navy-400 max-w-3xl mx-auto">{subtitle}</p>
+        <p className="mt-4 text-xl text-aivo-navy-400 max-w-3xl mx-auto leading-relaxed">{subtitle}</p>
       )}
     </motion.div>
   );

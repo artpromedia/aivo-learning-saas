@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { SectionHeader } from "@/components/shared/section-header";
+import { useTranslations } from "@/lib/i18n";
 
 const tutors = [
   {
@@ -62,12 +63,13 @@ const item = {
 };
 
 export function AiTutors() {
+  const messages = useTranslations();
   return (
     <section id="ai-tutors" className="py-20 sm:py-28 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader
-          title="Meet Your AI Learning Team"
-          subtitle="Five specialized AI tutors, each with a unique personality and teaching style designed to make every subject engaging and fun."
+          title={messages?.aiTutors?.title ?? "Meet Your AI Learning Team"}
+          subtitle={messages?.aiTutors?.subtitle ?? "Five specialized AI tutors, each with a unique personality and teaching style designed to make every subject engaging and fun."}
         />
 
         <motion.div
@@ -87,13 +89,13 @@ export function AiTutors() {
               <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${tutor.accent}`} />
 
               <div className="text-4xl mb-4">{tutor.emoji}</div>
-              <h3 className="text-xl font-bold text-aivo-navy-800 mb-1">
+              <h3 className="text-2xl font-bold text-aivo-navy-800 mb-1">
                 {tutor.name}
               </h3>
-              <p className="text-sm font-medium text-aivo-navy-500 mb-3">
+              <p className="text-base font-medium text-aivo-navy-500 mb-3">
                 {tutor.subject}
               </p>
-              <p className="text-sm text-aivo-navy-400 leading-relaxed">
+              <p className="text-base text-aivo-navy-400 leading-relaxed">
                 {tutor.personality}
               </p>
             </motion.div>

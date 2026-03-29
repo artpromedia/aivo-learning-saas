@@ -1,59 +1,77 @@
 {
   "nav": {
-    "features": "[FR] Features",
-    "pricing": "[FR] Pricing",
-    "about": "[FR] About",
-    "blog": "[FR] Blog",
-    "howItWorks": "[FR] How It Works",
-    "tutors": "[FR] AI Tutors",
-    "login": "[FR] Log In",
-    "getStarted": "[FR] Get Started Free"
+    "features": "Fonctionnalités",
+    "pricing": "Tarifs",
+    "about": "À Propos",
+    "blog": "Blog",
+    "howItWorks": "Comment ça Marche",
+    "tutors": "Tuteurs IA",
+    "login": "Connexion",
+    "getStarted": "Commencer Gratuitement"
   },
   "hero": {
-    "headline": "[FR] AI-Powered Learning That Adapts to Every Student",
-    "subheadline": "[FR] No Learner Left Behind. Personalized education powered by Brain Clone AI technology.",
-    "cta": "[FR] Get Started Free",
-    "ctaSecondary": "[FR] Request a Demo"
+    "headline": "L'Apprentissage par IA qui s'Adapte à Chaque Élève",
+    "subheadline": "Aucun élève laissé pour compte. Une éducation personnalisée propulsée par la technologie Brain Clone AI qui crée un profil d'apprentissage unique pour chaque étudiant.",
+    "cta": "Commencer Gratuitement",
+    "ctaSecondary": "Demander une Démo",
+    "slide2Headline": "Des Parcours Personnalisés pour Chaque Élève",
+    "slide2Subheadline": "Notre IA s'adapte en temps réel, identifiant les forces et les lacunes pour créer un programme sur mesure qui maintient les élèves engagés et sur la bonne voie.",
+    "slide2Cta": "Voir Comment ça Marche",
+    "slide3Headline": "Suivez les Progrès en Temps Réel",
+    "slide3Subheadline": "Un tableau de bord élégant offre aux élèves, parents et enseignants une visibilité instantanée sur les progrès, les séries et les recommandations de l'IA.",
+    "slide3Cta": "Commencer Gratuitement",
+    "slide3CtaSecondary": "Voir les Études de Cas"
   },
   "features": {
-    "title": "[FR] Everything Your Students Need to Succeed",
-    "subtitle": "[FR] AIVO combines cutting-edge AI with proven educational science."
+    "title": "Tout ce dont Vos Élèves ont Besoin pour Réussir",
+    "subtitle": "AIVO combine une IA de pointe avec des sciences éducatives éprouvées pour créer une expérience d'apprentissage qui s'adapte à chaque élève."
   },
   "howItWorks": {
-    "title": "[FR] How AIVO Works",
-    "subtitle": "[FR] Three simple steps to personalized learning."
+    "title": "Comment Fonctionne AIVO",
+    "subtitle": "Trois étapes simples vers un apprentissage personnalisé qui s'adapte aux besoins uniques de chaque élève."
+  },
+  "aiTutors": {
+    "title": "Rencontrez Votre Équipe d'Apprentissage IA",
+    "subtitle": "Cinq tuteurs IA spécialisés, chacun avec une personnalité et un style d'enseignement uniques conçus pour rendre chaque matière captivante et amusante."
   },
   "pricing": {
-    "title": "[FR] Simple, Transparent Pricing",
-    "subtitle": "[FR] Start free. Upgrade when you're ready.",
-    "monthly": "[FR] Monthly",
-    "annual": "[FR] Annual",
-    "faqTitle": "[FR] Frequently Asked Questions"
+    "title": "Des Tarifs Simples et Transparents",
+    "subtitle": "Commencez gratuitement. Passez à la version supérieure quand vous êtes prêt.",
+    "monthly": "Mensuel",
+    "annual": "Annuel",
+    "faqTitle": "Questions Fréquentes"
   },
   "demo": {
-    "title": "[FR] See AIVO in Action",
-    "subtitle": "[FR] Schedule a personalized demo.",
-    "successTitle": "[FR] Thank You!",
-    "successMessage": "[FR] Our team will reach out within 24 hours."
+    "title": "Découvrez AIVO en Action",
+    "subtitle": "Planifiez une démonstration personnalisée avec notre équipe pédagogique.",
+    "successTitle": "Merci !",
+    "successMessage": "Notre équipe vous contactera dans les 24 heures."
   },
   "contact": {
-    "title": "[FR] Get in Touch",
-    "subtitle": "[FR] Have a question? We'd love to hear from you.",
-    "successTitle": "[FR] Message Sent!",
-    "successMessage": "[FR] We'll get back to you within 1-2 business days."
+    "title": "Contactez-nous",
+    "subtitle": "Vous avez une question ? Nous serions ravis de vous entendre.",
+    "successTitle": "Message Envoyé !",
+    "successMessage": "Nous vous répondrons sous 1 à 2 jours ouvrables."
+  },
+  "cta": {
+    "headline": "Prêt à Transformer l'Apprentissage ?",
+    "subheadline": "Rejoignez plus de 150 élèves qui apprennent déjà avec AIVO. Commencez votre essai gratuit aujourd'hui — sans carte de crédit.",
+    "button": "Commencer Gratuitement",
+    "secondary": "Parler aux Ventes",
+    "mobileNote": "Également disponible sur mobile"
   },
   "footer": {
-    "copyright": "[FR] © 2025 AIVO Learning. All rights reserved.",
-    "privacy": "[FR] Privacy Policy",
-    "terms": "[FR] Terms of Service",
-    "newsletter": "[FR] Stay updated",
-    "subscribe": "[FR] Subscribe"
+    "copyright": "© 2025 AIVO Learning. Tous droits réservés.",
+    "privacy": "Politique de Confidentialité",
+    "terms": "Conditions d'Utilisation",
+    "newsletter": "Restez informé",
+    "subscribe": "S'abonner"
   },
   "common": {
-    "learnMore": "[FR] Learn More",
-    "getStarted": "[FR] Get Started Free",
-    "contactUs": "[FR] Contact Us",
-    "readMore": "[FR] Read More",
-    "backToHome": "[FR] Back to Home"
+    "learnMore": "En Savoir Plus",
+    "getStarted": "Commencer Gratuitement",
+    "contactUs": "Contactez-nous",
+    "readMore": "Lire la Suite",
+    "backToHome": "Retour à l'Accueil"
   }
 }

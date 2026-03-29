@@ -13,6 +13,8 @@
 
 html {
   scroll-behavior: smooth;
+  /* Scale up all rem-based sizing (Tailwind) for better readability on large screens */
+  font-size: clamp(16px, 1.1vw + 8px, 22px);
 }
 
 body {

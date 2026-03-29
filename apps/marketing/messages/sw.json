@@ -1,59 +1,77 @@
 {
   "nav": {
-    "features": "[SW] Features",
-    "pricing": "[SW] Pricing",
-    "about": "[SW] About",
-    "blog": "[SW] Blog",
-    "howItWorks": "[SW] How It Works",
-    "tutors": "[SW] AI Tutors",
-    "login": "[SW] Log In",
-    "getStarted": "[SW] Get Started Free"
+    "features": "Vipengele",
+    "pricing": "Bei",
+    "about": "Kuhusu",
+    "blog": "Blogu",
+    "howItWorks": "Inavyofanya Kazi",
+    "tutors": "Walimu wa AI",
+    "login": "Ingia",
+    "getStarted": "Anza Bure"
   },
   "hero": {
-    "headline": "[SW] AI-Powered Learning That Adapts to Every Student",
-    "subheadline": "[SW] No Learner Left Behind. Personalized education powered by Brain Clone AI technology.",
-    "cta": "[SW] Get Started Free",
-    "ctaSecondary": "[SW] Request a Demo"
+    "headline": "Ujifunzaji wa AI Unaobadilika kwa Kila Mwanafunzi",
+    "subheadline": "Hakuna mwanafunzi anayeachwa nyuma. Elimu ya kibinafsi inayoendeshwa na teknolojia ya Brain Clone AI inayounda wasifu wa kipekee wa kujifunza kwa kila mwanafunzi.",
+    "cta": "Anza Bure",
+    "ctaSecondary": "Omba Onyesho",
+    "slide2Headline": "Njia za Kibinafsi kwa Kila Mwanafunzi",
+    "slide2Subheadline": "AI yetu inabadilika kwa wakati halisi, ikitambua nguvu na mapungufu ili kuunda mtaala wa kipekee unaowafanya wanafunzi waendelee kujishughulisha.",
+    "slide2Cta": "Tazama Inavyofanya Kazi",
+    "slide3Headline": "Fuatilia Maendeleo kwa Wakati Halisi",
+    "slide3Subheadline": "Dashibodi nzuri ya kujifunza inayowapa wanafunzi, wazazi na walimu muonekano wa papo hapo wa maendeleo, mfuatano na mapendekezo ya AI.",
+    "slide3Cta": "Anza Bure",
+    "slide3CtaSecondary": "Tazama Mafanikio"
   },
   "features": {
-    "title": "[SW] Everything Your Students Need to Succeed",
-    "subtitle": "[SW] AIVO combines cutting-edge AI with proven educational science."
+    "title": "Kila Kitu Wanafunzi Wako Wanahitaji Kufanikiwa",
+    "subtitle": "AIVO inachanganya AI ya kisasa na sayansi ya elimu iliyothibitishwa kuunda uzoefu wa kujifunza unaobadilika kwa kila mwanafunzi."
   },
   "howItWorks": {
-    "title": "[SW] How AIVO Works",
-    "subtitle": "[SW] Three simple steps to personalized learning."
+    "title": "AIVO Inavyofanya Kazi",
+    "subtitle": "Hatua tatu rahisi za kujifunza kibinafsi zinazobadilika kulingana na mahitaji ya kipekee ya kila mwanafunzi."
+  },
+  "aiTutors": {
+    "title": "Kutana na Timu Yako ya Kujifunza ya AI",
+    "subtitle": "Walimu watano wa AI wenye utaalamu, kila mmoja na utu na mtindo wa kufundisha wa kipekee ulioundwa kufanya kila somo kuvutia na kufurahisha."
   },
   "pricing": {
-    "title": "[SW] Simple, Transparent Pricing",
-    "subtitle": "[SW] Start free. Upgrade when you're ready.",
-    "monthly": "[SW] Monthly",
-    "annual": "[SW] Annual",
-    "faqTitle": "[SW] Frequently Asked Questions"
+    "title": "Bei Rahisi na Wazi",
+    "subtitle": "Anza bure. Panda daraja ukiwa tayari.",
+    "monthly": "Kwa Mwezi",
+    "annual": "Kwa Mwaka",
+    "faqTitle": "Maswali Yanayoulizwa Mara kwa Mara"
   },
   "demo": {
-    "title": "[SW] See AIVO in Action",
-    "subtitle": "[SW] Schedule a personalized demo.",
-    "successTitle": "[SW] Thank You!",
-    "successMessage": "[SW] Our team will reach out within 24 hours."
+    "title": "Tazama AIVO Ikifanya Kazi",
+    "subtitle": "Panga onyesho la kibinafsi na timu yetu ya elimu.",
+    "successTitle": "Asante!",
+    "successMessage": "Timu yetu itawasiliana nawe ndani ya masaa 24."
   },
   "contact": {
-    "title": "[SW] Get in Touch",
-    "subtitle": "[SW] Have a question? We'd love to hear from you.",
-    "successTitle": "[SW] Message Sent!",
-    "successMessage": "[SW] We'll get back to you within 1-2 business days."
+    "title": "Wasiliana Nasi",
+    "subtitle": "Una swali? Tungependa kusikia kutoka kwako.",
+    "successTitle": "Ujumbe Umetumwa!",
+    "successMessage": "Tutakujibu ndani ya siku 1-2 za kazi."
+  },
+  "cta": {
+    "headline": "Uko Tayari Kubadilisha Ujifunzaji?",
+    "subheadline": "Jiunge na wanafunzi zaidi ya 150 wanaojifunza tayari na AIVO. Anza jaribio lako la bure leo — bila kadi ya mkopo.",
+    "button": "Anza Bure",
+    "secondary": "Ongea na Mauzo",
+    "mobileNote": "Inapatikana pia kwenye simu"
   },
   "footer": {
-    "copyright": "[SW] © 2025 AIVO Learning. All rights reserved.",
-    "privacy": "[SW] Privacy Policy",
-    "terms": "[SW] Terms of Service",
-    "newsletter": "[SW] Stay updated",
-    "subscribe": "[SW] Subscribe"
+    "copyright": "© 2025 AIVO Learning. Haki zote zimehifadhiwa.",
+    "privacy": "Sera ya Faragha",
+    "terms": "Masharti ya Huduma",
+    "newsletter": "Endelea kupata habari",
+    "subscribe": "Jiandikishe"
   },
   "common": {
-    "learnMore": "[SW] Learn More",
-    "getStarted": "[SW] Get Started Free",
-    "contactUs": "[SW] Contact Us",
-    "readMore": "[SW] Read More",
-    "backToHome": "[SW] Back to Home"
+    "learnMore": "Jifunze Zaidi",
+    "getStarted": "Anza Bure",
+    "contactUs": "Wasiliana Nasi",
+    "readMore": "Soma Zaidi",
+    "backToHome": "Rudi Nyumbani"
   }
 }

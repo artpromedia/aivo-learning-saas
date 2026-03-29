@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "@/lib/i18n";
+import { useNewsletter } from "@/lib/use-newsletter";
 
 const footerLinks = {
   Product: [
@@ -32,6 +34,8 @@ const footerLinks = {
 };
 
 export function Footer() {
+  const messages = useTranslations();
+  const { email, setEmail, status, errorMsg, subscribe } = useNewsletter();
   return (
     <footer className="bg-aivo-navy-800 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -47,7 +51,7 @@ export function Footer() {
                 className="h-10 w-auto"
               />
             </Link>
-            <p className="mt-3 text-sm text-aivo-navy-300">
+            <p className="mt-3 text-base text-aivo-navy-300">
               AI-powered personalized learning that adapts to every student. No
               learner left behind.
             </p>
@@ -56,28 +60,38 @@ export function Footer() {
           {/* Newsletter */}
           <form
             className="w-full max-w-md shrink-0"
-            onSubmit={(e) => e.preventDefault()}
+            onSubmit={subscribe}
           >
             <label
               htmlFor="footer-email"
               className="text-sm font-medium text-aivo-navy-200"
             >
-              Stay updated
+              {messages?.footer?.newsletter ?? "Stay updated"}
             </label>
             <div className="mt-2 flex gap-2">
               <input
                 id="footer-email"
                 type="email"
                 placeholder="your@email.com"
-                className="flex-1 min-w-0 rounded-lg bg-aivo-navy-700 border border-aivo-navy-600 px-3 py-2 text-sm text-white placeholder:text-aivo-navy-400 focus:outline-none focus:ring-2 focus:ring-aivo-purple-500"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={status === "loading" || status === "success"}
+                className="flex-1 min-w-0 rounded-lg bg-aivo-navy-700 border border-aivo-navy-600 px-3 py-2 text-sm text-white placeholder:text-aivo-navy-400 focus:outline-none focus:ring-2 focus:ring-aivo-purple-500 disabled:opacity-50"
               />
               <button
                 type="submit"
-                className="rounded-lg bg-aivo-purple-600 px-4 py-2 text-sm font-semibold text-white hover:bg-aivo-purple-700 transition-colors whitespace-nowrap"
+                disabled={status === "loading" || status === "success"}
+                className="rounded-lg bg-aivo-purple-600 px-4 py-2 text-sm font-semibold text-white hover:bg-aivo-purple-700 transition-colors whitespace-nowrap disabled:opacity-50"
               >
-                Subscribe
+                {status === "loading" ? "..." : (messages?.footer?.subscribe ?? "Subscribe")}
               </button>
             </div>
+            {status === "success" && (
+              <p className="mt-2 text-sm text-green-400">Thanks for subscribing!</p>
+            )}
+            {status === "error" && (
+              <p className="mt-2 text-sm text-red-400">{errorMsg}</p>
+            )}
           </form>
         </div>
 
@@ -93,7 +107,7 @@ export function Footer() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-sm text-aivo-navy-300 hover:text-white transition-colors"
+                      className="text-base text-aivo-navy-300 hover:text-white transition-colors"
                     >
                       {link.label}
                     </Link>
@@ -107,21 +121,20 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="mt-12 pt-8 border-t border-aivo-navy-700 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-aivo-navy-400">
-            &copy; {new Date().getFullYear()} AIVO Learning. All rights
-            reserved.
+            &copy; {new Date().getFullYear()} AIVO Learning. {messages?.footer?.copyright ? messages.footer.copyright.replaceAll(/©\s*\d+\s*/g, "") : "All rights reserved."}
           </p>
           <div className="flex items-center gap-6">
             <Link
               href="/privacy"
               className="text-sm text-aivo-navy-400 hover:text-white transition-colors"
             >
-              Privacy
+              {messages?.footer?.privacy ?? "Privacy"}
             </Link>
             <Link
               href="/terms"
               className="text-sm text-aivo-navy-400 hover:text-white transition-colors"
             >
-              Terms
+              {messages?.footer?.terms ?? "Terms"}
             </Link>
             <Link
               href="/cookies"
