@@ -19,7 +19,7 @@ interface Slide {
 
 const slides: Slide[] = [
   {
-    image: "/hero/slide-1.jpg",
+    image: "/hero/slide-1.png",
     headline: "AI-Powered Learning That Adapts to Every Student",
     subheadline:
       "No Learner Left Behind. Personalized education powered by Brain Clone AI technology that creates a unique learning profile for every student.",
@@ -31,7 +31,7 @@ const slides: Slide[] = [
     },
   },
   {
-    image: "/hero/slide-2.jpg",
+    image: "/hero/slide-2.png",
     headline: "Personalized Paths for Every Learner",
     subheadline:
       "Our AI adapts in real time, identifying strengths and gaps to create a custom curriculum that keeps students engaged and on track.",
@@ -42,7 +42,7 @@ const slides: Slide[] = [
     },
   },
   {
-    image: "/hero/slide-3.jpg",
+    image: "/hero/slide-3.png",
     headline: "Track Progress in Real Time",
     subheadline:
       "A beautiful learner dashboard gives students, parents, and teachers instant visibility into progress, streaks, and AI-powered recommendations.",
