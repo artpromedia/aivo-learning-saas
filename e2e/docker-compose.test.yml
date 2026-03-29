@@ -49,7 +49,9 @@ services:
       DATABASE_URL: postgresql://aivo:aivo_test@postgres:5432/aivo_test
       REDIS_URL: redis://redis:6379
       NATS_URL: nats://nats:4222
-      AUTH_SECRET: e2e-test-secret-key-32-characters
+      AUTH_SECRET: e2e-test-secret-key-at-least-32-characters-long
+      JWT_PRIVATE_KEY: ${JWT_PRIVATE_KEY:?Generate keys with: openssl genpkey -algorithm RSA -out jwt-private.pem -pkeyopt rsa_keygen_bits:2048}
+      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY:?Generate keys with: openssl rsa -in jwt-private.pem -pubout -out jwt-public.pem}
       APP_URL: http://localhost:3000
       NODE_ENV: test
       LOG_LEVEL: warn

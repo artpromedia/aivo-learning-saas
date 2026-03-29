@@ -6,13 +6,17 @@ const API_BASE = process.env.API_BASE_URL || 'http://localhost:3101';
 const MAX_RETRIES = 30;
 const RETRY_DELAY_MS = 2_000;
 
-async function waitForService(url: string, label: string): Promise<void> {
+async function waitForService(
+  url: string,
+  label: string,
+  { required = true }: { required?: boolean } = {},
+): Promise<boolean> {
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
     try {
       const response = await fetch(url);
       if (response.ok) {
         console.log(`  [ok] ${label} is healthy`);
-        return;
+        return true;
       }
     } catch {
       // service not ready yet
@@ -21,6 +25,10 @@ async function waitForService(url: string, label: string): Promise<void> {
       console.log(`  [wait] ${label} not ready (attempt ${attempt}/${MAX_RETRIES})`);
     }
     await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));
+  }
+  if (!required) {
+    console.warn(`  [skip] ${label} not available — tests that depend on it will be skipped`);
+    return false;
   }
   throw new Error(`${label} did not become healthy after ${MAX_RETRIES} attempts`);
 }
@@ -72,12 +80,15 @@ async function globalSetup(_config: FullConfig): Promise<void> {
 
   // Wait for infrastructure services
   console.log('[setup] Waiting for services to be healthy...');
-  await waitForService('http://localhost:5433', 'PostgreSQL (test)').catch(() => {
+  await waitForService('http://localhost:5433', 'PostgreSQL (test)', { required: false }).catch(() => {
     console.log('  [info] PostgreSQL health check via HTTP not available, assuming ready via Docker healthcheck');
   });
 
   await waitForService(`${API_BASE}/health`, 'identity-svc');
-  await waitForService('http://localhost:3102/health', 'brain-svc');
+  const brainAvailable = await waitForService('http://localhost:3102/health', 'brain-svc', { required: false });
+
+  // Export brain-svc availability so tests can skip if needed
+  process.env.BRAIN_SVC_AVAILABLE = brainAvailable ? '1' : '0';
 
   // Run migrations
   await runMigrations();

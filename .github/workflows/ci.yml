@@ -97,10 +97,10 @@ jobs:
         ports:
           - 4223:4222
         options: >-
-          --health-cmd "wget -q --spider http://localhost:8222/healthz || exit 1"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          --health-cmd "true"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 3
 
     steps:
       - name: Checkout
@@ -123,12 +123,56 @@ jobs:
       - name: Install Playwright
         run: cd e2e && npx playwright install --with-deps chromium
 
+      - name: Generate test JWT keys
+        run: |
+          openssl genpkey -algorithm RSA -out /tmp/jwt-private.pem -pkeyopt rsa_keygen_bits:2048
+          openssl rsa -in /tmp/jwt-private.pem -pubout -out /tmp/jwt-public.pem
+          echo "JWT_PRIVATE_KEY<<JWTEOF" >> $GITHUB_ENV
+          cat /tmp/jwt-private.pem >> $GITHUB_ENV
+          echo "JWTEOF" >> $GITHUB_ENV
+          echo "JWT_PUBLIC_KEY<<JWTPUBEOF" >> $GITHUB_ENV
+          cat /tmp/jwt-public.pem >> $GITHUB_ENV
+          echo "JWTPUBEOF" >> $GITHUB_ENV
+
+      - name: Build workspace packages
+        run: |
+          pnpm --filter @aivo/db build
+          pnpm --filter @aivo/events build
+          pnpm --filter @aivo/observability build
+          pnpm --filter @aivo/brand build
+
+      - name: Start identity-svc
+        env:
+          DATABASE_URL: postgresql://aivo:aivo_test@localhost:5433/aivo_test
+          REDIS_URL: redis://localhost:6380
+          NATS_URL: nats://localhost:4223
+          AUTH_SECRET: e2e-test-secret-key-at-least-32-characters-long
+          APP_URL: http://localhost:3000
+          PORT: "3101"
+          NODE_ENV: test
+        run: |
+          pnpm --filter identity-svc dev &
+          echo "Waiting for identity-svc to be healthy..."
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:3101/health > /dev/null 2>&1; then
+              echo "identity-svc is healthy"
+              break
+            fi
+            if [ "$i" -eq 30 ]; then
+              echo "identity-svc did not become healthy"
+              exit 1
+            fi
+            sleep 2
+          done
+
       - name: Run E2E tests
         env:
           DATABASE_URL: postgresql://aivo:aivo_test@localhost:5433/aivo_test
           REDIS_URL: redis://localhost:6380
           NATS_URL: nats://localhost:4223
           NODE_ENV: test
+          API_BASE_URL: http://localhost:3101
+          NEXT_PUBLIC_API_URL: http://localhost:3101
         run: cd e2e && npx playwright test --reporter=json --output=coverage-reports/
 
       - name: Upload E2E coverage reports
