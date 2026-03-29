@@ -688,6 +688,9 @@ jobs:
           echo "Generated image tag overrides:"
           cat /tmp/image-tags.yaml
 
+      - name: Build Helm dependencies
+        run: helm dependency build infra/helm
+
       - name: Helm upgrade (staging)
         run: |
           helm upgrade --install aivolearning infra/helm \
