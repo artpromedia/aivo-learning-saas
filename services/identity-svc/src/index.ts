@@ -57,6 +57,9 @@ import { brainProxyRoutes } from "./routes/brain-proxy.js";
 // Routes — Health
 import { healthRoutes } from "./routes/health.js";
 
+// Routes — Test support (non-production only)
+import { testSupportRoutes } from "./routes/test-support.js";
+
 export async function buildApp() {
   const config = loadConfig();
 
@@ -114,6 +117,12 @@ export async function buildApp() {
 
   // Register routes
   await app.register(healthRoutes);
+
+  // Test-support routes — only in non-production, no /api prefix
+  if (config.NODE_ENV !== "production") {
+    await app.register(testSupportRoutes);
+  }
+
   await app.register(async function apiRoutes(api) {
     await api.register(registerRoute);
     await api.register(loginRoute);
