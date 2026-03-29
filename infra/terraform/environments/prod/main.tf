@@ -9,14 +9,16 @@ terraform {
   }
 
   backend "s3" {
-    bucket                      = "aivo-terraform-state"
+    bucket                      = "aivo"
     key                         = "prod/terraform.tfstate"
-    region                      = "fsn1"
-    endpoint                    = "https://fsn1.your-objectstorage.com"
+    region                      = "auto"
+    endpoints                   = { s3 = "https://56f34d4c32d7deeeb917c5e27e0083ac.r2.cloudflarestorage.com" }
     skip_credentials_validation = true
     skip_metadata_api_check     = true
     skip_region_validation      = true
-    force_path_style            = true
+    skip_requesting_account_id  = true
+    skip_s3_checksum            = true
+    use_path_style              = true
   }
 }
 

@@ -29,14 +29,14 @@ jobs:
         with:
           terraform_version: "1.7.x"
 
+      - name: Configure Terraform backend credentials
+        run: |
+          echo "AWS_ACCESS_KEY_ID=${{ secrets.CF_R2_ACCESS_KEY_ID }}"     >> $GITHUB_ENV
+          echo "AWS_SECRET_ACCESS_KEY=${{ secrets.CF_R2_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
+
       - name: Terraform init
         working-directory: ${{ env.TF_DIR }}
-        run: |
-          terraform init \
-            -backend-config="access_key=${{ secrets.HETZNER_OBJECT_STORAGE_KEY_ID }}" \
-            -backend-config="secret_key=${{ secrets.HETZNER_OBJECT_STORAGE_SECRET }}"
-        env:
-          HCLOUD_TOKEN: ${{ secrets.HCLOUD_TOKEN }}
+        run: terraform init -reconfigure
 
       - name: Terraform validate
         working-directory: ${{ env.TF_DIR }}
@@ -47,7 +47,7 @@ jobs:
         working-directory: ${{ env.TF_DIR }}
         run: terraform plan -no-color -out=tfplan 2>&1 | tee /tmp/plan-output.txt
         env:
-          HCLOUD_TOKEN: ${{ secrets.HCLOUD_TOKEN }}
+          TF_VAR_hcloud_token: ${{ secrets.HCLOUD_TOKEN }}
         continue-on-error: true
 
       - name: Post plan as PR comment
