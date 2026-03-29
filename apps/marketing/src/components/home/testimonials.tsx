@@ -55,10 +55,10 @@ export function Testimonials() {
               </blockquote>
               <div>
                 <div className="w-12 h-12 rounded-full bg-aivo-purple-100 text-aivo-purple-600 flex items-center justify-center mx-auto mb-3 text-lg font-bold">
-                  {testimonial.name.charAt(0)}
+                  {testimonial.role.charAt(0)}
                 </div>
-                <p className="font-semibold text-aivo-navy-800">{testimonial.name}</p>
-                <p className="text-sm text-aivo-navy-400">{testimonial.role}</p>
+                <p className="font-semibold text-aivo-navy-800">{testimonial.role}</p>
+                <p className="text-sm text-aivo-navy-400">{testimonial.location}</p>
               </div>
             </motion.div>
           </AnimatePresence>

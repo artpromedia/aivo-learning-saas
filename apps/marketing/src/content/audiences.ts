@@ -12,8 +12,8 @@ export interface AudienceWalkthrough {
 
 export interface AudienceTestimonial {
   quote: string;
-  name: string;
   role: string;
+  location: string;
 }
 
 export interface Audience {
@@ -84,8 +84,8 @@ export const audiences: Audience[] = [
     testimonial: {
       quote:
         "My son has ADHD and was struggling in traditional school. With AIVO, he actually asks to do his lessons. The AI tutors keep him engaged in a way his textbooks never could.",
-      name: "Sarah M.",
       role: "Parent of a 4th grader",
+      location: "Austin, TX",
     },
     ctaLabel: "Start Your Free Trial",
     ctaHref: "/get-started",
@@ -145,8 +145,8 @@ export const audiences: Audience[] = [
     testimonial: {
       quote:
         "I have 28 students with 8 different IEPs. AIVO lets me actually differentiate for each one without working until midnight. It's the tool I've been waiting 15 years for.",
-      name: "Marcus T.",
       role: "5th Grade Special Education Teacher",
+      location: "Chicago, IL",
     },
     ctaLabel: "Get Started for Free",
     ctaHref: "/get-started",
@@ -206,8 +206,8 @@ export const audiences: Audience[] = [
     testimonial: {
       quote:
         "We piloted AIVO in 12 classrooms and saw a 31% improvement in reading scores for students with IEPs. We're now rolling it out district-wide.",
-      name: "Dr. Lisa Chen",
-      role: "Director of Special Education, Riverside USD",
+      role: "Director of Special Education",
+      location: "Los Angeles, CA",
     },
     ctaLabel: "Request a Demo",
     ctaHref: "/demo",

@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { AppStoreButtons } from "@/components/shared/app-store-buttons";
 
 export function CtaBand() {
   return (
@@ -50,6 +51,16 @@ export function CtaBand() {
             Talk to Sales
             <span className="ml-2">→</span>
           </Link>
+        </motion.div>
+        <motion.div
+          className="mt-8"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+        >
+          <p className="text-sm text-purple-200 mb-3">Also available on mobile</p>
+          <AppStoreButtons variant="light" className="justify-center" />
         </motion.div>
       </div>
     </section>

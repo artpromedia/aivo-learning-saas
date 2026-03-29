@@ -6,6 +6,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { events } from "@/lib/analytics";
 import { DashboardMockup } from "./dashboard-mockup";
+import { AppStoreButtons } from "@/components/shared/app-store-buttons";
 
 interface Slide {
   image: string;
@@ -108,12 +109,7 @@ export function Hero() {
           transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
           className="absolute inset-0"
         >
-          {/* Photo background — loads over the gradient */}
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(${slide.image})` }}
-          />
-          {/* Fallback gradient */}
+          {/* Fallback gradient (renders first / behind photo) */}
           <div
             className="absolute inset-0"
             style={{
@@ -124,6 +120,11 @@ export function Hero() {
                     ? "linear-gradient(135deg, #0d95a8 0%, #14b8c8 40%, #5b21b6 80%, #7c3aed 100%)"
                     : "linear-gradient(135deg, #1a1a2e 0%, #2d1b69 30%, #1a1a2e 70%, #0d3d47 100%)",
             }}
+          />
+          {/* Photo background — renders on top of gradient */}
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${slide.image})` }}
           />
           {/* Dark overlay */}
           <div className="absolute inset-0 bg-black/30" />
@@ -214,6 +215,13 @@ export function Hero() {
                     </Link>
                   )}
                 </div>
+                <AppStoreButtons
+                  variant="light"
+                  className={cn(
+                    "mt-6",
+                    hasSplitLayout ? "justify-center lg:justify-start" : "justify-center",
+                  )}
+                />
               </div>
 
               {/* Visual column (slide 3 dashboard) */}
