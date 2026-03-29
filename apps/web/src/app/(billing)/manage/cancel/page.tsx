@@ -20,6 +20,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
 import { apiFetch } from "@/lib/api";
+import { useAuthStore } from "@/stores/auth.store";
 
 interface CurrentSubscription {
   id: string;
