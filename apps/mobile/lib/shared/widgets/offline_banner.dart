@@ -71,7 +71,7 @@ class _AnimatedBannerState extends State<_AnimatedBanner>
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: Curves.easeInOut,
-    ));
+    ),);
   }
 
   @override

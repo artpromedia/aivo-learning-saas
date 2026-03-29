@@ -40,16 +40,16 @@ void main() {
       endpoint: '/test',
       method: 'POST',
       payload: '{}',
-    ));
+    ),);
     registerFallbackValue(BrainSnapshotsCompanion.insert(
       learnerId: 'l-1',
       brainStateId: 'bs-1',
       functioningLevel: 'standard',
       lastSyncedAt: DateTime(2025, 1, 1),
-    ));
+    ),);
   });
 
-  BrainRepository _createRepo({bool isOnline = true}) {
+  BrainRepository createRepo({bool isOnline = true}) {
     return BrainRepository(
       apiClient: mockApi,
       brainDao: mockBrainDao,
@@ -82,11 +82,11 @@ void main() {
                 data: testBrainContextJson,
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
       when(() => mockBrainDao.saveBrainSnapshot(any()))
           .thenAnswer((_) async => 1);
 
-      final repo = _createRepo(isOnline: true);
+      final repo = createRepo(isOnline: true);
       final result = await repo.getBrainContext('learner-1');
 
       expect(result.brainStateId, 'bs-1');
@@ -117,7 +117,7 @@ void main() {
       when(() => mockBrainDao.getBrainSnapshot('learner-1'))
           .thenAnswer((_) async => localSnapshotData);
 
-      final repo = _createRepo(isOnline: true);
+      final repo = createRepo(isOnline: true);
       final result = await repo.getBrainContext('learner-1');
 
       expect(result.brainStateId, 'bs-1');
@@ -144,7 +144,7 @@ void main() {
       when(() => mockBrainDao.getBrainSnapshot('learner-1'))
           .thenAnswer((_) async => localSnapshotData);
 
-      final repo = _createRepo(isOnline: false);
+      final repo = createRepo(isOnline: false);
       final result = await repo.getBrainContext('learner-1');
 
       expect(result.brainStateId, 'bs-1');
@@ -155,7 +155,7 @@ void main() {
       when(() => mockBrainDao.getBrainSnapshot('learner-1'))
           .thenAnswer((_) async => null);
 
-      final repo = _createRepo(isOnline: false);
+      final repo = createRepo(isOnline: false);
 
       expect(
         () => repo.getBrainContext('learner-1'),
@@ -171,11 +171,11 @@ void main() {
                 data: testBrainContextJson,
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
       when(() => mockBrainDao.saveBrainSnapshot(any()))
           .thenAnswer((_) async => 1);
 
-      final repo = _createRepo();
+      final repo = createRepo();
       final result = await repo.syncBrainSnapshot('learner-1');
 
       expect(result.overallProgress, 0.5);
@@ -190,9 +190,9 @@ void main() {
                 data: {},
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
 
-      final repo = _createRepo(isOnline: true);
+      final repo = createRepo(isOnline: true);
       await repo.updateMastery('learner-1', 'skill-1', 0.85);
 
       verify(() => mockApi.post(any(), data: any(named: 'data'))).called(1);
@@ -203,7 +203,7 @@ void main() {
       when(() => mockSyncManager.queueAction(any()))
           .thenAnswer((_) async {});
 
-      final repo = _createRepo(isOnline: false);
+      final repo = createRepo(isOnline: false);
       await repo.updateMastery('learner-1', 'skill-1', 0.85);
 
       verify(() => mockSyncManager.queueAction(any())).called(1);
@@ -216,7 +216,7 @@ void main() {
       when(() => mockSyncManager.queueAction(any()))
           .thenAnswer((_) async {});
 
-      final repo = _createRepo(isOnline: true);
+      final repo = createRepo(isOnline: true);
       await repo.updateMastery('learner-1', 'skill-1', 0.85);
 
       verify(() => mockSyncManager.queueAction(any())).called(1);
@@ -245,7 +245,7 @@ void main() {
       when(() => mockBrainDao.getBrainSnapshot('learner-1'))
           .thenAnswer((_) async => localSnapshotData);
 
-      final repo = _createRepo();
+      final repo = createRepo();
       final result = await repo.getLocalBrainSnapshot('learner-1');
 
       expect(result, isNotNull);

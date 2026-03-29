@@ -225,7 +225,6 @@ class EyeGazeController extends ChangeNotifier implements EyeGazeProvider {
 final eyeGazeControllerProvider =
     ChangeNotifierProvider<EyeGazeController>((ref) {
   final controller = EyeGazeController();
-  ref.onDispose(() => controller.dispose());
   return controller;
 });
 

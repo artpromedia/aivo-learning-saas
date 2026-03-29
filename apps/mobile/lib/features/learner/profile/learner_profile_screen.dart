@@ -436,19 +436,27 @@ class LearnerProfileScreen extends ConsumerWidget {
             leading: const Icon(Icons.text_fields),
             title: const Text('Text Size'),
             subtitle: Text(
-                'Level ${ref.watch(functioningLevelProvider)} '
-                '(adjust for comfort)'),
+              'Level ${ref.watch(functioningLevelProvider)} (adjust for comfort)',
+            ),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
                   icon: const Icon(Icons.remove_circle_outline, size: 20),
                   onPressed: () {
+                    const levels = [
+                      'STANDARD',
+                      'SUPPORTED',
+                      'LOW_VERBAL',
+                      'NON_VERBAL',
+                      'PRE_SYMBOLIC',
+                    ];
                     final current = ref.read(functioningLevelProvider);
-                    if (current < 4) {
+                    final idx = levels.indexOf(current);
+                    if (idx >= 0 && idx < levels.length - 1) {
                       ref
                           .read(functioningLevelProvider.notifier)
-                          .state = current + 1;
+                          .state = levels[idx + 1];
                     }
                   },
                   tooltip: 'Decrease text size',
@@ -456,11 +464,19 @@ class LearnerProfileScreen extends ConsumerWidget {
                 IconButton(
                   icon: const Icon(Icons.add_circle_outline, size: 20),
                   onPressed: () {
+                    const levels = [
+                      'STANDARD',
+                      'SUPPORTED',
+                      'LOW_VERBAL',
+                      'NON_VERBAL',
+                      'PRE_SYMBOLIC',
+                    ];
                     final current = ref.read(functioningLevelProvider);
-                    if (current > 1) {
+                    final idx = levels.indexOf(current);
+                    if (idx > 0) {
                       ref
                           .read(functioningLevelProvider.notifier)
-                          .state = current - 1;
+                          .state = levels[idx - 1];
                     }
                   },
                   tooltip: 'Increase text size',

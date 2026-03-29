@@ -1,7 +1,8 @@
-import type { NatsConnection, JetStreamClient } from "nats";
+import type { NatsConnection, RetentionPolicy, StorageType, OrderedConsumerOptions } from "nats";
 import { StringCodec } from "nats";
 import type { z } from "zod";
 import { SUBJECTS, type EventName } from "./subjects.js";
+import { JETSTREAM_STREAMS } from "./jetstream.js";
 import {
   ASSESSMENT_SCHEMAS,
   BRAIN_SCHEMAS,
@@ -20,6 +21,37 @@ import {
 } from "./schemas/index.js";
 
 const sc = StringCodec();
+
+function resolveStreamForSubject(subject: string): string {
+  for (const stream of JETSTREAM_STREAMS) {
+    for (const pattern of stream.subjects) {
+      if (pattern === subject) return stream.name;
+      if (pattern.endsWith(">") && subject.startsWith(pattern.slice(0, -1))) {
+        return stream.name;
+      }
+    }
+  }
+  throw new Error(`No JetStream stream found for subject: ${subject}`);
+}
+
+export async function provisionStreams(nc: NatsConnection): Promise<void> {
+  const jsm = await nc.jetstreamManager();
+  for (const def of JETSTREAM_STREAMS) {
+    try {
+      await jsm.streams.info(def.name);
+    } catch {
+      await jsm.streams.add({
+        name: def.name,
+        subjects: def.subjects,
+        retention: def.retention as RetentionPolicy,
+        storage: def.storage as StorageType,
+        max_age: def.maxAge,
+        max_bytes: def.maxBytes,
+        duplicate_window: def.duplicateWindow,
+      });
+    }
+  }
+}
 
 const ALL_SCHEMAS: Record<string, z.ZodType> = {
   ...ASSESSMENT_SCHEMAS,
@@ -67,8 +99,11 @@ export async function subscribeEvent<S extends z.ZodType>(
   handler: EventHandler<S>,
 ): Promise<void> {
   const subject = SUBJECTS[eventName];
+  const streamName = resolveStreamForSubject(subject);
   const js = nc.jetstream();
-  const consumer = await js.consumers.get(subject);
+  const consumer = await js.consumers.get(streamName, {
+    filterSubjects: [subject],
+  } as OrderedConsumerOptions);
   const messages = await consumer.consume();
 
   for await (const msg of messages) {

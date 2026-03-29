@@ -108,7 +108,7 @@ void main() {
     testWidgets('displays error banner from AuthError state', (tester) async {
       await tester.pumpWidget(buildApp(
         initialState: const AuthError('Email already registered'),
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       expect(find.text('Email already registered'), findsOneWidget);

@@ -10,5 +10,5 @@ export { JETSTREAM_STREAMS } from "./jetstream.js";
 export type { StreamDefinition } from "./jetstream.js";
 
 // Helpers
-export { publishEvent, subscribeEvent } from "./helpers.js";
+export { publishEvent, subscribeEvent, provisionStreams } from "./helpers.js";
 export type { EventHandler } from "./helpers.js";

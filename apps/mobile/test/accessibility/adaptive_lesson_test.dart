@@ -42,7 +42,7 @@ void main() {
             LessonChoice(key: 'c', label: 'Red'),
           ],
         ),
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       // Only first sentence visible
@@ -60,7 +60,7 @@ void main() {
           title: 'Test',
           textContent: 'Sentence one. Sentence two.',
         ),
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       expect(find.text('1 of 2'), findsOneWidget);
@@ -80,7 +80,7 @@ void main() {
             LessonChoice(key: 'b', label: 'No'),
           ],
         ),
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       // Facilitator guide visible
@@ -114,7 +114,7 @@ void main() {
             'Grasps object for 3 seconds',
           ],
         ),
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       expect(find.text('Parent / Caregiver Guide'), findsOneWidget);

@@ -157,8 +157,8 @@ class _InsightSubmissionScreenState
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.check_circle,
-                    size: 80, color: AivoColors.secondary),
+                const Icon(Icons.check_circle,
+                    size: 80, color: AivoColors.secondary,),
                 const SizedBox(height: 24),
                 Text(
                   'Insight Submitted Successfully',
@@ -186,7 +186,7 @@ class _InsightSubmissionScreenState
                       onPressed: () {
                         if (widget.learnerId != null) {
                           context.go(
-                              '/teacher/learner/${widget.learnerId}');
+                              '/teacher/learner/${widget.learnerId}',);
                         } else {
                           context.go('/teacher/classroom');
                         }
@@ -216,7 +216,7 @@ class _InsightSubmissionScreenState
               Semantics(
                 header: true,
                 child: Text('Insight Type',
-                    style: theme.textTheme.titleMedium),
+                    style: theme.textTheme.titleMedium,),
               ),
               const SizedBox(height: 8),
               Wrap(
@@ -260,7 +260,7 @@ class _InsightSubmissionScreenState
               Semantics(
                 header: true,
                 child: Text('Description',
-                    style: theme.textTheme.titleMedium),
+                    style: theme.textTheme.titleMedium,),
               ),
               const SizedBox(height: 8),
               Semantics(
@@ -292,7 +292,7 @@ class _InsightSubmissionScreenState
               Semantics(
                 header: true,
                 child: Text('Severity',
-                    style: theme.textTheme.titleMedium),
+                    style: theme.textTheme.titleMedium,),
               ),
               const SizedBox(height: 8),
               Row(
@@ -335,7 +335,7 @@ class _InsightSubmissionScreenState
                           ),
                           child: Text(
                               level[0].toUpperCase() +
-                                  level.substring(1)),
+                                  level.substring(1),),
                         ),
                       ),
                     ),
@@ -348,7 +348,7 @@ class _InsightSubmissionScreenState
               Semantics(
                 header: true,
                 child: Text('Related Skills',
-                    style: theme.textTheme.titleMedium),
+                    style: theme.textTheme.titleMedium,),
               ),
               const SizedBox(height: 8),
               Wrap(
@@ -378,7 +378,7 @@ class _InsightSubmissionScreenState
               Semantics(
                 header: true,
                 child: Text('Photo (Optional)',
-                    style: theme.textTheme.titleMedium),
+                    style: theme.textTheme.titleMedium,),
               ),
               const SizedBox(height: 8),
               if (_photoPath != null) ...[

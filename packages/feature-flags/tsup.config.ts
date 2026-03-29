@@ -3,7 +3,7 @@ import { defineConfig } from "tsup";
 export default defineConfig({
   entry: ["src/index.ts", "src/fastify-plugin.ts", "src/react.tsx"],
   format: ["esm"],
-  dts: true,
+  dts: false,
   splitting: true,
   clean: true,
 });

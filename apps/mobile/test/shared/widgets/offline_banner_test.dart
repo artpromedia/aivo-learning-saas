@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:aivo_mobile/core/connectivity/connectivity_provider.dart';
 import 'package:aivo_mobile/core/connectivity/sync_manager.dart';
+import 'package:aivo_mobile/data/local/daos/sync_dao.dart';
 import 'package:aivo_mobile/shared/widgets/offline_banner.dart';
 
 void main() {
@@ -41,7 +42,7 @@ void main() {
       await tester.pumpWidget(buildApp(
         status: ConnectivityStatus.offline,
         syncDao: dao,
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.cloud_off), findsOneWidget);
@@ -54,7 +55,7 @@ void main() {
     testWidgets('hides banner when online', (tester) async {
       await tester.pumpWidget(buildApp(
         status: ConnectivityStatus.online,
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       // When online, the SizeTransition should collapse the banner.
@@ -68,17 +69,17 @@ void main() {
         endpoint: '/test1',
         method: 'POST',
         payload: '{}',
-      ));
+      ),);
       await dao.insertAction(SyncAction(
         endpoint: '/test2',
         method: 'POST',
         payload: '{}',
-      ));
+      ),);
 
       await tester.pumpWidget(buildApp(
         status: ConnectivityStatus.offline,
         syncDao: dao,
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       expect(

@@ -34,7 +34,7 @@ void main() {
       endpoint: '/test',
       method: 'POST',
       payload: '{}',
-    ));
+    ),);
     registerFallbackValue(CachedLessonsCompanion.insert(
       lessonId: '',
       learnerId: '',
@@ -43,10 +43,10 @@ void main() {
       skillId: '',
       contentJson: '',
       expiresAt: DateTime(2025),
-    ));
+    ),);
   });
 
-  LearningRepository _createRepo({bool isOnline = true}) {
+  LearningRepository createRepo({bool isOnline = true}) {
     return LearningRepository(
       apiClient: mockApi,
       lessonDao: mockLessonDao,
@@ -80,9 +80,9 @@ void main() {
                 },
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
 
-      final repo = _createRepo();
+      final repo = createRepo();
       final path = await repo.getLearningPath('learner-1');
 
       expect(path.completedToday, 2);
@@ -97,9 +97,9 @@ void main() {
                 data: sessionJson,
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
 
-      final repo = _createRepo(isOnline: true);
+      final repo = createRepo(isOnline: true);
       final session = await repo.startSession('lesson-1');
 
       expect(session.id, 'session-1');
@@ -110,7 +110,7 @@ void main() {
       when(() => mockLessonDao.getCachedLesson('lesson-1'))
           .thenAnswer((_) async => null);
 
-      final repo = _createRepo(isOnline: false);
+      final repo = createRepo(isOnline: false);
 
       expect(
         () => repo.startSession('lesson-1'),
@@ -134,9 +134,9 @@ void main() {
                 },
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
 
-      final repo = _createRepo(isOnline: true);
+      final repo = createRepo(isOnline: true);
       final interaction =
           await repo.submitInteraction('session-1', 'int-1', 'A');
 
@@ -147,7 +147,7 @@ void main() {
       when(() => mockSyncManager.queueAction(any()))
           .thenAnswer((_) async {});
 
-      final repo = _createRepo(isOnline: false);
+      final repo = createRepo(isOnline: false);
       final interaction =
           await repo.submitInteraction('session-1', 'int-1', 'A');
 
@@ -169,9 +169,9 @@ void main() {
                 },
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
 
-      final repo = _createRepo(isOnline: true);
+      final repo = createRepo(isOnline: true);
       final session = await repo.completeSession('session-1', score: 0.9);
 
       expect(session.status, 'completed');
@@ -181,7 +181,7 @@ void main() {
       when(() => mockSyncManager.queueAction(any()))
           .thenAnswer((_) async {});
 
-      final repo = _createRepo(isOnline: false);
+      final repo = createRepo(isOnline: false);
       final session = await repo.completeSession('session-1');
 
       expect(session.status, 'completed_offline');
@@ -198,9 +198,9 @@ void main() {
                 },
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
 
-      final repo = _createRepo();
+      final repo = createRepo();
       final sessions = await repo.getSessionHistory();
 
       expect(sessions.length, 1);
@@ -224,17 +224,17 @@ void main() {
                 },
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
       when(() => mockApi.get(any()))
           .thenAnswer((_) async => Response(
                 data: {'content': 'lesson data'},
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
       when(() => mockLessonDao.cacheLesson(any()))
           .thenAnswer((_) async => 1);
 
-      final repo = _createRepo(isOnline: true);
+      final repo = createRepo(isOnline: true);
       await repo.preCacheLessons('learner-1', count: 1);
 
       verify(() => mockLessonDao.cacheLesson(any())).called(1);
@@ -256,9 +256,9 @@ void main() {
                 },
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
 
-      final repo = _createRepo();
+      final repo = createRepo();
       final item = await repo.getNextLesson('learner-1');
 
       expect(item.lessonId, 'L-next');

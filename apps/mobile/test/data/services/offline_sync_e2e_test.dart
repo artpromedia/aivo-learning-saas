@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:drift/drift.dart';
+import 'package:drift/drift.dart' hide isNotNull;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -34,7 +34,7 @@ void main() {
           endpoint: '/brain/mastery/update',
           method: 'POST',
           payload: jsonEncode({'index': i}),
-        ));
+        ),);
       }
 
       final pending = await syncDao.unsyncedActions();
@@ -59,7 +59,7 @@ void main() {
           contentJson: jsonEncode({'title': 'Lesson $i'}),
           orderIndex: Value(i),
           expiresAt: DateTime.now().add(const Duration(hours: 48)),
-        ));
+        ),);
       }
 
       final count = await lessonDao.countCachedLessons('learner-1');
@@ -78,7 +78,7 @@ void main() {
         skillId: 'sub-1',
         contentJson: '{}',
         expiresAt: DateTime.now().subtract(const Duration(hours: 1)),
-      ));
+      ),);
 
       await lessonDao.cacheLesson(CachedLessonsCompanion.insert(
         lessonId: 'valid-lesson',
@@ -88,7 +88,7 @@ void main() {
         skillId: 'mul-1',
         contentJson: '{}',
         expiresAt: DateTime.now().add(const Duration(hours: 48)),
-      ));
+      ),);
 
       await lessonDao.deleteExpiredLessons();
       final count = await lessonDao.countCachedLessons('learner-1');
@@ -142,7 +142,7 @@ void main() {
         skillId: 'at-max',
         subject: 'science',
         masteryLevel: const Value(0.98),
-      ));
+      ),);
 
       final engine = OfflineMasteryEngine(
         masteryDao: masteryDao,
@@ -170,7 +170,7 @@ void main() {
         skillId: 'sm2-test',
         subject: 'math',
         nextReviewAt: Value(now.add(const Duration(days: 2))),
-      ));
+      ),);
 
       final engine = OfflineMasteryEngine(
         masteryDao: masteryDao,
@@ -207,7 +207,7 @@ void main() {
         endpoint: '/test',
         method: 'POST',
         payload: '{}',
-      ));
+      ),);
 
       expect(await bgDao.pendingCount(), 1);
 

@@ -9,18 +9,20 @@ COPY package.json pnpm-workspace.yaml pnpm-lock.yaml turbo.json tsconfig.base.js
 
 COPY packages/db/package.json packages/db/
 COPY packages/events/package.json packages/events/
+COPY packages/observability/package.json packages/observability/
 
 COPY services/integrations-svc/package.json services/integrations-svc/
 
-RUN pnpm install --frozen-lockfile
-
+RUN pnpm install --frozen-lockfile --prod=false
 COPY packages/db/ packages/db/
 COPY packages/events/ packages/events/
+COPY packages/observability/ packages/observability/
 COPY services/integrations-svc/ services/integrations-svc/
 
 RUN pnpm --filter @aivo/db build && \
     pnpm --filter @aivo/events build && \
-    pnpm --filter @aivo/integrations-svc build
+    pnpm --filter @aivo/observability build && \
+    pnpm --filter @aivo/integrations-svc build:docker
 
 # ── Production stage ──────────────────────────────────────────────────────────
 FROM node:22-alpine AS production
@@ -37,6 +39,8 @@ COPY --from=builder /app/packages/db/package.json packages/db/
 COPY --from=builder /app/packages/db/dist/ packages/db/dist/
 COPY --from=builder /app/packages/events/package.json packages/events/
 COPY --from=builder /app/packages/events/dist/ packages/events/dist/
+COPY --from=builder /app/packages/observability/package.json packages/observability/
+COPY --from=builder /app/packages/observability/dist/ packages/observability/dist/
 
 COPY --from=builder /app/services/integrations-svc/package.json services/integrations-svc/
 COPY --from=builder /app/services/integrations-svc/dist/ services/integrations-svc/dist/

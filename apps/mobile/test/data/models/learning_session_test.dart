@@ -5,7 +5,7 @@ import 'package:aivo_mobile/data/models/learning_session.dart';
 void main() {
   final testDate = DateTime.parse('2025-03-01T10:00:00.000Z');
 
-  Map<String, dynamic> _sessionJson() => {
+  Map<String, dynamic> sessionJson() => {
         'id': 'session-1',
         'learnerId': 'learner-1',
         'lessonId': 'lesson-1',
@@ -34,7 +34,7 @@ void main() {
 
   group('LearningSession', () {
     test('fromJson creates correct object', () {
-      final session = LearningSession.fromJson(_sessionJson());
+      final session = LearningSession.fromJson(sessionJson());
 
       expect(session.id, 'session-1');
       expect(session.learnerId, 'learner-1');
@@ -49,7 +49,7 @@ void main() {
     });
 
     test('toJson produces valid map', () {
-      final session = LearningSession.fromJson(_sessionJson());
+      final session = LearningSession.fromJson(sessionJson());
       final json = session.toJson();
 
       expect(json['id'], 'session-1');
@@ -59,7 +59,7 @@ void main() {
     });
 
     test('fromJson -> toJson round-trip preserves data', () {
-      final original = LearningSession.fromJson(_sessionJson());
+      final original = LearningSession.fromJson(sessionJson());
       final json = original.toJson();
       final restored = LearningSession.fromJson(json);
 
@@ -69,7 +69,7 @@ void main() {
     });
 
     test('copyWith overrides specified fields', () {
-      final session = LearningSession.fromJson(_sessionJson());
+      final session = LearningSession.fromJson(sessionJson());
       final updated = session.copyWith(
         status: 'completed',
         score: () => 1.0,
@@ -81,7 +81,7 @@ void main() {
     });
 
     test('fromJson handles null optional fields', () {
-      final json = _sessionJson();
+      final json = sessionJson();
       json.remove('score');
       json.remove('completedAt');
 
@@ -91,8 +91,8 @@ void main() {
     });
 
     test('equality', () {
-      final s1 = LearningSession.fromJson(_sessionJson());
-      final s2 = LearningSession.fromJson(_sessionJson());
+      final s1 = LearningSession.fromJson(sessionJson());
+      final s2 = LearningSession.fromJson(sessionJson());
 
       expect(s1, equals(s2));
     });

@@ -30,7 +30,7 @@ class _TestAuthNotifier extends AuthNotifier {
       name: 'Test Learner',
       role: 'learner',
       learnerId: 'learner-1',
-    ));
+    ),);
   }
 }
 

@@ -31,7 +31,7 @@ class _TestAuthNotifier extends AuthNotifier {
       email: 'parent@example.com',
       name: 'Parent User',
       role: 'parent',
-    ));
+    ),);
   }
 }
 

@@ -38,7 +38,10 @@ void main() {
       await tester.pumpAndSettle();
 
       final constrainedBox = tester.widget<ConstrainedBox>(
-        find.byType(ConstrainedBox),
+        find.descendant(
+          of: find.byType(LargeTouchWrapper),
+          matching: find.byType(ConstrainedBox),
+        ).first,
       );
       expect(constrainedBox.constraints.minWidth, 48.0);
       expect(constrainedBox.constraints.minHeight, 48.0);
@@ -50,7 +53,10 @@ void main() {
       await tester.pumpAndSettle();
 
       final constrainedBox = tester.widget<ConstrainedBox>(
-        find.byType(ConstrainedBox),
+        find.descendant(
+          of: find.byType(LargeTouchWrapper),
+          matching: find.byType(ConstrainedBox),
+        ).first,
       );
       expect(constrainedBox.constraints.minWidth, 48.0);
       expect(constrainedBox.constraints.minHeight, 48.0);
@@ -62,7 +68,10 @@ void main() {
       await tester.pumpAndSettle();
 
       final constrainedBox = tester.widget<ConstrainedBox>(
-        find.byType(ConstrainedBox),
+        find.descendant(
+          of: find.byType(LargeTouchWrapper),
+          matching: find.byType(ConstrainedBox),
+        ).first,
       );
       expect(constrainedBox.constraints.minWidth, 80.0);
       expect(constrainedBox.constraints.minHeight, 80.0);
@@ -74,7 +83,10 @@ void main() {
       await tester.pumpAndSettle();
 
       final constrainedBox = tester.widget<ConstrainedBox>(
-        find.byType(ConstrainedBox),
+        find.descendant(
+          of: find.byType(LargeTouchWrapper),
+          matching: find.byType(ConstrainedBox),
+        ).first,
       );
       expect(constrainedBox.constraints.minWidth, 80.0);
       expect(constrainedBox.constraints.minHeight, 80.0);
@@ -86,7 +98,10 @@ void main() {
       await tester.pumpAndSettle();
 
       final constrainedBox = tester.widget<ConstrainedBox>(
-        find.byType(ConstrainedBox),
+        find.descendant(
+          of: find.byType(LargeTouchWrapper),
+          matching: find.byType(ConstrainedBox),
+        ).first,
       );
       expect(constrainedBox.constraints.minWidth, 80.0);
       expect(constrainedBox.constraints.minHeight, 80.0);
@@ -98,7 +113,10 @@ void main() {
         await tester.pumpAndSettle();
 
         final constrainedBox = tester.widget<ConstrainedBox>(
-          find.byType(ConstrainedBox),
+          find.descendant(
+            of: find.byType(LargeTouchWrapper),
+            matching: find.byType(ConstrainedBox),
+          ).first,
         );
         expect(
           constrainedBox.constraints.minWidth >= 24.0,

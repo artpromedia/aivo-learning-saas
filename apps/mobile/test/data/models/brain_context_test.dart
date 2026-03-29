@@ -5,7 +5,7 @@ import 'package:aivo_mobile/data/models/brain_context.dart';
 void main() {
   final testDate = DateTime.parse('2025-03-01T12:00:00.000Z');
 
-  Map<String, dynamic> _brainContextJson() => {
+  Map<String, dynamic> brainContextJson() => {
         'brainStateId': 'bs-1',
         'learnerId': 'learner-1',
         'functioningLevel': 'standard',
@@ -48,7 +48,7 @@ void main() {
 
   group('BrainContext', () {
     test('fromJson creates correct object', () {
-      final ctx = BrainContext.fromJson(_brainContextJson());
+      final ctx = BrainContext.fromJson(brainContextJson());
 
       expect(ctx.brainStateId, 'bs-1');
       expect(ctx.learnerId, 'learner-1');
@@ -64,7 +64,7 @@ void main() {
     });
 
     test('toJson produces valid map', () {
-      final ctx = BrainContext.fromJson(_brainContextJson());
+      final ctx = BrainContext.fromJson(brainContextJson());
       final json = ctx.toJson();
 
       expect(json['brainStateId'], 'bs-1');
@@ -74,7 +74,7 @@ void main() {
     });
 
     test('fromJson -> toJson -> fromJson round-trip', () {
-      final original = BrainContext.fromJson(_brainContextJson());
+      final original = BrainContext.fromJson(brainContextJson());
       final json = original.toJson();
       final restored = BrainContext.fromJson(json);
 
@@ -84,7 +84,7 @@ void main() {
     });
 
     test('copyWith overrides specified fields', () {
-      final ctx = BrainContext.fromJson(_brainContextJson());
+      final ctx = BrainContext.fromJson(brainContextJson());
       final updated = ctx.copyWith(
         functioningLevel: 'lowVerbal',
         overallProgress: 0.9,
@@ -96,8 +96,8 @@ void main() {
     });
 
     test('equality', () {
-      final ctx1 = BrainContext.fromJson(_brainContextJson());
-      final ctx2 = BrainContext.fromJson(_brainContextJson());
+      final ctx1 = BrainContext.fromJson(brainContextJson());
+      final ctx2 = BrainContext.fromJson(brainContextJson());
 
       expect(ctx1, equals(ctx2));
     });
@@ -174,9 +174,9 @@ void main() {
 
     test('equality', () {
       const g1 = BrainGoal(
-          id: 'g-1', title: 'T', description: 'D', progress: 0.5, status: 'active');
+          id: 'g-1', title: 'T', description: 'D', progress: 0.5, status: 'active',);
       const g2 = BrainGoal(
-          id: 'g-1', title: 'T', description: 'D', progress: 0.5, status: 'active');
+          id: 'g-1', title: 'T', description: 'D', progress: 0.5, status: 'active',);
 
       expect(g1, equals(g2));
     });
@@ -231,9 +231,9 @@ void main() {
 
     test('equality', () {
       const g1 = IepGoal(
-          id: 'i1', goalText: 'G', area: 'a', progress: 0.5, status: 's');
+          id: 'i1', goalText: 'G', area: 'a', progress: 0.5, status: 's',);
       const g2 = IepGoal(
-          id: 'i1', goalText: 'G', area: 'a', progress: 0.5, status: 's');
+          id: 'i1', goalText: 'G', area: 'a', progress: 0.5, status: 's',);
 
       expect(g1, equals(g2));
       expect(g1.hashCode, equals(g2.hashCode));

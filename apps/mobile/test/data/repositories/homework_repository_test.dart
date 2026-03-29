@@ -51,11 +51,11 @@ void main() {
             fieldName: any(named: 'fieldName'),
             fields: any(named: 'fields'),
             onSendProgress: any(named: 'onSendProgress'),
-          )).thenAnswer((_) async => Response(
+          ),).thenAnswer((_) async => Response(
                 data: {'homework': homeworkJson},
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
 
       final events = <HomeworkUploadProgress>[];
       await for (final event in repo.uploadHomework('/path/to/file.jpg')) {
@@ -74,10 +74,10 @@ void main() {
             fieldName: any(named: 'fieldName'),
             fields: any(named: 'fields'),
             onSendProgress: any(named: 'onSendProgress'),
-          )).thenThrow(DioException(
+          ),).thenThrow(DioException(
         requestOptions: RequestOptions(path: ''),
         type: DioExceptionType.connectionTimeout,
-      ));
+      ),);
 
       final events = <HomeworkUploadProgress>[];
       await for (final event in repo.uploadHomework('/path/to/file.jpg')) {
@@ -95,7 +95,7 @@ void main() {
                 data: homeworkJson,
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
 
       final hw = await repo.getHomework('hw-1');
 
@@ -109,7 +109,7 @@ void main() {
                 data: {'homework': homeworkJson},
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
 
       final hw = await repo.getHomework('hw-1');
 
@@ -124,7 +124,7 @@ void main() {
                 data: sessionJson,
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
 
       final session = await repo.startHomeworkSession('hw-1');
 
@@ -140,7 +140,7 @@ void main() {
                 data: {},
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
 
       await repo.endHomeworkSession('hw-1');
 

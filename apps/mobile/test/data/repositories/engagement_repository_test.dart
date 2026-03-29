@@ -35,11 +35,11 @@ void main() {
       endpoint: '/test',
       method: 'POST',
       payload: '{}',
-    ));
+    ),);
     registerFallbackValue(const EngagementCacheCompanion());
   });
 
-  EngagementRepository _createRepo({bool isOnline = true}) {
+  EngagementRepository createRepo({bool isOnline = true}) {
     return EngagementRepository(
       apiClient: mockApi,
       engagementDao: mockEngagementDao,
@@ -63,11 +63,11 @@ void main() {
                 },
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
       when(() => mockEngagementDao.upsertEngagement(any()))
           .thenAnswer((_) async => 1);
 
-      final repo = _createRepo(isOnline: true);
+      final repo = createRepo(isOnline: true);
       final summary = await repo.getXpSummary('learner-1');
 
       expect(summary.totalXp, 500);
@@ -89,7 +89,7 @@ void main() {
       when(() => mockEngagementDao.getEngagement('learner-1'))
           .thenAnswer((_) async => cached);
 
-      final repo = _createRepo(isOnline: false);
+      final repo = createRepo(isOnline: false);
       final summary = await repo.getXpSummary('learner-1');
 
       expect(summary.totalXp, 300);
@@ -100,7 +100,7 @@ void main() {
       when(() => mockEngagementDao.getEngagement('learner-1'))
           .thenAnswer((_) async => null);
 
-      final repo = _createRepo(isOnline: false);
+      final repo = createRepo(isOnline: false);
 
       expect(
         () => repo.getXpSummary('learner-1'),
@@ -128,9 +128,9 @@ void main() {
                 },
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
 
-      final repo = _createRepo(isOnline: true);
+      final repo = createRepo(isOnline: true);
       final badges = await repo.getEarnedBadges('learner-1');
 
       expect(badges.length, 1);
@@ -138,7 +138,7 @@ void main() {
     });
 
     test('returns empty list when offline', () async {
-      final repo = _createRepo(isOnline: false);
+      final repo = createRepo(isOnline: false);
       final badges = await repo.getEarnedBadges('learner-1');
 
       expect(badges, isEmpty);
@@ -152,9 +152,9 @@ void main() {
                 data: {},
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
 
-      final repo = _createRepo();
+      final repo = createRepo();
       await repo.purchaseItem('item-1');
 
       verify(() => mockApi.post(any(), data: {'itemId': 'item-1'})).called(1);
@@ -178,9 +178,9 @@ void main() {
                 },
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
 
-      final repo = _createRepo();
+      final repo = createRepo();
       final entries = await repo.getLeaderboard('global');
 
       expect(entries.length, 1);
@@ -193,7 +193,7 @@ void main() {
       when(() => mockSyncManager.queueAction(any()))
           .thenAnswer((_) async {});
 
-      final repo = _createRepo(isOnline: false);
+      final repo = createRepo(isOnline: false);
       await repo.freezeStreak('learner-1');
 
       verify(() => mockSyncManager.queueAction(any())).called(1);

@@ -39,7 +39,7 @@ void main() {
           endpoint: '/test/$i',
           method: 'POST',
           payload: '{}',
-        ));
+        ),);
       }
 
       final pending = await dao.unsyncedActions();
@@ -75,7 +75,7 @@ void main() {
           endpoint: '/test/$i',
           method: 'POST',
           payload: '{}',
-        ));
+        ),);
       }
       expect(await dao.pendingCount(), 3);
 
@@ -99,7 +99,7 @@ void main() {
             ..where((t) => t.actionId.equals(action.id)))
           .write(SyncQueueItemsCompanion(
         syncedAt: Value(eightDaysAgo),
-      ));
+      ),);
 
       await dao.cleanupSyncedActions();
 
@@ -135,7 +135,7 @@ void main() {
         endpoint: '/test',
         method: 'POST',
         payload: '{}',
-      ));
+      ),);
 
       // Verify the data exists in the actual database table.
       final rows = await db.select(db.syncQueueItems).get();

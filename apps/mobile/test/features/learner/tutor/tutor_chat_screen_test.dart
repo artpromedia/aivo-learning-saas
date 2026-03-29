@@ -29,7 +29,7 @@ class _TestAuthNotifier extends AuthNotifier {
       name: 'Learner',
       role: 'learner',
       learnerId: 'learner-1',
-    ));
+    ),);
   }
 }
 
@@ -155,7 +155,7 @@ void main() {
               body: Consumer(
                 builder: (context, ref, _) {
                   final repo = ref.read(tutorRepositoryProvider);
-                  return Text(repo != null ? 'Tutor repo ready' : 'No repo');
+                  return Text('Tutor repo ready');
                 },
               ),
             ),

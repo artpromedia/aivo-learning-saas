@@ -126,7 +126,7 @@ void main() {
     testWidgets('displays error message from AuthError state', (tester) async {
       await tester.pumpWidget(buildApp(
         initialState: const AuthError('Invalid credentials'),
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       expect(find.text('Invalid credentials'), findsOneWidget);
@@ -135,7 +135,7 @@ void main() {
     testWidgets('shows loading indicator during AuthLoading', (tester) async {
       await tester.pumpWidget(buildApp(
         initialState: const AuthLoading(),
-      ));
+      ),);
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);

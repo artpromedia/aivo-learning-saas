@@ -118,7 +118,7 @@ class _CelebrationOverlayState extends ConsumerState<CelebrationOverlay>
           .animate(CurvedAnimation(
         parent: _xpController,
         curve: Curves.easeOutCubic,
-      ));
+      ),);
       _xpController.forward();
     } else {
       _xpAnimation = const AlwaysStoppedAnimation<int>(0);

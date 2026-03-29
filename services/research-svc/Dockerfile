@@ -16,8 +16,7 @@ COPY packages/events/package.json packages/events/
 COPY services/research-svc/package.json services/research-svc/
 
 # Install dependencies
-RUN pnpm install --frozen-lockfile
-
+RUN pnpm install --frozen-lockfile --prod=false
 # Copy source
 COPY packages/db/ packages/db/
 COPY packages/events/ packages/events/
@@ -26,7 +25,7 @@ COPY services/research-svc/ services/research-svc/
 # Build dependencies then service
 RUN pnpm --filter @aivo/db build && \
     pnpm --filter @aivo/events build && \
-    pnpm --filter @aivo/research-svc build
+    pnpm --filter @aivo/research-svc build:docker
 
 # ── Production stage ──────────────────────────────────────────────────────────
 FROM node:22-alpine AS production

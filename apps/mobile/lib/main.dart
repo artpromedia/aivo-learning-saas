@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'package:drift/drift.dart' show OrderingTerm;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,9 +33,9 @@ void callbackDispatcher() {
           final dao = DriftSyncDao(db);
           final dio = Dio(BaseOptions(
             baseUrl: Env.apiBaseUrl,
-            connectTimeout: Duration(seconds: Env.apiTimeoutSeconds),
-            receiveTimeout: Duration(seconds: Env.apiTimeoutSeconds),
-          ));
+            connectTimeout: const Duration(seconds: Env.apiTimeoutSeconds),
+            receiveTimeout: const Duration(seconds: Env.apiTimeoutSeconds),
+          ),);
           final manager = SyncManager(dao: dao, dio: dio);
           final beforeCount = await dao.pendingCount();
           await manager.drainSyncQueue();

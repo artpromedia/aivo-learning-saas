@@ -32,7 +32,7 @@ void main() {
                 },
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
 
       final data = await repo.getDashboardSummary('learner-1');
 
@@ -60,7 +60,7 @@ void main() {
                 },
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
 
       final recs = await repo.getRecommendations('learner-1');
 
@@ -85,7 +85,7 @@ void main() {
                 ],
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
 
       final recs = await repo.getRecommendations('learner-1');
 
@@ -100,7 +100,7 @@ void main() {
                 data: {},
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
 
       await repo.respondToRecommendation(
         'rec-1',
@@ -110,7 +110,7 @@ void main() {
       verify(() => mockApi.post(
             any(),
             data: {'response': 'approved'},
-          )).called(1);
+          ),).called(1);
     });
   });
 
@@ -135,7 +135,7 @@ void main() {
                 },
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
 
       final profile = await repo.getBrainProfile('learner-1');
 
@@ -149,11 +149,11 @@ void main() {
             any(),
             filePath: any(named: 'filePath'),
             fieldName: any(named: 'fieldName'),
-          )).thenAnswer((_) async => Response(
+          ),).thenAnswer((_) async => Response(
                 data: {},
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
 
       await repo.uploadIep('/path/to/iep.pdf');
 
@@ -161,7 +161,7 @@ void main() {
             any(),
             filePath: '/path/to/iep.pdf',
             fieldName: 'file',
-          )).called(1);
+          ),).called(1);
     });
   });
 
@@ -176,7 +176,7 @@ void main() {
                 },
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
 
       final settings = await repo.getSettings('learner-1');
 

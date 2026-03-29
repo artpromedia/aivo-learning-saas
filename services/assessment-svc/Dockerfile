@@ -12,24 +12,26 @@ COPY package.json pnpm-workspace.yaml pnpm-lock.yaml turbo.json tsconfig.base.js
 COPY packages/brand/package.json packages/brand/
 COPY packages/db/package.json packages/db/
 COPY packages/events/package.json packages/events/
+COPY packages/observability/package.json packages/observability/
 
 # Copy service
 COPY services/assessment-svc/package.json services/assessment-svc/
 
 # Install dependencies
-RUN pnpm install --frozen-lockfile
-
+RUN pnpm install --frozen-lockfile --prod=false
 # Copy source
 COPY packages/brand/ packages/brand/
 COPY packages/db/ packages/db/
 COPY packages/events/ packages/events/
+COPY packages/observability/ packages/observability/
 COPY services/assessment-svc/ services/assessment-svc/
 
 # Build dependencies then service
 RUN pnpm --filter @aivo/brand build && \
     pnpm --filter @aivo/db build && \
     pnpm --filter @aivo/events build && \
-    pnpm --filter assessment-svc build
+    pnpm --filter @aivo/observability build && \
+    pnpm --filter assessment-svc build:docker
 
 # ── Production stage ──────────────────────────────────────────────────────
 FROM node:22-alpine AS production
@@ -51,6 +53,8 @@ COPY --from=builder /app/packages/db/package.json packages/db/
 COPY --from=builder /app/packages/db/dist/ packages/db/dist/
 COPY --from=builder /app/packages/events/package.json packages/events/
 COPY --from=builder /app/packages/events/dist/ packages/events/dist/
+COPY --from=builder /app/packages/observability/package.json packages/observability/
+COPY --from=builder /app/packages/observability/dist/ packages/observability/dist/
 
 # Copy built service
 COPY --from=builder /app/services/assessment-svc/package.json services/assessment-svc/

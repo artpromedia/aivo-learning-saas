@@ -2,6 +2,32 @@ import { getRequestConfig } from "next-intl/server";
 import { cookies, headers } from "next/headers";
 import { defaultLocale, getI18nServiceUrl, locales, type Locale } from "./config";
 
+function toNestedMessages(flatMessages: Record<string, string>): Record<string, unknown> {
+  const nested: Record<string, unknown> = {};
+
+  for (const [flatKey, value] of Object.entries(flatMessages)) {
+    const path = flatKey.split(".");
+    let current: Record<string, unknown> = nested;
+
+    for (let i = 0; i < path.length; i++) {
+      const segment = path[i];
+      const isLeaf = i === path.length - 1;
+
+      if (isLeaf) {
+        current[segment] = value;
+      } else {
+        const existing = current[segment];
+        if (!existing || typeof existing !== "object" || Array.isArray(existing)) {
+          current[segment] = {};
+        }
+        current = current[segment] as Record<string, unknown>;
+      }
+    }
+  }
+
+  return nested;
+}
+
 async function fetchTranslations(locale: string): Promise<Record<string, string>> {
   const url = `${getI18nServiceUrl()}/i18n/translations/${locale}`;
   try {
@@ -39,10 +65,12 @@ export default getRequestConfig(async () => {
   const headerList = await headers();
   const locale = detectLocale(cookieStore, headerList);
 
-  const messages = await fetchTranslations(locale);
+  const flatMessages = await fetchTranslations(locale);
+  const messages = toNestedMessages(flatMessages);
 
   return {
     locale,
     messages,
+    timeZone: "UTC",
   };
 });

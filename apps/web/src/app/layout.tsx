@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 
-import { getLocale, getMessages } from "next-intl/server";
+import { getLocale, getMessages, getTimeZone } from "next-intl/server";
 import { I18nProvider } from "@/i18n/provider";
 import { isRtl } from "@/i18n/config";
 import { QueryProvider } from "@/providers/QueryProvider";
@@ -22,13 +22,14 @@ export default async function RootLayout({
 }) {
   const locale = await getLocale();
   const messages = await getMessages();
+  const timeZone = await getTimeZone();
 
   return (
     <html lang={locale} dir={isRtl(locale) ? "rtl" : "ltr"} suppressHydrationWarning>
       <body style={{ fontFamily: "'Inter', 'Segoe UI', Arial, sans-serif" }}>
         <ThemeProvider>
           <QueryProvider>
-            <I18nProvider locale={locale} messages={messages}>
+            <I18nProvider locale={locale} messages={messages} timeZone={timeZone}>
               <AuthProvider>{children}</AuthProvider>
             </I18nProvider>
           </QueryProvider>

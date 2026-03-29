@@ -12,13 +12,19 @@
   },
   "scripts": {
     "build": "tsup src/index.ts --format esm --dts",
-    "dev": "tsup src/index.ts --format esm --dts --watch"
+    "dev": "tsup src/index.ts --format esm --watch"
   },
   "dependencies": {
     "fastify-plugin": "^5.0.0"
   },
   "peerDependencies": {
-    "fastify": "^5.0.0",
-    "@fastify/cookie": "^10.0.0"
+    "@fastify/cookie": "^10.0.0",
+    "fastify": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.2",
+    "vitest": "^4.1.2"
   }
 }

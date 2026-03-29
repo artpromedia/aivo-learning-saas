@@ -28,7 +28,7 @@ void main() {
           onPressed: () {},
           variant: AivoButtonVariant.primary,
         ),
-      ));
+      ),);
 
       expect(find.text('Submit'), findsOneWidget);
       expect(find.byType(ElevatedButton), findsOneWidget);
@@ -41,7 +41,7 @@ void main() {
           onPressed: () {},
           variant: AivoButtonVariant.secondary,
         ),
-      ));
+      ),);
 
       expect(find.text('Cancel'), findsOneWidget);
     });
@@ -53,7 +53,7 @@ void main() {
           onPressed: () {},
           variant: AivoButtonVariant.outlined,
         ),
-      ));
+      ),);
 
       expect(find.text('Outline'), findsOneWidget);
     });
@@ -65,7 +65,7 @@ void main() {
           onPressed: () {},
           variant: AivoButtonVariant.text,
         ),
-      ));
+      ),);
 
       expect(find.text('Text Button'), findsOneWidget);
     });
@@ -77,7 +77,7 @@ void main() {
           onPressed: () {},
           variant: AivoButtonVariant.danger,
         ),
-      ));
+      ),);
 
       expect(find.text('Delete'), findsOneWidget);
     });
@@ -89,7 +89,7 @@ void main() {
           onPressed: () {},
           isLoading: true,
         ),
-      ));
+      ),);
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
       // Label text should not be visible when loading.
@@ -104,7 +104,7 @@ void main() {
           onPressed: () => tapped = true,
           isDisabled: true,
         ),
-      ));
+      ),);
 
       await tester.tap(find.byType(ElevatedButton));
       expect(tapped, isFalse);
@@ -118,7 +118,7 @@ void main() {
           onPressed: () => tapped = true,
           isLoading: true,
         ),
-      ));
+      ),);
 
       await tester.tap(find.byType(ElevatedButton));
       expect(tapped, isFalse);
@@ -131,7 +131,7 @@ void main() {
           label: 'Tap Me',
           onPressed: () => tapped = true,
         ),
-      ));
+      ),);
 
       await tester.tap(find.byType(ElevatedButton));
       expect(tapped, isTrue);
@@ -144,7 +144,7 @@ void main() {
           onPressed: () {},
           icon: Icons.add,
         ),
-      ));
+      ),);
 
       expect(find.byIcon(Icons.add), findsOneWidget);
       expect(find.text('Add'), findsOneWidget);
@@ -157,7 +157,7 @@ void main() {
           onPressed: () {},
           semanticsLabel: 'Custom action button',
         ),
-      ));
+      ),);
 
       expect(
         find.bySemanticsLabel('Custom action button'),
@@ -173,7 +173,7 @@ void main() {
           size: AivoButtonSize.medium,
         ),
         isLowVerbal: true,
-      ));
+      ),);
 
       // Button should be rendered (exact size depends on constraints).
       expect(find.text('Big Button'), findsOneWidget);

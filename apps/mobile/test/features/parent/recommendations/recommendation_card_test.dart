@@ -20,7 +20,7 @@ void main() {
     mockFamilyRepo = MockFamilyRepository();
   });
 
-  Recommendation _createRecommendation({
+  Recommendation createRecommendation({
     String status = 'pending',
     String type = 'accommodation',
   }) {
@@ -56,7 +56,7 @@ void main() {
 
   group('RecommendationCard', () {
     testWidgets('renders title and description', (tester) async {
-      await tester.pumpWidget(buildApp(_createRecommendation()));
+      await tester.pumpWidget(buildApp(createRecommendation()));
       await tester.pumpAndSettle();
 
       expect(find.text('Extra Time on Tests'), findsOneWidget);
@@ -67,14 +67,14 @@ void main() {
     });
 
     testWidgets('renders type badge', (tester) async {
-      await tester.pumpWidget(buildApp(_createRecommendation(type: 'accommodation')));
+      await tester.pumpWidget(buildApp(createRecommendation(type: 'accommodation')));
       await tester.pumpAndSettle();
 
       expect(find.text('Accommodation'), findsOneWidget);
     });
 
     testWidgets('shows action buttons for pending status', (tester) async {
-      await tester.pumpWidget(buildApp(_createRecommendation(status: 'pending')));
+      await tester.pumpWidget(buildApp(createRecommendation(status: 'pending')));
       await tester.pumpAndSettle();
 
       expect(find.text('Approve'), findsOneWidget);
@@ -83,7 +83,7 @@ void main() {
     });
 
     testWidgets('hides action buttons for approved status', (tester) async {
-      await tester.pumpWidget(buildApp(_createRecommendation(status: 'approved')));
+      await tester.pumpWidget(buildApp(createRecommendation(status: 'approved')));
       await tester.pumpAndSettle();
 
       expect(find.text('Approve'), findsNothing);
@@ -92,14 +92,14 @@ void main() {
     });
 
     testWidgets('shows status badge for non-pending items', (tester) async {
-      await tester.pumpWidget(buildApp(_createRecommendation(status: 'approved')));
+      await tester.pumpWidget(buildApp(createRecommendation(status: 'approved')));
       await tester.pumpAndSettle();
 
       expect(find.text('Approved'), findsOneWidget);
     });
 
     testWidgets('renders View rationale toggle', (tester) async {
-      await tester.pumpWidget(buildApp(_createRecommendation()));
+      await tester.pumpWidget(buildApp(createRecommendation()));
       await tester.pumpAndSettle();
 
       expect(find.text('View rationale'), findsOneWidget);
@@ -119,13 +119,13 @@ void main() {
       when(() => mockFamilyRepo.respondToRecommendation(
             any(),
             any(),
-          )).thenAnswer((_) async {});
+          ),).thenAnswer((_) async {});
 
       bool updated = false;
       await tester.pumpWidget(buildApp(
-        _createRecommendation(status: 'pending'),
+        createRecommendation(status: 'pending'),
         onUpdated: () => updated = true,
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('Approve'));

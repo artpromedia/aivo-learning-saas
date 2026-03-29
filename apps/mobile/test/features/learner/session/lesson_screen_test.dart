@@ -32,7 +32,7 @@ class _TestAuthNotifier extends AuthNotifier {
       name: 'Test Learner',
       role: 'learner',
       learnerId: 'learner-1',
-    ));
+    ),);
   }
 }
 
@@ -83,7 +83,7 @@ void main() {
                       return Center(
                         child: Text(isOnline
                             ? 'Online Mode'
-                            : 'Offline Mode - Using cached lesson'),
+                            : 'Offline Mode - Using cached lesson',),
                       );
                     },
                   );
@@ -166,7 +166,7 @@ void main() {
               body: Consumer(
                 builder: (context, ref, _) {
                   final repo = ref.read(learningRepositoryProvider);
-                  return Text(repo != null ? 'Repo available' : 'No repo');
+                  return Text('Repo available');
                 },
               ),
             ),

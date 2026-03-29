@@ -98,7 +98,7 @@ class LearnerBrainViewScreen extends ConsumerWidget {
                   title: 'Accommodations',
                   child: brain.accommodations.isEmpty
                       ? Text('None active',
-                          style: theme.textTheme.bodyMedium)
+                          style: theme.textTheme.bodyMedium,)
                       : Wrap(
                           spacing: 8,
                           runSpacing: 4,
@@ -112,7 +112,7 @@ class LearnerBrainViewScreen extends ConsumerWidget {
                             return Chip(
                               label: Text(_formatKey(e.key)),
                               avatar: Icon(_accommodationIcon(e.key),
-                                  size: 16),
+                                  size: 16,),
                             );
                           }).toList(),
                         ),
@@ -123,7 +123,7 @@ class LearnerBrainViewScreen extends ConsumerWidget {
                   icon: Icons.bar_chart,
                   title: 'Mastery Overview',
                   child: _MasteryList(
-                      masteryLevels: brain.masteryLevels),
+                      masteryLevels: brain.masteryLevels,),
                 ),
 
                 // IEP goals
@@ -147,7 +147,7 @@ class LearnerBrainViewScreen extends ConsumerWidget {
                     children: [
                       if (brain.strengths.isNotEmpty) ...[
                         Text('Strengths',
-                            style: theme.textTheme.labelLarge),
+                            style: theme.textTheme.labelLarge,),
                         const SizedBox(height: 4),
                         Wrap(
                           spacing: 6,
@@ -171,7 +171,7 @@ class LearnerBrainViewScreen extends ConsumerWidget {
                       ],
                       if (brain.challenges.isNotEmpty) ...[
                         Text('Challenges',
-                            style: theme.textTheme.labelLarge),
+                            style: theme.textTheme.labelLarge,),
                         const SizedBox(height: 4),
                         Wrap(
                           spacing: 6,
@@ -202,7 +202,7 @@ class LearnerBrainViewScreen extends ConsumerWidget {
                   title: 'Recent Team Insights',
                   child: insights.isEmpty
                       ? Text('No insights yet',
-                          style: theme.textTheme.bodyMedium)
+                          style: theme.textTheme.bodyMedium,)
                       : Column(
                           children: insights.take(5).map((insight) {
                             return _InsightTile(insight: insight);
@@ -241,7 +241,7 @@ class LearnerBrainViewScreen extends ConsumerWidget {
         .replaceAll('_', ' ')
         .split(' ')
         .map((w) =>
-            w.isNotEmpty ? '${w[0].toUpperCase()}${w.substring(1)}' : w)
+            w.isNotEmpty ? '${w[0].toUpperCase()}${w.substring(1)}' : w,)
         .join(' ');
   }
 
@@ -301,7 +301,7 @@ class _ReadOnlySection extends StatelessWidget {
                   Semantics(
                     header: true,
                     child: Text(title,
-                        style: theme.textTheme.titleMedium),
+                        style: theme.textTheme.titleMedium,),
                   ),
                 ],
               ),
@@ -329,7 +329,7 @@ class _MasteryList extends StatelessWidget {
 
     if (masteryLevels.isEmpty) {
       return Text('No mastery data',
-          style: theme.textTheme.bodyMedium);
+          style: theme.textTheme.bodyMedium,);
     }
 
     // Group by subject
@@ -497,7 +497,7 @@ class _InsightTile extends StatelessWidget {
               children: [
                 Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 6, vertical: 2),
+                      horizontal: 6, vertical: 2,),
                   decoration: BoxDecoration(
                     color: severityColor.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(6),
@@ -522,7 +522,7 @@ class _InsightTile extends StatelessWidget {
             Text(insight.description,
                 style: theme.textTheme.bodyMedium,
                 maxLines: 3,
-                overflow: TextOverflow.ellipsis),
+                overflow: TextOverflow.ellipsis,),
             const SizedBox(height: 4),
             Text(
               'By ${insight.authorName}',
@@ -556,7 +556,7 @@ class _ErrorRetry extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.error_outline,
-                size: 48, color: theme.colorScheme.error),
+                size: 48, color: theme.colorScheme.error,),
             const SizedBox(height: 16),
             Text(message, style: theme.textTheme.bodyLarge),
             const SizedBox(height: 16),

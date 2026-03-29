@@ -82,10 +82,10 @@ void main() {
     test('equality', () {
       const s1 = EngagementSummary(
           totalXp: 1, currentLevel: 1, xpToNextLevel: 1, xpProgress: 0,
-          currentStreak: 0, longestStreak: 0, aivoCoins: 0);
+          currentStreak: 0, longestStreak: 0, aivoCoins: 0,);
       const s2 = EngagementSummary(
           totalXp: 1, currentLevel: 1, xpToNextLevel: 1, xpProgress: 0,
-          currentStreak: 0, longestStreak: 0, aivoCoins: 0);
+          currentStreak: 0, longestStreak: 0, aivoCoins: 0,);
 
       expect(s1, equals(s2));
       expect(s1.hashCode, equals(s2.hashCode));
@@ -131,10 +131,10 @@ void main() {
     test('equality', () {
       const b1 = Badge(
           slug: 's', name: 'n', description: 'd', iconUrl: 'u',
-          rarity: 'r', isEarned: false, progress: 0.0);
+          rarity: 'r', isEarned: false, progress: 0.0,);
       const b2 = Badge(
           slug: 's', name: 'n', description: 'd', iconUrl: 'u',
-          rarity: 'r', isEarned: false, progress: 0.0);
+          rarity: 'r', isEarned: false, progress: 0.0,);
 
       expect(b1, equals(b2));
     });
@@ -189,9 +189,9 @@ void main() {
 
     test('equality', () {
       const e1 = LeaderboardEntry(
-          odometer: 'o', learnerName: 'n', xp: 100, rank: 1, isCurrentUser: false);
+          odometer: 'o', learnerName: 'n', xp: 100, rank: 1, isCurrentUser: false,);
       const e2 = LeaderboardEntry(
-          odometer: 'o', learnerName: 'n', xp: 100, rank: 1, isCurrentUser: false);
+          odometer: 'o', learnerName: 'n', xp: 100, rank: 1, isCurrentUser: false,);
 
       expect(e1, equals(e2));
     });
@@ -273,10 +273,10 @@ void main() {
     test('equality', () {
       const d1 = DailyChallenge(
           id: 'd', title: 't', description: 'desc',
-          xpReward: 10, isCompleted: false, progress: 0.0);
+          xpReward: 10, isCompleted: false, progress: 0.0,);
       const d2 = DailyChallenge(
           id: 'd', title: 't', description: 'desc',
-          xpReward: 10, isCompleted: false, progress: 0.0);
+          xpReward: 10, isCompleted: false, progress: 0.0,);
 
       expect(d1, equals(d2));
     });

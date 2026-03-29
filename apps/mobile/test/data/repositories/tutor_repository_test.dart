@@ -52,7 +52,7 @@ void main() {
                 },
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
 
       final catalog = await repo.getTutorCatalog();
       expect(catalog.length, 1);
@@ -66,7 +66,7 @@ void main() {
                 data: {},
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
 
       await repo.subscribe('tutor-1');
 
@@ -81,7 +81,7 @@ void main() {
                 data: tutorSessionJson,
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
 
       final session = await repo.startSession('tutor-1', subject: 'math');
 
@@ -95,7 +95,7 @@ void main() {
                 data: tutorSessionJson,
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
 
       final session = await repo.startSession('tutor-1');
 
@@ -110,7 +110,7 @@ void main() {
                 data: {},
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
 
       await repo.endSession('ts-1');
 
@@ -127,7 +127,7 @@ void main() {
                 },
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
 
       final sessions = await repo.getSessionHistory();
 
@@ -143,7 +143,7 @@ void main() {
                 data: {},
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
 
       await repo.cancelSubscription('sub-1');
 

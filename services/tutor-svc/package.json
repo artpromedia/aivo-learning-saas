@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "tsup",
+    "build:docker": "tsup --dts false",
+    "type-check": "tsc --noEmit",
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
     "test": "vitest run",

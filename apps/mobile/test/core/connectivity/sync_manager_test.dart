@@ -30,11 +30,11 @@ void main() {
       endpoint: '/test',
       method: 'POST',
       payload: '{}',
-    ));
+    ),);
     registerFallbackValue(RequestOptions(path: ''));
   });
 
-  SyncAction _makeAction({
+  SyncAction makeAction({
     String id = 'action-1',
     String endpoint = '/api/v1/test',
     String method = 'POST',
@@ -51,8 +51,8 @@ void main() {
   group('SyncManager.drainSyncQueue', () {
     test('syncs all unsynced POST actions', () async {
       final actions = [
-        _makeAction(id: 'a1', endpoint: '/endpoint1'),
-        _makeAction(id: 'a2', endpoint: '/endpoint2'),
+        makeAction(id: 'a1', endpoint: '/endpoint1'),
+        makeAction(id: 'a2', endpoint: '/endpoint2'),
       ];
 
       when(() => mockDao.unsyncedActions()).thenAnswer((_) async => actions);
@@ -61,7 +61,7 @@ void main() {
                 data: {},
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
       when(() => mockDao.markSynced(any())).thenAnswer((_) async {});
 
       await syncManager.drainSyncQueue();
@@ -71,7 +71,7 @@ void main() {
     });
 
     test('syncs PUT actions correctly', () async {
-      final action = _makeAction(id: 'put-1', method: 'PUT');
+      final action = makeAction(id: 'put-1', method: 'PUT');
 
       when(() => mockDao.unsyncedActions()).thenAnswer((_) async => [action]);
       when(() => mockDio.put(any(), data: any(named: 'data')))
@@ -79,7 +79,7 @@ void main() {
                 data: {},
                 statusCode: 200,
                 requestOptions: RequestOptions(path: ''),
-              ));
+              ),);
       when(() => mockDao.markSynced(any())).thenAnswer((_) async {});
 
       await syncManager.drainSyncQueue();
@@ -89,14 +89,14 @@ void main() {
     });
 
     test('leaves failed actions unsynced', () async {
-      final action = _makeAction(id: 'fail-1');
+      final action = makeAction(id: 'fail-1');
 
       when(() => mockDao.unsyncedActions()).thenAnswer((_) async => [action]);
       when(() => mockDio.post(any(), data: any(named: 'data')))
           .thenThrow(DioException(
         requestOptions: RequestOptions(path: ''),
         type: DioExceptionType.connectionTimeout,
-      ));
+      ),);
 
       await syncManager.drainSyncQueue();
 
@@ -105,8 +105,8 @@ void main() {
 
     test('continues syncing remaining actions when one fails', () async {
       final actions = [
-        _makeAction(id: 'fail-1', endpoint: '/fail'),
-        _makeAction(id: 'success-1', endpoint: '/success'),
+        makeAction(id: 'fail-1', endpoint: '/fail'),
+        makeAction(id: 'success-1', endpoint: '/success'),
       ];
 
       when(() => mockDao.unsyncedActions()).thenAnswer((_) async => actions);
@@ -144,7 +144,7 @@ void main() {
     });
 
     test('skips actions with unknown HTTP methods', () async {
-      final action = _makeAction(id: 'del-1', method: 'DELETE');
+      final action = makeAction(id: 'del-1', method: 'DELETE');
 
       when(() => mockDao.unsyncedActions()).thenAnswer((_) async => [action]);
 
@@ -158,7 +158,7 @@ void main() {
 
   group('SyncManager.queueAction', () {
     test('delegates to dao.insertAction', () async {
-      final action = _makeAction();
+      final action = makeAction();
       when(() => mockDao.insertAction(any())).thenAnswer((_) async {});
 
       await syncManager.queueAction(action);
@@ -175,7 +175,7 @@ void main() {
     });
 
     test('insertAction and unsyncedActions round-trip', () async {
-      final action = _makeAction(id: 'mem-1');
+      final action = makeAction(id: 'mem-1');
       await dao.insertAction(action);
 
       final unsynced = await dao.unsyncedActions();
@@ -184,7 +184,7 @@ void main() {
     });
 
     test('markSynced removes action from unsynced list', () async {
-      final action = _makeAction(id: 'mem-2');
+      final action = makeAction(id: 'mem-2');
       await dao.insertAction(action);
       await dao.markSynced('mem-2');
 
@@ -240,7 +240,7 @@ void main() {
     });
 
     test('copyWith updates synced field', () {
-      final action = _makeAction();
+      final action = makeAction();
       expect(action.synced, isFalse);
 
       final updated = action.copyWith(synced: true);
