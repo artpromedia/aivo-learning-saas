@@ -1,5 +1,5 @@
 # ── Build stage ────────────────────────────────────────────────────────────────
-FROM node:22-alpine AS builder
+FROM node:22.22.1-alpine AS builder
 
 RUN corepack enable && corepack prepare pnpm@10.6.5 --activate
 
@@ -32,7 +32,7 @@ RUN pnpm --filter @aivo/brand build && \
     pnpm --filter @aivo/web build
 
 # ── Production stage ──────────────────────────────────────────────────────────
-FROM node:22-alpine AS production
+FROM node:22.22.1-alpine AS production
 
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S appuser -u 1001 -G nodejs
