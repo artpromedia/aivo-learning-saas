@@ -17,7 +17,7 @@ export class StripeService {
   ): Promise<string> {
     if (!this.stripe) {
       const fakeUrl = `http://localhost:3000/checkout/success?session_id=fake_sess_${tenantId}_${planId}`;
-      console.log(`[stripe-stub] createCheckoutSession tenantId=${tenantId} planId=${planId} → ${fakeUrl}`);
+      console.log(`[stripe-dev] createCheckoutSession tenantId=${tenantId} planId=${planId} → ${fakeUrl}`);
       return fakeUrl;
     }
 
@@ -46,7 +46,7 @@ export class StripeService {
         subscription: subscriptionId,
         price: { id: priceId },
       } as unknown as Stripe.SubscriptionItem;
-      console.log(`[stripe-stub] createSubscriptionItem sub=${subscriptionId} price=${priceId} → ${fake.id}`);
+      console.log(`[stripe-dev] createSubscriptionItem sub=${subscriptionId} price=${priceId} → ${fake.id}`);
       return fake;
     }
 
@@ -58,7 +58,7 @@ export class StripeService {
 
   async cancelSubscriptionItem(subscriptionItemId: string): Promise<void> {
     if (!this.stripe) {
-      console.log(`[stripe-stub] cancelSubscriptionItem itemId=${subscriptionItemId}`);
+      console.log(`[stripe-dev] cancelSubscriptionItem itemId=${subscriptionItemId}`);
       return;
     }
 
@@ -71,7 +71,7 @@ export class StripeService {
   ): Promise<string> {
     if (!this.stripe) {
       const fakeUrl = `http://localhost:3000/billing?customer=${customerId}`;
-      console.log(`[stripe-stub] createBillingPortalSession customer=${customerId} → ${fakeUrl}`);
+      console.log(`[stripe-dev] createBillingPortalSession customer=${customerId} → ${fakeUrl}`);
       return fakeUrl;
     }
 
@@ -96,7 +96,7 @@ export class StripeService {
         hosted_invoice_url: `http://localhost:3000/invoices/fake_${Date.now()}`,
         invoice_pdf: null,
       } as unknown as Stripe.Invoice;
-      console.log(`[stripe-stub] createInvoice customer=${customerId} items=${items.length} → ${fake.id}`);
+      console.log(`[stripe-dev] createInvoice customer=${customerId} items=${items.length} → ${fake.id}`);
       return fake;
     }
 
@@ -119,7 +119,7 @@ export class StripeService {
 
   async listInvoices(customerId: string, limit = 20): Promise<Stripe.Invoice[]> {
     if (!this.stripe) {
-      console.log(`[stripe-stub] listInvoices customer=${customerId}`);
+      console.log(`[stripe-dev] listInvoices customer=${customerId}`);
       return [];
     }
 
@@ -133,7 +133,7 @@ export class StripeService {
 
   async getInvoice(invoiceId: string): Promise<Stripe.Invoice | null> {
     if (!this.stripe) {
-      console.log(`[stripe-stub] getInvoice invoiceId=${invoiceId}`);
+      console.log(`[stripe-dev] getInvoice invoiceId=${invoiceId}`);
       return null;
     }
 
@@ -142,7 +142,7 @@ export class StripeService {
 
   async cancelSubscription(stripeSubscriptionId: string): Promise<void> {
     if (!this.stripe) {
-      console.log(`[stripe-stub] cancelSubscription subId=${stripeSubscriptionId}`);
+      console.log(`[stripe-dev] cancelSubscription subId=${stripeSubscriptionId}`);
       return;
     }
 

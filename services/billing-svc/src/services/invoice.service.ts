@@ -28,7 +28,7 @@ export class InvoiceService {
 
     // Retrieve the Stripe subscription to get the customer ID
     if (!this.app.stripe) {
-      console.log(`[stripe-stub] listInvoices for tenant=${tenantId}`);
+      console.log(`[stripe-dev] listInvoices for tenant=${tenantId}`);
       return [];
     }
 

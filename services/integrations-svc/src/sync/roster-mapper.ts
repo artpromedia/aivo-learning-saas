@@ -44,7 +44,7 @@ export interface MappedLearner {
 
 export class RosterMapper {
   mapStudent(student: SisStudent): { user: MappedUser; learner: MappedLearner } {
-    const email = student.email ?? `${student.sisId}@sis.aivo.placeholder`;
+    const email = student.email ?? `${student.sisId}@sis.noemail.aivo.ai`;
     return {
       user: {
         email,

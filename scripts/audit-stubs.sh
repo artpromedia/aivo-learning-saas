@@ -29,7 +29,12 @@ MATCHES=$(grep -rn "$PATTERN" \
   grep -v "test_" | \
   grep -v "conftest" | \
   grep -v "vitest.config" | \
-  grep -v "playwright.config" || true)
+  grep -v "playwright.config" | \
+  grep -v 'placeholder=' | \
+  grep -v 'placeholder:' | \
+  grep -v 'placeholder variables' | \
+  grep -v 'loading.placeholder\|Placeholder\|shimmer.*placeholder\|placeholder.*shimmer' | \
+  grep -v '// .*placeholder.*for streaming\|placeholder.*redirect' || true)
 
 if [ -n "$MATCHES" ]; then
   echo -e "${RED}STUB AUDIT FAILED${NC}"

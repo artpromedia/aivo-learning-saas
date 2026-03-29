@@ -116,7 +116,11 @@ export class LtiService {
       return { keys: [] };
     }
 
-    // Return a static JWKS with the tool's public key
+    // Derive JWK components from PEM public key
+    const crypto = await import("node:crypto");
+    const keyObject = crypto.createPublicKey(config.LTI_PUBLIC_KEY);
+    const jwk = keyObject.export({ format: "jwk" }) as { n: string; e: string };
+
     return {
       keys: [
         {
@@ -124,10 +128,8 @@ export class LtiService {
           kid: config.LTI_KID,
           use: "sig",
           alg: "RS256",
-          // In production, this would be the actual JWK components
-          // derived from the PEM public key
-          n: "placeholder",
-          e: "AQAB",
+          n: jwk.n,
+          e: jwk.e,
         },
       ],
     };
