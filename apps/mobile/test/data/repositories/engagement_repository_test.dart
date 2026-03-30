@@ -6,7 +6,6 @@ import 'package:aivo_mobile/core/api/api_client.dart';
 import 'package:aivo_mobile/core/connectivity/sync_manager.dart';
 import 'package:aivo_mobile/data/local/daos/engagement_dao.dart';
 import 'package:aivo_mobile/data/local/database.dart';
-import 'package:aivo_mobile/data/models/engagement.dart';
 import 'package:aivo_mobile/data/repositories/engagement_repository.dart';
 
 // ---------------------------------------------------------------------------

@@ -55,7 +55,7 @@ class PartnerAssisted extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(Icons.person_outline,
-                    size: 18, color: colorScheme.onTertiaryContainer),
+                    size: 18, color: colorScheme.onTertiaryContainer,),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
@@ -86,7 +86,7 @@ class PartnerAssisted extends StatelessWidget {
                   Row(
                     children: [
                       Icon(Icons.info_outline,
-                          size: 20, color: colorScheme.primary),
+                          size: 20, color: colorScheme.primary,),
                       const SizedBox(width: 8),
                       Text(
                         'What to do:',

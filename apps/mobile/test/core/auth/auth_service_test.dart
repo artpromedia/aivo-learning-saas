@@ -1,4 +1,4 @@
-import 'package:flutter_test/flutter_test.dart';
+ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:dio/dio.dart';
 
@@ -33,8 +33,8 @@ void main() {
     registerFallbackValue(RequestOptions(path: ''));
   });
 
-  Response<dynamic> _buildResponse(Map<String, dynamic> data,
-      {int statusCode = 200}) {
+  Response<dynamic> buildResponse(Map<String, dynamic> data,
+      {int statusCode = 200,}) {
     return Response(
       data: data,
       statusCode: statusCode,
@@ -56,17 +56,17 @@ void main() {
       };
 
       when(() => mockApiClient.post(Endpoints.login, data: any(named: 'data')))
-          .thenAnswer((_) async => _buildResponse(responseData));
+          .thenAnswer((_) async => buildResponse(responseData));
       when(() => mockStorage.saveTokens(
             accessToken: any(named: 'accessToken'),
             refreshToken: any(named: 'refreshToken'),
-          )).thenAnswer((_) async {});
+          ),).thenAnswer((_) async {});
       when(() => mockStorage.saveUserInfo(
             userId: any(named: 'userId'),
             userRole: any(named: 'userRole'),
             learnerId: any(named: 'learnerId'),
             functioningLevel: any(named: 'functioningLevel'),
-          )).thenAnswer((_) async {});
+          ),).thenAnswer((_) async {});
 
       final user = await authService.login('test@example.com', 'password123');
 
@@ -75,7 +75,7 @@ void main() {
       verify(() => mockStorage.saveTokens(
             accessToken: 'access-token-123',
             refreshToken: 'refresh-token-456',
-          )).called(1);
+          ),).called(1);
     });
 
     test('throws on network error', () async {
@@ -83,7 +83,7 @@ void main() {
           .thenThrow(DioException(
         requestOptions: RequestOptions(path: Endpoints.login),
         type: DioExceptionType.connectionTimeout,
-      ));
+      ),);
 
       expect(
         () => authService.login('test@example.com', 'password'),
@@ -106,17 +106,17 @@ void main() {
       };
 
       when(() => mockApiClient.post(Endpoints.register, data: any(named: 'data')))
-          .thenAnswer((_) async => _buildResponse(responseData));
+          .thenAnswer((_) async => buildResponse(responseData));
       when(() => mockStorage.saveTokens(
             accessToken: any(named: 'accessToken'),
             refreshToken: any(named: 'refreshToken'),
-          )).thenAnswer((_) async {});
+          ),).thenAnswer((_) async {});
       when(() => mockStorage.saveUserInfo(
             userId: any(named: 'userId'),
             userRole: any(named: 'userRole'),
             learnerId: any(named: 'learnerId'),
             functioningLevel: any(named: 'functioningLevel'),
-          )).thenAnswer((_) async {});
+          ),).thenAnswer((_) async {});
 
       final user = await authService.register(
         name: 'New User',
@@ -137,7 +137,7 @@ void main() {
       when(() => mockApiClient.post(Endpoints.logout, data: any(named: 'data')))
           .thenThrow(DioException(
         requestOptions: RequestOptions(path: Endpoints.logout),
-      ));
+      ),);
       when(() => mockStorage.clearAll()).thenAnswer((_) async {});
 
       await authService.logout();
@@ -149,7 +149,7 @@ void main() {
       when(() => mockStorage.getRefreshToken())
           .thenAnswer((_) async => 'rt-123');
       when(() => mockApiClient.post(Endpoints.logout, data: any(named: 'data')))
-          .thenAnswer((_) async => _buildResponse({}));
+          .thenAnswer((_) async => buildResponse({}));
       when(() => mockStorage.clearAll()).thenAnswer((_) async {});
 
       await authService.logout();
@@ -157,7 +157,7 @@ void main() {
       verify(() => mockApiClient.post(
             Endpoints.logout,
             data: {'refreshToken': 'rt-123'},
-          )).called(1);
+          ),).called(1);
     });
   });
 
@@ -166,15 +166,15 @@ void main() {
       when(() => mockStorage.getRefreshToken())
           .thenAnswer((_) async => 'old-refresh');
       when(() => mockApiClient.post(Endpoints.refreshToken,
-              data: any(named: 'data')))
-          .thenAnswer((_) async => _buildResponse({
+              data: any(named: 'data'),),)
+          .thenAnswer((_) async => buildResponse({
                 'accessToken': 'new-access',
                 'refreshToken': 'new-refresh',
-              }));
+              }),);
       when(() => mockStorage.saveTokens(
             accessToken: any(named: 'accessToken'),
             refreshToken: any(named: 'refreshToken'),
-          )).thenAnswer((_) async {});
+          ),).thenAnswer((_) async {});
 
       final result = await authService.refreshToken();
 
@@ -182,7 +182,7 @@ void main() {
       verify(() => mockStorage.saveTokens(
             accessToken: 'new-access',
             refreshToken: 'new-refresh',
-          )).called(1);
+          ),).called(1);
     });
 
     test('returns false when no refresh token stored', () async {
@@ -198,10 +198,10 @@ void main() {
       when(() => mockStorage.getRefreshToken())
           .thenAnswer((_) async => 'some-token');
       when(() => mockApiClient.post(Endpoints.refreshToken,
-              data: any(named: 'data')))
+              data: any(named: 'data'),),)
           .thenThrow(DioException(
         requestOptions: RequestOptions(path: Endpoints.refreshToken),
-      ));
+      ),);
 
       final result = await authService.refreshToken();
 
@@ -212,15 +212,15 @@ void main() {
   group('AuthService.forgotPassword', () {
     test('calls API with email', () async {
       when(() => mockApiClient.post(Endpoints.forgotPassword,
-              data: any(named: 'data')))
-          .thenAnswer((_) async => _buildResponse({}));
+              data: any(named: 'data'),),)
+          .thenAnswer((_) async => buildResponse({}));
 
       await authService.forgotPassword('user@example.com');
 
       verify(() => mockApiClient.post(
             Endpoints.forgotPassword,
             data: {'email': 'user@example.com'},
-          )).called(1);
+          ),).called(1);
     });
   });
 

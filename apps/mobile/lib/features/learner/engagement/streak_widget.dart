@@ -6,7 +6,6 @@ import 'package:aivo_mobile/config/theme.dart';
 import 'package:aivo_mobile/core/api/api_client.dart';
 import 'package:aivo_mobile/core/api/endpoints.dart';
 import 'package:aivo_mobile/core/auth/auth_provider.dart';
-import 'package:aivo_mobile/core/auth/auth_service.dart';
 
 // ---------------------------------------------------------------------------
 // Streak data model
@@ -306,7 +305,7 @@ class _StreakCalendar extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: days.map((day) {
         final isActive = activeDays.any((a) =>
-            a.year == day.year && a.month == day.month && a.day == day.day);
+            a.year == day.year && a.month == day.month && a.day == day.day,);
         final isToday = day.year == today.year &&
             day.month == today.month &&
             day.day == today.day;
@@ -339,9 +338,9 @@ class _StreakCalendar extends StatelessWidget {
                 ),
                 child: isActive
                     ? const Icon(Icons.local_fire_department,
-                        size: 16, color: Colors.white)
+                        size: 16, color: Colors.white,)
                     : Icon(Icons.circle,
-                        size: 8, color: colorScheme.outline),
+                        size: 8, color: colorScheme.outline,),
               ),
             ],
           ),

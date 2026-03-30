@@ -1,5 +1,6 @@
 /// Tutor session models for AI tutor chat, quick replies,
 /// and tutor catalog in the AIVO Learning mobile app.
+library;
 
 import 'package:flutter/foundation.dart';
 

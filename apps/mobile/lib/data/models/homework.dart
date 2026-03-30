@@ -1,5 +1,6 @@
 /// Homework models for photo/PDF upload, OCR processing,
 /// and adapted question answering in the AIVO Learning mobile app.
+library;
 
 import 'package:flutter/foundation.dart';
 

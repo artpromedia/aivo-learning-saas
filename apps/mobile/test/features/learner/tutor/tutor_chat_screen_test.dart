@@ -154,8 +154,8 @@ void main() {
             home: Scaffold(
               body: Consumer(
                 builder: (context, ref, _) {
-                  final repo = ref.read(tutorRepositoryProvider);
-                  return Text('Tutor repo ready');
+                  ref.read(tutorRepositoryProvider);
+                  return const Text('Tutor repo ready');
                 },
               ),
             ),

@@ -58,7 +58,7 @@ class LessonDao {
           ..where((t) => t.lessonId.equals(lessonId)))
         .write(const CachedLessonsCompanion(
       isCompleted: Value(true),
-    ));
+    ),);
   }
 
   /// Deletes all cached lessons whose [expiresAt] is in the past.

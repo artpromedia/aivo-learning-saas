@@ -197,14 +197,14 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
                     Semantics(
                       header: true,
                       child: Text(
-                        "Tell us about your child",
+                        'Tell us about your child',
                         style: theme.textTheme.headlineSmall,
                         textAlign: TextAlign.center,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      "This helps us personalize their learning experience.",
+                      'This helps us personalize their learning experience.',
                       style: theme.textTheme.bodyMedium,
                       textAlign: TextAlign.center,
                     ),
@@ -224,7 +224,7 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
                             children: [
                               Icon(Icons.error_outline,
                                   color: colorScheme.onErrorContainer,
-                                  size: 20),
+                                  size: 20,),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
@@ -260,7 +260,7 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
                                 child: _profileImage == null
                                     ? Icon(Icons.person,
                                         size: 48,
-                                        color: colorScheme.onSurfaceVariant)
+                                        color: colorScheme.onSurfaceVariant,)
                                     : null,
                               ),
                               Positioned(
@@ -352,7 +352,7 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
                     Semantics(
                       label: 'Grade level',
                       child: DropdownButtonFormField<String>(
-                        value: _selectedGrade,
+                        initialValue: _selectedGrade,
                         decoration: const InputDecoration(
                           labelText: 'Grade Level',
                           prefixIcon: Icon(Icons.school_outlined),
@@ -361,7 +361,7 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
                             .map((grade) => DropdownMenuItem(
                                   value: grade,
                                   child: Text(grade),
-                                ))
+                                ),)
                             .toList(),
                         onChanged: _isSubmitting
                             ? null

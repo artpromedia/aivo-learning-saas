@@ -79,7 +79,7 @@ class IepGoalsScreen extends ConsumerWidget {
                         child: Row(
                           children: [
                             Icon(Icons.description,
-                                color: theme.colorScheme.primary),
+                                color: theme.colorScheme.primary,),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Column(
@@ -123,10 +123,10 @@ class IepGoalsScreen extends ConsumerWidget {
                           Icon(Icons.flag_outlined,
                               size: 64,
                               color:
-                                  theme.colorScheme.outlineVariant),
+                                  theme.colorScheme.outlineVariant,),
                           const SizedBox(height: 16),
                           Text('No IEP goals found',
-                              style: theme.textTheme.bodyLarge),
+                              style: theme.textTheme.bodyLarge,),
                           const SizedBox(height: 8),
                           Text(
                             'Upload an IEP document to import goals',
@@ -150,7 +150,7 @@ class IepGoalsScreen extends ConsumerWidget {
   }
 
   Future<void> _uploadIep(
-      BuildContext context, WidgetRef ref) async {
+      BuildContext context, WidgetRef ref,) async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['pdf', 'doc', 'docx'],
@@ -177,7 +177,7 @@ class IepGoalsScreen extends ConsumerWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
-                'IEP uploaded successfully. Goals will be extracted shortly.'),
+                'IEP uploaded successfully. Goals will be extracted shortly.',),
           ),
         );
       }
@@ -284,7 +284,7 @@ class _IepGoalExpandableState extends State<_IepGoalExpandable> {
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 3),
+                          horizontal: 8, vertical: 3,),
                       decoration: BoxDecoration(
                         color: statusColor.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(12),
@@ -305,7 +305,7 @@ class _IepGoalExpandableState extends State<_IepGoalExpandable> {
                 Text(goal.goalText,
                     style: theme.textTheme.bodyMedium,
                     maxLines: _expanded ? null : 2,
-                    overflow: _expanded ? null : TextOverflow.ellipsis),
+                    overflow: _expanded ? null : TextOverflow.ellipsis,),
                 const SizedBox(height: 10),
 
                 // Progress bar
@@ -350,7 +350,7 @@ class _IepGoalExpandableState extends State<_IepGoalExpandable> {
                 if (_expanded) ...[
                   const Divider(height: 24),
                   Text('Progress History',
-                      style: theme.textTheme.labelLarge),
+                      style: theme.textTheme.labelLarge,),
                   const SizedBox(height: 8),
                   // Simple progress milestones
                   _ProgressMilestone(
@@ -455,7 +455,7 @@ class _ErrorRetry extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.error_outline,
-                size: 48, color: theme.colorScheme.error),
+                size: 48, color: theme.colorScheme.error,),
             const SizedBox(height: 16),
             Text(message, style: theme.textTheme.bodyLarge),
             const SizedBox(height: 16),

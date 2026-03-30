@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:aivo_mobile/core/api/api_client.dart';
@@ -29,7 +28,7 @@ class TutorRepository {
     final data = response.data as Map<String, dynamic>;
     return (data['tutors'] as List<dynamic>?)
             ?.map(
-                (e) => TutorCatalogItem.fromJson(e as Map<String, dynamic>))
+                (e) => TutorCatalogItem.fromJson(e as Map<String, dynamic>),)
             .toList() ??
         [];
   }
@@ -40,7 +39,7 @@ class TutorRepository {
     final data = response.data as Map<String, dynamic>;
     return (data['subscriptions'] as List<dynamic>?)
             ?.map(
-                (e) => TutorCatalogItem.fromJson(e as Map<String, dynamic>))
+                (e) => TutorCatalogItem.fromJson(e as Map<String, dynamic>),)
             .toList() ??
         [];
   }
@@ -122,7 +121,7 @@ class TutorRepository {
     final data = response.data as Map<String, dynamic>;
     return (data['sessions'] as List<dynamic>?)
             ?.map(
-                (e) => TutorSession.fromJson(e as Map<String, dynamic>))
+                (e) => TutorSession.fromJson(e as Map<String, dynamic>),)
             .toList() ??
         [];
   }

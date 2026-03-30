@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:aivo_mobile/core/accessibility/audio_narrator.dart';
 import 'package:aivo_mobile/core/accessibility/functioning_level_provider.dart';
-import 'package:aivo_mobile/core/accessibility/large_touch_wrapper.dart';
 import 'package:aivo_mobile/core/accessibility/switch_scan_controller.dart';
 import 'package:aivo_mobile/config/theme.dart';
 import 'package:aivo_mobile/data/models/learning_session.dart';

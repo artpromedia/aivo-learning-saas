@@ -149,7 +149,7 @@ class NotificationHandler {
     final notificationId = message.messageId.hashCode;
 
     await _localNotifications.show(notificationId, title, body, details,
-        payload: payload);
+        payload: payload,);
   }
 
   // -----------------------------------------------------------------------

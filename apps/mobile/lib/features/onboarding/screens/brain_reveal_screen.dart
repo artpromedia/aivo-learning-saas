@@ -89,7 +89,7 @@ class _BrainRevealScreenState extends ConsumerState<BrainRevealScreen>
     ).animate(CurvedAnimation(
       parent: _animController,
       curve: const Interval(0.2, 0.8, curve: Curves.easeOutCubic),
-    ));
+    ),);
 
     _loadProfile();
   }
@@ -302,10 +302,10 @@ class _BrainRevealScreenState extends ConsumerState<BrainRevealScreen>
                     Center(
                       child: Chip(
                         avatar: Icon(Icons.psychology,
-                            color: colorScheme.onPrimaryContainer),
+                            color: colorScheme.onPrimaryContainer,),
                         label: Text(
                           _readableFunctioningLevel(
-                              profile.functioningLevel),
+                              profile.functioningLevel,),
                           style: theme.textTheme.labelLarge?.copyWith(
                             color: colorScheme.onPrimaryContainer,
                           ),
@@ -313,7 +313,7 @@ class _BrainRevealScreenState extends ConsumerState<BrainRevealScreen>
                         backgroundColor: colorScheme.primaryContainer,
                         side: BorderSide.none,
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 4),
+                            horizontal: 12, vertical: 4,),
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -329,7 +329,7 @@ class _BrainRevealScreenState extends ConsumerState<BrainRevealScreen>
                       ...profile.strengths.map((s) => _BulletItem(
                             text: s,
                             color: colorScheme.secondary,
-                          )),
+                          ),),
                       const SizedBox(height: 20),
                     ],
 
@@ -344,7 +344,7 @@ class _BrainRevealScreenState extends ConsumerState<BrainRevealScreen>
                       ...profile.areasForGrowth.map((a) => _BulletItem(
                             text: a,
                             color: colorScheme.tertiary,
-                          )),
+                          ),),
                       const SizedBox(height: 20),
                     ],
 
@@ -359,7 +359,7 @@ class _BrainRevealScreenState extends ConsumerState<BrainRevealScreen>
                       ...profile.accommodations.map((a) => _BulletItem(
                             text: a,
                             color: colorScheme.primary,
-                          )),
+                          ),),
                       const SizedBox(height: 20),
                     ],
 

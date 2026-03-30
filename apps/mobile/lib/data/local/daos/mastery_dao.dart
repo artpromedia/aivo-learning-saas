@@ -22,7 +22,7 @@ class MasteryDao {
   Future<MasteryCacheData?> getMastery(String learnerId, String skillId) {
     return (_db.select(_db.masteryCache)
           ..where(
-              (t) => t.learnerId.equals(learnerId) & t.skillId.equals(skillId))
+              (t) => t.learnerId.equals(learnerId) & t.skillId.equals(skillId),)
           ..limit(1))
         .getSingleOrNull();
   }
@@ -38,16 +38,16 @@ class MasteryDao {
   /// Returns a single mastery record for [learnerId] + [skillId], aliased
   /// as `getMasteryForSkill` for clarity in domain code.
   Future<MasteryCacheData?> getMasteryForSkill(
-      String learnerId, String skillId) {
+      String learnerId, String skillId,) {
     return getMastery(learnerId, skillId);
   }
 
   /// Returns all mastery records for [learnerId] filtered to a [subject].
   Future<List<MasteryCacheData>> getMasteryForSubject(
-      String learnerId, String subject) {
+      String learnerId, String subject,) {
     return (_db.select(_db.masteryCache)
           ..where((t) =>
-              t.learnerId.equals(learnerId) & t.subject.equals(subject)))
+              t.learnerId.equals(learnerId) & t.subject.equals(subject),))
         .get();
   }
 
@@ -57,7 +57,7 @@ class MasteryDao {
     return _db.batch((batch) {
       for (final companion in companions) {
         batch.insert(_db.masteryCache, companion,
-            mode: InsertMode.insertOrReplace);
+            mode: InsertMode.insertOrReplace,);
       }
     });
   }

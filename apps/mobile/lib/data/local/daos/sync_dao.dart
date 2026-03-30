@@ -41,7 +41,7 @@ class DriftSyncDao implements SyncDao {
               payload: row.payload,
               createdAt: row.createdAt,
               synced: row.synced,
-            ))
+            ),)
         .toList();
   }
 
@@ -53,7 +53,7 @@ class DriftSyncDao implements SyncDao {
       synced: const Value(true),
       syncedAt: Value(DateTime.now()),
       errorMessage: const Value(null),
-    ));
+    ),);
   }
 
   @override

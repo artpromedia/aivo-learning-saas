@@ -29,7 +29,7 @@ final authProvider = StateProvider<AuthState>((_) => const AuthState());
 // ---------------------------------------------------------------------------
 
 class _Placeholder extends StatelessWidget {
-  const _Placeholder(this.label, {super.key});
+  const _Placeholder(this.label);
   final String label;
 
   @override

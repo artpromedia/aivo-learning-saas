@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:aivo_mobile/core/api/api_client.dart';
@@ -42,7 +41,7 @@ class HomeworkRepository {
     );
 
     try {
-      final response = await _api.upload<Map<String, dynamic>>(
+      await _api.upload<Map<String, dynamic>>(
         Endpoints.tutorHomeworkUpload,
         filePath: filePath,
         fieldName: 'file',
@@ -53,22 +52,17 @@ class HomeworkRepository {
             stage: 'uploading',
             progress: progress,
             message: 'Uploading... ${(progress * 100).toStringAsFixed(0)}%',
-          ));
+          ),);
         },
       );
 
-      yield HomeworkUploadProgress(
+      yield const HomeworkUploadProgress(
         stage: 'processing',
         progress: 1.0,
         message: 'Processing...',
       );
 
-      final data = response.data!;
-      final homework = data.containsKey('homework')
-          ? Homework.fromJson(data['homework'] as Map<String, dynamic>)
-          : Homework.fromJson(data);
-
-      yield HomeworkUploadProgress(
+      yield const HomeworkUploadProgress(
         stage: 'complete',
         progress: 1.0,
         message: 'Upload complete',
@@ -112,7 +106,7 @@ class HomeworkRepository {
   /// Sends a message within a homework tutoring session and returns a stream
   /// of incremental text chunks from the AI tutor.
   Stream<String> sendHomeworkMessage(
-      String homeworkId, String message) async* {
+      String homeworkId, String message,) async* {
     final streamResponse = await _api.stream(
       Endpoints.tutorHomeworkSessionMessage(homeworkId),
       data: {'message': message},

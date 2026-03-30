@@ -5,7 +5,6 @@ import 'package:aivo_mobile/config/theme.dart';
 import 'package:aivo_mobile/core/api/api_client.dart';
 import 'package:aivo_mobile/core/api/endpoints.dart';
 import 'package:aivo_mobile/core/auth/auth_provider.dart';
-import 'package:aivo_mobile/core/auth/auth_service.dart';
 
 // ---------------------------------------------------------------------------
 // XP data model

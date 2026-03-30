@@ -194,7 +194,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                 child: Row(
                   children: [
                     Icon(Icons.error_outline,
-                        color: colorScheme.onErrorContainer, size: 20),
+                        color: colorScheme.onErrorContainer, size: 20,),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -232,7 +232,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                   return 'Email is required';
                 }
                 final emailRegex = RegExp(
-                    r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+                    r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',);
                 if (!emailRegex.hasMatch(value.trim())) {
                   return 'Enter a valid email address';
                 }

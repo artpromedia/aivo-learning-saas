@@ -130,7 +130,7 @@ class AuthInterceptor extends Interceptor {
         headers: {'Content-Type': 'application/json'},
         connectTimeout: _dio.options.connectTimeout,
         receiveTimeout: _dio.options.receiveTimeout,
-      ));
+      ),);
 
       final response = await refreshDio.post(
         Endpoints.refreshToken,

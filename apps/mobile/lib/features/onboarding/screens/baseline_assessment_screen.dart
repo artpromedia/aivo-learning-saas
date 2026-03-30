@@ -136,9 +136,9 @@ List<BaselineQuestion> _lowVerbalQuestions() => const [
         imageUrlB: 'assets/images/cat.png',
         options: [
           BaselineOption(
-              value: 'dog', label: 'Dog', imageUrl: 'assets/images/dog.png'),
+              value: 'dog', label: 'Dog', imageUrl: 'assets/images/dog.png',),
           BaselineOption(
-              value: 'cat', label: 'Cat', imageUrl: 'assets/images/cat.png'),
+              value: 'cat', label: 'Cat', imageUrl: 'assets/images/cat.png',),
         ],
       ),
       BaselineQuestion(
@@ -150,11 +150,11 @@ List<BaselineQuestion> _lowVerbalQuestions() => const [
           BaselineOption(
               value: 'red',
               label: 'Red',
-              imageUrl: 'assets/images/red_apple.png'),
+              imageUrl: 'assets/images/red_apple.png',),
           BaselineOption(
               value: 'green',
               label: 'Green',
-              imageUrl: 'assets/images/green_leaf.png'),
+              imageUrl: 'assets/images/green_leaf.png',),
         ],
       ),
       BaselineQuestion(
@@ -166,11 +166,11 @@ List<BaselineQuestion> _lowVerbalQuestions() => const [
           BaselineOption(
               value: 'ball',
               label: 'Ball',
-              imageUrl: 'assets/images/ball.png'),
+              imageUrl: 'assets/images/ball.png',),
           BaselineOption(
               value: 'book',
               label: 'Book',
-              imageUrl: 'assets/images/book.png'),
+              imageUrl: 'assets/images/book.png',),
         ],
       ),
     ];
@@ -470,7 +470,7 @@ class _BaselineAssessmentScreenState
                     child: Row(
                       children: [
                         Icon(Icons.error_outline,
-                            color: colorScheme.onErrorContainer, size: 20),
+                            color: colorScheme.onErrorContainer, size: 20,),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
@@ -546,7 +546,7 @@ class _BaselineAssessmentScreenState
                         isSelected: selected == opt.value,
                         onTap: () => _selectAnswer(q.id, opt.value),
                       ),
-                    )),
+                    ),),
               ],
             ),
           ),
@@ -588,7 +588,7 @@ class _BaselineAssessmentScreenState
                     if (q.audioUrl != null)
                       IconButton(
                         icon: Icon(Icons.volume_up,
-                            color: colorScheme.primary),
+                            color: colorScheme.primary,),
                         onPressed: () {
                           // Audio playback would be handled by audioplayers.
                           // The URL is stored in q.audioUrl.
@@ -607,7 +607,7 @@ class _BaselineAssessmentScreenState
                         onTap: () => _selectAnswer(q.id, opt.value),
                         large: true,
                       ),
-                    )),
+                    ),),
               ],
             ),
           ),

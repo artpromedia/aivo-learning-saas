@@ -1,6 +1,7 @@
 /// Engagement and gamification models including XP, badges, shop items,
 /// avatar configuration, leaderboards, and challenges for the AIVO Learning
 /// mobile app.
+library;
 
 import 'package:flutter/foundation.dart';
 

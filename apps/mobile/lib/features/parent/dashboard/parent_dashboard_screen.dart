@@ -177,7 +177,7 @@ class _DashboardTab extends ConsumerWidget {
                       children: [
                         Icon(Icons.child_care,
                             size: 64,
-                            color: colorScheme.outlineVariant),
+                            color: colorScheme.outlineVariant,),
                         const SizedBox(height: 16),
                         Text(
                           'No children added yet',
@@ -341,8 +341,8 @@ class _ChildCard extends StatelessWidget {
                 // Streak
                 Column(
                   children: [
-                    Icon(Icons.local_fire_department,
-                        color: AivoColors.streakFlame, size: 24),
+                    const Icon(Icons.local_fire_department,
+                        color: AivoColors.streakFlame, size: 24,),
                     Text(
                       '${learner.streak}',
                       style: theme.textTheme.labelLarge?.copyWith(
@@ -543,7 +543,7 @@ class _ErrorBody extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.error_outline,
-                size: 48, color: theme.colorScheme.error),
+                size: 48, color: theme.colorScheme.error,),
             const SizedBox(height: 16),
             Text(message, style: theme.textTheme.bodyLarge),
             const SizedBox(height: 16),

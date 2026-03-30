@@ -14,17 +14,14 @@ class I18nService {
   }) : _dio = dio ??
             Dio(BaseOptions(
               baseUrl: Env.apiBaseUrl.replaceFirst('/api/v1', ''),
-              connectTimeout: Duration(seconds: Env.apiTimeoutSeconds),
-              receiveTimeout: Duration(seconds: Env.apiTimeoutSeconds),
-            ));
+              connectTimeout: const Duration(seconds: Env.apiTimeoutSeconds),
+              receiveTimeout: const Duration(seconds: Env.apiTimeoutSeconds),
+            ),);
 
   final Dio _dio;
   static const String _boxName = 'i18n_translations';
   static const String _metaBoxName = 'i18n_meta';
   static const Duration _cacheExpiry = Duration(hours: 6);
-
-  /// The base URL for the i18n service.
-  static const String _i18nBasePath = ':3011';
 
   String get _i18nBaseUrl {
     final base = Env.apiBaseUrl.replaceFirst('/api/v1', '');
@@ -136,7 +133,7 @@ class I18nService {
         debugPrint('[I18n] Failed to fetch available locales: $e');
       }
     }
-    return [LocaleInfo(code: 'en', name: 'English', nativeName: 'English', direction: 'LTR')];
+    return [const LocaleInfo(code: 'en', name: 'English', nativeName: 'English', direction: 'LTR')];
   }
 
   Future<void> _cacheTranslations(

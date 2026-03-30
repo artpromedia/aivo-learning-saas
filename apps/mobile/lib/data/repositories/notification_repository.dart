@@ -59,7 +59,7 @@ class NotificationRepository {
 
   /// Updates the user's notification preferences.
   Future<void> updatePreferences(
-      String userId, Map<String, dynamic> prefs) async {
+      String userId, Map<String, dynamic> prefs,) async {
     await _api.put(
       Endpoints.notificationPreferences(userId),
       data: prefs,

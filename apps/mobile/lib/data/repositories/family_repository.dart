@@ -138,17 +138,17 @@ class ChildDashboard {
               const {},
       recentActivity: (json['recentActivity'] as List<dynamic>?)
               ?.map(
-                  (e) => ActivityItem.fromJson(e as Map<String, dynamic>))
+                  (e) => ActivityItem.fromJson(e as Map<String, dynamic>),)
               .toList() ??
           const [],
       nextLessons: (json['nextLessons'] as List<dynamic>?)
               ?.map(
-                  (e) => LessonPreview.fromJson(e as Map<String, dynamic>))
+                  (e) => LessonPreview.fromJson(e as Map<String, dynamic>),)
               .toList() ??
           const [],
       weeklyTrend: (json['weeklyTrend'] as List<dynamic>?)
               ?.map((e) =>
-                  WeeklyDataPoint.fromJson(e as Map<String, dynamic>))
+                  WeeklyDataPoint.fromJson(e as Map<String, dynamic>),)
               .toList() ??
           const [],
     );
@@ -463,7 +463,7 @@ class ClassroomSummary {
       topPerformers: json['topPerformers'] as int? ?? 0,
       students: (json['students'] as List<dynamic>?)
               ?.map((e) =>
-                  ClassroomStudent.fromJson(e as Map<String, dynamic>))
+                  ClassroomStudent.fromJson(e as Map<String, dynamic>),)
               .toList() ??
           const [],
     );
@@ -498,7 +498,7 @@ class FamilyRepository {
     final response = await _apiClient
         .get(Endpoints.familyDashboard(learnerId));
     return ChildDashboard.fromJson(
-        response.data as Map<String, dynamic>);
+        response.data as Map<String, dynamic>,);
   }
 
   // ---------------------------------------------------------------------------
@@ -518,7 +518,7 @@ class FamilyRepository {
     final map = data as Map<String, dynamic>;
     return (map['recommendations'] as List<dynamic>?)
             ?.map(
-                (e) => Recommendation.fromJson(e as Map<String, dynamic>))
+                (e) => Recommendation.fromJson(e as Map<String, dynamic>),)
             .toList() ??
         [];
   }
@@ -547,7 +547,7 @@ class FamilyRepository {
     final response = await _apiClient
         .get(Endpoints.familyBrainProfile(learnerId));
     return BrainContext.fromJson(
-        response.data as Map<String, dynamic>);
+        response.data as Map<String, dynamic>,);
   }
 
   /// Returns the functioning level label for a learner.
@@ -565,7 +565,7 @@ class FamilyRepository {
 
   /// Returns brain profile version history for a learner.
   Future<List<Map<String, dynamic>>> getBrainVersions(
-      String learnerId) async {
+      String learnerId,) async {
     final response = await _apiClient
         .get(Endpoints.familyBrainVersions(learnerId));
     final list = response.data as List<dynamic>;
@@ -625,7 +625,7 @@ class FamilyRepository {
 
   /// Updates the learner's family-managed settings.
   Future<void> updateSettings(
-      String learnerId, Map<String, dynamic> settings) async {
+      String learnerId, Map<String, dynamic> settings,) async {
     await _apiClient.put(
       Endpoints.familySettings(learnerId),
       data: settings,
@@ -639,7 +639,7 @@ class FamilyRepository {
   /// Returns the list of collaboration members (therapists, teachers, etc.)
   /// for a learner.
   Future<List<Map<String, dynamic>>> getCollaborationMembers(
-      String learnerId) async {
+      String learnerId,) async {
     final response = await _apiClient
         .get(Endpoints.familyCollaborationMembers(learnerId));
     final data = response.data;
@@ -667,7 +667,7 @@ class FamilyRepository {
 
   /// Returns insights for a learner.
   Future<List<TeacherInsight>> getInsightsForLearner(
-      String learnerId) async {
+      String learnerId,) async {
     final response = await _apiClient
         .get(Endpoints.familyInsightsLearner(learnerId));
     final list = response.data as List<dynamic>;
@@ -702,7 +702,7 @@ class FamilyRepository {
   Future<ClassroomSummary> getClassroom() async {
     final response = await _apiClient.get('/teacher/classroom');
     return ClassroomSummary.fromJson(
-        response.data as Map<String, dynamic>);
+        response.data as Map<String, dynamic>,);
   }
 
   /// Returns the unread notification count for a user.
@@ -711,7 +711,7 @@ class FamilyRepository {
         .get(Endpoints.notifications(userId), queryParameters: {
       'unreadOnly': true,
       'countOnly': true,
-    });
+    },);
     final data = response.data;
     if (data is Map<String, dynamic>) {
       return data['count'] as int? ?? 0;

@@ -30,7 +30,6 @@ class ChildDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final asyncDash = ref.watch(_childDashboardProvider(learnerId));
-    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -63,21 +62,21 @@ class ChildDetailScreen extends ConsumerWidget {
               const SizedBox(height: 24),
 
               // Subject progress chart
-              _SectionHeader(title: 'Subject Progress'),
+              const _SectionHeader(title: 'Subject Progress'),
               const SizedBox(height: 8),
               _SubjectProgressChart(
-                  subjectProgress: dash.subjectProgress),
+                  subjectProgress: dash.subjectProgress,),
               const SizedBox(height: 24),
 
               // Quick actions
-              _SectionHeader(title: 'Quick Actions'),
+              const _SectionHeader(title: 'Quick Actions'),
               const SizedBox(height: 8),
               _QuickActions(learnerId: learnerId),
               const SizedBox(height: 24),
 
               // Learning path preview
               if (dash.nextLessons.isNotEmpty) ...[
-                _SectionHeader(title: 'Up Next'),
+                const _SectionHeader(title: 'Up Next'),
                 const SizedBox(height: 8),
                 ...dash.nextLessons.take(3).map(
                       (lesson) => _LessonPreviewTile(lesson: lesson),
@@ -87,7 +86,7 @@ class ChildDetailScreen extends ConsumerWidget {
 
               // Weekly trend chart
               if (dash.weeklyTrend.isNotEmpty) ...[
-                _SectionHeader(title: 'Weekly Trend'),
+                const _SectionHeader(title: 'Weekly Trend'),
                 const SizedBox(height: 8),
                 _WeeklyTrendChart(data: dash.weeklyTrend),
                 const SizedBox(height: 24),
@@ -95,7 +94,7 @@ class ChildDetailScreen extends ConsumerWidget {
 
               // Recent activity timeline
               if (dash.recentActivity.isNotEmpty) ...[
-                _SectionHeader(title: 'Recent Activity'),
+                const _SectionHeader(title: 'Recent Activity'),
                 const SizedBox(height: 8),
                 ...dash.recentActivity.map(
                   (item) => _ActivityTile(item: item),
@@ -192,7 +191,7 @@ class _MiniStatCard extends StatelessWidget {
                   children: [
                     Text(value,
                         style: theme.textTheme.titleMedium
-                            ?.copyWith(color: color)),
+                            ?.copyWith(color: color),),
                     Text(label, style: theme.textTheme.bodySmall),
                   ],
                 ),
@@ -313,9 +312,9 @@ class _SubjectProgressChart extends StatelessWidget {
                       ),
                     ),
                     topTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false)),
+                        sideTitles: SideTitles(showTitles: false),),
                     rightTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false)),
+                        sideTitles: SideTitles(showTitles: false),),
                   ),
                   borderData: FlBorderData(show: false),
                   gridData: FlGridData(
@@ -337,7 +336,7 @@ class _SubjectProgressChart extends StatelessWidget {
                           color: barColors[i % barColors.length],
                           width: 20,
                           borderRadius: const BorderRadius.vertical(
-                              top: Radius.circular(6)),
+                              top: Radius.circular(6),),
                         ),
                       ],
                     );
@@ -425,7 +424,7 @@ class _ActionChip extends StatelessWidget {
             child: Column(
               children: [
                 Icon(icon,
-                    color: colorScheme.onPrimaryContainer, size: 24),
+                    color: colorScheme.onPrimaryContainer, size: 24,),
                 const SizedBox(height: 4),
                 Text(
                   label,
@@ -558,9 +557,9 @@ class _WeeklyTrendChart extends StatelessWidget {
                       ),
                     ),
                     topTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false)),
+                        sideTitles: SideTitles(showTitles: false),),
                     rightTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false)),
+                        sideTitles: SideTitles(showTitles: false),),
                   ),
                   borderData: FlBorderData(show: false),
                   lineBarsData: [
@@ -707,7 +706,7 @@ class _ErrorRetry extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.error_outline,
-                size: 48, color: theme.colorScheme.error),
+                size: 48, color: theme.colorScheme.error,),
             const SizedBox(height: 16),
             Text(message, style: theme.textTheme.bodyLarge),
             const SizedBox(height: 16),

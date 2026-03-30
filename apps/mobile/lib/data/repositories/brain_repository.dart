@@ -204,7 +204,7 @@ class BrainRepository {
         final data = response.data as Map<String, dynamic>;
         final items = (data['recommendations'] as List<dynamic>?)
                 ?.map((e) =>
-                    Recommendation.fromJson(e as Map<String, dynamic>))
+                    Recommendation.fromJson(e as Map<String, dynamic>),)
                 .toList() ??
             [];
         return items;
@@ -230,7 +230,7 @@ class BrainRepository {
   ///
   /// Returns a [BrainReconciliationResult] describing what changed.
   Future<BrainReconciliationResult> reconcileAfterReconnect(
-      String learnerId) async {
+      String learnerId,) async {
     final localSnapshot = await _brainDao.getBrainSnapshot(learnerId);
     final localLastSynced = localSnapshot?.lastSyncedAt;
 

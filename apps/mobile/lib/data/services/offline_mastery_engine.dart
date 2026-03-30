@@ -95,7 +95,7 @@ class OfflineMasteryEngine {
       recentScores: Value(jsonEncode(recentScores)),
       lastPracticedAt: Value(DateTime.now()),
       nextReviewAt: Value(nextReview),
-    ));
+    ),);
   }
 
   /// Keeps the last 10 scores as a sliding window.
@@ -149,7 +149,7 @@ class OfflineMasteryEngine {
         'timeSpentSeconds': timeSpentSeconds,
         'completedOffline': true,
       }),
-    ));
+    ),);
   }
 }
 

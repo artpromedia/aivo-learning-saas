@@ -136,7 +136,7 @@ void main() {
     });
 
     test('handleKeyEvent returns false when not scanning', () {
-      final event = KeyDownEvent(
+      const event = KeyDownEvent(
         physicalKey: PhysicalKeyboardKey.space,
         logicalKey: LogicalKeyboardKey.space,
         timeStamp: Duration.zero,
@@ -149,7 +149,7 @@ void main() {
       controller.registerTarget(key, 'A');
       controller.startScanning();
 
-      final event = KeyDownEvent(
+      const event = KeyDownEvent(
         physicalKey: PhysicalKeyboardKey.space,
         logicalKey: LogicalKeyboardKey.space,
         timeStamp: Duration.zero,

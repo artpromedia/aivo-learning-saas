@@ -101,7 +101,7 @@ void main() {
       final inMemorySync = InMemorySyncDao();
       final syncManager = SyncManager(
         dao: inMemorySync,
-        dio: _FakeDio(),
+        dio: _fakeDio(),
       );
       final engine = OfflineMasteryEngine(
         masteryDao: masteryDao,
@@ -146,7 +146,7 @@ void main() {
 
       final engine = OfflineMasteryEngine(
         masteryDao: masteryDao,
-        syncManager: SyncManager(dao: InMemorySyncDao(), dio: _FakeDio()),
+        syncManager: SyncManager(dao: InMemorySyncDao(), dio: _fakeDio()),
       );
 
       await engine.processCompletion(
@@ -174,7 +174,7 @@ void main() {
 
       final engine = OfflineMasteryEngine(
         masteryDao: masteryDao,
-        syncManager: SyncManager(dao: InMemorySyncDao(), dio: _FakeDio()),
+        syncManager: SyncManager(dao: InMemorySyncDao(), dio: _fakeDio()),
       );
 
       await engine.processCompletion(
@@ -225,4 +225,4 @@ void main() {
 }
 
 /// Stub Dio used where we don't actually make HTTP calls.
-Dio _FakeDio() => Dio(BaseOptions(baseUrl: 'http://localhost'));
+Dio _fakeDio() => Dio(BaseOptions(baseUrl: 'http://localhost'));

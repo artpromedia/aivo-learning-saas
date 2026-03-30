@@ -8,7 +8,6 @@ import 'package:aivo_mobile/config/theme.dart';
 import 'package:aivo_mobile/core/api/api_client.dart';
 import 'package:aivo_mobile/core/api/endpoints.dart';
 import 'package:aivo_mobile/core/auth/auth_provider.dart';
-import 'package:aivo_mobile/core/auth/auth_service.dart';
 
 // ---------------------------------------------------------------------------
 // Leaderboard entry model
@@ -147,10 +146,10 @@ class LeaderboardScreen extends ConsumerWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(Icons.leaderboard,
-                        size: 48, color: colorScheme.outline),
+                        size: 48, color: colorScheme.outline,),
                     const SizedBox(height: 16),
                     Text('No learners yet',
-                        style: theme.textTheme.bodyLarge),
+                        style: theme.textTheme.bodyLarge,),
                   ],
                 ),
               );
@@ -218,7 +217,7 @@ class LeaderboardScreen extends ConsumerWidget {
   }
 
   Widget _buildError(BuildContext context, WidgetRef ref, Object error,
-      LeaderboardTab tab) {
+      LeaderboardTab tab,) {
     final theme = Theme.of(context);
     return Center(
       child: Column(
@@ -227,7 +226,7 @@ class LeaderboardScreen extends ConsumerWidget {
           Icon(Icons.error_outline, size: 48, color: theme.colorScheme.error),
           const SizedBox(height: 16),
           Text('Failed to load leaderboard',
-              style: theme.textTheme.titleMedium),
+              style: theme.textTheme.titleMedium,),
           const SizedBox(height: 24),
           ElevatedButton.icon(
             onPressed: () => ref.invalidate(_leaderboardProvider(tab)),
@@ -299,9 +298,6 @@ class _Podium extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
       child: Row(
@@ -377,12 +373,12 @@ class _PodiumSlot extends StatelessWidget {
                           height: entry.rank == 1 ? 60 : 44,
                           fit: BoxFit.cover,
                           errorWidget: (_, __, ___) => Icon(Icons.person,
-                              size: entry.rank == 1 ? 32 : 24),
+                              size: entry.rank == 1 ? 32 : 24,),
                         ),
                       )
                     : Icon(Icons.person,
                         size: entry.rank == 1 ? 32 : 24,
-                        color: colorScheme.outline),
+                        color: colorScheme.outline,),
               ),
               Positioned(
                 bottom: -8,
@@ -481,7 +477,7 @@ class _LeaderboardRow extends StatelessWidget {
           border: isCurrentUser
               ? Border.all(color: colorScheme.primary, width: 1.5)
               : Border.all(
-                  color: colorScheme.outline.withValues(alpha: 0.2)),
+                  color: colorScheme.outline.withValues(alpha: 0.2),),
         ),
         child: Row(
           children: [

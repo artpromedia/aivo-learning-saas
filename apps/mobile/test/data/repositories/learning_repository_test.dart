@@ -5,7 +5,6 @@ import 'package:dio/dio.dart';
 import 'package:aivo_mobile/core/api/api_client.dart';
 import 'package:aivo_mobile/core/connectivity/sync_manager.dart';
 import 'package:aivo_mobile/data/local/daos/lesson_dao.dart';
-import 'package:aivo_mobile/data/models/learning_session.dart';
 import 'package:aivo_mobile/data/repositories/learning_repository.dart';
 
 // ---------------------------------------------------------------------------

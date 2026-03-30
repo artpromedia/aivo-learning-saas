@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
 
 import 'package:aivo_mobile/config/theme.dart';
 import 'package:aivo_mobile/core/api/api_client.dart';
 import 'package:aivo_mobile/core/api/endpoints.dart';
-import 'package:aivo_mobile/core/auth/auth_provider.dart';
-import 'package:aivo_mobile/core/auth/auth_service.dart';
 
 // ---------------------------------------------------------------------------
 // Challenge model
@@ -180,10 +177,10 @@ class ChallengeScreen extends ConsumerWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(Icons.flag_outlined,
-                                size: 48, color: colorScheme.outline),
+                                size: 48, color: colorScheme.outline,),
                             const SizedBox(height: 16),
                             Text('No active challenges',
-                                style: theme.textTheme.bodyLarge),
+                                style: theme.textTheme.bodyLarge,),
                           ],
                         ),
                       ),
@@ -207,7 +204,7 @@ class ChallengeScreen extends ConsumerWidget {
   }
 
   Widget _buildDailySection(ThemeData theme, ColorScheme colorScheme,
-      AsyncValue<List<Challenge>> dailyAsync, WidgetRef ref) {
+      AsyncValue<List<Challenge>> dailyAsync, WidgetRef ref,) {
     return dailyAsync.when(
       loading: () => const Padding(
         padding: EdgeInsets.all(16),
@@ -237,7 +234,7 @@ class ChallengeScreen extends ConsumerWidget {
               Row(
                 children: [
                   Icon(Icons.today,
-                      color: colorScheme.tertiary, size: 24),
+                      color: colorScheme.tertiary, size: 24,),
                   const SizedBox(width: 8),
                   Text(
                     'Daily Challenges',
@@ -252,7 +249,7 @@ class ChallengeScreen extends ConsumerWidget {
               ...dailies.map((daily) => _DailyChallengeItem(
                     challenge: daily,
                     ref: ref,
-                  )),
+                  ),),
             ],
           ),
         );
@@ -294,7 +291,7 @@ class ChallengeScreen extends ConsumerWidget {
             Icon(Icons.error_outline, size: 48, color: theme.colorScheme.error),
             const SizedBox(height: 16),
             Text('Failed to load challenges',
-                style: theme.textTheme.titleMedium),
+                style: theme.textTheme.titleMedium,),
             const SizedBox(height: 24),
             ElevatedButton.icon(
               onPressed: () => ref.invalidate(_challengesProvider),
@@ -425,7 +422,7 @@ class _ChallengeCard extends ConsumerWidget {
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 3),
+                          horizontal: 8, vertical: 3,),
                       decoration: BoxDecoration(
                         color: _typeColor(colorScheme).withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(8),
@@ -441,7 +438,7 @@ class _ChallengeCard extends ConsumerWidget {
                     ),
                     const Spacer(),
                     Icon(Icons.timer_outlined,
-                        size: 14, color: colorScheme.outline),
+                        size: 14, color: colorScheme.outline,),
                     const SizedBox(width: 4),
                     Text(
                       challenge.timeRemainingLabel,
@@ -465,7 +462,7 @@ class _ChallengeCard extends ConsumerWidget {
                 Row(
                   children: [
                     Icon(Icons.people_outline,
-                        size: 14, color: colorScheme.outline),
+                        size: 14, color: colorScheme.outline,),
                     const SizedBox(width: 4),
                     Text(
                       '${challenge.participantCount}'
@@ -476,7 +473,7 @@ class _ChallengeCard extends ConsumerWidget {
                     if (challenge.xpReward != null) ...[
                       const SizedBox(width: 12),
                       const Icon(Icons.star,
-                          size: 14, color: AivoColors.xpGold),
+                          size: 14, color: AivoColors.xpGold,),
                       const SizedBox(width: 2),
                       Text(
                         '${challenge.xpReward} XP',
@@ -495,7 +492,7 @@ class _ChallengeCard extends ConsumerWidget {
                               isJoining ? null : () => _join(context, ref),
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 16),
+                                horizontal: 16,),
                             textStyle: theme.textTheme.bodySmall,
                           ),
                           child: isJoining
@@ -503,7 +500,7 @@ class _ChallengeCard extends ConsumerWidget {
                                   width: 16,
                                   height: 16,
                                   child: CircularProgressIndicator(
-                                      strokeWidth: 2),
+                                      strokeWidth: 2,),
                                 )
                               : const Text('Join'),
                         ),
@@ -511,7 +508,7 @@ class _ChallengeCard extends ConsumerWidget {
                     else
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 4),
+                            horizontal: 10, vertical: 4,),
                         decoration: BoxDecoration(
                           color: AivoColors.questGreen.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(8),
@@ -572,7 +569,7 @@ class _ChallengeCard extends ConsumerWidget {
   }
 
   void _showChallengeDetail(BuildContext context, WidgetRef ref,
-      ThemeData theme, ColorScheme colorScheme) {
+      ThemeData theme, ColorScheme colorScheme,) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -660,7 +657,7 @@ class _ChallengeCard extends ConsumerWidget {
                       challenge.standings!.isNotEmpty) ...[
                     const SizedBox(height: 20),
                     Text('Current Standings',
-                        style: theme.textTheme.titleMedium),
+                        style: theme.textTheme.titleMedium,),
                     const SizedBox(height: 8),
                     ...challenge.standings!
                         .take(10)
@@ -674,7 +671,7 @@ class _ChallengeCard extends ConsumerWidget {
                                       '${s['rank'] ?? '-'}',
                                       style: theme.textTheme.bodyMedium
                                           ?.copyWith(
-                                              fontWeight: FontWeight.w700),
+                                              fontWeight: FontWeight.w700,),
                                     ),
                                   ),
                                   Expanded(
@@ -687,11 +684,11 @@ class _ChallengeCard extends ConsumerWidget {
                                     '${s['score'] ?? 0}',
                                     style: theme.textTheme.bodyMedium
                                         ?.copyWith(
-                                            fontWeight: FontWeight.w600),
+                                            fontWeight: FontWeight.w600,),
                                   ),
                                 ],
                               ),
-                            )),
+                            ),),
                   ],
                   const SizedBox(height: 16),
                 ],

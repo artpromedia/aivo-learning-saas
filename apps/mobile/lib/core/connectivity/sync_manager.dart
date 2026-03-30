@@ -111,9 +111,9 @@ void backgroundSyncCallback() {
         final dao = DriftSyncDao(db);
         final dio = Dio(BaseOptions(
           baseUrl: Env.apiBaseUrl,
-          connectTimeout: Duration(seconds: Env.apiTimeoutSeconds),
-          receiveTimeout: Duration(seconds: Env.apiTimeoutSeconds),
-        ));
+          connectTimeout: const Duration(seconds: Env.apiTimeoutSeconds),
+          receiveTimeout: const Duration(seconds: Env.apiTimeoutSeconds),
+        ),);
         final manager = SyncManager(dao: dao, dio: dio);
         await manager.drainSyncQueue();
         await dao.cleanupSyncedActions();
@@ -133,9 +133,9 @@ final syncManagerProvider = Provider<SyncManager>((ref) {
   final dao = ref.watch(syncDaoProvider);
   final dio = Dio(BaseOptions(
     baseUrl: Env.apiBaseUrl,
-    connectTimeout: Duration(seconds: Env.apiTimeoutSeconds),
-    receiveTimeout: Duration(seconds: Env.apiTimeoutSeconds),
-  ));
+    connectTimeout: const Duration(seconds: Env.apiTimeoutSeconds),
+    receiveTimeout: const Duration(seconds: Env.apiTimeoutSeconds),
+  ),);
 
   final manager = SyncManager(dao: dao, dio: dio);
 

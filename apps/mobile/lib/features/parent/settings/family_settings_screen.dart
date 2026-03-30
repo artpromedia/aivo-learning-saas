@@ -48,7 +48,7 @@ class _SettingsNotifier extends StateNotifier<FamilySettings?> {
       // Use defaults
       if (mounted) {
         state = FamilySettings(
-            learnerId: _learnerId, functioningLevel: 'standard');
+            learnerId: _learnerId, functioningLevel: 'standard',);
       }
     }
   }
@@ -87,7 +87,7 @@ class FamilySettingsScreen extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(Icons.error_outline,
-                  size: 48, color: theme.colorScheme.error),
+                  size: 48, color: theme.colorScheme.error,),
               const SizedBox(height: 16),
               const Text('Failed to load settings'),
               const SizedBox(height: 16),
@@ -159,7 +159,7 @@ class _SettingsBody extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: DropdownButtonFormField<String>(
-              value: currentLearnerId,
+              initialValue: currentLearnerId,
               decoration: const InputDecoration(
                 labelText: 'Select Child',
                 prefixIcon: Icon(Icons.child_care),
@@ -181,7 +181,7 @@ class _SettingsBody extends ConsumerWidget {
         const SizedBox(height: 16),
 
         // ---- Accessibility ----
-        _SettingsSectionHeader(title: 'Accessibility'),
+        const _SettingsSectionHeader(title: 'Accessibility'),
         _InfoTile(
           icon: Icons.psychology,
           title: 'Functioning Level',
@@ -239,7 +239,7 @@ class _SettingsBody extends ConsumerWidget {
         const Divider(height: 32),
 
         // ---- Notifications ----
-        _SettingsSectionHeader(title: 'Notifications'),
+        const _SettingsSectionHeader(title: 'Notifications'),
         SwitchListTile(
           secondary: const Icon(Icons.notifications_active),
           title: const Text('Learning Reminders'),
@@ -278,12 +278,12 @@ class _SettingsBody extends ConsumerWidget {
         const Divider(height: 32),
 
         // ---- Privacy ----
-        _SettingsSectionHeader(title: 'Privacy'),
+        const _SettingsSectionHeader(title: 'Privacy'),
         SwitchListTile(
           secondary: const Icon(Icons.share),
           title: const Text('Data Sharing'),
           subtitle: const Text(
-              'Share anonymized learning data to improve AIVO'),
+              'Share anonymized learning data to improve AIVO',),
           value: settings.dataSharing,
           onChanged: (v) {
             notifier.update(settings.copyWith(dataSharing: v));
@@ -292,12 +292,12 @@ class _SettingsBody extends ConsumerWidget {
         const Divider(height: 32),
 
         // ---- Learning ----
-        _SettingsSectionHeader(title: 'Learning'),
+        const _SettingsSectionHeader(title: 'Learning'),
         ListTile(
           leading: const Icon(Icons.timer),
           title: const Text('Session Duration Limit'),
           subtitle: Text(
-              '${settings.sessionDurationLimitMinutes} minutes'),
+              '${settings.sessionDurationLimitMinutes} minutes',),
           trailing: SizedBox(
             width: 160,
             child: Semantics(
@@ -315,7 +315,7 @@ class _SettingsBody extends ConsumerWidget {
                 onChanged: (v) {
                   notifier.update(settings.copyWith(
                     sessionDurationLimitMinutes: v.toInt(),
-                  ));
+                  ),);
                 },
               ),
             ),
@@ -340,7 +340,7 @@ class _SettingsBody extends ConsumerWidget {
                 onChanged: (v) {
                   notifier.update(settings.copyWith(
                     dailyGoalMinutes: v.toInt(),
-                  ));
+                  ),);
                 },
               ),
             ),
@@ -350,13 +350,13 @@ class _SettingsBody extends ConsumerWidget {
           enabledSubjects: settings.enabledSubjects,
           onChanged: (subjects) {
             notifier.update(
-                settings.copyWith(enabledSubjects: subjects));
+                settings.copyWith(enabledSubjects: subjects),);
           },
         ),
         const Divider(height: 32),
 
         // ---- Account ----
-        _SettingsSectionHeader(title: 'Account'),
+        const _SettingsSectionHeader(title: 'Account'),
         ListTile(
           leading: const Icon(Icons.lock_outline),
           title: const Text('Change Password'),
@@ -364,7 +364,7 @@ class _SettingsBody extends ConsumerWidget {
           onTap: () {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                  content: Text('Password change coming soon')),
+                  content: Text('Password change coming soon'),),
             );
           },
         ),
@@ -375,15 +375,15 @@ class _SettingsBody extends ConsumerWidget {
           onTap: () {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                  content: Text('Email change coming soon')),
+                  content: Text('Email change coming soon'),),
             );
           },
         ),
         ListTile(
           leading: Icon(Icons.delete_forever,
-              color: theme.colorScheme.error),
+              color: theme.colorScheme.error,),
           title: Text('Delete Account',
-              style: TextStyle(color: theme.colorScheme.error)),
+              style: TextStyle(color: theme.colorScheme.error),),
           onTap: () => _confirmDeleteAccount(context, ref),
         ),
         const SizedBox(height: 32),
@@ -392,7 +392,7 @@ class _SettingsBody extends ConsumerWidget {
   }
 
   Future<void> _confirmDeleteAccount(
-      BuildContext context, WidgetRef ref) async {
+      BuildContext context, WidgetRef ref,) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -409,7 +409,7 @@ class _SettingsBody extends ConsumerWidget {
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
             style: TextButton.styleFrom(
-                foregroundColor: AivoColors.error),
+                foregroundColor: AivoColors.error,),
             child: const Text('Delete Account'),
           ),
         ],
@@ -462,7 +462,7 @@ class _SubjectToggles extends StatelessWidget {
               .split(' ')
               .map((w) => w.isNotEmpty
                   ? '${w[0].toUpperCase()}${w.substring(1)}'
-                  : w)
+                  : w,)
               .join(' ');
           return FilterChip(
             label: Text(displayName),

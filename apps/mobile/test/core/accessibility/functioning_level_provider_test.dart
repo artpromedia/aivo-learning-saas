@@ -52,7 +52,7 @@ void main() {
       verify(() => mockStorage.write(
             key: 'aivo_functioning_level',
             value: 'nonVerbal',
-          )).called(1);
+          ),).called(1);
     });
 
     test('handles invalid persisted value gracefully', () async {

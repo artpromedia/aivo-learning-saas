@@ -8,7 +8,6 @@ import 'package:aivo_mobile/config/theme.dart';
 import 'package:aivo_mobile/core/api/api_client.dart';
 import 'package:aivo_mobile/core/api/endpoints.dart';
 import 'package:aivo_mobile/core/auth/auth_provider.dart';
-import 'package:aivo_mobile/core/auth/auth_service.dart';
 
 // ---------------------------------------------------------------------------
 // Shop item model
@@ -188,10 +187,10 @@ class ShopScreen extends ConsumerWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(Icons.shopping_bag_outlined,
-                            size: 48, color: colorScheme.outline),
+                            size: 48, color: colorScheme.outline,),
                         const SizedBox(height: 16),
                         Text('No items in this category',
-                            style: theme.textTheme.bodyLarge),
+                            style: theme.textTheme.bodyLarge,),
                       ],
                     ),
                   );
@@ -225,7 +224,7 @@ class ShopScreen extends ConsumerWidget {
   }
 
   Widget _buildCoinBalance(
-      ThemeData theme, ColorScheme colorScheme, AsyncValue<int> coinAsync) {
+      ThemeData theme, ColorScheme colorScheme, AsyncValue<int> coinAsync,) {
     return Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
@@ -353,11 +352,11 @@ class _ShopItemCard extends ConsumerWidget {
                       fit: BoxFit.cover,
                       placeholder: (_, __) => Center(
                         child: Icon(Icons.image,
-                            size: 32, color: colorScheme.outline),
+                            size: 32, color: colorScheme.outline,),
                       ),
                       errorWidget: (_, __, ___) => Center(
                         child: Icon(Icons.image,
-                            size: 32, color: colorScheme.outline),
+                            size: 32, color: colorScheme.outline,),
                       ),
                     )
                   : Center(
@@ -390,7 +389,7 @@ class _ShopItemCard extends ConsumerWidget {
                   Row(
                     children: [
                       const Icon(Icons.monetization_on,
-                          size: 14, color: AivoColors.xpGold),
+                          size: 14, color: AivoColors.xpGold,),
                       const SizedBox(width: 2),
                       Text(
                         '${item.price}',
@@ -407,7 +406,7 @@ class _ShopItemCard extends ConsumerWidget {
                     width: double.infinity,
                     height: 30,
                     child: _buildActionButton(
-                        context, ref, theme, colorScheme, isLoading, canAfford),
+                        context, ref, theme, colorScheme, isLoading, canAfford,),
                   ),
                 ],
               ),
@@ -419,7 +418,7 @@ class _ShopItemCard extends ConsumerWidget {
   }
 
   Widget _buildActionButton(BuildContext context, WidgetRef ref,
-      ThemeData theme, ColorScheme colorScheme, bool isLoading, bool canAfford) {
+      ThemeData theme, ColorScheme colorScheme, bool isLoading, bool canAfford,) {
     if (item.isEquipped) {
       return OutlinedButton(
         onPressed: null,

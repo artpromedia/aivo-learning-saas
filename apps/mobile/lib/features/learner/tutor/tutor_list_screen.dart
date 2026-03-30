@@ -172,7 +172,7 @@ class TutorListScreen extends ConsumerWidget {
   }
 
   Widget _buildErrorState(
-      BuildContext context, WidgetRef ref, ThemeData theme, Object error) {
+      BuildContext context, WidgetRef ref, ThemeData theme, Object error,) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -219,7 +219,7 @@ class TutorListScreen extends ConsumerWidget {
             Semantics(
               label: 'No tutors subscribed',
               child: Icon(Icons.school_outlined,
-                  size: 80, color: theme.colorScheme.outline),
+                  size: 80, color: theme.colorScheme.outline,),
             ),
             const SizedBox(height: 24),
             Text(

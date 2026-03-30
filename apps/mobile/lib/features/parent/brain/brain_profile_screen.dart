@@ -61,22 +61,22 @@ class BrainProfileScreen extends ConsumerWidget {
 
               // Functioning level
               _FunctioningLevelSection(
-                  level: brain.functioningLevel),
+                  level: brain.functioningLevel,),
               const SizedBox(height: 24),
 
               // Diagnoses
               if (brain.diagnoses.isNotEmpty) ...[
-                _SectionHeader(title: 'Diagnoses'),
+                const _SectionHeader(title: 'Diagnoses'),
                 const SizedBox(height: 8),
                 _DiagnosesList(diagnoses: brain.diagnoses),
                 const SizedBox(height: 24),
               ],
 
               // Accommodations
-              _SectionHeader(title: 'Active Accommodations'),
+              const _SectionHeader(title: 'Active Accommodations'),
               const SizedBox(height: 8),
               _AccommodationsList(
-                  accommodations: brain.accommodations),
+                  accommodations: brain.accommodations,),
               const SizedBox(height: 24),
 
               // Strengths and challenges
@@ -87,15 +87,15 @@ class BrainProfileScreen extends ConsumerWidget {
               const SizedBox(height: 24),
 
               // Mastery overview
-              _SectionHeader(title: 'Mastery Overview'),
+              const _SectionHeader(title: 'Mastery Overview'),
               const SizedBox(height: 8),
               _MasteryOverview(
-                  masteryLevels: brain.masteryLevels),
+                  masteryLevels: brain.masteryLevels,),
               const SizedBox(height: 24),
 
               // IEP goals
               if (brain.iepGoals.isNotEmpty) ...[
-                _SectionHeader(title: 'IEP Goals'),
+                const _SectionHeader(title: 'IEP Goals'),
                 const SizedBox(height: 8),
                 ...brain.iepGoals.map(
                   (goal) => _IepGoalTile(goal: goal),
@@ -104,10 +104,10 @@ class BrainProfileScreen extends ConsumerWidget {
               ],
 
               // Learning preferences
-              _SectionHeader(title: 'Learning Preferences'),
+              const _SectionHeader(title: 'Learning Preferences'),
               const SizedBox(height: 8),
               _LearningPreferences(
-                  preferences: brain.learningPreferences),
+                  preferences: brain.learningPreferences,),
               const SizedBox(height: 24),
 
               // Export button
@@ -137,7 +137,7 @@ class BrainProfileScreen extends ConsumerWidget {
   }
 
   Future<void> _exportBrainData(
-      BuildContext context, WidgetRef ref) async {
+      BuildContext context, WidgetRef ref,) async {
     try {
       await ref
           .read(familyRepositoryProvider)
@@ -145,7 +145,7 @@ class BrainProfileScreen extends ConsumerWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-              content: Text('Brain data export initiated. Check your email.')),
+              content: Text('Brain data export initiated. Check your email.'),),
         );
       }
     } catch (e) {
@@ -158,7 +158,7 @@ class BrainProfileScreen extends ConsumerWidget {
   }
 
   Future<void> _showVersionHistory(
-      BuildContext context, WidgetRef ref) async {
+      BuildContext context, WidgetRef ref,) async {
     try {
       final versions = await ref
           .read(familyRepositoryProvider)
@@ -193,7 +193,7 @@ class BrainProfileScreen extends ConsumerWidget {
                 Semantics(
                   header: true,
                   child: Text('Version History',
-                      style: theme.textTheme.titleLarge),
+                      style: theme.textTheme.titleLarge,),
                 ),
                 const SizedBox(height: 16),
                 if (versions.isEmpty)
@@ -287,7 +287,7 @@ class _OverallProgressGauge extends StatelessWidget {
                 ),
               ),
               Text('Overall Progress',
-                  style: theme.textTheme.bodyMedium),
+                  style: theme.textTheme.bodyMedium,),
             ],
           ),
         ),
@@ -361,12 +361,12 @@ class _FunctioningLevelSection extends StatelessWidget {
               Row(
                 children: [
                   Icon(Icons.psychology,
-                      color: theme.colorScheme.primary),
+                      color: theme.colorScheme.primary,),
                   const SizedBox(width: 8),
                   Semantics(
                     header: true,
                     child: Text('Functioning Level',
-                        style: theme.textTheme.titleMedium),
+                        style: theme.textTheme.titleMedium,),
                   ),
                 ],
               ),
@@ -374,7 +374,7 @@ class _FunctioningLevelSection extends StatelessWidget {
               Text(_displayLevel,
                   style: theme.textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.w600,
-                  )),
+                  ),),
               const SizedBox(height: 4),
               Text(_description, style: theme.textTheme.bodyMedium),
             ],
@@ -411,11 +411,11 @@ class _DiagnosesList extends StatelessWidget {
                   children: [
                     Icon(Icons.medical_information,
                         size: 18,
-                        color: theme.colorScheme.primary),
+                        color: theme.colorScheme.primary,),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(d,
-                          style: theme.textTheme.bodyLarge),
+                          style: theme.textTheme.bodyLarge,),
                     ),
                   ],
                 ),
@@ -472,7 +472,7 @@ class _AccommodationsList extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Text('No active accommodations',
-                style: theme.textTheme.bodyMedium),
+                style: theme.textTheme.bodyMedium,),
           ),
         ),
       );
@@ -500,7 +500,7 @@ class _AccommodationsList extends StatelessWidget {
                       .split(' ')
                       .map((w) => w.isNotEmpty
                           ? '${w[0].toUpperCase()}${w.substring(1)}'
-                          : w)
+                          : w,)
                       .join(' '),
                 ),
               );
@@ -546,16 +546,16 @@ class _StrengthsAndChallenges extends StatelessWidget {
                     Row(
                       children: [
                         const Icon(Icons.thumb_up,
-                            color: AivoColors.secondary, size: 18),
+                            color: AivoColors.secondary, size: 18,),
                         const SizedBox(width: 6),
                         Text('Strengths',
-                            style: theme.textTheme.labelLarge),
+                            style: theme.textTheme.labelLarge,),
                       ],
                     ),
                     const SizedBox(height: 8),
                     if (strengths.isEmpty)
                       Text('None identified yet',
-                          style: theme.textTheme.bodySmall)
+                          style: theme.textTheme.bodySmall,)
                     else
                       Wrap(
                         spacing: 4,
@@ -594,16 +594,16 @@ class _StrengthsAndChallenges extends StatelessWidget {
                     Row(
                       children: [
                         const Icon(Icons.trending_up,
-                            color: AivoColors.accent, size: 18),
+                            color: AivoColors.accent, size: 18,),
                         const SizedBox(width: 6),
                         Text('Challenges',
-                            style: theme.textTheme.labelLarge),
+                            style: theme.textTheme.labelLarge,),
                       ],
                     ),
                     const SizedBox(height: 8),
                     if (challenges.isEmpty)
                       Text('None identified yet',
-                          style: theme.textTheme.bodySmall)
+                          style: theme.textTheme.bodySmall,)
                     else
                       Wrap(
                         spacing: 4,
@@ -653,7 +653,7 @@ class _MasteryOverview extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Text('No mastery data yet',
-                style: theme.textTheme.bodyMedium),
+                style: theme.textTheme.bodyMedium,),
           ),
         ),
       );
@@ -819,7 +819,7 @@ class _LearningPreferences extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Text('No preferences data yet',
-                style: theme.textTheme.bodyMedium),
+                style: theme.textTheme.bodyMedium,),
           ),
         ),
       );
@@ -838,7 +838,7 @@ class _LearningPreferences extends StatelessWidget {
                   .split(' ')
                   .map((w) => w.isNotEmpty
                       ? '${w[0].toUpperCase()}${w.substring(1)}'
-                      : w)
+                      : w,)
                   .join(' ');
               final value = entry.value.toString();
 
@@ -909,7 +909,7 @@ class _ErrorRetry extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.error_outline,
-                size: 48, color: theme.colorScheme.error),
+                size: 48, color: theme.colorScheme.error,),
             const SizedBox(height: 16),
             Text(message, style: theme.textTheme.bodyLarge),
             const SizedBox(height: 16),

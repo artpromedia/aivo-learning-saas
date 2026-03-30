@@ -461,7 +461,7 @@ class _ParentAssessmentScreenState
                           children: [
                             Icon(question.category.icon,
                                 size: 16,
-                                color: colorScheme.primary),
+                                color: colorScheme.primary,),
                             const SizedBox(width: 4),
                             Text(
                               question.category.label,
@@ -506,7 +506,7 @@ class _ParentAssessmentScreenState
                     child: Row(
                       children: [
                         Icon(Icons.error_outline,
-                            color: colorScheme.onErrorContainer, size: 20),
+                            color: colorScheme.onErrorContainer, size: 20,),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(

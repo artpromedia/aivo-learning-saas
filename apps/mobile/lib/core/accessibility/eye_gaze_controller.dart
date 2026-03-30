@@ -433,7 +433,7 @@ class _TwoChoiceEyeGazeLayoutState
 
   @override
   Widget build(BuildContext context) {
-    final controller = ref.watch(eyeGazeControllerProvider);
+    ref.watch(eyeGazeControllerProvider);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _updateDwellTarget();

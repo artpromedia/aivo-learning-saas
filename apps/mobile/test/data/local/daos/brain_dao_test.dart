@@ -13,9 +13,6 @@ class MockAivoDatabase extends Mock implements AivoDatabase {}
 
 class MockBrainSnapshots extends Mock implements $BrainSnapshotsTable {}
 
-class MockSelectStatement extends Mock
-    implements SimpleSelectStatement<$BrainSnapshotsTable, BrainSnapshotData> {}
-
 class MockInsertStatement extends Mock
     implements InsertStatement<$BrainSnapshotsTable, BrainSnapshotData> {}
 

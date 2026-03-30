@@ -116,7 +116,7 @@ void main() {
             email: 'new@example.com',
             password: 'password123',
             role: 'parent',
-          )).thenAnswer((_) async => testUser);
+          ),).thenAnswer((_) async => testUser);
 
       final notifier = createNotifier();
       await Future.delayed(Duration.zero);
@@ -191,7 +191,6 @@ void main() {
       when(() => mockAuthService.getCurrentUser())
           .thenAnswer((_) async => null);
 
-      final states = <AuthState>[];
       when(() => mockAuthService.login(any(), any()))
           .thenAnswer((_) async {
         return testUser;

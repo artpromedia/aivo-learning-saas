@@ -1,5 +1,6 @@
 /// Quest world models for gamified learning journeys including worlds,
 /// chapters, stages, and progress tracking in the AIVO Learning mobile app.
+library;
 
 import 'package:flutter/foundation.dart';
 

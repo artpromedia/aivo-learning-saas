@@ -71,7 +71,7 @@ class QuestMapScreen extends ConsumerWidget {
                 // Progress header
                 SliverToBoxAdapter(
                   child: _buildProgressHeader(
-                      theme, colorScheme, progressAsync, worlds),
+                      theme, colorScheme, progressAsync, worlds,),
                 ),
                 // Worlds list
                 SliverPadding(
@@ -308,7 +308,7 @@ class _WorldCard extends StatelessWidget {
             child: InkWell(
               onTap: world.isUnlocked
                   ? () => context.push(
-                      '/learner/quests/${world.id}/chapter/${world.id}')
+                      '/learner/quests/${world.id}/chapter/${world.id}',)
                   : null,
               child: Opacity(
                 opacity: world.isUnlocked ? 1.0 : 0.5,
@@ -347,7 +347,7 @@ class _WorldCard extends StatelessWidget {
                                 if (isCurrent)
                                   Container(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 2),
+                                        horizontal: 8, vertical: 2,),
                                     decoration: BoxDecoration(
                                       color:
                                           subjectColor.withValues(alpha: 0.12),

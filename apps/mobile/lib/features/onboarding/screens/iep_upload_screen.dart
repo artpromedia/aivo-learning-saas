@@ -151,9 +151,9 @@ class _IepUploadScreenState extends ConsumerState<IepUploadScreen> {
         child: switch (_state) {
           _UploadState.initial => _buildInitialView(theme, colorScheme),
           _UploadState.uploading => _buildProgressView(theme, colorScheme,
-              label: 'Uploading document...'),
+              label: 'Uploading document...',),
           _UploadState.processing => _buildProgressView(theme, colorScheme,
-              label: 'AI is extracting IEP goals...'),
+              label: 'AI is extracting IEP goals...',),
           _UploadState.confirming =>
             _buildConfirmView(theme, colorScheme),
           _UploadState.error => _buildInitialView(theme, colorScheme),
@@ -203,7 +203,7 @@ class _IepUploadScreenState extends ConsumerState<IepUploadScreen> {
                     child: Row(
                       children: [
                         Icon(Icons.error_outline,
-                            color: colorScheme.onErrorContainer, size: 20),
+                            color: colorScheme.onErrorContainer, size: 20,),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(

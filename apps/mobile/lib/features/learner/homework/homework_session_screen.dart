@@ -4,24 +4,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:aivo_mobile/core/api/api_client.dart';
 import 'package:aivo_mobile/core/api/endpoints.dart';
 import 'package:aivo_mobile/data/models/homework.dart';
-
-// ---------------------------------------------------------------------------
-// Providers
-// ---------------------------------------------------------------------------
-
-final _homeworkDetailProvider =
-    FutureProvider.autoDispose.family<Homework, String>((ref, id) async {
-  final api = ref.watch(apiClientProvider);
-  final response = await api.get(Endpoints.tutorHomeworkDetail(id));
-  return Homework.fromJson(response.data as Map<String, dynamic>);
-});
 
 // ---------------------------------------------------------------------------
 // Help chat message model
@@ -352,7 +340,7 @@ class _HomeworkSessionScreenState
   }
 
   Widget _buildHeader(
-      ThemeData theme, ColorScheme colorScheme, Homework homework) {
+      ThemeData theme, ColorScheme colorScheme, Homework homework,) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
@@ -389,7 +377,7 @@ class _HomeworkSessionScreenState
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(Icons.picture_as_pdf,
-                  color: colorScheme.error, size: 24),
+                  color: colorScheme.error, size: 24,),
             ),
           const SizedBox(width: 12),
           // Subject badge
@@ -453,7 +441,7 @@ class _HomeworkSessionScreenState
           // Answer input based on type
           if (question.type == 'multiple_choice')
             _buildMultipleChoice(
-                theme, colorScheme, question, currentAnswer)
+                theme, colorScheme, question, currentAnswer,)
           else
             _buildFreeTextAnswer(theme, colorScheme, question, currentAnswer),
 
@@ -585,7 +573,7 @@ class _HomeworkSessionScreenState
   }
 
   Widget _buildHelpChat(
-      ThemeData theme, ColorScheme colorScheme, _SessionState sessionState) {
+      ThemeData theme, ColorScheme colorScheme, _SessionState sessionState,) {
     if (sessionState.helpMessages.isEmpty && !sessionState.isSendingHelp) {
       // Collapsed help bar
       return Container(
@@ -688,7 +676,7 @@ class _HomeworkSessionScreenState
                     decoration: InputDecoration(
                       hintText: 'Ask for help...',
                       contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 8),
+                          horizontal: 12, vertical: 8,),
                       isDense: true,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
@@ -733,7 +721,7 @@ class _HomeworkSessionScreenState
   }
 
   Widget _buildBottomBar(ThemeData theme, ColorScheme colorScheme,
-      _SessionState sessionState, Homework homework) {
+      _SessionState sessionState, Homework homework,) {
     if (homework.questions.isEmpty) return const SizedBox.shrink();
     final isLast =
         sessionState.currentQuestionIndex >= homework.questions.length - 1;
@@ -779,7 +767,7 @@ class _HomeworkSessionScreenState
   }
 
   Widget _buildSummary(BuildContext context, ThemeData theme,
-      ColorScheme colorScheme, _SessionState sessionState, Homework homework) {
+      ColorScheme colorScheme, _SessionState sessionState, Homework homework,) {
     final score = sessionState.score ?? 0.0;
     final answeredCount = sessionState.answers.length;
     final totalCount = homework.questions.length;

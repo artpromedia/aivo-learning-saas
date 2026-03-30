@@ -68,7 +68,7 @@ class LearningRepository {
           data: {'lessonId': lessonId},
         );
         return LearningSession.fromJson(
-            response.data as Map<String, dynamic>);
+            response.data as Map<String, dynamic>,);
       } on DioException {
         // Fall through to cached lesson.
       }
@@ -100,7 +100,7 @@ class LearningRepository {
           data: payload,
         );
         return Interaction.fromJson(
-            apiResponse.data as Map<String, dynamic>);
+            apiResponse.data as Map<String, dynamic>,);
       } on DioException {
         // Queue offline.
       }
@@ -110,7 +110,7 @@ class LearningRepository {
       endpoint: Endpoints.learningSessionInteract(sessionId),
       method: 'POST',
       payload: jsonEncode(payload),
-    ));
+    ),);
 
     // Return a provisional interaction so the UI can proceed.
     return Interaction(
@@ -139,7 +139,7 @@ class LearningRepository {
           data: payload,
         );
         return LearningSession.fromJson(
-            response.data as Map<String, dynamic>);
+            response.data as Map<String, dynamic>,);
       } on DioException {
         // Queue offline.
       }
@@ -149,7 +149,7 @@ class LearningRepository {
       endpoint: Endpoints.learningSessionComplete(sessionId),
       method: 'POST',
       payload: jsonEncode(payload),
-    ));
+    ),);
 
     // Return a provisional completed session.
     return LearningSession(
@@ -175,7 +175,7 @@ class LearningRepository {
     final data = response.data as Map<String, dynamic>;
     final sessions = (data['sessions'] as List<dynamic>?)
             ?.map(
-                (e) => LearningSession.fromJson(e as Map<String, dynamic>))
+                (e) => LearningSession.fromJson(e as Map<String, dynamic>),)
             .toList() ??
         [];
     return sessions;
@@ -224,7 +224,7 @@ class LearningRepository {
           contentJson: jsonEncode(lessonData),
           orderIndex: Value(i),
           expiresAt: expiresAt,
-        ));
+        ),);
       } on DioException {
         // Skip lessons that fail to download.
         continue;
@@ -274,7 +274,7 @@ class LearningRepository {
       endpoint: Endpoints.questChapterComplete(chapterId),
       method: 'POST',
       payload: jsonEncode({}),
-    ));
+    ),);
   }
 
   /// Returns overall quest progress.
@@ -298,7 +298,7 @@ class LearningRepository {
     final data = response.data as Map<String, dynamic>;
     return (data['items'] as List<dynamic>?)
             ?.map(
-                (e) => LearningPathItem.fromJson(e as Map<String, dynamic>))
+                (e) => LearningPathItem.fromJson(e as Map<String, dynamic>),)
             .toList() ??
         [];
   }

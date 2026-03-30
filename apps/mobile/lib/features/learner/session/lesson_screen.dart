@@ -11,11 +11,8 @@ import 'package:shimmer/shimmer.dart';
 import 'package:aivo_mobile/config/theme.dart';
 import 'package:aivo_mobile/core/accessibility/audio_narrator.dart';
 import 'package:aivo_mobile/core/accessibility/functioning_level_provider.dart';
-import 'package:aivo_mobile/core/accessibility/switch_scan_controller.dart';
 import 'package:aivo_mobile/core/api/api_client.dart';
 import 'package:aivo_mobile/core/api/endpoints.dart';
-import 'package:aivo_mobile/core/auth/auth_provider.dart';
-import 'package:aivo_mobile/core/auth/auth_service.dart';
 import 'package:aivo_mobile/core/connectivity/connectivity_provider.dart';
 import 'package:aivo_mobile/core/connectivity/sync_manager.dart';
 import 'package:aivo_mobile/data/local/daos/lesson_dao.dart';
@@ -124,7 +121,7 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
   }
 
   Future<void> _submitInteraction(
-      LearningSession session, String response) async {
+      LearningSession session, String response,) async {
     final interaction = _currentInteraction(session);
     if (interaction == null || _isSubmitting) return;
 
@@ -165,7 +162,7 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
           endpoint: Endpoints.learningSessionInteract(session.id),
           method: 'POST',
           payload: jsonEncode(payload),
-        ));
+        ),);
       }
       _advanceStep(session);
     } catch (e) {
@@ -392,7 +389,7 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
               Semantics(
                 label: 'Break time',
                 child: Icon(Icons.pause_circle_filled,
-                    size: 80, color: theme.colorScheme.primary),
+                    size: 80, color: theme.colorScheme.primary,),
               ),
               const SizedBox(height: 24),
               Text(
@@ -419,7 +416,7 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
                     },
                     icon: const Icon(Icons.play_arrow),
                     label: const Text('Continue Learning',
-                        style: TextStyle(fontSize: 18)),
+                        style: TextStyle(fontSize: 18),),
                   ),
                 ),
               ),
@@ -445,7 +442,7 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
   }
 
   Widget _buildLessonContent(ThemeData theme, LearningSession session,
-      bool isLowVerbal, bool isNonVerbal) {
+      bool isLowVerbal, bool isNonVerbal,) {
     final total = _totalSteps(session);
     final progress = total > 0 ? (_currentStep + 1) / total : 0.0;
     final isOffline = !ref.watch(isOnlineProvider);
@@ -462,13 +459,13 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.cloud_off, size: 14,
-                      color: theme.colorScheme.onTertiaryContainer),
+                      color: theme.colorScheme.onTertiaryContainer,),
                   const SizedBox(width: 6),
                   Text('Offline Mode',
                       style: theme.textTheme.labelSmall?.copyWith(
                         color: theme.colorScheme.onTertiaryContainer,
                         fontWeight: FontWeight.w600,
-                      )),
+                      ),),
                 ],
               ),
             ),
@@ -512,7 +509,7 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
                   padding: const EdgeInsets.only(left: 8),
                   child: Semantics(
                     label: 'Session timer',
-                    child: _SessionTimer(),
+                    child: const _SessionTimer(),
                   ),
                 ),
               ],
@@ -566,7 +563,7 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
   }
 
   Widget _buildNextButton(
-      ThemeData theme, LearningSession session, bool isLowVerbal) {
+      ThemeData theme, LearningSession session, bool isLowVerbal,) {
     final isLastStep = _currentStep + 1 >= _totalSteps(session);
     final isInteraction = _isInteractionStep(session);
 
@@ -647,7 +644,7 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
   // -------------------------------------------------------------------------
 
   Widget _buildSection(ThemeData theme, LearningSession session,
-      bool isLowVerbal, bool isNonVerbal) {
+      bool isLowVerbal, bool isNonVerbal,) {
     final section = _currentSection(session);
     if (section == null) return const SizedBox.shrink();
 
@@ -691,7 +688,7 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
                   height: 200,
                   child: Center(
                     child: Icon(Icons.broken_image,
-                        size: 48, color: theme.colorScheme.outline),
+                        size: 48, color: theme.colorScheme.outline,),
                   ),
                 ),
               ),
@@ -713,7 +710,7 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
   // -------------------------------------------------------------------------
 
   Widget _buildInteraction(ThemeData theme, LearningSession session,
-      bool isLowVerbal, bool isNonVerbal) {
+      bool isLowVerbal, bool isNonVerbal,) {
     final interaction = _currentInteraction(session);
     if (interaction == null) return const SizedBox.shrink();
 
@@ -736,7 +733,7 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
   }
 
   Widget _buildInteractionByType(ThemeData theme, Interaction interaction,
-      bool isLowVerbal, bool isNonVerbal) {
+      bool isLowVerbal, bool isNonVerbal,) {
     switch (interaction.type) {
       case 'multiple_choice':
         return _buildMultipleChoice(theme, interaction, isLowVerbal);
@@ -754,7 +751,7 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
   }
 
   Widget _buildMultipleChoice(
-      ThemeData theme, Interaction interaction, bool isLowVerbal) {
+      ThemeData theme, Interaction interaction, bool isLowVerbal,) {
     final options = (interaction.data['options'] as List<dynamic>?)
             ?.map((e) => e.toString())
             .toList() ??
@@ -849,7 +846,7 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
   }
 
   Widget _buildFillInBlank(
-      ThemeData theme, Interaction interaction, bool isLowVerbal) {
+      ThemeData theme, Interaction interaction, bool isLowVerbal,) {
     return Semantics(
       textField: true,
       label: 'Type your answer',
@@ -868,7 +865,7 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
   }
 
   Widget _buildMatching(
-      ThemeData theme, Interaction interaction, bool isLowVerbal) {
+      ThemeData theme, Interaction interaction, bool isLowVerbal,) {
     final leftItems = (interaction.data['left'] as List<dynamic>?)
             ?.map((e) => e.toString())
             .toList() ??
@@ -882,7 +879,7 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Match each item on the left with one on the right:',
-            style: theme.textTheme.bodyMedium),
+            style: theme.textTheme.bodyMedium,),
         const SizedBox(height: 16),
         ...leftItems.map((left) {
           return Padding(
@@ -897,29 +894,29 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(left,
-                        style: TextStyle(fontSize: isLowVerbal ? 18 : 14)),
+                        style: TextStyle(fontSize: isLowVerbal ? 18 : 14),),
                   ),
                 ),
                 const SizedBox(width: 12),
                 Icon(Icons.arrow_forward,
-                    size: 20, color: theme.colorScheme.outline),
+                    size: 20, color: theme.colorScheme.outline,),
                 const SizedBox(width: 12),
                 Expanded(
                   child: DropdownButtonFormField<String>(
-                    value: _matchingAnswers[left],
+                    initialValue: _matchingAnswers[left],
                     hint: const Text('Select'),
                     isExpanded: true,
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 8),
+                          horizontal: 12, vertical: 8,),
                       border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                          borderRadius: BorderRadius.circular(12),),
                     ),
                     items: rightItems.map((right) {
                       return DropdownMenuItem(
                         value: right,
                         child: Text(right,
-                            style: TextStyle(fontSize: isLowVerbal ? 18 : 14)),
+                            style: TextStyle(fontSize: isLowVerbal ? 18 : 14),),
                       );
                     }).toList(),
                     onChanged: (value) {
@@ -943,7 +940,7 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
   }
 
   Widget _buildDragDrop(
-      ThemeData theme, Interaction interaction, bool isLowVerbal) {
+      ThemeData theme, Interaction interaction, bool isLowVerbal,) {
     // Simplified drag-drop: tap items in order
     final items = (interaction.data['items'] as List<dynamic>?)
             ?.map((e) => e.toString())
@@ -955,7 +952,7 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Tap items in the correct order:',
-            style: theme.textTheme.bodyMedium),
+            style: theme.textTheme.bodyMedium,),
         const SizedBox(height: 12),
         Wrap(
           spacing: 8,
@@ -974,7 +971,7 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
                 },
                 child: Chip(
                   label: Text(item,
-                      style: TextStyle(fontSize: isLowVerbal ? 18 : 14)),
+                      style: TextStyle(fontSize: isLowVerbal ? 18 : 14),),
                   backgroundColor: isUsed
                       ? theme.colorScheme.primaryContainer
                       : null,
@@ -1006,7 +1003,7 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
   }
 
   Widget _buildPictureSelect(
-      ThemeData theme, Interaction interaction, bool isLowVerbal) {
+      ThemeData theme, Interaction interaction, bool isLowVerbal,) {
     final options = (interaction.data['options'] as List<dynamic>?)
             ?.cast<Map<String, dynamic>>() ??
         [];

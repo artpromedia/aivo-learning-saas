@@ -7,7 +7,6 @@ import 'package:aivo_mobile/core/connectivity/sync_manager.dart';
 import 'package:aivo_mobile/data/local/daos/brain_dao.dart';
 import 'package:aivo_mobile/data/local/daos/mastery_dao.dart';
 import 'package:aivo_mobile/data/local/database.dart';
-import 'package:aivo_mobile/data/models/brain_context.dart';
 import 'package:aivo_mobile/data/repositories/brain_repository.dart';
 
 // ---------------------------------------------------------------------------

@@ -1,5 +1,6 @@
 /// Recommendation model for AI-generated accommodation, curriculum,
 /// goal, and tutor suggestions in the AIVO Learning mobile app.
+library;
 
 import 'package:flutter/foundation.dart';
 

@@ -5,7 +5,6 @@ import 'package:mocktail/mocktail.dart';
 
 import 'package:aivo_mobile/core/auth/auth_provider.dart';
 import 'package:aivo_mobile/core/auth/auth_service.dart';
-import 'package:aivo_mobile/core/accessibility/functioning_level_provider.dart';
 import 'package:aivo_mobile/core/connectivity/connectivity_provider.dart';
 import 'package:aivo_mobile/data/repositories/learning_repository.dart';
 
@@ -165,8 +164,8 @@ void main() {
             home: Scaffold(
               body: Consumer(
                 builder: (context, ref, _) {
-                  final repo = ref.read(learningRepositoryProvider);
-                  return Text('Repo available');
+                  ref.read(learningRepositoryProvider);
+                  return const Text('Repo available');
                 },
               ),
             ),

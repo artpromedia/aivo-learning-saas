@@ -1,17 +1,14 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:mime/mime.dart';
 
 import 'package:aivo_mobile/core/api/api_client.dart';
 import 'package:aivo_mobile/core/api/endpoints.dart';
-import 'package:aivo_mobile/data/models/homework.dart';
 
 // ---------------------------------------------------------------------------
 // Upload state
@@ -89,7 +86,7 @@ class _UploadNotifier extends StateNotifier<UploadState> {
   Future<void> upload(String filePath) async {
     try {
       state = const UploadState(
-          stage: UploadStage.uploading, progress: 0.0, message: 'Uploading...');
+          stage: UploadStage.uploading, progress: 0.0, message: 'Uploading...',);
 
       final response = await _api.upload<Map<String, dynamic>>(
         Endpoints.tutorHomeworkUpload,
@@ -190,7 +187,7 @@ class _CameraCaptureScreenState extends ConsumerState<CameraCaptureScreen> {
     if (photo != null && mounted) {
       setState(() {
         _capturedFile = _CapturedFile(
-            path: photo.path, name: photo.name, isPdf: false);
+            path: photo.path, name: photo.name, isPdf: false,);
       });
     }
   }
@@ -205,7 +202,7 @@ class _CameraCaptureScreenState extends ConsumerState<CameraCaptureScreen> {
     if (image != null && mounted) {
       setState(() {
         _capturedFile = _CapturedFile(
-            path: image.path, name: image.name, isPdf: false);
+            path: image.path, name: image.name, isPdf: false,);
       });
     }
   }
@@ -222,7 +219,7 @@ class _CameraCaptureScreenState extends ConsumerState<CameraCaptureScreen> {
       if (file.path != null) {
         setState(() {
           _capturedFile = _CapturedFile(
-              path: file.path!, name: file.name, isPdf: true);
+              path: file.path!, name: file.name, isPdf: true,);
         });
       }
     }
@@ -260,9 +257,8 @@ class _CameraCaptureScreenState extends ConsumerState<CameraCaptureScreen> {
     ref.listen<UploadState>(_uploadStateProvider, (prev, next) {
       if (next.stage == UploadStage.complete && next.homeworkId != null) {
         Future.delayed(const Duration(milliseconds: 500), () {
-          if (mounted) {
-            context.go('/learner/homework/session/${next.homeworkId}');
-          }
+          if (!context.mounted) return;
+          context.go('/learner/homework/session/${next.homeworkId}');
         });
       }
     });
@@ -432,7 +428,7 @@ class _CameraCaptureScreenState extends ConsumerState<CameraCaptureScreen> {
   }
 
   Widget _buildPdfPreview(
-      ThemeData theme, ColorScheme colorScheme, _CapturedFile file) {
+      ThemeData theme, ColorScheme colorScheme, _CapturedFile file,) {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -449,7 +445,7 @@ class _CameraCaptureScreenState extends ConsumerState<CameraCaptureScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Icons.picture_as_pdf,
-                    size: 56, color: colorScheme.error),
+                    size: 56, color: colorScheme.error,),
                 const SizedBox(height: 8),
                 Text('PDF', style: theme.textTheme.titleMedium),
               ],
@@ -467,7 +463,7 @@ class _CameraCaptureScreenState extends ConsumerState<CameraCaptureScreen> {
   }
 
   Widget _buildProgressOverlay(
-      ThemeData theme, ColorScheme colorScheme, UploadState state) {
+      ThemeData theme, ColorScheme colorScheme, UploadState state,) {
     return Container(
       color: Colors.black.withValues(alpha: 0.75),
       child: Center(
@@ -528,7 +524,7 @@ class _CameraCaptureScreenState extends ConsumerState<CameraCaptureScreen> {
                 const SizedBox(height: 8),
                 Text('All done!',
                     style: theme.textTheme.titleMedium
-                        ?.copyWith(color: Colors.white)),
+                        ?.copyWith(color: Colors.white),),
               ],
             ],
           ),
@@ -538,7 +534,7 @@ class _CameraCaptureScreenState extends ConsumerState<CameraCaptureScreen> {
   }
 
   Widget _buildErrorOverlay(
-      ThemeData theme, ColorScheme colorScheme, UploadState state) {
+      ThemeData theme, ColorScheme colorScheme, UploadState state,) {
     return Container(
       color: Colors.black.withValues(alpha: 0.75),
       child: Center(

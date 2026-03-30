@@ -30,7 +30,6 @@ class ClassroomScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final asyncClassroom = ref.watch(_classroomProvider);
-    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -80,8 +79,6 @@ class _ClassSummaryBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Row(
@@ -139,7 +136,7 @@ class _StatPill extends StatelessWidget {
       margin: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.symmetric(
-            horizontal: 12, vertical: 10),
+            horizontal: 12, vertical: 10,),
         child: Row(
           children: [
             Icon(icon, color: color, size: 20),
@@ -280,7 +277,7 @@ class _StudentList extends ConsumerWidget {
     switch (sortMode) {
       case _SortMode.name:
         filtered.sort(
-            (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+            (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),);
       case _SortMode.progress:
         filtered
             .sort((a, b) => b.todayProgress.compareTo(a.todayProgress));
@@ -300,7 +297,7 @@ class _StudentList extends ConsumerWidget {
             children: [
               Icon(Icons.search_off,
                   size: 48,
-                  color: Theme.of(context).colorScheme.outlineVariant),
+                  color: Theme.of(context).colorScheme.outlineVariant,),
               const SizedBox(height: 16),
               Text(
                 query.isNotEmpty
@@ -393,7 +390,7 @@ class _StudentCard extends StatelessWidget {
                               label: 'At risk indicator',
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 6, vertical: 2),
+                                    horizontal: 6, vertical: 2,),
                                 decoration: BoxDecoration(
                                   color: AivoColors.error
                                       .withValues(alpha: 0.12),
@@ -416,7 +413,7 @@ class _StudentCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 2),
                       _FunctioningLevelBadge(
-                          level: student.functioningLevel),
+                          level: student.functioningLevel,),
                       const SizedBox(height: 6),
                       ClipRRect(
                         borderRadius: BorderRadius.circular(3),
@@ -441,7 +438,7 @@ class _StudentCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 4),
                 Icon(Icons.chevron_right,
-                    color: colorScheme.outline),
+                    color: colorScheme.outline,),
               ],
             ),
           ),
@@ -524,7 +521,7 @@ class _ErrorRetry extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.error_outline,
-                size: 48, color: theme.colorScheme.error),
+                size: 48, color: theme.colorScheme.error,),
             const SizedBox(height: 16),
             Text(message, style: theme.textTheme.bodyLarge),
             const SizedBox(height: 16),

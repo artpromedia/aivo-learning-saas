@@ -69,7 +69,7 @@ class LessonPrefetchService {
               : const Value.absent(),
           orderIndex: Value(lesson['orderIndex'] as int? ?? i),
           expiresAt: DateTime.now().add(_lessonTtl),
-        ));
+        ),);
       }
     } on DioException catch (e) {
       debugPrint('[LessonPrefetch] Failed to prefetch lessons: $e');

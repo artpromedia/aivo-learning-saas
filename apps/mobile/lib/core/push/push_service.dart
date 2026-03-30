@@ -120,9 +120,9 @@ final pushServiceProvider = Provider<PushService>((ref) {
   final handler = ref.watch(notificationHandlerProvider);
   final dio = Dio(BaseOptions(
     baseUrl: Env.apiBaseUrl,
-    connectTimeout: Duration(seconds: Env.apiTimeoutSeconds),
-    receiveTimeout: Duration(seconds: Env.apiTimeoutSeconds),
-  ));
+    connectTimeout: const Duration(seconds: Env.apiTimeoutSeconds),
+    receiveTimeout: const Duration(seconds: Env.apiTimeoutSeconds),
+  ),);
 
   final service = PushService(notificationHandler: handler, dio: dio);
   ref.onDispose(service.dispose);

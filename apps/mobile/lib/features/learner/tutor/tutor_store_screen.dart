@@ -128,10 +128,10 @@ class TutorStoreScreen extends ConsumerWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(Icons.search_off,
-                                size: 48, color: theme.colorScheme.outline),
+                                size: 48, color: theme.colorScheme.outline,),
                             const SizedBox(height: 12),
                             Text('No tutors found',
-                                style: theme.textTheme.bodyLarge),
+                                style: theme.textTheme.bodyLarge,),
                           ],
                         ),
                       )
@@ -194,7 +194,7 @@ class TutorStoreScreen extends ConsumerWidget {
   }
 
   Widget _buildErrorState(
-      BuildContext context, WidgetRef ref, ThemeData theme, Object error) {
+      BuildContext context, WidgetRef ref, ThemeData theme, Object error,) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -204,7 +204,7 @@ class TutorStoreScreen extends ConsumerWidget {
             Icon(Icons.error_outline, size: 48, color: theme.colorScheme.error),
             const SizedBox(height: 16),
             Text('Failed to load tutor catalog',
-                style: theme.textTheme.titleMedium),
+                style: theme.textTheme.titleMedium,),
             const SizedBox(height: 8),
             Text(
               error.toString(),
@@ -264,11 +264,11 @@ class _TutorCard extends ConsumerWidget {
                         fit: BoxFit.cover,
                         placeholder: (_, __) => Center(
                           child: Icon(Icons.person,
-                              size: 40, color: theme.colorScheme.outline),
+                              size: 40, color: theme.colorScheme.outline,),
                         ),
                         errorWidget: (_, __, ___) => Center(
                           child: Icon(Icons.person,
-                              size: 40, color: theme.colorScheme.outline),
+                              size: 40, color: theme.colorScheme.outline,),
                         ),
                       )
                     : Center(
@@ -301,7 +301,7 @@ class _TutorCard extends ConsumerWidget {
                     const SizedBox(height: 2),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: 2),
+                          horizontal: 6, vertical: 2,),
                       decoration: BoxDecoration(
                         color: theme.colorScheme.primary.withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(6),
@@ -348,7 +348,7 @@ class _TutorCard extends ConsumerWidget {
                                 children: [
                                   Icon(Icons.check,
                                       size: 14,
-                                      color: theme.colorScheme.primary),
+                                      color: theme.colorScheme.primary,),
                                   const SizedBox(width: 4),
                                   const Text('Subscribed'),
                                 ],
@@ -370,7 +370,7 @@ class _TutorCard extends ConsumerWidget {
                                         width: 16,
                                         height: 16,
                                         child: CircularProgressIndicator(
-                                            strokeWidth: 2),
+                                            strokeWidth: 2,),
                                       )
                                     : const Text('Subscribe'),
                               ),

@@ -391,9 +391,9 @@ class _ChapterNode extends StatelessWidget {
               Row(
                 children: [
                   if (_isBoss)
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: const Icon(Icons.star,
+                    const Padding(
+                      padding: EdgeInsets.only(right: 8),
+                      child: Icon(Icons.star,
                           color: AivoColors.streakFlame, size: 28,),
                     ),
                   Expanded(

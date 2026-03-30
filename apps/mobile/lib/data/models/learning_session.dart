@@ -1,5 +1,6 @@
 /// Learning session models for tracking lesson progress, interactions,
 /// and learning path items in the AIVO Learning mobile app.
+library;
 
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';

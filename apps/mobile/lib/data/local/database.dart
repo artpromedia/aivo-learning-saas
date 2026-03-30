@@ -233,6 +233,7 @@ class $BrainSnapshotsTable extends BrainSnapshots
     );
   }
 
+  @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
     'id', aliasedName, false,
     hasAutoIncrement: true,
@@ -240,62 +241,76 @@ class $BrainSnapshotsTable extends BrainSnapshots
     defaultConstraints:
         GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'),
   );
+  @override
   late final GeneratedColumn<String> learnerId = GeneratedColumn<String>(
     'learner_id', aliasedName, false,
     type: DriftSqlType.string,
   );
+  @override
   late final GeneratedColumn<String> brainStateId = GeneratedColumn<String>(
     'brain_state_id', aliasedName, false,
     type: DriftSqlType.string,
   );
+  @override
   late final GeneratedColumn<String> functioningLevel =
       GeneratedColumn<String>(
     'functioning_level', aliasedName, false,
     type: DriftSqlType.string,
   );
+  @override
   late final GeneratedColumn<String> diagnoses = GeneratedColumn<String>(
     'diagnoses', aliasedName, true,
     type: DriftSqlType.string,
   );
+  @override
   late final GeneratedColumn<String> accommodations = GeneratedColumn<String>(
     'accommodations', aliasedName, true,
     type: DriftSqlType.string,
   );
+  @override
   late final GeneratedColumn<String> masteryLevels = GeneratedColumn<String>(
     'mastery_levels', aliasedName, true,
     type: DriftSqlType.string,
   );
+  @override
   late final GeneratedColumn<String> learningPreferences =
       GeneratedColumn<String>(
     'learning_preferences', aliasedName, true,
     type: DriftSqlType.string,
   );
+  @override
   late final GeneratedColumn<String> strengths = GeneratedColumn<String>(
     'strengths', aliasedName, true,
     type: DriftSqlType.string,
   );
+  @override
   late final GeneratedColumn<String> challenges = GeneratedColumn<String>(
     'challenges', aliasedName, true,
     type: DriftSqlType.string,
   );
+  @override
   late final GeneratedColumn<String> currentGoals = GeneratedColumn<String>(
     'current_goals', aliasedName, true,
     type: DriftSqlType.string,
   );
+  @override
   late final GeneratedColumn<String> iepGoals = GeneratedColumn<String>(
     'iep_goals', aliasedName, true,
     type: DriftSqlType.string,
   );
+  @override
   late final GeneratedColumn<double> overallProgress = GeneratedColumn<double>(
     'overall_progress', aliasedName, false,
     type: DriftSqlType.double,
     defaultValue: const Constant(0.0),
   );
+  @override
   late final GeneratedColumn<DateTime> lastSyncedAt =
       GeneratedColumn<DateTime>(
     'last_synced_at', aliasedName, false,
     type: DriftSqlType.dateTime,
   );
+  @override
   late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
     'created_at', aliasedName, false,
     type: DriftSqlType.dateTime,
@@ -365,6 +380,7 @@ class $CachedLessonsTable extends CachedLessons
     );
   }
 
+  @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
     'id', aliasedName, false,
     hasAutoIncrement: true,
@@ -372,41 +388,50 @@ class $CachedLessonsTable extends CachedLessons
     defaultConstraints:
         GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'),
   );
+  @override
   late final GeneratedColumn<String> lessonId = GeneratedColumn<String>(
     'lesson_id', aliasedName, false,
     type: DriftSqlType.string,
     defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
   );
+  @override
   late final GeneratedColumn<String> learnerId = GeneratedColumn<String>(
     'learner_id', aliasedName, false,
     type: DriftSqlType.string,
   );
+  @override
   late final GeneratedColumn<String> subject = GeneratedColumn<String>(
     'subject', aliasedName, false,
     type: DriftSqlType.string,
   );
+  @override
   late final GeneratedColumn<String> topic = GeneratedColumn<String>(
     'topic', aliasedName, false,
     type: DriftSqlType.string,
   );
+  @override
   late final GeneratedColumn<String> skillId = GeneratedColumn<String>(
     'skill_id', aliasedName, false,
     type: DriftSqlType.string,
   );
+  @override
   late final GeneratedColumn<String> contentJson = GeneratedColumn<String>(
     'content_json', aliasedName, false,
     type: DriftSqlType.string,
   );
+  @override
   late final GeneratedColumn<String> interactionsJson =
       GeneratedColumn<String>(
     'interactions_json', aliasedName, true,
     type: DriftSqlType.string,
   );
+  @override
   late final GeneratedColumn<int> orderIndex = GeneratedColumn<int>(
     'order_index', aliasedName, false,
     type: DriftSqlType.int,
     defaultValue: const Constant(0),
   );
+  @override
   late final GeneratedColumn<bool> isCompleted = GeneratedColumn<bool>(
     'is_completed', aliasedName, false,
     type: DriftSqlType.bool,
@@ -414,11 +439,13 @@ class $CachedLessonsTable extends CachedLessons
         GeneratedColumn.constraintIsAlways('CHECK ("is_completed" IN (0, 1))'),
     defaultValue: const Constant(false),
   );
+  @override
   late final GeneratedColumn<DateTime> cachedAt = GeneratedColumn<DateTime>(
     'cached_at', aliasedName, false,
     type: DriftSqlType.dateTime,
     defaultValue: currentDateAndTime,
   );
+  @override
   late final GeneratedColumn<DateTime> expiresAt = GeneratedColumn<DateTime>(
     'expires_at', aliasedName, false,
     type: DriftSqlType.dateTime,
@@ -483,6 +510,7 @@ class $SyncQueueItemsTable extends SyncQueueItems
     );
   }
 
+  @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
     'id', aliasedName, false,
     hasAutoIncrement: true,
@@ -490,27 +518,33 @@ class $SyncQueueItemsTable extends SyncQueueItems
     defaultConstraints:
         GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'),
   );
+  @override
   late final GeneratedColumn<String> actionId = GeneratedColumn<String>(
     'action_id', aliasedName, false,
     type: DriftSqlType.string,
     defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
   );
+  @override
   late final GeneratedColumn<String> endpoint = GeneratedColumn<String>(
     'endpoint', aliasedName, false,
     type: DriftSqlType.string,
   );
+  @override
   late final GeneratedColumn<String> method = GeneratedColumn<String>(
     'method', aliasedName, false,
     type: DriftSqlType.string,
   );
+  @override
   late final GeneratedColumn<String> payload = GeneratedColumn<String>(
     'payload', aliasedName, false,
     type: DriftSqlType.string,
   );
+  @override
   late final GeneratedColumn<String> headers = GeneratedColumn<String>(
     'headers', aliasedName, true,
     type: DriftSqlType.string,
   );
+  @override
   late final GeneratedColumn<bool> synced = GeneratedColumn<bool>(
     'synced', aliasedName, false,
     type: DriftSqlType.bool,
@@ -518,20 +552,24 @@ class $SyncQueueItemsTable extends SyncQueueItems
         GeneratedColumn.constraintIsAlways('CHECK ("synced" IN (0, 1))'),
     defaultValue: const Constant(false),
   );
+  @override
   late final GeneratedColumn<int> retryCount = GeneratedColumn<int>(
     'retry_count', aliasedName, false,
     type: DriftSqlType.int,
     defaultValue: const Constant(0),
   );
+  @override
   late final GeneratedColumn<String> errorMessage = GeneratedColumn<String>(
     'error_message', aliasedName, true,
     type: DriftSqlType.string,
   );
+  @override
   late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
     'created_at', aliasedName, false,
     type: DriftSqlType.dateTime,
     defaultValue: currentDateAndTime,
   );
+  @override
   late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
     'synced_at', aliasedName, true,
     type: DriftSqlType.dateTime,
@@ -601,6 +639,7 @@ class $MasteryCacheTable extends MasteryCache
     );
   }
 
+  @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
     'id', aliasedName, false,
     hasAutoIncrement: true,
@@ -608,47 +647,57 @@ class $MasteryCacheTable extends MasteryCache
     defaultConstraints:
         GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'),
   );
+  @override
   late final GeneratedColumn<String> learnerId = GeneratedColumn<String>(
     'learner_id', aliasedName, false,
     type: DriftSqlType.string,
   );
+  @override
   late final GeneratedColumn<String> skillId = GeneratedColumn<String>(
     'skill_id', aliasedName, false,
     type: DriftSqlType.string,
   );
+  @override
   late final GeneratedColumn<String> subject = GeneratedColumn<String>(
     'subject', aliasedName, false,
     type: DriftSqlType.string,
   );
+  @override
   late final GeneratedColumn<double> masteryLevel = GeneratedColumn<double>(
     'mastery_level', aliasedName, false,
     type: DriftSqlType.double,
     defaultValue: const Constant(0.0),
   );
+  @override
   late final GeneratedColumn<int> totalAttempts = GeneratedColumn<int>(
     'total_attempts', aliasedName, false,
     type: DriftSqlType.int,
     defaultValue: const Constant(0),
   );
+  @override
   late final GeneratedColumn<int> correctAttempts = GeneratedColumn<int>(
     'correct_attempts', aliasedName, false,
     type: DriftSqlType.int,
     defaultValue: const Constant(0),
   );
+  @override
   late final GeneratedColumn<String> recentScores = GeneratedColumn<String>(
     'recent_scores', aliasedName, true,
     type: DriftSqlType.string,
   );
+  @override
   late final GeneratedColumn<DateTime> lastPracticedAt =
       GeneratedColumn<DateTime>(
     'last_practiced_at', aliasedName, true,
     type: DriftSqlType.dateTime,
   );
+  @override
   late final GeneratedColumn<DateTime> nextReviewAt =
       GeneratedColumn<DateTime>(
     'next_review_at', aliasedName, true,
     type: DriftSqlType.dateTime,
   );
+  @override
   late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
     'updated_at', aliasedName, false,
     type: DriftSqlType.dateTime,
@@ -718,6 +767,7 @@ class $EngagementCacheTable extends EngagementCache
     );
   }
 
+  @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
     'id', aliasedName, false,
     hasAutoIncrement: true,
@@ -725,59 +775,71 @@ class $EngagementCacheTable extends EngagementCache
     defaultConstraints:
         GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'),
   );
+  @override
   late final GeneratedColumn<String> learnerId = GeneratedColumn<String>(
     'learner_id', aliasedName, false,
     type: DriftSqlType.string,
     defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
   );
+  @override
   late final GeneratedColumn<int> totalXp = GeneratedColumn<int>(
     'total_xp', aliasedName, false,
     type: DriftSqlType.int,
     defaultValue: const Constant(0),
   );
+  @override
   late final GeneratedColumn<int> currentLevel = GeneratedColumn<int>(
     'current_level', aliasedName, false,
     type: DriftSqlType.int,
     defaultValue: const Constant(1),
   );
+  @override
   late final GeneratedColumn<int> xpToNextLevel = GeneratedColumn<int>(
     'xp_to_next_level', aliasedName, false,
     type: DriftSqlType.int,
     defaultValue: const Constant(100),
   );
+  @override
   late final GeneratedColumn<int> currentStreak = GeneratedColumn<int>(
     'current_streak', aliasedName, false,
     type: DriftSqlType.int,
     defaultValue: const Constant(0),
   );
+  @override
   late final GeneratedColumn<int> longestStreak = GeneratedColumn<int>(
     'longest_streak', aliasedName, false,
     type: DriftSqlType.int,
     defaultValue: const Constant(0),
   );
+  @override
   late final GeneratedColumn<int> aivoCoins = GeneratedColumn<int>(
     'aivo_coins', aliasedName, false,
     type: DriftSqlType.int,
     defaultValue: const Constant(0),
   );
+  @override
   late final GeneratedColumn<String> earnedBadges = GeneratedColumn<String>(
     'earned_badges', aliasedName, true,
     type: DriftSqlType.string,
   );
+  @override
   late final GeneratedColumn<String> activeItems = GeneratedColumn<String>(
     'active_items', aliasedName, true,
     type: DriftSqlType.string,
   );
+  @override
   late final GeneratedColumn<DateTime> lastActivityAt =
       GeneratedColumn<DateTime>(
     'last_activity_at', aliasedName, true,
     type: DriftSqlType.dateTime,
   );
+  @override
   late final GeneratedColumn<DateTime> streakExpiresAt =
       GeneratedColumn<DateTime>(
     'streak_expires_at', aliasedName, true,
     type: DriftSqlType.dateTime,
   );
+  @override
   late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
     'updated_at', aliasedName, false,
     type: DriftSqlType.dateTime,

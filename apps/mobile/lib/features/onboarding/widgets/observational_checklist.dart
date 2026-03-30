@@ -115,9 +115,9 @@ class _ObservationalChecklistState extends State<ObservationalChecklist> {
                     item,
                     theme,
                     colorScheme,
-                  )),
+                  ),),
               const SizedBox(height: 16),
-            ]),
+            ],),
 
         const Divider(),
         const SizedBox(height: 16),
@@ -160,7 +160,7 @@ class _ObservationalChecklistState extends State<ObservationalChecklist> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Icon(Icons.notes,
-                        size: 16, color: colorScheme.onSurfaceVariant),
+                        size: 16, color: colorScheme.onSurfaceVariant,),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -190,7 +190,7 @@ class _ObservationalChecklistState extends State<ObservationalChecklist> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Icons.check_circle_outline,
-                    color: colorScheme.secondary),
+                    color: colorScheme.secondary,),
                 const SizedBox(width: 8),
                 Text(
                   '$_checkedCount of ${widget.items.length} milestones observed',

@@ -5,10 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 
-import 'package:aivo_mobile/config/theme.dart';
 import 'package:aivo_mobile/core/accessibility/audio_narrator.dart';
 import 'package:aivo_mobile/core/accessibility/functioning_level_provider.dart';
 import 'package:aivo_mobile/core/api/api_client.dart';
@@ -112,7 +110,7 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
         content: '',
         timestamp: DateTime.now(),
         isStreaming: true,
-      ));
+      ),);
     });
     _scrollToBottom();
 
@@ -258,10 +256,10 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(Icons.error_outline,
-                    size: 48, color: theme.colorScheme.error),
+                    size: 48, color: theme.colorScheme.error,),
                 const SizedBox(height: 16),
                 Text('Failed to start session',
-                    style: theme.textTheme.titleMedium),
+                    style: theme.textTheme.titleMedium,),
                 const SizedBox(height: 8),
                 Text(
                   e.toString(),
@@ -303,11 +301,11 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(Icons.cloud_off, size: 64,
-                  color: theme.colorScheme.outline),
+                  color: theme.colorScheme.outline,),
               const SizedBox(height: 16),
               Text('Offline — Tutor unavailable',
                   style: theme.textTheme.titleMedium,
-                  textAlign: TextAlign.center),
+                  textAlign: TextAlign.center,),
               const SizedBox(height: 8),
               Text(
                 'The AI tutor requires an internet connection. '
@@ -341,7 +339,7 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
                 radius: 16,
                 child: Text(_tutorName.isNotEmpty
                     ? _tutorName[0].toUpperCase()
-                    : 'T'),
+                    : 'T',),
               ),
             const SizedBox(width: 8),
             Expanded(
@@ -359,7 +357,7 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
             child: TextButton(
               onPressed: _endSession,
               child: Text('End',
-                  style: TextStyle(color: theme.colorScheme.error)),
+                  style: TextStyle(color: theme.colorScheme.error),),
             ),
           ),
         ],
@@ -404,12 +402,12 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
           // Input area
           Container(
             padding: EdgeInsets.fromLTRB(
-                12, 8, 12, MediaQuery.of(context).padding.bottom + 8),
+                12, 8, 12, MediaQuery.of(context).padding.bottom + 8,),
             decoration: BoxDecoration(
               color: theme.colorScheme.surface,
               border: Border(
                 top: BorderSide(
-                    color: theme.colorScheme.outline.withValues(alpha: 0.2)),
+                    color: theme.colorScheme.outline.withValues(alpha: 0.2),),
               ),
             ),
             child: Row(
@@ -424,7 +422,7 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
                       decoration: InputDecoration(
                         hintText: 'Type a message...',
                         contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 10),
+                            horizontal: 16, vertical: 10,),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(24),
                           borderSide: BorderSide.none,
@@ -469,7 +467,7 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
       replies = const [
         QuickReply(label: 'Help me', value: 'Can you help me understand?'),
         QuickReply(
-            label: 'Example', value: 'Can you show me an example?'),
+            label: 'Example', value: 'Can you show me an example?',),
       ];
     }
 
@@ -709,7 +707,7 @@ class _OfflineFaqSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Frequently Asked Questions',
-            style: theme.textTheme.titleSmall),
+            style: theme.textTheme.titleSmall,),
         const SizedBox(height: 12),
         ..._faqs.map((faq) => Padding(
               padding: const EdgeInsets.only(bottom: 12),
@@ -718,15 +716,15 @@ class _OfflineFaqSection extends StatelessWidget {
                 children: [
                   Text(faq.q,
                       style: theme.textTheme.bodyMedium
-                          ?.copyWith(fontWeight: FontWeight.w600)),
+                          ?.copyWith(fontWeight: FontWeight.w600),),
                   const SizedBox(height: 4),
                   Text(faq.a,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.outline,
-                      )),
+                      ),),
                 ],
               ),
-            )),
+            ),),
       ],
     );
   }

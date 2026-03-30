@@ -56,7 +56,7 @@ class RecommendationListScreen extends ConsumerWidget {
           // Filter tabs
           Padding(
             padding: const EdgeInsets.symmetric(
-                horizontal: 16, vertical: 8),
+                horizontal: 16, vertical: 8,),
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
@@ -100,7 +100,7 @@ class RecommendationListScreen extends ConsumerWidget {
               error: (error, _) => _ErrorBody(
                 message: 'Failed to load recommendations',
                 onRetry: () => ref.invalidate(
-                    _allRecommendationsProvider),
+                    _allRecommendationsProvider,),
               ),
               data: (allRecs) {
                 final recs = currentFilter == 'all'
@@ -146,7 +146,7 @@ class RecommendationListScreen extends ConsumerWidget {
                   },
                   child: ListView.builder(
                     padding: const EdgeInsets.only(
-                        top: 8, bottom: 32),
+                        top: 8, bottom: 32,),
                     itemCount: recs.length,
                     itemBuilder: (context, index) {
                       return RecommendationCard(
@@ -186,7 +186,7 @@ class _ErrorBody extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.error_outline,
-                size: 48, color: theme.colorScheme.error),
+                size: 48, color: theme.colorScheme.error,),
             const SizedBox(height: 16),
             Text(message, style: theme.textTheme.bodyLarge),
             const SizedBox(height: 16),

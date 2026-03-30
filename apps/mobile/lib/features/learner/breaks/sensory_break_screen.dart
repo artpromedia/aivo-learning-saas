@@ -1,4 +1,3 @@
-import 'dart:math' as math;
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
@@ -178,7 +177,7 @@ class _SensoryBreakScreenState extends ConsumerState<SensoryBreakScreen>
                     foregroundColor: Colors.white,
                     side: const BorderSide(color: Colors.white54),
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 12),
+                        horizontal: 24, vertical: 12,),
                   ),
                   icon: Icon(
                     _isPlayingAudio ? Icons.volume_off : Icons.volume_up,
@@ -225,7 +224,7 @@ class _SensoryBreakScreenState extends ConsumerState<SensoryBreakScreen>
         height: 160,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: Colors.white.withOpacity(0.3),
+          color: Colors.white.withValues(alpha: 0.3),
           border: Border.all(color: Colors.white, width: 3),
         ),
         child: const Center(
@@ -245,7 +244,7 @@ class _SensoryBreakScreenState extends ConsumerState<SensoryBreakScreen>
             height: 160,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.white.withOpacity(0.2 + 0.15 * scale),
+              color: Colors.white.withValues(alpha: 0.2 + 0.15 * scale),
               border: Border.all(color: Colors.white, width: 3),
             ),
             child: const Center(

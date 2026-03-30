@@ -1,4 +1,5 @@
 /// User and authentication token models for the AIVO Learning mobile app.
+library;
 
 class User {
   final String id;

@@ -1,5 +1,6 @@
 /// Brain context models representing learner cognitive profiles,
 /// mastery levels, and IEP goals for the AIVO Learning mobile app.
+library;
 
 import 'package:flutter/foundation.dart';
 

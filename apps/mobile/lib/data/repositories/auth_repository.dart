@@ -48,7 +48,7 @@ class AuthRepository {
 
   /// Creates a new account and returns the authenticated [User].
   Future<User> register(
-      String name, String email, String password, String role) async {
+      String name, String email, String password, String role,) async {
     final response = await _api.post(
       Endpoints.register,
       data: {

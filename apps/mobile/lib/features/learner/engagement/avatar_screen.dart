@@ -7,7 +7,6 @@ import 'package:aivo_mobile/config/theme.dart';
 import 'package:aivo_mobile/core/api/api_client.dart';
 import 'package:aivo_mobile/core/api/endpoints.dart';
 import 'package:aivo_mobile/core/auth/auth_provider.dart';
-import 'package:aivo_mobile/core/auth/auth_service.dart';
 
 // ---------------------------------------------------------------------------
 // Avatar item model
@@ -101,28 +100,6 @@ String _learnerId(Ref ref) {
       ? (authState.user.learnerId ?? authState.user.id)
       : '';
 }
-
-final _avatarDataProvider =
-    FutureProvider.autoDispose<({AvatarConfig config, List<AvatarItem> items})>(
-        (ref) async {
-  final api = ref.watch(apiClientProvider);
-  final learnerId = _learnerId(ref);
-
-  final results = await Future.wait([
-    api.get(Endpoints.avatar(learnerId)),
-    api.get(Endpoints.inventory(learnerId)),
-  ]);
-
-  final avatarJson = results[0].data as Map<String, dynamic>;
-  final inventoryJson = results[1].data as Map<String, dynamic>;
-
-  final config = AvatarConfig.fromJson(avatarJson);
-  final items = (inventoryJson['avatarItems'] as List<dynamic>? ?? [])
-      .map((e) => AvatarItem.fromJson(e as Map<String, dynamic>))
-      .toList();
-
-  return (config: config, items: items);
-});
 
 // ---------------------------------------------------------------------------
 // Avatar state notifier
@@ -300,7 +277,7 @@ class AvatarScreen extends ConsumerWidget {
                         .map((s) => Tab(
                               text: s,
                               icon: Icon(_sectionIcon(s), size: 20),
-                            ))
+                            ),)
                         .toList(),
                     isScrollable: false,
                     labelColor: colorScheme.primary,
@@ -521,7 +498,7 @@ class _SectionItems extends ConsumerWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             const Icon(Icons.monetization_on,
-                                size: 10, color: AivoColors.xpGold),
+                                size: 10, color: AivoColors.xpGold,),
                             const SizedBox(width: 2),
                             Text(
                               '${item.price}',
@@ -534,7 +511,7 @@ class _SectionItems extends ConsumerWidget {
                       if (isSelected) ...[
                         const SizedBox(height: 2),
                         Icon(Icons.check_circle,
-                            size: 14, color: colorScheme.primary),
+                            size: 14, color: colorScheme.primary,),
                       ],
                     ],
                   ),

@@ -8,7 +8,6 @@ import 'package:aivo_mobile/core/accessibility/eye_gaze_controller.dart';
 import 'package:aivo_mobile/core/accessibility/functioning_level_provider.dart';
 import 'package:aivo_mobile/core/accessibility/large_touch_wrapper.dart';
 import 'package:aivo_mobile/core/accessibility/scan_target_wrapper.dart';
-import 'package:aivo_mobile/core/accessibility/switch_scan_controller.dart';
 import 'package:aivo_mobile/features/learner/breaks/sensory_break_timer.dart';
 
 // ---------------------------------------------------------------------------
@@ -200,7 +199,7 @@ class _AdaptiveLessonRendererState
                 child: Chip(
                   label: Text(choice.label),
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 8),
+                      horizontal: 16, vertical: 8,),
                 ),
               );
             }).toList(),
@@ -449,7 +448,7 @@ class _AdaptiveLessonRendererState
                 Row(
                   children: [
                     Icon(Icons.family_restroom,
-                        color: theme.colorScheme.onPrimaryContainer),
+                        color: theme.colorScheme.onPrimaryContainer,),
                     const SizedBox(width: 8),
                     Text(
                       'Parent / Caregiver Guide',

@@ -8,7 +8,6 @@ import 'package:aivo_mobile/core/api/api_client.dart';
 import 'package:aivo_mobile/core/api/endpoints.dart';
 import 'package:aivo_mobile/core/connectivity/connectivity_provider.dart';
 import 'package:aivo_mobile/core/connectivity/sync_manager.dart';
-import 'package:aivo_mobile/data/local/database.dart';
 import 'package:aivo_mobile/data/local/daos/engagement_dao.dart';
 import 'package:aivo_mobile/data/models/engagement.dart';
 
@@ -43,7 +42,7 @@ class EngagementRepository {
       try {
         final response = await _api.get(Endpoints.xp(learnerId));
         final summary = EngagementSummary.fromJson(
-            response.data as Map<String, dynamic>);
+            response.data as Map<String, dynamic>,);
         await _saveEngagementSummary(learnerId, summary);
         return summary;
       } on DioException {
@@ -69,7 +68,7 @@ class EngagementRepository {
       try {
         final response = await _api.get(Endpoints.streaks(learnerId));
         final summary = EngagementSummary.fromJson(
-            response.data as Map<String, dynamic>);
+            response.data as Map<String, dynamic>,);
         await _saveEngagementSummary(learnerId, summary);
         return summary;
       } on DioException {
@@ -100,7 +99,7 @@ class EngagementRepository {
       endpoint: Endpoints.streakFreeze(learnerId),
       method: 'POST',
       payload: jsonEncode({}),
-    ));
+    ),);
   }
 
   // ---------------------------------------------------------------------------
@@ -201,7 +200,7 @@ class EngagementRepository {
     final data = response.data as Map<String, dynamic>;
     return (data['entries'] as List<dynamic>?)
             ?.map(
-                (e) => LeaderboardEntry.fromJson(e as Map<String, dynamic>))
+                (e) => LeaderboardEntry.fromJson(e as Map<String, dynamic>),)
             .toList() ??
         [];
   }
@@ -231,7 +230,7 @@ class EngagementRepository {
     final data = response.data as Map<String, dynamic>;
     return (data['challenges'] as List<dynamic>?)
             ?.map(
-                (e) => DailyChallenge.fromJson(e as Map<String, dynamic>))
+                (e) => DailyChallenge.fromJson(e as Map<String, dynamic>),)
             .toList() ??
         [];
   }
@@ -272,7 +271,7 @@ class EngagementRepository {
       streakExpiresAt: streakData['streakExpiresAt'] != null
           ? Value(DateTime.parse(streakData['streakExpiresAt'] as String))
           : const Value.absent(),
-    ));
+    ),);
   }
 
   // ---------------------------------------------------------------------------
@@ -295,12 +294,12 @@ class EngagementRepository {
       streakExpiresAt: summary.streakExpiresAt != null
           ? Value(summary.streakExpiresAt!)
           : const Value.absent(),
-    ));
+    ),);
   }
 
   /// Reads an [EngagementSummary] from the local database, or returns `null`.
   Future<EngagementSummary?> _loadEngagementSummary(
-      String learnerId) async {
+      String learnerId,) async {
     final row = await _engagementDao.getEngagement(learnerId);
     if (row == null) return null;
     return EngagementSummary(

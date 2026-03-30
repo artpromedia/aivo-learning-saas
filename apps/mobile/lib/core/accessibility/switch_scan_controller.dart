@@ -132,7 +132,7 @@ class SwitchScanController extends ChangeNotifier {
   // Hardware key handling
   // -----------------------------------------------------------------------
 
-  /// Call from a [Focus] or [RawKeyboardListener] ancestor.  Maps any key
+  /// Call from a [Focus] or [KeyboardListener] ancestor.  Maps any key
   /// press to the [select] action while scanning is active.  Returns true if
   /// the event was consumed.
   bool handleKeyEvent(KeyEvent event) {

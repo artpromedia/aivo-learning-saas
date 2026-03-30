@@ -7,7 +7,6 @@ import 'package:shimmer/shimmer.dart';
 import 'package:aivo_mobile/core/api/api_client.dart';
 import 'package:aivo_mobile/core/api/endpoints.dart';
 import 'package:aivo_mobile/core/auth/auth_provider.dart';
-import 'package:aivo_mobile/core/auth/auth_service.dart';
 import 'package:aivo_mobile/data/models/homework.dart';
 
 // ---------------------------------------------------------------------------
@@ -25,7 +24,7 @@ final _homeworkListProvider =
       await api.get(Endpoints.learningSessionHistory, queryParameters: {
     'learnerId': learnerId,
     'type': 'homework',
-  });
+  },);
   final list = response.data as List<dynamic>;
   return list
       .map((e) => Homework.fromJson(e as Map<String, dynamic>))
@@ -76,7 +75,7 @@ class HomeworkScreen extends ConsumerWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(Icons.assignment_outlined,
-                        size: 64, color: colorScheme.outline),
+                        size: 64, color: colorScheme.outline,),
                     const SizedBox(height: 16),
                     Text(
                       'No homework yet',
@@ -272,7 +271,7 @@ class _HomeworkCard extends StatelessWidget {
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 4),
+                          horizontal: 10, vertical: 4,),
                       decoration: BoxDecoration(
                         color: statusColor.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(12),

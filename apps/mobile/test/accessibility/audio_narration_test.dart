@@ -129,14 +129,16 @@ void main() {
     test('setEnabled persists preference and stops speech when disabled',
         () async {
       when(mockStorage.write(key: anyNamed('key'), value: anyNamed('value')))
-          .thenAnswer((_) async {});
+          .thenAnswer((_) async {
+            return;
+          });
 
       await narrator.setEnabled(false);
 
       verify(mockStorage.write(
         key: 'aivo_narration_enabled',
         value: 'false',
-      )).called(1);
+      ),).called(1);
       verify(mockTts.stop()).called(1);
       expect(narrator.isEnabled, false);
     });

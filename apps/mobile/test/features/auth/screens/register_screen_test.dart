@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mocktail/mocktail.dart';
 
 import 'package:aivo_mobile/core/auth/auth_provider.dart';
 import 'package:aivo_mobile/core/auth/auth_service.dart';

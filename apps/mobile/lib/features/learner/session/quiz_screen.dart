@@ -110,7 +110,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
           endpoint: Endpoints.learningSessionInteract(widget.sessionId),
           method: 'POST',
           payload: jsonEncode(payload),
-        ));
+        ),);
         // Offline: cannot determine correctness
         feedback = 'Answer saved. We will check when online.';
       }
@@ -182,10 +182,10 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(Icons.quiz_outlined,
-                    size: 64, color: theme.colorScheme.outline),
+                    size: 64, color: theme.colorScheme.outline,),
                 const SizedBox(height: 16),
                 Text('No quiz questions available.',
-                    style: theme.textTheme.bodyLarge),
+                    style: theme.textTheme.bodyLarge,),
                 const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: () => context.canPop()
@@ -285,10 +285,10 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                   child: Row(
                     children: [
                       const Icon(Icons.check_circle,
-                          size: 16, color: AivoColors.questGreen),
+                          size: 16, color: AivoColors.questGreen,),
                       const SizedBox(width: 4),
                       Text('$_correctCount/$_totalAnswered',
-                          style: theme.textTheme.bodySmall),
+                          style: theme.textTheme.bodySmall,),
                     ],
                   ),
                 ),
@@ -344,7 +344,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                               )
                             : Text('Submit',
                                 style:
-                                    TextStyle(fontSize: isLowVerbal ? 20 : 16)),
+                                    TextStyle(fontSize: isLowVerbal ? 20 : 16),),
                       ),
                     ),
             ),
@@ -376,7 +376,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
   }
 
   Widget _buildQuestionType(
-      ThemeData theme, Interaction interaction, bool isLowVerbal) {
+      ThemeData theme, Interaction interaction, bool isLowVerbal,) {
     switch (interaction.type) {
       case 'true_false':
         return _buildTrueFalse(theme, isLowVerbal);
@@ -391,7 +391,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
   }
 
   Widget _buildMultipleChoice(
-      ThemeData theme, Interaction interaction, bool isLowVerbal) {
+      ThemeData theme, Interaction interaction, bool isLowVerbal,) {
     final options = (interaction.data['options'] as List<dynamic>?)
             ?.map((e) => e.toString())
             .toList() ??
@@ -401,33 +401,35 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
         ? options.take(2).toList()
         : options;
 
-    return Column(
-      children: display.map((option) {
-        final isSelected = _selectedAnswer == option;
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 10),
-          child: Semantics(
-            button: true,
-            selected: isSelected,
-            label: option,
-            child: RadioListTile<String>(
-              value: option,
-              groupValue: _selectedAnswer,
-              onChanged: (v) => setState(() => _selectedAnswer = v),
-              title: Text(option,
-                  style: TextStyle(fontSize: isLowVerbal ? 20 : 16)),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
-              tileColor: isSelected
-                  ? theme.colorScheme.primary.withValues(alpha: 0.08)
-                  : theme.colorScheme.surfaceContainerHighest,
-              activeColor: theme.colorScheme.primary,
-              contentPadding:
-                  EdgeInsets.symmetric(horizontal: isLowVerbal ? 20 : 12),
+    return RadioGroup<String>(
+      groupValue: _selectedAnswer,
+      onChanged: (v) => setState(() => _selectedAnswer = v),
+      child: Column(
+        children: display.map((option) {
+          final isSelected = _selectedAnswer == option;
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: Semantics(
+              button: true,
+              selected: isSelected,
+              label: option,
+              child: RadioListTile<String>(
+                value: option,
+                title: Text(option,
+                    style: TextStyle(fontSize: isLowVerbal ? 20 : 16),),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),),
+                tileColor: isSelected
+                    ? theme.colorScheme.primary.withValues(alpha: 0.08)
+                    : theme.colorScheme.surfaceContainerHighest,
+                activeColor: theme.colorScheme.primary,
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: isLowVerbal ? 20 : 12),
+              ),
             ),
-          ),
-        );
-      }).toList(),
+          );
+        }).toList(),
+      ),
     );
   }
 
@@ -453,10 +455,10 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                       : theme.colorScheme.onSurface,
                   minimumSize: Size(0, isLowVerbal ? 80 : 56),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16)),
+                      borderRadius: BorderRadius.circular(16),),
                 ),
                 child: Text(option,
-                    style: TextStyle(fontSize: isLowVerbal ? 22 : 18)),
+                    style: TextStyle(fontSize: isLowVerbal ? 22 : 18),),
               ),
             ),
           ),
@@ -483,7 +485,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
   }
 
   Widget _buildPictureSelect(
-      ThemeData theme, Interaction interaction, bool isLowVerbal) {
+      ThemeData theme, Interaction interaction, bool isLowVerbal,) {
     final options = (interaction.data['options'] as List<dynamic>?)
             ?.cast<Map<String, dynamic>>() ??
         [];
@@ -538,7 +540,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                   const SizedBox(height: 6),
                   Text(label,
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: isLowVerbal ? 16 : 13)),
+                      style: TextStyle(fontSize: isLowVerbal ? 16 : 13),),
                 ],
               ),
             ),
@@ -616,7 +618,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                 Semantics(
                   header: true,
                   child: Text('Quiz Complete!',
-                      style: theme.textTheme.headlineMedium),
+                      style: theme.textTheme.headlineMedium,),
                 ),
                 const SizedBox(height: 16),
                 Semantics(
@@ -683,7 +685,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                           ? context.pop()
                           : context.go('/learner/home'),
                       child: Text('Done',
-                          style: TextStyle(fontSize: isLowVerbal ? 20 : 16)),
+                          style: TextStyle(fontSize: isLowVerbal ? 20 : 16),),
                     ),
                   ),
                 ),

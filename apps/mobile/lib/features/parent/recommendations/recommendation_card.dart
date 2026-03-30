@@ -487,7 +487,7 @@ class _AdjustmentSheetState extends State<_AdjustmentSheet> {
 
             // Difficulty slider
             Text('Difficulty Level',
-                style: theme.textTheme.labelLarge),
+                style: theme.textTheme.labelLarge,),
             Semantics(
               label:
                   'Difficulty adjustment: ${(_difficultyAdjustment * 100).toInt()}%',
@@ -505,9 +505,9 @@ class _AdjustmentSheetState extends State<_AdjustmentSheet> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('Easier',
-                    style: theme.textTheme.bodySmall),
+                    style: theme.textTheme.bodySmall,),
                 Text('Harder',
-                    style: theme.textTheme.bodySmall),
+                    style: theme.textTheme.bodySmall,),
               ],
             ),
             const SizedBox(height: 16),
@@ -531,9 +531,9 @@ class _AdjustmentSheetState extends State<_AdjustmentSheet> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('Less often',
-                    style: theme.textTheme.bodySmall),
+                    style: theme.textTheme.bodySmall,),
                 Text('More often',
-                    style: theme.textTheme.bodySmall),
+                    style: theme.textTheme.bodySmall,),
               ],
             ),
             const SizedBox(height: 16),
