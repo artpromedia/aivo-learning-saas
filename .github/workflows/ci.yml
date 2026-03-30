@@ -140,6 +140,7 @@ jobs:
           pnpm --filter @aivo/events build
           pnpm --filter @aivo/observability build
           pnpm --filter @aivo/brand build
+          pnpm --filter @aivo/feature-flags build
 
       - name: Start identity-svc
         env:
@@ -164,6 +165,50 @@ jobs:
             fi
             sleep 2
           done
+
+      - name: Start backend services
+        env:
+          DATABASE_URL: postgresql://aivo:aivo_test@localhost:5433/aivo_test
+          REDIS_URL: redis://localhost:6380
+          NATS_URL: nats://localhost:4223
+          JWT_PUBLIC_KEY: ${{ env.JWT_PUBLIC_KEY }}
+          NODE_ENV: test
+        run: |
+          start_svc() {
+            local filter="$1" port="$2"
+            echo "Starting $filter on port $port..."
+            PORT=$port pnpm --filter "$filter" dev &
+          }
+
+          start_svc "@aivo/family-svc"      3005
+          start_svc "@aivo/admin-svc"        3009
+          start_svc "@aivo/billing-svc"      3008
+          start_svc "@aivo/comms-svc"        3007
+          start_svc "@aivo/engagement-svc"   3004
+          start_svc "@aivo/learning-svc"     3003
+          start_svc "tutor-svc"              3006
+
+          # Wait for all services to become healthy
+          wait_svc() {
+            local name="$1" port="$2"
+            echo "Waiting for $name (port $port)..."
+            for i in $(seq 1 30); do
+              if curl -sf "http://localhost:$port/health" > /dev/null 2>&1; then
+                echo "  $name is healthy"
+                return 0
+              fi
+              sleep 2
+            done
+            echo "  [warn] $name did not become healthy after 60s, continuing..."
+          }
+
+          wait_svc family-svc      3005
+          wait_svc admin-svc        3009
+          wait_svc billing-svc      3008
+          wait_svc comms-svc        3007
+          wait_svc engagement-svc   3004
+          wait_svc learning-svc     3003
+          wait_svc tutor-svc        3006
 
       - name: Run E2E tests
         env:
