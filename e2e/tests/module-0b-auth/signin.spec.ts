@@ -36,7 +36,7 @@ test.describe('Module 0b: Sign In', () => {
 
     await page.goto(`${BASE_URL}/login`);
     await page.getByLabel(/email/i).fill(parentUser.email);
-    await page.getByLabel(/^password$/i).fill(parentUser.password);
+    await page.getByLabel(/password/i).first().fill(parentUser.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
 
     await page.waitForURL(/\/(parent|learner|teacher|admin|add-child)/, { timeout: 15_000 });
@@ -74,7 +74,7 @@ test.describe('Module 0b: Sign In', () => {
 
     await page.goto(`${BASE_URL}/login`);
     await page.getByLabel(/email/i).fill(parentUser.email);
-    await page.getByLabel(/^password$/i).fill(parentUser.password);
+    await page.getByLabel(/password/i).first().fill(parentUser.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
     await page.waitForURL(/\/(parent|learner|teacher|admin|add-child)/, { timeout: 15_000 });
 

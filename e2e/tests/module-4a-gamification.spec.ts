@@ -119,7 +119,7 @@ test.describe('Module 4a: Gamification', () => {
     // Verify in UI
     await page.goto(`${BASE_URL}/login`);
     await page.getByLabel(/email/i).fill(parent.email);
-    await page.getByLabel(/^password$/i).fill(parent.password);
+    await page.getByLabel(/password/i).first().fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
     await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
 
@@ -214,7 +214,7 @@ test.describe('Module 4a: Gamification', () => {
     // Verify in UI
     await page.goto(`${BASE_URL}/login`);
     await page.getByLabel(/email/i).fill(parent.email);
-    await page.getByLabel(/^password$/i).fill(parent.password);
+    await page.getByLabel(/password/i).first().fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
     await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
 
@@ -302,7 +302,7 @@ test.describe('Module 4a: Gamification', () => {
     // Verify challenge appears in UI
     await page.goto(`${BASE_URL}/login`);
     await page.getByLabel(/email/i).fill(parent.email);
-    await page.getByLabel(/^password$/i).fill(parent.password);
+    await page.getByLabel(/password/i).first().fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
     await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
 

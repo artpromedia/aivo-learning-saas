@@ -108,7 +108,7 @@ test.describe('Integration: Full Onboarding Flow', () => {
 
     await page.goto(`${BASE_URL}/login`);
     await page.getByLabel(/email/i).fill(email);
-    await page.getByLabel(/^password$/i).fill(password);
+    await page.getByLabel(/password/i).first().fill(password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
     await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
     await expect(page).not.toHaveURL(/\/login/);

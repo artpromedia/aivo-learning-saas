@@ -87,7 +87,7 @@ test.describe('Module 3a: Homework Help', () => {
     // Verify via UI
     await page.goto(`${BASE_URL}/login`);
     await page.getByLabel(/email/i).fill(parent.email);
-    await page.getByLabel(/^password$/i).fill(parent.password);
+    await page.getByLabel(/password/i).first().fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
     await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
 
@@ -135,7 +135,7 @@ test.describe('Module 3a: Homework Help', () => {
     // Verify via UI that homework help shows locked state
     await page.goto(`${BASE_URL}/login`);
     await page.getByLabel(/email/i).fill(freeParent.email);
-    await page.getByLabel(/^password$/i).fill(freeParent.password);
+    await page.getByLabel(/password/i).first().fill(freeParent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
     await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
 
@@ -197,7 +197,7 @@ test.describe('Module 3a: Homework Help', () => {
       // Navigate to the homework session in UI
       await page.goto(`${BASE_URL}/login`);
       await page.getByLabel(/email/i).fill(parent.email);
-      await page.getByLabel(/^password$/i).fill(parent.password);
+      await page.getByLabel(/password/i).first().fill(parent.password);
       await page.getByRole('button', { name: /sign in|log in/i }).click();
       await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
 

@@ -29,7 +29,7 @@ test.describe('Module 1a: Assessment & Onboarding', () => {
     // Login as the test parent
     await page.goto(`${BASE_URL}/login`);
     await page.getByLabel(/email/i).fill(parent.email);
-    await page.getByLabel(/^password$/i).fill(parent.password);
+    await page.getByLabel(/password/i).first().fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
     await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
 
@@ -202,7 +202,7 @@ test.describe('Module 1a: Assessment & Onboarding', () => {
         // Navigate to learner profile page to verify IEP data display
         await page.goto(`${BASE_URL}/login`);
         await page.getByLabel(/email/i).fill(parent.email);
-        await page.getByLabel(/^password$/i).fill(parent.password);
+        await page.getByLabel(/password/i).first().fill(parent.password);
         await page.getByRole('button', { name: /sign in|log in/i }).click();
         await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
 

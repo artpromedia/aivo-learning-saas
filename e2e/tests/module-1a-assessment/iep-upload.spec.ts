@@ -49,7 +49,7 @@ test.describe('Module 1a: IEP Upload', () => {
 
     await page.goto(`${BASE_URL}/login`);
     await page.getByLabel(/email/i).fill(parent.email);
-    await page.getByLabel(/^password$/i).fill(parent.password);
+    await page.getByLabel(/password/i).first().fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
     await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
 
