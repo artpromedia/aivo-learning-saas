@@ -40,7 +40,7 @@ test.describe('Module 3b: Collaboration', () => {
     // Login as parent
     await page.goto(`${BASE_URL}/login`);
     await page.getByLabel(/email/i).fill(parent.email);
-    await page.getByLabel(/password/i).fill(parent.password);
+    await page.getByLabel(/^password$/i).fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
     await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
 
@@ -149,7 +149,7 @@ test.describe('Module 3b: Collaboration', () => {
     // Verify in parent UI
     await page.goto(`${BASE_URL}/login`);
     await page.getByLabel(/email/i).fill(parent.email);
-    await page.getByLabel(/password/i).fill(parent.password);
+    await page.getByLabel(/^password$/i).fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
     await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
 

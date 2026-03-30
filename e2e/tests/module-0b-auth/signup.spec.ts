@@ -20,7 +20,7 @@ test.describe('Module 0b: Signup', () => {
     await expect(page.locator('h1, h2').first()).toBeVisible();
 
     await page.getByLabel(/email/i).fill(email);
-    await page.getByLabel(/password/i).first().fill(password);
+    await page.getByLabel(/^password$/i).fill(password);
     if (await page.getByLabel(/confirm password/i).isVisible().catch(() => false)) {
       await page.getByLabel(/confirm password/i).fill(password);
     }
@@ -37,7 +37,7 @@ test.describe('Module 0b: Signup', () => {
     if (verifyRes.ok()) {
       await page.goto(`${BASE_URL}/login`);
       await page.getByLabel(/email/i).fill(email);
-      await page.getByLabel(/password/i).fill(password);
+      await page.getByLabel(/^password$/i).fill(password);
       await page.getByRole('button', { name: /sign in|log in/i }).click();
 
       await page.waitForURL(/\/(parent|learner|add-child)/, { timeout: 15_000 });

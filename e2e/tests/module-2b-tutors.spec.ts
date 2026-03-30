@@ -48,7 +48,7 @@ test.describe('Module 2b: Tutors', () => {
     // Login and verify tutor appears in dashboard
     await page.goto(`${BASE_URL}/login`);
     await page.getByLabel(/email/i).fill(parent.email);
-    await page.getByLabel(/password/i).fill(parent.password);
+    await page.getByLabel(/^password$/i).fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
     await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
 
@@ -139,7 +139,7 @@ test.describe('Module 2b: Tutors', () => {
     // Navigate to the session in UI
     await page.goto(`${BASE_URL}/login`);
     await page.getByLabel(/email/i).fill(parent.email);
-    await page.getByLabel(/password/i).fill(parent.password);
+    await page.getByLabel(/^password$/i).fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
     await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
 

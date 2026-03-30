@@ -59,7 +59,7 @@ test.describe('Module 1b: Brain Profile', () => {
     // Login and navigate to brain reveal page
     await page.goto(`${BASE_URL}/login`);
     await page.getByLabel(/email/i).fill(parent.email);
-    await page.getByLabel(/password/i).fill(parent.password);
+    await page.getByLabel(/^password$/i).fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
     await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
 
@@ -106,7 +106,7 @@ test.describe('Module 1b: Brain Profile', () => {
     // Verify through the UI
     await page.goto(`${BASE_URL}/login`);
     await page.getByLabel(/email/i).fill(parent.email);
-    await page.getByLabel(/password/i).fill(parent.password);
+    await page.getByLabel(/^password$/i).fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
     await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
 

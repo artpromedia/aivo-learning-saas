@@ -26,7 +26,7 @@ test.describe('Module 0b: Authentication', () => {
 
     // Fill the signup form
     await page.getByLabel(/email/i).fill(email);
-    await page.getByLabel(/password/i).first().fill(password);
+    await page.getByLabel(/^password$/i).fill(password);
     if (await page.getByLabel(/confirm password/i).isVisible()) {
       await page.getByLabel(/confirm password/i).fill(password);
     }
@@ -47,7 +47,7 @@ test.describe('Module 0b: Authentication', () => {
       // Navigate to login and confirm access
       await page.goto(`${BASE_URL}/login`);
       await page.getByLabel(/email/i).fill(email);
-      await page.getByLabel(/password/i).fill(password);
+      await page.getByLabel(/^password$/i).fill(password);
       await page.getByRole('button', { name: /sign in|log in/i }).click();
 
       await page.waitForURL(/\/(parent|learner|teacher|admin|add-child)/, { timeout: 15_000 });
@@ -67,7 +67,7 @@ test.describe('Module 0b: Authentication', () => {
 
     // Fill login form
     await page.getByLabel(/email/i).fill(parentUser.email);
-    await page.getByLabel(/password/i).fill(parentUser.password);
+    await page.getByLabel(/^password$/i).fill(parentUser.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
 
     // Should navigate to role-based dashboard
@@ -100,7 +100,7 @@ test.describe('Module 0b: Authentication', () => {
     // Login via the UI
     await page.goto(`${BASE_URL}/login`);
     await page.getByLabel(/email/i).fill(user.email);
-    await page.getByLabel(/password/i).fill(user.password);
+    await page.getByLabel(/^password$/i).fill(user.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
     await page.waitForURL(/\/(parent|learner|teacher|admin|add-child)/, { timeout: 15_000 });
 
@@ -144,7 +144,7 @@ test.describe('Module 0b: Authentication', () => {
     // Login as parent
     await page.goto(`${BASE_URL}/login`);
     await page.getByLabel(/email/i).fill(user.email);
-    await page.getByLabel(/password/i).fill(user.password);
+    await page.getByLabel(/^password$/i).fill(user.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
     await page.waitForURL(/\/(parent|learner|teacher|admin|add-child)/, { timeout: 15_000 });
 
@@ -222,7 +222,7 @@ test.describe('Module 0b: Authentication', () => {
       // Login with new password
       await page.goto(`${BASE_URL}/login`);
       await page.getByLabel(/email/i).fill(user.email);
-      await page.getByLabel(/password/i).fill(newPassword);
+      await page.getByLabel(/^password$/i).fill(newPassword);
       await page.getByRole('button', { name: /sign in|log in/i }).click();
 
       await page.waitForURL(/\/(parent|learner|teacher|admin|add-child)/, { timeout: 15_000 });

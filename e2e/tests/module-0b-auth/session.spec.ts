@@ -66,7 +66,7 @@ test.describe('Module 0b: Session Management', () => {
 
     await page.goto(`${BASE_URL}/login`);
     await page.getByLabel(/email/i).fill(user.email);
-    await page.getByLabel(/password/i).fill(user.password);
+    await page.getByLabel(/^password$/i).fill(user.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
     await page.waitForURL(/\/(parent|learner|teacher|admin|add-child)/, { timeout: 15_000 });
 
