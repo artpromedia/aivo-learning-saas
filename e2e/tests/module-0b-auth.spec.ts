@@ -193,9 +193,9 @@ test.describe('Module 0b: Authentication', () => {
     await page.getByLabel(/email/i).fill(user.email);
     await page.getByRole('button', { name: /send|reset|submit/i }).click();
 
-    // Should see confirmation message
+    // Should see confirmation message (raw i18n key when i18n-svc unavailable)
     await expect(
-      page.getByText(/check your email|reset link sent|email sent/i),
+      page.getByText(/check\s*your\s*email|reset link sent|email sent/i),
     ).toBeVisible({ timeout: 10_000 });
 
     // Trigger password reset via API in test mode

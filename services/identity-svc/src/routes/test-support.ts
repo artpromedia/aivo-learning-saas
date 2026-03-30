@@ -33,6 +33,9 @@ const verifyEmailBodySchema = z.object({
 });
 
 export async function testSupportRoutes(app: FastifyInstance) {
+  // In-memory token blacklist for sign-out simulation
+  const revokedTokens = new Set<string>();
+
   // ── POST /auth/sign-up ─────────────────────────────────────────────
   // Test-friendly registration with role support + token in response body.
   app.post("/auth/sign-up", async (request, reply) => {
@@ -171,6 +174,12 @@ export async function testSupportRoutes(app: FastifyInstance) {
 
   // ── GET /auth/session ──────────────────────────────────────────────
   app.get("/auth/session", { preHandler: [authenticate] }, async (request, reply) => {
+    // Check if token has been revoked via sign-out
+    const auth = request.headers.authorization;
+    if (auth?.startsWith("Bearer ") && revokedTokens.has(auth.slice(7))) {
+      return reply.status(401).send({ error: "Token revoked" });
+    }
+
     const [user] = await app.db
       .select({
         id: users.id,
@@ -216,7 +225,11 @@ export async function testSupportRoutes(app: FastifyInstance) {
   });
 
   // ── POST /auth/sign-out ────────────────────────────────────────────
-  app.post("/auth/sign-out", async (_request, reply) => {
+  app.post("/auth/sign-out", async (request, reply) => {
+    const auth = request.headers.authorization;
+    if (auth?.startsWith("Bearer ")) {
+      revokedTokens.add(auth.slice(7));
+    }
     return reply.status(200).send({ ok: true });
   });
 
