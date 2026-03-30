@@ -702,7 +702,26 @@ jobs:
               helm uninstall aivolearning -n aivo --no-hooks 2>/dev/null || true
           fi
 
+      - name: Pre-flight checks
+        run: |
+          echo "Checking required Kubernetes secrets..."
+          MISSING=0
+          for secret in db-secrets jwt-secrets identity-secrets ghcr-pull-secret; do
+            if kubectl get secret "$secret" -n aivo >/dev/null 2>&1; then
+              echo "  OK: $secret"
+            else
+              echo "  MISSING: $secret"
+              MISSING=$((MISSING + 1))
+            fi
+          done
+          if [ "$MISSING" -gt 0 ]; then
+            echo "::error::$MISSING required Kubernetes secret(s) missing in namespace 'aivo'"
+            echo "Create them before deploying. See infra/helm/templates/deployment.yaml for required keys."
+            exit 1
+          fi
+
       - name: Helm upgrade (staging)
+        id: helm-upgrade
         run: |
           helm upgrade --install aivolearning infra/helm \
             -f infra/helm/values/hetzner.yaml \
@@ -711,7 +730,37 @@ jobs:
             --timeout 10m \
             --wait
 
+      - name: Diagnose failed rollout
+        if: failure() && steps.helm-upgrade.outcome == 'failure'
+        run: |
+          echo "=== Helm upgrade failed — collecting diagnostics ==="
+          echo ""
+          echo "--- Pod statuses ---"
+          kubectl get pods -n aivo -o wide --no-headers | sort
+          echo ""
+          echo "--- Non-running pods ---"
+          NOT_RUNNING=$(kubectl get pods -n aivo --no-headers | grep -v Running | grep -v Completed || true)
+          if [ -n "$NOT_RUNNING" ]; then
+            echo "$NOT_RUNNING"
+            echo ""
+            echo "--- Describe non-running pods ---"
+            for pod in $(echo "$NOT_RUNNING" | awk '{print $1}'); do
+              echo ""
+              echo "=== kubectl describe pod $pod ==="
+              kubectl describe pod "$pod" -n aivo | tail -30
+              echo ""
+              echo "=== kubectl logs $pod (last 30 lines) ==="
+              kubectl logs "$pod" -n aivo --tail=30 2>/dev/null || echo "(no logs)"
+            done
+          else
+            echo "(all pods running)"
+          fi
+          echo ""
+          echo "--- Recent events (last 5 min) ---"
+          kubectl get events -n aivo --sort-by=.metadata.creationTimestamp | tail -40
+
       - name: Verify rollout status
+        if: success()
         run: |
           SERVICES=(
             identity-svc billing-svc family-svc integrations-svc admin-svc
