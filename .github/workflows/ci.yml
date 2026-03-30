@@ -212,11 +212,6 @@ jobs:
           wait_svc tutor-svc        3006
           wait_svc i18n-svc         3011
 
-      - name: Seed i18n translations
-        run: |
-          echo "Seeding i18n translations..."
-          curl -sf -X POST http://localhost:3011/i18n/seed || echo "[warn] i18n seed failed, UI text may show raw keys"
-
       - name: Run E2E tests
         env:
           DATABASE_URL: postgresql://aivo:aivo_test@localhost:5433/aivo_test

@@ -28,7 +28,7 @@ global:
 
   # NATS inside K3s cluster
   nats:
-    url: nats://nats.aivo-staging.svc.cluster.local:4222
+    url: nats://nats.aivo.svc.cluster.local:4222
     jetstream: true
 
   # MinIO on Server 3 (i7-8700, 3rd SSD — internal storage)
@@ -282,3 +282,25 @@ ingress:
         - staging.aivo.app
         - api.staging.aivo.app
         - status.staging.aivo.app
+
+# ─────────────────────────────────────────────
+# NATS — deploy inside K3s cluster
+# ─────────────────────────────────────────────
+nats:
+  enabled: true
+  fullnameOverride: nats
+  config:
+    jetstream:
+      enabled: true
+      fileStore:
+        pvc:
+          size: 2Gi
+  container:
+    merge:
+      resources:
+        requests:
+          cpu: 50m
+          memory: 64Mi
+        limits:
+          cpu: 250m
+          memory: 256Mi

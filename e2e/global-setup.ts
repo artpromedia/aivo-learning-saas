@@ -75,6 +75,22 @@ async function seedTestFixtures(): Promise<void> {
   }
 }
 
+const I18N_BASE = process.env.NEXT_PUBLIC_I18N_SVC_URL || 'http://localhost:3011';
+
+async function seedI18nTranslations(): Promise<void> {
+  console.log('[setup] Seeding i18n translations...');
+  try {
+    const response = await fetch(`${I18N_BASE}/i18n/seed`, { method: 'POST' });
+    if (response.ok) {
+      console.log('  [ok] i18n translations seeded');
+    } else {
+      console.warn(`  [warn] i18n seed returned ${response.status}, UI may show raw keys`);
+    }
+  } catch {
+    console.warn('  [warn] i18n-svc not available, UI will show raw translation keys');
+  }
+}
+
 async function globalSetup(_config: FullConfig): Promise<void> {
   console.log('\n=== AIVO E2E Global Setup ===\n');
 
@@ -95,6 +111,9 @@ async function globalSetup(_config: FullConfig): Promise<void> {
 
   // Seed fixtures
   await seedTestFixtures();
+
+  // Seed i18n translations (must run after migrations)
+  await seedI18nTranslations();
 
   // Store test run metadata for teardown
   process.env.E2E_TEST_RUN_ID = `e2e-${Date.now()}`;
