@@ -152,7 +152,7 @@ jobs:
           PORT: "3101"
           NODE_ENV: test
         run: |
-          pnpm --filter identity-svc dev &
+          pnpm --filter identity-svc exec tsx src/index.ts &
           echo "Waiting for identity-svc to be healthy..."
           for i in $(seq 1 30); do
             if curl -sf http://localhost:3101/health > /dev/null 2>&1; then
@@ -177,7 +177,7 @@ jobs:
           start_svc() {
             local filter="$1" port="$2"
             echo "Starting $filter on port $port..."
-            PORT=$port pnpm --filter "$filter" dev &
+            PORT=$port pnpm --filter "$filter" exec tsx src/index.ts &
           }
 
           start_svc "@aivo/family-svc"      3005

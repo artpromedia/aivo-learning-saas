@@ -16,7 +16,7 @@ export const locales = pgTable(
   "locales",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    code: varchar("code", { length: 10 }).notNull(),
+    code: varchar("code", { length: 10 }).notNull().unique(),
     name: varchar("name", { length: 128 }).notNull(),
     nativeName: varchar("native_name", { length: 128 }).notNull(),
     direction: localeDirectionEnum("direction").notNull().default("LTR"),
