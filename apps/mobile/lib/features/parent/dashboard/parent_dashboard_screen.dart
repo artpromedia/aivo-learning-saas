@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:aivo_mobile/config/theme.dart';
@@ -223,7 +224,7 @@ class _NotificationBell extends ConsumerWidget {
       }),
     );
 
-    final count = asyncCount.valueOrNull ?? 0;
+    final count = asyncCount.value ?? 0;
 
     return Semantics(
       label: count > 0
@@ -488,7 +489,7 @@ class _BrainNavTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final asyncLearners = ref.watch(_learnersProvider);
-    final learners = asyncLearners.valueOrNull ?? [];
+    final learners = asyncLearners.value ?? [];
 
     if (learners.isEmpty) {
       return const Scaffold(

@@ -68,7 +68,7 @@ class TutorListScreen extends ConsumerWidget {
             return _buildEmptyState(context, theme);
           }
 
-          final sessions = historyAsync.valueOrNull ?? [];
+          final sessions = historyAsync.value ?? [];
           final lastSessionMap = <String, DateTime>{};
           final sessionCountMap = <String, int>{};
           for (final session in sessions) {

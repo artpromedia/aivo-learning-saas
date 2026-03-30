@@ -120,7 +120,7 @@ class _BannerContent extends ConsumerWidget {
 
     // Read the pending sync count from the DAO.
     final pendingCountAsync = ref.watch(_pendingSyncCountProvider);
-    final pendingCount = pendingCountAsync.valueOrNull ?? 0;
+    final pendingCount = pendingCountAsync.value ?? 0;
 
     final backgroundColor = isDark
         ? const Color(0xFF6D4C00)

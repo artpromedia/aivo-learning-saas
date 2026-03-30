@@ -82,7 +82,6 @@ class SyncManager {
   static Future<void> registerBackgroundSync() async {
     await Workmanager().initialize(
       backgroundSyncCallback,
-      isInDebugMode: !Env.isProduction,
     );
 
     await Workmanager().registerPeriodicTask(
@@ -92,7 +91,7 @@ class SyncManager {
       constraints: Constraints(
         networkType: NetworkType.connected,
       ),
-      existingWorkPolicy: ExistingWorkPolicy.keep,
+      existingWorkPolicy: ExistingPeriodicWorkPolicy.keep,
     );
   }
 }
@@ -143,8 +142,8 @@ final syncManagerProvider = Provider<SyncManager>((ref) {
   ref.listen<AsyncValue<ConnectivityStatus>>(
     connectivityProvider,
     (previous, next) {
-      final wasOffline = previous?.valueOrNull != ConnectivityStatus.online;
-      final isNowOnline = next.valueOrNull == ConnectivityStatus.online;
+      final wasOffline = previous?.value != ConnectivityStatus.online;
+      final isNowOnline = next.value == ConnectivityStatus.online;
       if (wasOffline && isNowOnline) {
         manager.drainSyncQueue();
       }

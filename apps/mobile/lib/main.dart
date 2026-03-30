@@ -103,7 +103,7 @@ Future<void> main() async {
   }
 
   // --- Workmanager (background tasks) ---
-  await Workmanager().initialize(callbackDispatcher, isInDebugMode: kDebugMode);
+  await Workmanager().initialize(callbackDispatcher);
   await Workmanager().registerPeriodicTask(
     'offlineSync',
     'offlineSync',

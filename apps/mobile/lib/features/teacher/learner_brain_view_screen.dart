@@ -56,7 +56,7 @@ class LearnerBrainViewScreen extends ConsumerWidget {
               ref.invalidate(_brainProvider(learnerId)),
         ),
         data: (brain) {
-          final insights = asyncInsights.valueOrNull ?? [];
+          final insights = asyncInsights.value ?? [];
 
           return RefreshIndicator(
             onRefresh: () async {

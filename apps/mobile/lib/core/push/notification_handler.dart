@@ -87,7 +87,7 @@ class NotificationHandler {
     );
 
     await _localNotifications.initialize(
-      initSettings,
+      settings: initSettings,
       onDidReceiveNotificationResponse: _onNotificationResponse,
     );
 
@@ -148,8 +148,13 @@ class NotificationHandler {
     // Use a hash of the message ID as the int notification ID.
     final notificationId = message.messageId.hashCode;
 
-    await _localNotifications.show(notificationId, title, body, details,
-        payload: payload,);
+    await _localNotifications.show(
+      id: notificationId,
+      title: title,
+      body: body,
+      notificationDetails: details,
+      payload: payload,
+    );
   }
 
   // -----------------------------------------------------------------------

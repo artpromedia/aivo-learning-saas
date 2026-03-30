@@ -57,7 +57,7 @@ class IepGoalsScreen extends ConsumerWidget {
               ref.invalidate(_iepGoalsProvider(learnerId)),
         ),
         data: (goals) {
-          final docs = asyncDocs.valueOrNull ?? [];
+          final docs = asyncDocs.value ?? [];
           final lastDoc = docs.isNotEmpty ? docs.first : null;
 
           return RefreshIndicator(

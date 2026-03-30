@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 // ---------------------------------------------------------------------------
 // AacDeviceType
@@ -197,7 +197,11 @@ class AacBridge extends ChangeNotifier {
 
     try {
       _bleDevice = BluetoothDevice.fromId(device.id);
-      await _bleDevice!.connect(autoConnect: true);
+      await _bleDevice!.connect(
+        license: License.free,
+        autoConnect: true,
+        mtu: null,
+      );
 
       _deviceConnectionSub =
           _bleDevice!.connectionState.listen((state) {

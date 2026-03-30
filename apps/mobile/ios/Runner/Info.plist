@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>AIVO Learning</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>AIVO Learning</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(FLUTTER_BUILD_NAME)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<false/>
+		<key>UISceneConfigurations</key>
+		<dict>
+			<key>UIWindowSceneSessionRoleApplication</key>
+			<array>
+				<dict>
+					<key>UISceneClassName</key>
+					<string>UIWindowScene</string>
+					<key>UISceneConfigurationName</key>
+					<string>flutter</string>
+					<key>UISceneDelegateClassName</key>
+					<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
+					<key>UISceneStoryboardFile</key>
+					<string>Main</string>
+				</dict>
+			</array>
+		</dict>
+	</dict>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+
+	<!-- Camera (homework capture, image_picker) -->
+	<key>NSCameraUsageDescription</key>
+	<string>AIVO needs camera access to capture homework photos and profile pictures.</string>
+
+	<!-- Microphone (speech_to_text for learner voice input) -->
+	<key>NSMicrophoneUsageDescription</key>
+	<string>AIVO needs microphone access for speech-to-text during lessons and voice-based interaction.</string>
+
+	<!-- Speech Recognition (speech_to_text) -->
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>AIVO uses speech recognition to help learners interact with lessons using their voice.</string>
+
+	<!-- Photo Library (image_picker save/select) -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>AIVO needs photo library access to select homework images and save captures.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>AIVO saves captured homework photos to your photo library.</string>
+
+	<!-- Bluetooth (flutter_blue_plus for AAC assistive devices) -->
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>AIVO connects to Bluetooth-enabled assistive communication devices for accessibility support.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>AIVO connects to Bluetooth-enabled assistive communication devices for accessibility support.</string>
+
+	<!-- Biometric Auth (local_auth - Face ID) -->
+	<key>NSFaceIDUsageDescription</key>
+	<string>AIVO uses Face ID for quick and secure sign-in.</string>
+
+	<!-- Location (required by Bluetooth scanning on iOS) -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>AIVO needs location access to discover nearby Bluetooth assistive devices.</string>
+
+	<!-- Background Modes -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+		<string>audio</string>
+		<string>bluetooth-central</string>
+	</array>
+
+	<!-- Firebase -->
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
+
+	<!-- App Transport Security (allow API connections) -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<false/>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
+
+	<!-- Localized app name -->
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>https</string>
+		<string>http</string>
+	</array>
+</dict>
+</plist>
