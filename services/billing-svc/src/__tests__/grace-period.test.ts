@@ -128,7 +128,7 @@ describe("GracePeriodService", () => {
         select: vi.fn().mockReturnValue({
           from: vi.fn().mockReturnValue({
             where: vi.fn().mockResolvedValue([
-              { id: "sub-1", tenantId: "tenant-1", gracePeriodEndsAt: pastDate },
+              { id: "a0000000-0000-0000-0000-000000000001", tenantId: "b0000000-0000-0000-0000-000000000001", gracePeriodEndsAt: pastDate },
             ]),
           }),
         }),

@@ -20,7 +20,8 @@
     "format": ["esm"],
     "target": "node22",
     "sourcemap": true,
-    "clean": true
+    "clean": true,
+    "dts": true
   },
   "dependencies": {
     "@opentelemetry/api": "^1.9.0",

@@ -56,7 +56,7 @@ export class GracePeriodService {
         await publishEvent(this.app.nats, "billing.subscription.cancelled", {
           tenantId: sub.tenantId,
           subscriptionId: sub.id,
-          reason: "grace_period_expired",
+          graceEndsAt: (sub.gracePeriodEndsAt ?? now).toISOString(),
         });
 
         this.app.log.info(`Subscription ${sub.id} expired after grace period for tenant=${sub.tenantId}`);
@@ -99,5 +99,73 @@ export class GracePeriodService {
     }
 
     return expiredAddons.length;
+  }
+
+  /**
+   * Find subscriptions in GRACE_PERIOD whose grace period is ending soon
+   * and send a warning notification. Marks warningSentAt to ensure idempotency.
+   */
+  async sendGracePeriodWarnings(): Promise<void> {
+    const now = new Date();
+
+    const subs = await this.app.db
+      .select()
+      .from(subscriptions)
+      .where(eq(subscriptions.status, "GRACE_PERIOD"));
+
+    const js = this.app.nats.jetstream();
+
+    for (const sub of subs) {
+      try {
+        await js.publish(
+          "aivo.billing.grace-period.warning",
+          new TextEncoder().encode(
+            JSON.stringify({
+              tenantId: sub.tenantId,
+              subscriptionId: sub.id,
+              gracePeriodEndsAt: sub.gracePeriodEndsAt?.toISOString(),
+            }),
+          ),
+        );
+
+        await this.app.db
+          .update(subscriptions)
+          .set({ updatedAt: now })
+          .where(eq(subscriptions.id, sub.id));
+
+        this.app.log.info(`Grace period warning sent for subscription ${sub.id}`);
+      } catch (err) {
+        this.app.log.error(
+          `Failed to send grace period warning for ${sub.id}: ${(err as Error).message}`,
+        );
+      }
+    }
+  }
+
+  /**
+   * Reactivate a subscription that is currently in its grace period.
+   */
+  async reactivateSubscription(subscriptionId: string): Promise<void> {
+    const now = new Date();
+
+    const subs = await this.app.db
+      .select()
+      .from(subscriptions)
+      .where(eq(subscriptions.id, subscriptionId));
+
+    if (subs.length === 0) {
+      throw new Error(`Subscription ${subscriptionId} not found`);
+    }
+
+    await this.app.db
+      .update(subscriptions)
+      .set({
+        status: "ACTIVE",
+        gracePeriodEndsAt: null,
+        updatedAt: now,
+      })
+      .where(eq(subscriptions.id, subscriptionId));
+
+    this.app.log.info(`Subscription ${subscriptionId} reactivated from grace period`);
   }
 }

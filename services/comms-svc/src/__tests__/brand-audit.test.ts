@@ -24,6 +24,18 @@ const sampleData: Record<string, Record<string, unknown>> = {
   streak_broken: { userName: "Test", previousStreak: 7, learnerName: "Alex", resumeUrl: "https://app.test.com/learn" },
   badge_earned: { userName: "Test", badgeName: "Star", badgeIcon: "", learnerName: "Alex", appUrl: "https://app.test.com" },
   weekly_progress_digest: { userName: "Test", learnerName: "Alex", weekSummary: "Good week", xpEarned: 100, lessonsCompleted: 5, streakDays: 3, masteryChanges: [], recommendations: [], appUrl: "https://app.test.com" },
+  regression_rollback_offer: { userName: "Test", learnerName: "Alex", domains: "Math", dropSummary: "Scores declined", rollbackUrl: "https://app.test.com/rollback", appUrl: "https://app.test.com" },
+  teacher_insight: { userName: "Test", learnerName: "Alex", teacherName: "Mr. Smith", insightText: "Improving in fractions", reviewUrl: "https://app.test.com/insights" },
+  grace_period_started: { userName: "Test", gracePeriodEndsAt: "May 1", exportUrl: "https://app.test.com/export", resubscribeUrl: "https://app.test.com/reactivate" },
+  grace_period_warning: { userName: "Test", gracePeriodEndsAt: "May 7", daysRemaining: 7, exportUrl: "https://app.test.com/export", resubscribeUrl: "https://app.test.com/reactivate" },
+  export_ready: { userName: "Test", learnerName: "Alex", downloadUrl: "https://app.test.com/dl/export.zip", expiresAt: "April 15" },
+  data_deletion_confirmation: { userName: "Test", learnerId: "learner_123" },
+  incident_created: { title: "Outage", impact: "Service down", message: "Investigating.", services: ["learning-svc"], statusPageUrl: "https://status.test.com/inc/1", unsubscribeUrl: "https://status.test.com/unsub" },
+  incident_updated: { title: "Outage", status: "Investigating", message: "Fix deploying.", statusPageUrl: "https://status.test.com/inc/1", unsubscribeUrl: "https://status.test.com/unsub" },
+  incident_resolved: { title: "Outage", resolvedAt: "March 30, 2026", statusPageUrl: "https://status.test.com/inc/1", unsubscribeUrl: "https://status.test.com/unsub" },
+  maintenance_scheduled: { title: "DB Upgrade", description: "Upgrading DB.", scheduledStart: "April 5 2AM", scheduledEnd: "April 5 4AM", statusPageUrl: "https://status.test.com/maint/1", unsubscribeUrl: "https://status.test.com/unsub" },
+  maintenance_started: { title: "DB Upgrade", statusPageUrl: "https://status.test.com/maint/1", unsubscribeUrl: "https://status.test.com/unsub" },
+  maintenance_completed: { title: "DB Upgrade", statusPageUrl: "https://status.test.com/maint/1", unsubscribeUrl: "https://status.test.com/unsub" },
 };
 
 describe("Brand Audit", () => {
@@ -61,7 +73,7 @@ describe("Brand Audit", () => {
     });
 
     const { allPassed, results } = auditAllTemplates(rendered);
-    expect(results).toHaveLength(21);
+    expect(results).toHaveLength(33);
     expect(allPassed).toBe(true);
   });
 });

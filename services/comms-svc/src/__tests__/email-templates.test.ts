@@ -2,9 +2,9 @@ import { describe, it, expect } from "vitest";
 import { renderTemplate, getAvailableTemplates, type TemplateSlug } from "../email/renderer.js";
 
 describe("Email Templates", () => {
-  it("should have all 21 templates registered", () => {
+  it("should have all 33 templates registered", () => {
     const templates = getAvailableTemplates();
-    expect(templates).toHaveLength(21);
+    expect(templates).toHaveLength(33);
   });
 
   const templateData: Record<TemplateSlug, Record<string, unknown>> = {
@@ -34,6 +34,18 @@ describe("Email Templates", () => {
       recommendations: ["Try reading sessions"],
       appUrl: "https://app.aivolearning.com",
     },
+    regression_rollback_offer: { userName: "Jane", learnerName: "Alex", domains: "Math, Reading", dropSummary: "Scores declined 15% this week", rollbackUrl: "https://app.aivolearning.com/rollback/abc", appUrl: "https://app.aivolearning.com" },
+    teacher_insight: { userName: "Jane", learnerName: "Alex", teacherName: "Mr. Smith", insightText: "Alex is showing great improvement in fractions", reviewUrl: "https://app.aivolearning.com/insights/abc" },
+    grace_period_started: { userName: "Jane", gracePeriodEndsAt: "May 1, 2026", exportUrl: "https://app.aivolearning.com/settings/export", resubscribeUrl: "https://app.aivolearning.com/subscription/reactivate" },
+    grace_period_warning: { userName: "Jane", gracePeriodEndsAt: "May 7, 2026", daysRemaining: 7, exportUrl: "https://app.aivolearning.com/settings/export", resubscribeUrl: "https://app.aivolearning.com/subscription/reactivate" },
+    export_ready: { userName: "Jane", learnerName: "Alex", downloadUrl: "https://s3.aivolearning.com/exports/learner_123.zip", expiresAt: "April 15, 2026 at 11:59 PM" },
+    data_deletion_confirmation: { userName: "Jane", learnerId: "learner_987654" },
+    incident_created: { title: "Database Connection Issues", impact: "Users unable to save progress", message: "We are investigating database connectivity issues.", services: ["learning-svc", "brain-svc"], statusPageUrl: "https://status.aivolearning.com/incidents/inc_001", unsubscribeUrl: "https://status.aivolearning.com/unsubscribe?token=abc" },
+    incident_updated: { title: "Database Connection Issues", status: "Investigating", message: "Root cause identified, fix is being deployed.", statusPageUrl: "https://status.aivolearning.com/incidents/inc_001", unsubscribeUrl: "https://status.aivolearning.com/unsubscribe?token=abc" },
+    incident_resolved: { title: "Database Connection Issues", resolvedAt: "March 30, 2026 at 3:15 PM UTC", statusPageUrl: "https://status.aivolearning.com/incidents/inc_001", unsubscribeUrl: "https://status.aivolearning.com/unsubscribe?token=abc" },
+    maintenance_scheduled: { title: "Database Upgrade", description: "Upgrading database infrastructure for improved performance.", scheduledStart: "April 5, 2026 at 2:00 AM UTC", scheduledEnd: "April 5, 2026 at 4:00 AM UTC", statusPageUrl: "https://status.aivolearning.com/maintenance/maint_001", unsubscribeUrl: "https://status.aivolearning.com/unsubscribe?token=abc" },
+    maintenance_started: { title: "Database Upgrade", statusPageUrl: "https://status.aivolearning.com/maintenance/maint_001", unsubscribeUrl: "https://status.aivolearning.com/unsubscribe?token=abc" },
+    maintenance_completed: { title: "Database Upgrade", statusPageUrl: "https://status.aivolearning.com/maintenance/maint_001", unsubscribeUrl: "https://status.aivolearning.com/unsubscribe?token=abc" },
   };
 
   for (const [slug, data] of Object.entries(templateData)) {
@@ -83,6 +95,8 @@ describe("Email Templates", () => {
       });
 
       it("should have UTM parameters on CTA links", () => {
+        const templatesWithoutCta: TemplateSlug[] = ["data_deletion_confirmation"];
+        if (templatesWithoutCta.includes(slug as TemplateSlug)) return;
         const result = renderTemplate(slug as TemplateSlug, data as any);
         expect(result.html).toContain("utm_source=aivo");
         expect(result.html).toContain("utm_medium=email");
