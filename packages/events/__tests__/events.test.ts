@@ -368,9 +368,9 @@ describe("Identity Events", () => {
 
 // ─── SUBJECTS constant ─────────────────────────────────────────────────────────
 describe("SUBJECTS constant", () => {
-  it("should include all 52 event subjects", () => {
+  it("should include all 69 event subjects", () => {
     const subjectCount = Object.keys(SUBJECTS).length;
-    expect(subjectCount).toBe(52);
+    expect(subjectCount).toBe(69);
   });
 
   it("all subjects should start with 'aivo.'", () => {
@@ -382,8 +382,8 @@ describe("SUBJECTS constant", () => {
 
 // ─── JetStream Streams ─────────────────────────────────────────────────────────
 describe("JetStream Streams", () => {
-  it("should define 9 streams", () => {
-    expect(JETSTREAM_STREAMS).toHaveLength(9);
+  it("should define 10 streams", () => {
+    expect(JETSTREAM_STREAMS).toHaveLength(10);
   });
 
   it("all streams should have valid configurations", () => {

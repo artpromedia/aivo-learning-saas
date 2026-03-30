@@ -1,4 +1,5 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
+import "@fastify/cookie";
 import fp from "fastify-plugin";
 import { randomBytes } from "crypto";
 

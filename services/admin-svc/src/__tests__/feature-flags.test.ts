@@ -88,7 +88,10 @@ describe("FeatureFlagService", () => {
       );
 
       expect(result.key).toBe("new_feature");
-      expect(app.redis.set).toHaveBeenCalledWith("ff:new_feature", JSON.stringify(true));
+      expect(app.redis.set).toHaveBeenCalledWith(
+        "ff:new_feature",
+        JSON.stringify({ key: "new_feature", type: "BOOLEAN", defaultValue: true, enabled: true }),
+      );
     });
 
     it("should create a PERCENTAGE flag", async () => {

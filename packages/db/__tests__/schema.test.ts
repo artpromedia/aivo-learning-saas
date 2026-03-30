@@ -212,8 +212,8 @@ describe("Enum Values", () => {
     expect(schema.functioningLevelEnum.enumValues).toHaveLength(5);
   });
 
-  it("recommendationTypeEnum should have all 13 types", () => {
-    expect(schema.recommendationTypeEnum.enumValues).toHaveLength(13);
+  it("recommendationTypeEnum should have all 14 types", () => {
+    expect(schema.recommendationTypeEnum.enumValues).toHaveLength(14);
   });
 
   it("assessmentModeEnum should have all 7 modes", () => {
@@ -224,7 +224,7 @@ describe("Enum Values", () => {
     expect(schema.tutorSkuEnum.enumValues).toHaveLength(6);
   });
 
-  it("snapshotTriggerEnum should have all 9 triggers", () => {
-    expect(schema.snapshotTriggerEnum.enumValues).toHaveLength(9);
+  it("snapshotTriggerEnum should have all 10 triggers", () => {
+    expect(schema.snapshotTriggerEnum.enumValues).toHaveLength(10);
   });
 });
