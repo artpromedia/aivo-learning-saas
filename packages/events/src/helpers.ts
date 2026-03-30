@@ -35,7 +35,12 @@ function resolveStreamForSubject(subject: string): string {
 }
 
 export async function provisionStreams(nc: NatsConnection): Promise<void> {
-  const jsm = await nc.jetstreamManager();
+  let jsm;
+  try {
+    jsm = await nc.jetstreamManager();
+  } catch {
+    return;
+  }
   for (const def of JETSTREAM_STREAMS) {
     try {
       await jsm.streams.info(def.name);
