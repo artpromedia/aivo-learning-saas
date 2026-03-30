@@ -52,12 +52,14 @@ jobs:
         run: terraform plan -out=tfplan
         env:
           TF_VAR_hcloud_token: ${{ secrets.HCLOUD_TOKEN }}
+          TF_VAR_ssh_public_key: ${{ secrets.SSH_PUBLIC_KEY }}
 
       - name: Terraform apply
         working-directory: ${{ env.TF_DIR }}
         run: terraform apply -auto-approve tfplan
         env:
           TF_VAR_hcloud_token: ${{ secrets.HCLOUD_TOKEN }}
+          TF_VAR_ssh_public_key: ${{ secrets.SSH_PUBLIC_KEY }}
 
   # ═════════════════════════════════════════════
   # Stage 2: Helm Deploy
@@ -95,6 +97,17 @@ jobs:
           fi
           kubectl get nodes
           echo "Cluster is reachable"
+
+      - name: Clear stuck Helm releases
+        run: |
+          # Check if there's a pending/stuck release and roll back if needed
+          STATUS=$(helm status aivolearning -n aivo -o json 2>/dev/null | jq -r '.info.status' 2>/dev/null || echo "not-found")
+          echo "Current Helm release status: $STATUS"
+          if [ "$STATUS" = "pending-install" ] || [ "$STATUS" = "pending-upgrade" ] || [ "$STATUS" = "pending-rollback" ]; then
+            echo "::warning::Found stuck Helm release in '$STATUS' state — rolling back"
+            helm rollback aivolearning 0 -n aivo --timeout 5m || \
+              helm uninstall aivolearning -n aivo --no-hooks 2>/dev/null || true
+          fi
 
       - name: Helm upgrade
         run: |

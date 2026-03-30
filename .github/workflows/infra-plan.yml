@@ -48,6 +48,7 @@ jobs:
         run: terraform plan -no-color -out=tfplan 2>&1 | tee /tmp/plan-output.txt
         env:
           TF_VAR_hcloud_token: ${{ secrets.HCLOUD_TOKEN }}
+          TF_VAR_ssh_public_key: ${{ secrets.SSH_PUBLIC_KEY }}
         continue-on-error: true
 
       - name: Post plan as PR comment

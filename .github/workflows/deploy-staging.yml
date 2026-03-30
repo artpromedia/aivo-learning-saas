@@ -691,6 +691,17 @@ jobs:
       - name: Build Helm dependencies
         run: helm dependency build infra/helm
 
+      - name: Clear stuck Helm releases
+        run: |
+          # Check if there's a pending/stuck release and roll back if needed
+          STATUS=$(helm status aivolearning -n aivo -o json 2>/dev/null | jq -r '.info.status' 2>/dev/null || echo "not-found")
+          echo "Current Helm release status: $STATUS"
+          if [ "$STATUS" = "pending-install" ] || [ "$STATUS" = "pending-upgrade" ] || [ "$STATUS" = "pending-rollback" ]; then
+            echo "::warning::Found stuck Helm release in '$STATUS' state — rolling back"
+            helm rollback aivolearning 0 -n aivo --timeout 5m || \
+              helm uninstall aivolearning -n aivo --no-hooks 2>/dev/null || true
+          fi
+
       - name: Helm upgrade (staging)
         run: |
           helm upgrade --install aivolearning infra/helm \
