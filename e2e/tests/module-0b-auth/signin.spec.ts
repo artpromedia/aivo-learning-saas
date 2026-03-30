@@ -39,7 +39,7 @@ test.describe('Module 0b: Sign In', () => {
     await page.getByLabel(/password/i).fill(parentUser.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
 
-    await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
+    await page.waitForURL(/\/(parent|learner|teacher|admin|add-child)/, { timeout: 15_000 });
     await expect(page).not.toHaveURL(/\/login/);
   });
 
@@ -76,7 +76,7 @@ test.describe('Module 0b: Sign In', () => {
     await page.getByLabel(/email/i).fill(parentUser.email);
     await page.getByLabel(/password/i).fill(parentUser.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
-    await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
+    await page.waitForURL(/\/(parent|learner|teacher|admin|add-child)/, { timeout: 15_000 });
 
     const _urlBeforeRefresh = page.url();
 
@@ -84,7 +84,7 @@ test.describe('Module 0b: Sign In', () => {
 
     await expect(page).not.toHaveURL(/\/login/);
 
-    await page.goto(`${BASE_URL}/dashboard`);
+    await page.goto(`${BASE_URL}/parent`);
     await expect(page).not.toHaveURL(/\/login/);
 
     const sessionRes = await page.request.get(`${API_BASE}/auth/session`, {

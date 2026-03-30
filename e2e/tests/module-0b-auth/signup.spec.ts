@@ -16,7 +16,7 @@ test.describe('Module 0b: Signup', () => {
     const email = `e2e+signup-${Date.now()}@aivo.test`;
     const password = 'E2eTest!Secure456';
 
-    await page.goto(`${BASE_URL}/signup`);
+    await page.goto(`${BASE_URL}/register`);
     await expect(page.locator('h1, h2').first()).toBeVisible();
 
     await page.getByLabel(/email/i).fill(email);
@@ -28,7 +28,7 @@ test.describe('Module 0b: Signup', () => {
 
     await page.getByRole('button', { name: /sign up|create account|get started/i }).click();
 
-    await page.waitForURL(/\/(verify-email|dashboard|onboarding)/, { timeout: 15_000 });
+    await page.waitForURL(/\/(verify-email|parent|learner|add-child)/, { timeout: 15_000 });
 
     const verifyRes = await page.request.post(`${API_BASE}/test/verify-email`, {
       data: { email },
@@ -40,7 +40,7 @@ test.describe('Module 0b: Signup', () => {
       await page.getByLabel(/password/i).fill(password);
       await page.getByRole('button', { name: /sign in|log in/i }).click();
 
-      await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
+      await page.waitForURL(/\/(parent|learner|add-child)/, { timeout: 15_000 });
       await expect(page).not.toHaveURL(/\/login/);
     }
   });
@@ -102,12 +102,12 @@ test.describe('Module 0b: Signup', () => {
       });
     });
 
-    await page.goto(`${BASE_URL}/signup`);
+    await page.goto(`${BASE_URL}/register`);
 
     const googleButton = page.getByRole('button', { name: /google|continue with google/i });
     if (await googleButton.isVisible({ timeout: 3_000 }).catch(() => false)) {
       await googleButton.click();
-      await page.waitForURL(/\/(dashboard|onboarding|auth\/callback)/, { timeout: 15_000 });
+      await page.waitForURL(/\/(parent|learner|add-child|auth\/callback)/, { timeout: 15_000 });
     }
 
     const oauthRes = await page.request.post(`${API_BASE}/auth/oauth/google`, {

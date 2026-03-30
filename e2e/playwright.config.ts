@@ -29,6 +29,9 @@ export default defineConfig({
     url: 'http://localhost:3000',
     reuseExistingServer: !isCI,
     timeout: 120_000,
+    env: {
+      NEXT_PUBLIC_API_URL: process.env.API_BASE_URL || 'http://localhost:3101',
+    },
   },
 
   use: {

@@ -21,7 +21,7 @@ test.describe('Module 0b: Authentication', () => {
     const password = 'E2eTest!Secure456';
 
     // Navigate to signup page
-    await page.goto(`${BASE_URL}/signup`);
+    await page.goto(`${BASE_URL}/register`);
     await expect(page.locator('h1, h2').first()).toBeVisible();
 
     // Fill the signup form
@@ -35,8 +35,8 @@ test.describe('Module 0b: Authentication', () => {
     // Submit form
     await page.getByRole('button', { name: /sign up|create account|get started/i }).click();
 
-    // Should redirect to verification page or dashboard
-    await page.waitForURL(/\/(verify-email|dashboard|onboarding)/, { timeout: 15_000 });
+    // Should redirect to verification page or role-based dashboard
+    await page.waitForURL(/\/(verify-email|parent|learner|add-child)/, { timeout: 15_000 });
 
     // Verify email via API (test mode)
     const verifyRes = await page.request.post(`${API_BASE}/test/verify-email`, {
@@ -50,7 +50,7 @@ test.describe('Module 0b: Authentication', () => {
       await page.getByLabel(/password/i).fill(password);
       await page.getByRole('button', { name: /sign in|log in/i }).click();
 
-      await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
+      await page.waitForURL(/\/(parent|learner|teacher|admin|add-child)/, { timeout: 15_000 });
       await expect(page).not.toHaveURL(/\/login/);
     }
   });
@@ -70,11 +70,11 @@ test.describe('Module 0b: Authentication', () => {
     await page.getByLabel(/password/i).fill(parentUser.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
 
-    // Should navigate to dashboard
-    await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
+    // Should navigate to role-based dashboard
+    await page.waitForURL(/\/(parent|learner|teacher|admin|add-child)/, { timeout: 15_000 });
 
     // Verify session persists across navigation
-    await page.goto(`${BASE_URL}/dashboard`);
+    await page.goto(`${BASE_URL}/parent`);
     await expect(page).not.toHaveURL(/\/login/);
 
     // Refresh the page and verify still authenticated
@@ -102,7 +102,7 @@ test.describe('Module 0b: Authentication', () => {
     await page.getByLabel(/email/i).fill(user.email);
     await page.getByLabel(/password/i).fill(user.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
-    await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
+    await page.waitForURL(/\/(parent|learner|teacher|admin|add-child)/, { timeout: 15_000 });
 
     // Click logout
     const logoutButton = page.getByRole('button', { name: /log\s?out|sign\s?out/i });
@@ -131,8 +131,8 @@ test.describe('Module 0b: Authentication', () => {
     await page.waitForURL(/\/(login|$)/, { timeout: 10_000 });
 
     // Navigating to dashboard should redirect to login
-    await page.goto(`${BASE_URL}/dashboard`);
-    await expect(page).toHaveURL(/\/(login|signup)/);
+    await page.goto(`${BASE_URL}/parent`);
+    await expect(page).toHaveURL(/\/(login|register)/);
   });
 
   test('role enforcement - parent cannot access admin routes', async ({ page }) => {
@@ -146,7 +146,7 @@ test.describe('Module 0b: Authentication', () => {
     await page.getByLabel(/email/i).fill(user.email);
     await page.getByLabel(/password/i).fill(user.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
-    await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
+    await page.waitForURL(/\/(parent|learner|teacher|admin|add-child)/, { timeout: 15_000 });
 
     // Attempt to access admin route
     await page.goto(`${BASE_URL}/admin`);
@@ -154,7 +154,9 @@ test.describe('Module 0b: Authentication', () => {
     // Should be redirected or shown forbidden
     const url = page.url();
     const isBlocked =
-      url.includes('/dashboard') ||
+      url.includes('/parent') ||
+      url.includes('/teacher') ||
+      url.includes('/learner') ||
       url.includes('/login') ||
       url.includes('/403') ||
       url.includes('/unauthorized');
@@ -166,7 +168,7 @@ test.describe('Module 0b: Authentication', () => {
     expect(isBlocked || hasForbiddenText).toBeTruthy();
 
     // Also check API-level enforcement
-    const adminApiRes = await page.request.get(`${API_BASE}/admin/users`, {
+    const adminApiRes = await page.request.get(`${API_BASE}/admin/tenants`, {
       headers: { Authorization: `Bearer ${user.token}` },
     });
     expect([401, 403]).toContain(adminApiRes.status());
@@ -223,7 +225,7 @@ test.describe('Module 0b: Authentication', () => {
       await page.getByLabel(/password/i).fill(newPassword);
       await page.getByRole('button', { name: /sign in|log in/i }).click();
 
-      await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
+      await page.waitForURL(/\/(parent|learner|teacher|admin|add-child)/, { timeout: 15_000 });
       await expect(page).not.toHaveURL(/\/login/);
     }
   });
