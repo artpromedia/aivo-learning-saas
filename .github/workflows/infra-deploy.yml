@@ -43,6 +43,21 @@ jobs:
           echo "AWS_ACCESS_KEY_ID=${{ secrets.CF_R2_ACCESS_KEY_ID }}"     >> $GITHUB_ENV
           echo "AWS_SECRET_ACCESS_KEY=${{ secrets.CF_R2_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
 
+      - name: Validate required secrets
+        run: |
+          MISSING=0
+          for secret_name in HCLOUD_TOKEN SSH_PUBLIC_KEY; do
+            eval val="\$$secret_name"
+            if [ -z "$val" ]; then
+              echo "::error::Required secret $secret_name is not set"
+              MISSING=$((MISSING + 1))
+            fi
+          done
+          [ "$MISSING" -eq 0 ] || exit 1
+        env:
+          HCLOUD_TOKEN: ${{ secrets.HCLOUD_TOKEN }}
+          SSH_PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
+
       - name: Terraform init
         working-directory: ${{ env.TF_DIR }}
         run: terraform init -reconfigure
