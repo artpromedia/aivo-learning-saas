@@ -10,6 +10,7 @@ export interface RegisterInput {
   email: string;
   password: string;
   name: string;
+  role?: string;
 }
 
 export interface LoginInput {
@@ -43,13 +44,14 @@ export class AuthService {
     }
 
     const passwordHash = await hash(input.password);
-    const slug = `family-${nanoid(10)}`.toLowerCase();
+    const userRole = input.role === "TEACHER" ? "TEACHER" : "PARENT";
+    const slug = `${userRole === "TEACHER" ? "teacher" : "family"}-${nanoid(10)}`.toLowerCase();
 
     // Create tenant
     const [tenant] = await this.app.db
       .insert(tenants)
       .values({
-        name: `${input.name}'s Family`,
+        name: userRole === "TEACHER" ? `${input.name}'s Classroom` : `${input.name}'s Family`,
         slug,
         type: "B2C_FAMILY",
         status: "ACTIVE",
@@ -63,7 +65,7 @@ export class AuthService {
         tenantId: tenant.id,
         email: input.email.toLowerCase(),
         name: input.name,
-        role: "PARENT",
+        role: userRole,
         status: "ACTIVE",
       })
       .returning();
@@ -84,7 +86,7 @@ export class AuthService {
     await publishEvent(this.app.nats, "identity.user.created", {
       userId: user.id,
       tenantId: tenant.id,
-      role: "PARENT",
+      role: userRole,
       email: user.email,
     }).catch((err) => {
       this.app.log.warn({ err }, "Failed to publish user.created event");
@@ -305,7 +307,7 @@ export class AuthService {
     const resetToken = await this.app.auth.signAccessToken({
       sub: user.id,
       tenantId: user.tenantId,
-      role: "PARENT",
+      role: user.role ?? "PARENT",
       email: user.email,
     });
 

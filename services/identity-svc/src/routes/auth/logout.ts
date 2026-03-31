@@ -3,7 +3,9 @@ import { AuthService } from "../../services/auth.service.js";
 
 export async function logoutRoute(app: FastifyInstance) {
   app.post("/auth/logout", async (request, reply) => {
-    const sessionToken = request.cookies?.access_token;
+    const sessionToken =
+      request.cookies?.access_token ??
+      request.headers.authorization?.replace("Bearer ", "");
     if (sessionToken) {
       const authService = new AuthService(app);
       await authService.logout(sessionToken);

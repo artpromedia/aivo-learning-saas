@@ -8,7 +8,7 @@ class Env {
   /// Base URL of the REST API (no trailing slash).
   static const String apiBaseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://localhost:3000/api/v1',
+    defaultValue: 'http://localhost:3001/api',
   );
 
   /// WebSocket URL for real-time events.

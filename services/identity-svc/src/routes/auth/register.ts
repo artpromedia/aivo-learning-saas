@@ -8,6 +8,7 @@ const registerBodySchema = z.object({
   email: z.string().email().max(320),
   password: z.string().min(8).max(128),
   name: z.string().min(1).max(255),
+  role: z.enum(["PARENT", "TEACHER"]).optional(),
 });
 
 export async function registerRoute(app: FastifyInstance) {
@@ -55,6 +56,8 @@ export async function registerRoute(app: FastifyInstance) {
         role: user.role,
         tenantId: tenant.id,
       },
+      accessToken: session.accessToken,
+      refreshToken: session.refreshToken,
     });
   });
 }

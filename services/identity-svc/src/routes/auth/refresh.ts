@@ -4,8 +4,10 @@ import { getConfig } from "../../config.js";
 
 export async function refreshRoute(app: FastifyInstance) {
   app.post("/auth/refresh", async (request, reply) => {
+    const body = request.body as Record<string, unknown> | undefined;
     const refreshToken =
       request.cookies?.refresh_token ??
+      (body?.refreshToken as string | undefined) ??
       (request.headers.authorization?.replace("Bearer ", "") || "");
 
     if (!refreshToken) {
@@ -40,6 +42,8 @@ export async function refreshRoute(app: FastifyInstance) {
         role: result.user.role,
         tenantId: result.user.tenantId,
       },
+      accessToken: result.accessToken,
+      refreshToken: result.refreshToken,
     });
   });
 }

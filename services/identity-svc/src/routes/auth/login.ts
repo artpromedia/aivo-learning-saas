@@ -40,6 +40,8 @@ export async function loginRoute(app: FastifyInstance) {
         role: user.role,
         tenantId: user.tenantId,
       },
+      accessToken: session.accessToken,
+      refreshToken: session.refreshToken,
     });
   });
 }
