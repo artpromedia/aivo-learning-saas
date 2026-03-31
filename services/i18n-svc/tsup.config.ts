@@ -7,4 +7,7 @@ export default defineConfig({
   dts: false,
   clean: true,
   sourcemap: true,
+  banner: {
+    js: 'import { createRequire } from "module"; const require = createRequire(import.meta.url);',
+  },
 });
