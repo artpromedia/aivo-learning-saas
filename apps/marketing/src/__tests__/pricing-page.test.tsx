@@ -1,5 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { render, screen, fireEvent, cleanup } from "@testing-library/react";
+
+afterEach(() => {
+  cleanup();
+});
 
 vi.mock("framer-motion", () => ({
   motion: {
@@ -41,11 +45,11 @@ vi.mock("@/components/shared/section-header", () => ({
   ),
 }));
 
-const mockEvents = {
+const mockEvents = vi.hoisted(() => ({
   pricingView: vi.fn(),
   pricingToggle: vi.fn(),
   faqExpand: vi.fn(),
-};
+}));
 vi.mock("@/lib/analytics", () => ({ events: mockEvents }));
 
 vi.mock("@/lib/ab-testing", () => ({
