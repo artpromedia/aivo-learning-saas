@@ -45,18 +45,18 @@ spec:
             httpGet:
               path: {{ $svcValues.healthCheck.path }}
               port: {{ $svcValues.healthCheck.port }}
-            initialDelaySeconds: 15
+            initialDelaySeconds: 60
             periodSeconds: 30
             timeoutSeconds: 5
-            failureThreshold: 3
+            failureThreshold: 5
           readinessProbe:
             httpGet:
               path: {{ $svcValues.healthCheck.path }}
               port: {{ $svcValues.healthCheck.port }}
-            initialDelaySeconds: 5
+            initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 5
-            failureThreshold: 3
+            failureThreshold: 5
           {{- end }}
           {{- if $svcValues.resources }}
           resources:

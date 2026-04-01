@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: debug-billing
+  namespace: aivo
+spec:
+  securityContext:
+    runAsUser: 0
+  containers:
+  - name: debug
+    image: ghcr.io/artpromedia/billing-svc:latest
+    command: ["sleep", "3600"]
+    env:
+    - name: DATABASE_URL
+      valueFrom:
+        secretKeyRef:
+          name: db-secrets
+          key: database-url
+    - name: REDIS_URL
+      valueFrom:
+        secretKeyRef:
+          name: redis-secrets
+          key: redis-url
+    - name: NATS_URL
+      value: nats://nats.aivo.svc.cluster.local:4222
+    - name: JWT_PUBLIC_KEY
+      valueFrom:
+        secretKeyRef:
+          name: jwt-secrets
+          key: jwt-public-key
+    - name: NODE_ENV
+      value: production
+    - name: PORT
+      value: "3008"
+  imagePullSecrets:
+  - name: ghcr-secret
+  restartPolicy: Never
