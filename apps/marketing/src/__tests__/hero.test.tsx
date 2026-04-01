@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, fireEvent, cleanup } from "@testing-library/react";
+import { render, screen, fireEvent, act, cleanup } from "@testing-library/react";
 
 afterEach(() => {
   cleanup();
@@ -33,15 +33,6 @@ vi.mock("next/link", () => ({
   ),
 }));
 
-// Mock walkthrough player
-vi.mock("@/components/walkthrough/aivo-walkthrough-player", () => ({
-  AivoWalkthroughPlayer: ({ autoplay, source }: { autoplay?: boolean; source?: string }) => (
-    <div data-testid="walkthrough-player" data-autoplay={autoplay} data-source={source}>
-      Walkthrough Player Mock
-    </div>
-  ),
-}));
-
 // Mock hero background
 vi.mock("@/components/home/hero-background", () => ({
   HeroBackground: () => <div data-testid="hero-background">Background</div>,
@@ -59,9 +50,14 @@ import { Hero } from "@/components/home/hero";
 describe("Hero", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.useFakeTimers();
   });
 
-  it("renders the headline text", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("renders the first slide headline text", () => {
     render(<Hero />);
     expect(screen.getByText("AI That Learns How Your Child Learns")).toBeDefined();
   });
@@ -93,19 +89,37 @@ describe("Hero", () => {
     expect(screen.getByText(/Trusted by 500\+ schools/)).toBeDefined();
   });
 
-  it("renders AivoWalkthroughPlayer", () => {
+  it("renders 3 slide indicator dots", () => {
     render(<Hero />);
-    const player = screen.getByTestId("walkthrough-player");
-    expect(player).toBeDefined();
-    expect(player.getAttribute("data-autoplay")).toBe("true");
-    expect(player.getAttribute("data-source")).toBe("hero");
+    const dots = screen.getAllByLabelText(/Go to slide/);
+    expect(dots).toHaveLength(3);
+  });
+
+  it("autoplay advances to next slide after 6 seconds", () => {
+    render(<Hero />);
+    expect(screen.getByText("AI That Learns How Your Child Learns")).toBeDefined();
+
+    act(() => {
+      vi.advanceTimersByTime(6001);
+    });
+
+    expect(screen.getByText("5 Expert AI Tutors, One Personalized Journey")).toBeDefined();
+  });
+
+  it("clicking slide dot changes the active slide", () => {
+    render(<Hero />);
+    expect(screen.getByText("AI That Learns How Your Child Learns")).toBeDefined();
+
+    const dot3 = screen.getByLabelText("Go to slide 3");
+    fireEvent.click(dot3);
+
+    expect(screen.getByText("Real-Time Insights for Parents & Teachers")).toBeDefined();
   });
 
   it("Watch How It Works button has an onClick handler", () => {
     render(<Hero />);
     const btn = screen.getByTestId("hero-cta-secondary");
     expect(btn.textContent).toContain("Watch How It Works");
-    // Should not throw when clicked
     fireEvent.click(btn);
   });
 
@@ -115,17 +129,12 @@ describe("Hero", () => {
   });
 
   it("renders entry animations with correct Framer Motion props", () => {
-    // The hero uses motion.h1, motion.p, motion.div with initial/animate
-    // Since we're mocking framer-motion, just verify the component renders
     render(<Hero />);
     expect(screen.getByText("AI That Learns How Your Child Learns")).toBeDefined();
     expect(screen.getByText(/Aivo creates a unique Brain Clone/)).toBeDefined();
   });
 
   it("disables background animation when prefers-reduced-motion is set", () => {
-    // The HeroBackground component internally checks prefers-reduced-motion
-    // Since it's mocked here, we test the background component separately
-    // This test verifies HeroBackground is rendered
     render(<Hero />);
     expect(screen.getByTestId("hero-background")).toBeDefined();
   });
