@@ -1,5 +1,9 @@
-import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { describe, it, expect, vi, afterEach } from "vitest";
+import { render, screen, cleanup } from "@testing-library/react";
+
+afterEach(() => {
+  cleanup();
+});
 
 // Mock framer-motion
 vi.mock("framer-motion", () => ({
@@ -17,6 +21,20 @@ vi.mock("framer-motion", () => ({
         if (typeof v === "string" || typeof v === "function" || k === "className") safe[k] = v;
       }
       return <button {...safe}>{children}</button>;
+    },
+    h3: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => {
+      const safe: Record<string, unknown> = {};
+      for (const [k, v] of Object.entries(props)) {
+        if (typeof v === "string" || typeof v === "number" || k === "className") safe[k] = v;
+      }
+      return <h3 {...safe}>{children}</h3>;
+    },
+    p: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => {
+      const safe: Record<string, unknown> = {};
+      for (const [k, v] of Object.entries(props)) {
+        if (typeof v === "string" || typeof v === "number" || k === "className") safe[k] = v;
+      }
+      return <p {...safe}>{children}</p>;
     },
     span: ({ children }: React.PropsWithChildren) => <span>{children}</span>,
     path: (props: Record<string, unknown>) => <path {...props} />,

@@ -1,5 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, fireEvent, act } from "@testing-library/react";
+import { render, screen, cleanup } from "@testing-library/react";
+
+afterEach(() => {
+  cleanup();
+});
 
 // Mock framer-motion
 vi.mock("framer-motion", () => ({
@@ -13,9 +17,15 @@ vi.mock("framer-motion", () => ({
       }
       return <div {...filtered}>{children}</div>;
     },
-    button: ({ children, onClick, ...props }: React.PropsWithChildren<{ onClick?: () => void }>) => (
-      <button onClick={onClick}>{children}</button>
-    ),
+    button: ({ children, onClick, ...props }: React.PropsWithChildren<{ onClick?: () => void; [key: string]: unknown }>) => {
+      const filtered: Record<string, unknown> = {};
+      for (const [key, value] of Object.entries(props)) {
+        if (typeof value === "string" || key === "className") {
+          filtered[key] = value;
+        }
+      }
+      return <button onClick={onClick} {...filtered}>{children}</button>;
+    },
   },
   AnimatePresence: ({ children }: React.PropsWithChildren) => <>{children}</>,
 }));
@@ -26,12 +36,13 @@ vi.mock("next/link", () => ({
   ),
 }));
 
-// Mock analytics
-const mockEvents = {
+// Use vi.hoisted to avoid the hoisting issue with vi.mock
+const mockEvents = vi.hoisted(() => ({
   videoWalkthroughStarted: vi.fn(),
   videoWalkthroughMilestone: vi.fn(),
   videoWalkthroughCompleted: vi.fn(),
-};
+}));
+
 vi.mock("@/lib/analytics", () => ({
   events: mockEvents,
 }));
@@ -39,12 +50,10 @@ vi.mock("@/lib/analytics", () => ({
 // Mock IntersectionObserver
 const mockObserve = vi.fn();
 const mockDisconnect = vi.fn();
-let intersectionCallback: (entries: { isIntersecting: boolean }[]) => void;
 
 beforeEach(() => {
   vi.useFakeTimers();
-  global.IntersectionObserver = vi.fn((callback) => {
-    intersectionCallback = callback;
+  global.IntersectionObserver = vi.fn(function (this: IntersectionObserver) {
     return {
       observe: mockObserve,
       disconnect: mockDisconnect,
@@ -84,8 +93,8 @@ describe("AivoWalkthroughPlayer", () => {
 
   it("renders play/pause button", () => {
     render(<AivoWalkthroughPlayer />);
-    const playBtn = screen.getByLabelText("Play walkthrough");
-    expect(playBtn).toBeDefined();
+    const playBtns = screen.getAllByLabelText("Play walkthrough");
+    expect(playBtns.length).toBeGreaterThanOrEqual(1);
   });
 
   it("renders scene dot indicators", () => {
@@ -101,9 +110,9 @@ describe("AivoWalkthroughPlayer", () => {
 
   it("toggles play/pause", () => {
     render(<AivoWalkthroughPlayer />);
-    // Initially shows play button
-    const toggleBtn = screen.getByLabelText(/Play|Pause/);
-    expect(toggleBtn).toBeDefined();
+    // Initially shows play buttons (overlay + control bar)
+    const toggleBtns = screen.getAllByLabelText(/Play|Pause/);
+    expect(toggleBtns.length).toBeGreaterThanOrEqual(1);
   });
 
   it("renders CTA links in scene 6 with correct hrefs", () => {
