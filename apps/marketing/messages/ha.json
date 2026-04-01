@@ -1,0 +1,77 @@
+{
+  "nav": {
+    "features": "Fasaloli",
+    "pricing": "Farashin",
+    "about": "Game da Mu",
+    "blog": "Shafin Yanar Gizo",
+    "howItWorks": "Yadda Yake Aiki",
+    "tutors": "Malamai na AI",
+    "login": "Shiga",
+    "getStarted": "Fara Kyauta"
+  },
+  "hero": {
+    "headline": "Koyon AI da ke Daidaitawa ga Kowane Ɗalibi",
+    "subheadline": "Ba a Bar Ɗalibi Daya a Baya Ba. Ilimi na musamman da fasahar Brain Clone AI ke ba da karfi wanda ke ƙirƙira bayanan koyo na musamman ga kowane ɗalibi.",
+    "cta": "Fara Kyauta",
+    "ctaSecondary": "Nemi Demo",
+    "slide2Headline": "Hanyoyi Na Musamman ga Kowane Mai Koyo",
+    "slide2Subheadline": "AI dinmu na daidaitawa a lokaci guda, yana gano ƙarfi da giɓi don ƙirƙira tsarin karatu na musamman da ke sa ɗalibai su ci gaba.",
+    "slide2Cta": "Duba Yadda Yake Aiki",
+    "slide3Headline": "Bi Ci Gaba a Lokaci Guda",
+    "slide3Subheadline": "Dashboard mai kyau na koyo wanda ke ba ɗalibai, iyaye, da malamai ganin nan take na ci gaba, jerin nasarori, da shawarwarin AI.",
+    "slide3Cta": "Fara Kyauta",
+    "slide3CtaSecondary": "Duba Nazarin Shari'o'i"
+  },
+  "features": {
+    "title": "Duk Abin da Ɗalibanka Ke Bukata don Cin Nasara",
+    "subtitle": "AIVO na haɗa AI na zamani da ilimin kimiyyar koyarwa da aka tabbatar don ƙirƙira ƙwarewar koyo da ke daidaitawa ga kowane ɗalibi."
+  },
+  "howItWorks": {
+    "title": "Yadda AIVO Yake Aiki",
+    "subtitle": "Matakai uku masu sauƙi don koyon musamman da ke daidaitawa ga buƙatun musamman na kowane ɗalibi."
+  },
+  "aiTutors": {
+    "title": "Sadu da Ƙungiyar Koyon AI Naka",
+    "subtitle": "Malamai na AI guda biyar masu ƙwarewa, kowane ɗaya da halin kansa da salon koyarwa na musamman da aka ƙera don sa kowane fanni ya zama mai ban sha'awa."
+  },
+  "pricing": {
+    "title": "Farashin Mai Sauƙi da Gaskiya",
+    "subtitle": "Fara kyauta. Haɓaka lokacin da ka shirya.",
+    "monthly": "Na Wata-Wata",
+    "annual": "Na Shekara-Shekara",
+    "faqTitle": "Tambayoyin da Ake Yawan Yi"
+  },
+  "demo": {
+    "title": "Duba AIVO Yana Aiki",
+    "subtitle": "Shirya demo na musamman tare da ƙungiyar ilimi namu.",
+    "successTitle": "Na Gode!",
+    "successMessage": "Ƙungiyarmu za ta tuntuɓe ka cikin awanni 24."
+  },
+  "contact": {
+    "title": "Tuntuɓe Mu",
+    "subtitle": "Kana da tambaya? Za mu ji daɗin jin daga gare ka.",
+    "successTitle": "An Aika Saƙo!",
+    "successMessage": "Za mu amsa maka cikin kwanaki 1-2 na aiki."
+  },
+  "cta": {
+    "headline": "Kuna Shirye Don Canza Koyo?",
+    "subheadline": "Ku shiga cikin ɗalibai sama da 150 da suke koyo tare da AIVO. Fara gwajin kyauta yau — ba tare da katin kuɗi ba.",
+    "button": "Fara Kyauta",
+    "secondary": "Yi Magana da Masu Siyarwa",
+    "mobileNote": "Akwai kuma a wayar hannu"
+  },
+  "footer": {
+    "copyright": "© 2025 AIVO Learning. An kiyaye duk haƙƙoƙi.",
+    "privacy": "Manufar Sirri",
+    "terms": "Sharuɗɗan Hidima",
+    "newsletter": "Kasance da sabuntawa",
+    "subscribe": "Yi Rajista"
+  },
+  "common": {
+    "learnMore": "Ƙara Koyo",
+    "getStarted": "Fara Kyauta",
+    "contactUs": "Tuntuɓe Mu",
+    "readMore": "Ƙara Karantawa",
+    "backToHome": "Koma Gida"
+  }
+}

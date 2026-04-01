@@ -1,0 +1,77 @@
+{
+  "nav": {
+    "features": "Àwọn Ẹ̀yà",
+    "pricing": "Iye Owó",
+    "about": "Nípa Wa",
+    "blog": "Búlọ́ọ̀gì",
+    "howItWorks": "Bí Ó Ṣe Ń Ṣiṣẹ́",
+    "tutors": "Àwọn Olùkọ́ AI",
+    "login": "Wọlé",
+    "getStarted": "Bẹ̀rẹ̀ Lọ́fẹ̀ẹ́"
+  },
+  "hero": {
+    "headline": "Ẹ̀kọ́ AI Tí Ó Báramu Pẹ̀lú Akẹ́kọ̀ọ́ Kọ̀ọ̀kan",
+    "subheadline": "Kò Sí Akẹ́kọ̀ọ́ Tí A Fi Sílẹ̀. Ẹ̀kọ́ tí a ṣe ní pàtó tí a fi agbára Brain Clone AI ṣe tí ó ṣẹ̀dá ìwé ẹ̀kọ́ àkànṣe fún akẹ́kọ̀ọ́ kọ̀ọ̀kan.",
+    "cta": "Bẹ̀rẹ̀ Lọ́fẹ̀ẹ́",
+    "ctaSecondary": "Béèrè fún Ìfihàn",
+    "slide2Headline": "Àwọn Ọ̀nà Àkànṣe fún Olùkọ́ Kọ̀ọ̀kan",
+    "slide2Subheadline": "AI wa ń báramu ní àkókò gidi, ó ń ṣàwárí àwọn agbára àti àwọn àlàfo láti ṣẹ̀dá ètò ẹ̀kọ́ àkànṣe tí ó mú àwọn akẹ́kọ̀ọ́ ṣiṣẹ́.",
+    "slide2Cta": "Wo Bí Ó Ṣe Ń Ṣiṣẹ́",
+    "slide3Headline": "Tẹ̀lé Ìlọsíwájú Ní Àkókò Gidi",
+    "slide3Subheadline": "Dáṣíbọ́ọ̀dù ẹ̀kọ́ ẹlẹ́wà tí ó fún àwọn akẹ́kọ̀ọ́, àwọn òbí, àti àwọn olùkọ́ ní ìwòran lẹ́sẹ̀kẹsẹ̀ ti ìlọsíwájú, àwọn streak, àti àwọn ìmọ̀ràn AI.",
+    "slide3Cta": "Bẹ̀rẹ̀ Lọ́fẹ̀ẹ́",
+    "slide3CtaSecondary": "Wo Àwọn Ìwádìí Ọ̀ràn"
+  },
+  "features": {
+    "title": "Gbogbo Ohun Tí Àwọn Akẹ́kọ̀ọ́ Rẹ Nílò Láti Ṣàṣeyọrí",
+    "subtitle": "AIVO dàpọ̀ AI ọjọ́ iwájú pẹ̀lú ìmọ̀ sáyẹ́nsì ẹ̀kọ́ tí a fìdí múlẹ̀ láti ṣẹ̀dá ìrírí ẹ̀kọ́ tí ó báramu pẹ̀lú akẹ́kọ̀ọ́ kọ̀ọ̀kan."
+  },
+  "howItWorks": {
+    "title": "Bí AIVO Ṣe Ń Ṣiṣẹ́",
+    "subtitle": "Ìgbésẹ̀ mẹ́ta tí ó rọrùn fún ẹ̀kọ́ àkànṣe tí ó báramu pẹ̀lú àwọn àìní àkànṣe ti akẹ́kọ̀ọ́ kọ̀ọ̀kan."
+  },
+  "aiTutors": {
+    "title": "Pàdé Ẹgbẹ́ Ẹ̀kọ́ AI Rẹ",
+    "subtitle": "Àwọn olùkọ́ AI márùn-ún àkànṣe, ọ̀kọ̀ọ̀kan pẹ̀lú ìwà àti ọ̀nà ẹ̀kọ́ àkànṣe tí a ṣe láti mú kí kókó ẹ̀kọ́ kọ̀ọ̀kan nífẹ̀ẹ́ àti ìgbádùn."
+  },
+  "pricing": {
+    "title": "Iye Owó Tí Ó Rọrùn àti Kedere",
+    "subtitle": "Bẹ̀rẹ̀ lọ́fẹ̀ẹ́. Ṣe ìgbégasókè nígbà tí o bá ti ṣetán.",
+    "monthly": "Oṣooṣù",
+    "annual": "Ọdọọdún",
+    "faqTitle": "Àwọn Ìbéèrè Tí A Sábà Máa Ń Béèrè"
+  },
+  "demo": {
+    "title": "Wo AIVO Ní Iṣẹ́",
+    "subtitle": "Ṣètò ìfihàn àkànṣe pẹ̀lú ẹgbẹ́ ẹ̀kọ́ wa.",
+    "successTitle": "O Ṣeun!",
+    "successMessage": "Ẹgbẹ́ wa yóò kàn sí ọ láàrin wákàtí 24."
+  },
+  "contact": {
+    "title": "Kàn Sí Wa",
+    "subtitle": "Ṣé o ní ìbéèrè? A yóò nífẹ̀ẹ́ láti gbọ́ lọ́wọ́ rẹ.",
+    "successTitle": "A Ti Fi Ìfiranṣẹ́ Ránṣẹ́!",
+    "successMessage": "A ó dáhùn rẹ láàrin ọjọ́ 1-2 iṣẹ́."
+  },
+  "cta": {
+    "headline": "Ṣé O Ti Ṣetán Láti Yí Ẹ̀kọ́ Padà?",
+    "subheadline": "Darapọ̀ mọ́ àwọn akẹ́kọ̀ọ́ tí ó ju 150 lọ tí wọ́n ti ń kọ́ ẹ̀kọ́ pẹ̀lú AIVO. Bẹ̀rẹ̀ ìdánwò ọ̀fẹ́ rẹ lónìí — láìsí káàdì kírẹ́dítì.",
+    "button": "Bẹ̀rẹ̀ Lọ́fẹ̀ẹ́",
+    "secondary": "Bá Ẹgbẹ́ Títà Sọ̀rọ̀",
+    "mobileNote": "Ó tún wà lórí fóònù alágbèéká"
+  },
+  "footer": {
+    "copyright": "© 2025 AIVO Learning. Gbogbo ẹ̀tọ́ ni a pamọ́.",
+    "privacy": "Ìlànà Ìpamọ́",
+    "terms": "Àwọn Òfin Iṣẹ́",
+    "newsletter": "Dúró ní ìmúdójúìwọ̀n",
+    "subscribe": "Forúkọ Sílẹ̀"
+  },
+  "common": {
+    "learnMore": "Kọ́ Síi",
+    "getStarted": "Bẹ̀rẹ̀ Lọ́fẹ̀ẹ́",
+    "contactUs": "Kàn Sí Wa",
+    "readMore": "Ka Síi",
+    "backToHome": "Padà Sí Ilé"
+  }
+}
