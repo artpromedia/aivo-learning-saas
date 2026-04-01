@@ -1,6 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import fp from "fastify-plugin";
 import { connect, type NatsConnection } from "nats";
+import { provisionStreams } from "@aivo/events";
 import { getConfig } from "../config.js";
 
 declare module "fastify" {
@@ -12,6 +13,8 @@ declare module "fastify" {
 export default fp(async (fastify: FastifyInstance) => {
   const config = getConfig();
   const nc = await connect({ servers: config.NATS_URL });
+
+  await provisionStreams(nc);
 
   fastify.decorate("nats", nc);
 

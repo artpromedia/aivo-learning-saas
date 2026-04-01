@@ -97,12 +97,16 @@ export async function publishEvent<T extends EventName>(
 
 export type EventHandler<S extends z.ZodType> = (data: z.infer<S>) => Promise<void>;
 
+export interface Subscription {
+  unsubscribe(): void;
+}
+
 export async function subscribeEvent<S extends z.ZodType>(
   nc: NatsConnection,
   eventName: EventName,
   schema: S,
   handler: EventHandler<S>,
-): Promise<void> {
+): Promise<Subscription> {
   const subject = SUBJECTS[eventName];
   const streamName = resolveStreamForSubject(subject);
   const js = nc.jetstream();
@@ -111,14 +115,23 @@ export async function subscribeEvent<S extends z.ZodType>(
   } as OrderedConsumerOptions);
   const messages = await consumer.consume();
 
-  for await (const msg of messages) {
-    try {
-      const raw = JSON.parse(sc.decode(msg.data));
-      const validated = schema.parse(raw);
-      await handler(validated);
-      msg.ack();
-    } catch (err) {
-      msg.nak();
+  // Fire-and-forget: do NOT await the loop
+  (async () => {
+    for await (const msg of messages) {
+      try {
+        const raw = JSON.parse(sc.decode(msg.data));
+        const validated = schema.parse(raw);
+        await handler(validated);
+        msg.ack();
+      } catch (err) {
+        msg.nak();
+      }
     }
-  }
+  })();
+
+  return {
+    unsubscribe() {
+      messages.stop();
+    },
+  };
 }

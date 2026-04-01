@@ -1,6 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import { eq } from "drizzle-orm";
-import { subscribeEvent, BRAIN_SCHEMAS } from "@aivo/events";
+import { subscribeEvent, BRAIN_SCHEMAS, type Subscription } from "@aivo/events";
 import { publishEvent } from "@aivo/events";
 import { brainStates, learners, users } from "@aivo/db";
 import { RecommendationService } from "../services/recommendation.service.js";
@@ -8,10 +8,11 @@ import { RecommendationService } from "../services/recommendation.service.js";
 export async function setupSubscribers(app: FastifyInstance): Promise<void> {
   const nc = app.nats;
   const recService = new RecommendationService(app);
+  const subs: Subscription[] = [];
 
   // brain.recommendation.created → store locally + notify parent
   try {
-    await subscribeEvent(nc, "brain.recommendation.created", BRAIN_SCHEMAS["brain.recommendation.created"], async (data) => {
+    const sub = await subscribeEvent(nc, "brain.recommendation.created", BRAIN_SCHEMAS["brain.recommendation.created"], async (data) => {
       app.log.info({ data }, "Received brain.recommendation.created");
       try {
         const [brainState] = await app.db
@@ -49,11 +50,12 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
         app.log.error({ err, data }, "Failed to process brain.recommendation.created");
       }
     });
+    subs.push(sub);
   } catch { app.log.warn("Could not subscribe to brain.recommendation.created"); }
 
   // brain.iep_goal.met → create iep_goal_met recommendation
   try {
-    await subscribeEvent(nc, "brain.iep_goal.met", BRAIN_SCHEMAS["brain.iep_goal.met"], async (data) => {
+    const sub = await subscribeEvent(nc, "brain.iep_goal.met", BRAIN_SCHEMAS["brain.iep_goal.met"], async (data) => {
       app.log.info({ data }, "Received brain.iep_goal.met");
       try {
         const [brainState] = await app.db
@@ -76,11 +78,12 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
         app.log.error({ err, data }, "Failed to process brain.iep_goal.met");
       }
     });
+    subs.push(sub);
   } catch { app.log.warn("Could not subscribe to brain.iep_goal.met"); }
 
   // brain.cloned → create initial brain_profile_review recommendation
   try {
-    await subscribeEvent(nc, "brain.cloned", BRAIN_SCHEMAS["brain.cloned"], async (data) => {
+    const sub = await subscribeEvent(nc, "brain.cloned", BRAIN_SCHEMAS["brain.cloned"], async (data) => {
       app.log.info({ data }, "Received brain.cloned");
       try {
         await recService.createRecommendation({
@@ -95,11 +98,12 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
         app.log.error({ err, data }, "Failed to process brain.cloned");
       }
     });
+    subs.push(sub);
   } catch { app.log.warn("Could not subscribe to brain.cloned"); }
 
   // brain.regression.detected → create regression_alert recommendation
   try {
-    await subscribeEvent(nc, "brain.regression.detected", BRAIN_SCHEMAS["brain.regression.detected"], async (data) => {
+    const sub = await subscribeEvent(nc, "brain.regression.detected", BRAIN_SCHEMAS["brain.regression.detected"], async (data) => {
       app.log.info({ data }, "Received brain.regression.detected");
       try {
         const [brainState] = await app.db
@@ -122,7 +126,15 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
         app.log.error({ err, data }, "Failed to process brain.regression.detected");
       }
     });
+    subs.push(sub);
   } catch { app.log.warn("Could not subscribe to brain.regression.detected"); }
+
+  // Clean up on close
+  app.addHook("onClose", async () => {
+    for (const sub of subs) {
+      sub.unsubscribe();
+    }
+  });
 
   app.log.info("Family-svc NATS subscribers set up");
 }
