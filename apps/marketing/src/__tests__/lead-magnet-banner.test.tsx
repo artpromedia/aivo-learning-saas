@@ -1,16 +1,20 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { render, screen, fireEvent, waitFor, cleanup } from "@testing-library/react";
+
+afterEach(() => {
+  cleanup();
+});
 
 vi.mock("lucide-react", () => ({
   Loader2: () => <span>Loading</span>,
 }));
 
-const mockSubmitLead = vi.fn().mockResolvedValue({ lead: { id: "123" } });
+const mockSubmitLead = vi.hoisted(() => vi.fn().mockResolvedValue({ lead: { id: "123" } }));
 vi.mock("@/lib/leads-api", () => ({
   submitLead: (...args: unknown[]) => mockSubmitLead(...args),
 }));
 
-const mockEvents = { leadMagnetDownload: vi.fn() };
+const mockEvents = vi.hoisted(() => ({ leadMagnetDownload: vi.fn() }));
 vi.mock("@/lib/analytics", () => ({ events: mockEvents }));
 
 vi.mock("@/lib/utils", () => ({
