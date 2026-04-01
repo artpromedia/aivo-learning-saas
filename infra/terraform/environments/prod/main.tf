@@ -1,12 +1,29 @@
+# ─────────────────────────────────────────────────────────────
+# AIVO Platform — Hetzner Dedicated Server Infrastructure
+# ─────────────────────────────────────────────────────────────
+#
+# This project runs on 4 Hetzner Robot DEDICATED servers (not Cloud VMs).
+# Dedicated servers are provisioned via Hetzner Robot console and configured
+# manually per HETZNER_DEPLOYMENT_GUIDE.md. They CANNOT be managed by the
+# hcloud Terraform provider (which only targets Hetzner Cloud resources).
+#
+# Infrastructure managed here:
+#   - Terraform state backend (Cloudflare R2)
+#   - Server inventory as locals (documentation-as-code)
+#
+# Infrastructure managed OUTSIDE Terraform:
+#   - Hetzner Robot dedicated servers (ordered via Robot console)
+#   - Hetzner vSwitch (VLAN 4000, 10.0.0.0/24, configured via Robot console)
+#   - UFW firewall rules (configured per-server via SSH)
+#   - K3s cluster (installed via k3s.io install script)
+#   - Kubernetes workloads (deployed via Helm — see deploy-staging.yml)
+#   - Cloudflare DNS, WAF, R2, Workers (managed via Cloudflare dashboard)
+#
+# See: HETZNER_DEPLOYMENT_GUIDE.md for full setup procedures.
+# ─────────────────────────────────────────────────────────────
+
 terraform {
   required_version = ">= 1.7.0"
-
-  required_providers {
-    hcloud = {
-      source  = "hetznercloud/hcloud"
-      version = "~> 1.48"
-    }
-  }
 
   backend "s3" {
     bucket                      = "aivo"
@@ -22,19 +39,9 @@ terraform {
   }
 }
 
-provider "hcloud" {
-  token = var.hcloud_token
-}
-
 # ─────────────────────────────────────────────
 # Variables
 # ─────────────────────────────────────────────
-
-variable "hcloud_token" {
-  description = "Hetzner Cloud API token"
-  type        = string
-  sensitive   = true
-}
 
 variable "environment" {
   description = "Environment name"
@@ -42,234 +49,87 @@ variable "environment" {
   default     = "prod"
 }
 
-variable "location" {
-  description = "Hetzner datacenter location"
-  type        = string
-  default     = "fsn1"
-}
-
-variable "k8s_version" {
-  description = "Kubernetes version"
-  type        = string
-  default     = "1.29"
-}
-
 # ─────────────────────────────────────────────
-# Network
+# Server Inventory (Hetzner Robot Dedicated)
 # ─────────────────────────────────────────────
+# These are DOCUMENTATION ONLY — dedicated servers are not managed by Terraform.
+# Source of truth: HETZNER_DEPLOYMENT_GUIDE.md
 
-resource "hcloud_network" "aivo" {
-  name     = "aivo-${var.environment}"
-  ip_range = "10.0.0.0/16"
-}
-
-resource "hcloud_network_subnet" "k8s" {
-  network_id   = hcloud_network.aivo.id
-  type         = "cloud"
-  network_zone = "eu-central"
-  ip_range     = "10.0.1.0/24"
-}
-
-# ─────────────────────────────────────────────
-# Kubernetes Cluster (Hetzner Cloud)
-# ─────────────────────────────────────────────
-
-resource "hcloud_server" "k8s_control_plane" {
-  name        = "aivo-cp-${var.environment}"
-  server_type = "cx32"
-  image       = "ubuntu-24.04"
-  location    = var.location
-  ssh_keys    = [hcloud_ssh_key.deploy.id]
-
-  network {
-    network_id = hcloud_network.aivo.id
-    ip         = "10.0.1.10"
+locals {
+  servers = {
+    "aivo-db1" = {
+      role        = "database"
+      private_ip  = "10.0.0.1"
+      location    = "HEL1"
+      cpu         = "Xeon W-2145 8C/16T @ 4.5GHz"
+      ram         = "128GB ECC"
+      storage     = "2x1.92TB Datacenter SSD"
+      services    = ["postgresql", "pgbouncer", "redis"]
+      k3s_role    = "agent"
+      k3s_labels  = ["role=database"]
+      k3s_taints  = ["role=database:NoSchedule"]
+    }
+    "aivo-app1" = {
+      role        = "app-primary"
+      private_ip  = "10.0.0.2"
+      location    = "HEL1"
+      cpu         = "i9-9900K 8C/16T @ 5.0GHz"
+      ram         = "128GB"
+      storage     = "2x1TB NVMe"
+      services    = ["k3s-control-plane", "ingress-nginx", "monitoring", "typescript-services"]
+      k3s_role    = "server"
+      k3s_labels  = ["role=app"]
+      k3s_taints  = []
+    }
+    "aivo-app2" = {
+      role        = "app-secondary"
+      private_ip  = "10.0.0.3"
+      location    = "HEL1"
+      cpu         = "i7-8700 6C/12T @ 4.6GHz"
+      ram         = "128GB"
+      storage     = "3x1TB NVMe"
+      services    = ["k3s-agent", "minio", "backup-mirror"]
+      k3s_role    = "agent"
+      k3s_labels  = ["role=app"]
+      k3s_taints  = []
+    }
+    "aivo-ml1" = {
+      role        = "ml"
+      private_ip  = "10.0.0.4"
+      location    = "HEL1"
+      cpu         = "Ryzen 9 5950X 16C/32T @ 4.9GHz"
+      ram         = "128GB ECC"
+      storage     = "2x3.84TB Datacenter SSD"
+      services    = ["k3s-agent", "ai-svc"]
+      k3s_role    = "agent"
+      k3s_labels  = ["role=ml"]
+      k3s_taints  = []
+    }
   }
 
-  labels = {
-    environment = var.environment
-    role        = "control-plane"
-    project     = "aivo"
+  # vSwitch configuration (Hetzner Robot, not Cloud Network)
+  vswitch = {
+    vlan_id  = 4000
+    ip_range = "10.0.0.0/24"
+    location = "HEL1"
   }
-
-  depends_on = [hcloud_network_subnet.k8s]
-}
-
-resource "hcloud_server" "k8s_worker" {
-  count       = 3
-  name        = "aivo-worker-${var.environment}-${count.index + 1}"
-  server_type = "cx42"
-  image       = "ubuntu-24.04"
-  location    = var.location
-  ssh_keys    = [hcloud_ssh_key.deploy.id]
-
-  network {
-    network_id = hcloud_network.aivo.id
-    ip         = "10.0.1.${20 + count.index}"
-  }
-
-  labels = {
-    environment = var.environment
-    role        = "worker"
-    project     = "aivo"
-  }
-
-  depends_on = [hcloud_network_subnet.k8s]
-}
-
-# ─────────────────────────────────────────────
-# SSH Key
-# ─────────────────────────────────────────────
-
-resource "hcloud_ssh_key" "deploy" {
-  name       = "aivo-deploy-${var.environment}"
-  public_key = var.ssh_public_key
-}
-
-variable "ssh_public_key" {
-  description = "SSH public key for server access"
-  type        = string
-
-  validation {
-    condition     = length(var.ssh_public_key) > 0
-    error_message = "ssh_public_key must not be empty. Set the SSH_PUBLIC_KEY secret in GitHub."
-  }
-}
-
-# ─────────────────────────────────────────────
-# Load Balancer
-# ─────────────────────────────────────────────
-
-resource "hcloud_load_balancer" "ingress" {
-  name               = "aivo-lb-${var.environment}"
-  load_balancer_type = "lb11"
-  location           = var.location
-
-  labels = {
-    environment = var.environment
-    project     = "aivo"
-  }
-}
-
-resource "hcloud_load_balancer_network" "ingress" {
-  load_balancer_id = hcloud_load_balancer.ingress.id
-  network_id       = hcloud_network.aivo.id
-  ip               = "10.0.1.100"
-}
-
-resource "hcloud_load_balancer_target" "workers" {
-  count            = 3
-  type             = "server"
-  load_balancer_id = hcloud_load_balancer.ingress.id
-  server_id        = hcloud_server.k8s_worker[count.index].id
-}
-
-resource "hcloud_load_balancer_service" "https" {
-  load_balancer_id = hcloud_load_balancer.ingress.id
-  protocol         = "tcp"
-  listen_port      = 443
-  destination_port = 443
-}
-
-resource "hcloud_load_balancer_service" "http" {
-  load_balancer_id = hcloud_load_balancer.ingress.id
-  protocol         = "tcp"
-  listen_port      = 80
-  destination_port = 80
-}
-
-# ─────────────────────────────────────────────
-# Firewall
-# ─────────────────────────────────────────────
-
-resource "hcloud_firewall" "k8s" {
-  name = "aivo-fw-${var.environment}"
-
-  rule {
-    direction  = "in"
-    protocol   = "tcp"
-    port       = "22"
-    source_ips = ["0.0.0.0/0", "::/0"]
-  }
-
-  rule {
-    direction  = "in"
-    protocol   = "tcp"
-    port       = "80"
-    source_ips = ["0.0.0.0/0", "::/0"]
-  }
-
-  rule {
-    direction  = "in"
-    protocol   = "tcp"
-    port       = "443"
-    source_ips = ["0.0.0.0/0", "::/0"]
-  }
-
-  rule {
-    direction  = "in"
-    protocol   = "tcp"
-    port       = "6443"
-    source_ips = ["10.0.0.0/16"]
-    description = "K8s API server (internal only)"
-  }
-
-  rule {
-    direction  = "in"
-    protocol   = "tcp"
-    port       = "10250"
-    source_ips = ["10.0.0.0/16"]
-    description = "Kubelet API"
-  }
-}
-
-resource "hcloud_firewall_attachment" "k8s" {
-  firewall_id = hcloud_firewall.k8s.id
-  label_selectors = ["project=aivo"]
-}
-
-# ─────────────────────────────────────────────
-# Volumes (persistent storage)
-# ─────────────────────────────────────────────
-
-resource "hcloud_volume" "postgres_data" {
-  name     = "aivo-pg-data-${var.environment}"
-  size     = 100
-  location = var.location
-
-  labels = {
-    environment = var.environment
-    project     = "aivo"
-    role        = "database"
-  }
-}
-
-resource "hcloud_volume_attachment" "postgres_data" {
-  volume_id = hcloud_volume.postgres_data.id
-  server_id = hcloud_server.k8s_worker[0].id
-  automount = true
 }
 
 # ─────────────────────────────────────────────
 # Outputs
 # ─────────────────────────────────────────────
 
-output "control_plane_ip" {
-  value       = hcloud_server.k8s_control_plane.ipv4_address
-  description = "Control plane public IP"
+output "server_inventory" {
+  value       = { for name, s in local.servers : name => {
+    role       = s.role
+    private_ip = s.private_ip
+    location   = s.location
+    k3s_role   = s.k3s_role
+  }}
+  description = "Hetzner dedicated server inventory (documentation only)"
 }
 
-output "worker_ips" {
-  value       = hcloud_server.k8s_worker[*].ipv4_address
-  description = "Worker node public IPs"
-}
-
-output "load_balancer_ip" {
-  value       = hcloud_load_balancer.ingress.ipv4
-  description = "Load balancer public IP"
-}
-
-output "network_id" {
-  value       = hcloud_network.aivo.id
-  description = "Hetzner network ID"
+output "vswitch_config" {
+  value       = local.vswitch
+  description = "Hetzner vSwitch configuration (documentation only)"
 }
