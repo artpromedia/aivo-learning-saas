@@ -76,7 +76,7 @@ resource "hcloud_network_subnet" "k8s" {
 
 resource "hcloud_server" "k8s_control_plane" {
   name        = "aivo-cp-${var.environment}"
-  server_type = "cpx31"
+  server_type = "cx32"
   image       = "ubuntu-24.04"
   location    = var.location
   ssh_keys    = [hcloud_ssh_key.deploy.id]
@@ -98,7 +98,7 @@ resource "hcloud_server" "k8s_control_plane" {
 resource "hcloud_server" "k8s_worker" {
   count       = 3
   name        = "aivo-worker-${var.environment}-${count.index + 1}"
-  server_type = "cpx41"
+  server_type = "cx42"
   image       = "ubuntu-24.04"
   location    = var.location
   ssh_keys    = [hcloud_ssh_key.deploy.id]

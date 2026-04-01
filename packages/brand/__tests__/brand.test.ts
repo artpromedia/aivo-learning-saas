@@ -7,7 +7,6 @@ import {
   AIVO_SHADOWS,
   AIVO_GRADIENTS,
   AIVO_ANIMATION,
-  AIVO_TRANSITIONS,
 } from "../src/tokens.js";
 import { AIVO_BRAND } from "../src/email.js";
 import {
