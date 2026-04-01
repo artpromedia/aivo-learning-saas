@@ -1,5 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { render, screen, fireEvent, waitFor, cleanup } from "@testing-library/react";
+
+afterEach(() => {
+  cleanup();
+});
 
 vi.mock("framer-motion", () => ({
   motion: {
@@ -26,15 +30,15 @@ vi.mock("lucide-react", () => ({
   Shield: () => <span>Shield</span>,
 }));
 
-const mockSubmitLead = vi.fn().mockResolvedValue({ lead: { id: "123" } });
+const mockSubmitLead = vi.hoisted(() => vi.fn().mockResolvedValue({ lead: { id: "123" } }));
 vi.mock("@/lib/leads-api", () => ({
   submitLead: (...args: unknown[]) => mockSubmitLead(...args),
 }));
 
-const mockEvents = {
+const mockEvents = vi.hoisted(() => ({
   demoBookingStarted: vi.fn(),
   demoBookingCompleted: vi.fn(),
-};
+}));
 vi.mock("@/lib/analytics", () => ({ events: mockEvents }));
 
 vi.mock("@/components/booking/oonrumail-calendar", () => ({
