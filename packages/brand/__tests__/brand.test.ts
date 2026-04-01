@@ -62,9 +62,9 @@ describe("AIVO_COLORS", () => {
   });
 
   it("should have semantic colors", () => {
-    expect(AIVO_COLORS.success).toBe("#16a34a");
+    expect(AIVO_COLORS.success).toBe("#22c55e");
     expect(AIVO_COLORS.warning).toBe("#f59e0b");
-    expect(AIVO_COLORS.error).toBe("#ef4444");
+    expect(AIVO_COLORS.danger).toBe("#ef4444");
   });
 });
 

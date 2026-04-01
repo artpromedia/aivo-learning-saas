@@ -64,7 +64,7 @@ describe("Color palette completeness", () => {
   it("semantic colors are valid hex", () => {
     expect(AIVO_COLORS.success).toMatch(hexRegex);
     expect(AIVO_COLORS.warning).toMatch(hexRegex);
-    expect(AIVO_COLORS.error).toMatch(hexRegex);
+    expect(AIVO_COLORS.danger).toMatch(hexRegex);
     expect(AIVO_COLORS.white).toMatch(hexRegex);
   });
 });
@@ -221,14 +221,14 @@ describe("WCAG contrast ratios", () => {
     expect(ratio).toBeGreaterThanOrEqual(7);
   });
 
-  it("error red on white meets AA for large text (≥ 3:1)", () => {
-    const ratio = contrastRatio(AIVO_COLORS.error, WHITE);
+  it("danger red on white meets AA for large text (≥ 3:1)", () => {
+    const ratio = contrastRatio(AIVO_COLORS.danger, WHITE);
     expect(ratio).toBeGreaterThanOrEqual(3);
   });
 
-  it("success green on white meets AA for large text (≥ 3:1)", () => {
-    const ratio = contrastRatio(AIVO_COLORS.success, WHITE);
-    expect(ratio).toBeGreaterThanOrEqual(3);
+  it("success green on navy-900 meets AA for normal text (≥ 4.5:1)", () => {
+    const ratio = contrastRatio(AIVO_COLORS.success, AIVO_COLORS.navy[900]);
+    expect(ratio).toBeGreaterThanOrEqual(4.5);
   });
 
   it("white on purple-500 meets AA for normal text (≥ 4.5:1)", () => {

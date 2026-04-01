@@ -109,27 +109,7 @@ export const events = {
   experimentConverted: (experiment: string, variant: string): void =>
     trackEvent("Experiment Converted", { experiment, variant }),
 
-  videoWalkthroughStarted: (source: string) =>
-    trackEvent("Video Walkthrough Started", { source }),
-
-  videoWalkthroughMilestone: (source: string, percent: number) =>
-    trackEvent("Video Walkthrough Milestone", { source, percent }),
-
-  videoWalkthroughCompleted: (source: string, watchTimeMs: number) =>
-    trackEvent("Video Walkthrough Completed", { source, watchTimeMs }),
-
-  ctaClicked: (cta: string, source: string) =>
-    trackEvent("CTA Clicked", { cta, source }),
-
-  demoBookingStarted: (source: string) =>
-    trackEvent("Demo Booking Started", { source }),
-
-  demoBookingCompleted: (source: string, dateTime: string) =>
-    trackEvent("Demo Booking Completed", { source, dateTime }),
-
-  pricingToggle: (cycle: string) =>
-    trackEvent("Pricing Toggle", { cycle }),
-
-  leadMagnetDownload: (source: string) =>
+  /** Lead magnet downloaded. */
+  leadMagnetDownload: (source: string): void =>
     trackEvent("Lead Magnet Download", { source }),
 };
