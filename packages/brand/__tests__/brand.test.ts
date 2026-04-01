@@ -7,6 +7,7 @@ import {
   AIVO_SHADOWS,
   AIVO_GRADIENTS,
   AIVO_ANIMATION,
+  AIVO_TRANSITIONS,
 } from "../src/tokens.js";
 import { AIVO_BRAND } from "../src/email.js";
 import {
@@ -18,16 +19,20 @@ import {
 
 // ─── Color Tokens ───────────────────────────────────────────────────────────────
 describe("AIVO_COLORS", () => {
-  it("should have purple palette with 10 shades", () => {
-    expect(Object.keys(AIVO_COLORS.purple)).toHaveLength(10);
+  it("should have purple palette with 11 shades (50–950)", () => {
+    expect(Object.keys(AIVO_COLORS.purple)).toHaveLength(11);
   });
 
-  it("should have teal palette with 10 shades", () => {
-    expect(Object.keys(AIVO_COLORS.teal)).toHaveLength(10);
+  it("should have teal palette with 11 shades (50–950)", () => {
+    expect(Object.keys(AIVO_COLORS.teal)).toHaveLength(11);
   });
 
-  it("should have navy palette with 10 shades", () => {
-    expect(Object.keys(AIVO_COLORS.navy)).toHaveLength(10);
+  it("should have navy palette with 11 shades (50–950)", () => {
+    expect(Object.keys(AIVO_COLORS.navy)).toHaveLength(11);
+  });
+
+  it("should have gray palette with 11 shades (50–950)", () => {
+    expect(Object.keys(AIVO_COLORS.gray)).toHaveLength(11);
   });
 
   it("all hex colors should be valid format", () => {
@@ -48,33 +53,36 @@ describe("AIVO_COLORS", () => {
     expect(AIVO_COLORS.purple[500]).toBe("#7c3aed");
   });
 
-  it("should have PRD-correct teal 400", () => {
-    expect(AIVO_COLORS.teal[400]).toBe("#35cbda");
+  it("should have PRD-correct teal 500", () => {
+    expect(AIVO_COLORS.teal[500]).toBe("#14b8c8");
   });
 
-  it("should have PRD-correct navy 800", () => {
-    expect(AIVO_COLORS.navy[800]).toBe("#161a36");
+  it("should have navy 900 as dark navy", () => {
+    expect(AIVO_COLORS.navy[900]).toBe("#0f172a");
   });
 
   it("should have semantic colors", () => {
-    expect(AIVO_COLORS.success).toBe("#10B981");
-    expect(AIVO_COLORS.warning).toBe("#F59E0B");
-    expect(AIVO_COLORS.error).toBe("#EF4444");
+    expect(AIVO_COLORS.success).toBe("#16a34a");
+    expect(AIVO_COLORS.warning).toBe("#f59e0b");
+    expect(AIVO_COLORS.error).toBe("#ef4444");
   });
 });
 
 // ─── Typography ─────────────────────────────────────────────────────────────────
 describe("AIVO_TYPOGRAPHY", () => {
-  it("should use Inter font family", () => {
-    expect(AIVO_TYPOGRAPHY.fontFamily).toContain("Inter");
+  it("should use Plus Jakarta Sans font family", () => {
+    expect(AIVO_TYPOGRAPHY.fontFamily).toContain("Plus Jakarta Sans");
   });
 
   it("should have 5 font weights", () => {
     expect(Object.keys(AIVO_TYPOGRAPHY.fontWeights)).toHaveLength(5);
   });
 
-  it("should have 9 font sizes", () => {
-    expect(Object.keys(AIVO_TYPOGRAPHY.fontSize)).toHaveLength(9);
+  it("should have typography scale with all required sizes", () => {
+    const requiredSizes = ["hero", "h1", "h2", "h3", "h4", "body-lg", "body", "body-sm", "caption"];
+    for (const size of requiredSizes) {
+      expect(AIVO_TYPOGRAPHY.scale).toHaveProperty(size);
+    }
   });
 });
 
@@ -108,6 +116,12 @@ describe("AIVO_SPACING", () => {
 describe("AIVO_BORDER_RADIUS", () => {
   it("should have full radius", () => {
     expect(AIVO_BORDER_RADIUS.full).toBe("9999px");
+  });
+
+  it("should have standard radius scale", () => {
+    expect(AIVO_BORDER_RADIUS.sm).toBeDefined();
+    expect(AIVO_BORDER_RADIUS.md).toBeDefined();
+    expect(AIVO_BORDER_RADIUS.lg).toBeDefined();
   });
 });
 

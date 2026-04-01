@@ -18,9 +18,10 @@ function buildPaletteMap(palette: Record<string, string>): Record<string, string
 }
 
 export const AIVO_FLUTTER_COLORS = {
-  purple: buildPaletteMap(AIVO_COLORS.purple),
-  teal: buildPaletteMap(AIVO_COLORS.teal),
-  navy: buildPaletteMap(AIVO_COLORS.navy),
+  purple: buildPaletteMap(AIVO_COLORS.purple as unknown as Record<string, string>),
+  teal: buildPaletteMap(AIVO_COLORS.teal as unknown as Record<string, string>),
+  navy: buildPaletteMap(AIVO_COLORS.navy as unknown as Record<string, string>),
+  gray: buildPaletteMap(AIVO_COLORS.gray as unknown as Record<string, string>),
   success: hexToArgb(AIVO_COLORS.success),
   warning: hexToArgb(AIVO_COLORS.warning),
   error: hexToArgb(AIVO_COLORS.error),
