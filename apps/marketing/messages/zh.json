@@ -1,0 +1,77 @@
+{
+  "nav": {
+    "features": "功能",
+    "pricing": "价格",
+    "about": "关于我们",
+    "blog": "博客",
+    "howItWorks": "工作原理",
+    "tutors": "AI导师",
+    "login": "登录",
+    "getStarted": "免费开始"
+  },
+  "hero": {
+    "headline": "适应每个学生的AI学习",
+    "subheadline": "不让任何一个学生掉队。由Brain Clone AI技术驱动的个性化教育，为每个学生创建独特的学习档案。",
+    "cta": "免费开始",
+    "ctaSecondary": "预约演示",
+    "slide2Headline": "为每个学习者量身定制路径",
+    "slide2Subheadline": "我们的AI实时适应，识别优势和不足，创建个性化课程，让学生保持参与和进步。",
+    "slide2Cta": "了解工作原理",
+    "slide3Headline": "实时追踪进度",
+    "slide3Subheadline": "精美的学习仪表板让学生、家长和教师即时了解进度、连续学习天数和AI个性化建议。",
+    "slide3Cta": "免费开始",
+    "slide3CtaSecondary": "查看案例研究"
+  },
+  "features": {
+    "title": "学生成功所需的一切",
+    "subtitle": "AIVO将尖端AI与经验证的教育科学相结合，创造适应每个学生的学习体验。"
+  },
+  "howItWorks": {
+    "title": "AIVO如何工作",
+    "subtitle": "三个简单步骤，实现适应每个学生独特需求的个性化学习。"
+  },
+  "aiTutors": {
+    "title": "认识您的AI学习团队",
+    "subtitle": "五位专业AI导师，每位都有独特的个性和教学风格，旨在让每个科目都变得有趣和吸引人。"
+  },
+  "pricing": {
+    "title": "简单透明的价格",
+    "subtitle": "免费开始。准备好时再升级。",
+    "monthly": "月付",
+    "annual": "年付",
+    "faqTitle": "常见问题"
+  },
+  "demo": {
+    "title": "观看AIVO演示",
+    "subtitle": "与我们的教育团队预约个性化演示。",
+    "successTitle": "谢谢！",
+    "successMessage": "我们的团队将在24小时内与您联系。"
+  },
+  "contact": {
+    "title": "联系我们",
+    "subtitle": "有问题？我们很乐意听取您的意见。",
+    "successTitle": "消息已发送！",
+    "successMessage": "我们将在1-2个工作日内回复您。"
+  },
+  "cta": {
+    "headline": "准备好改变学习方式了吗？",
+    "subheadline": "加入150多名已经在使用AIVO学习的学生。今天就开始免费试用——无需信用卡。",
+    "button": "免费开始",
+    "secondary": "联系销售",
+    "mobileNote": "同时支持移动端"
+  },
+  "footer": {
+    "copyright": "© 2025 AIVO Learning. 保留所有权利。",
+    "privacy": "隐私政策",
+    "terms": "服务条款",
+    "newsletter": "保持更新",
+    "subscribe": "订阅"
+  },
+  "common": {
+    "learnMore": "了解更多",
+    "getStarted": "免费开始",
+    "contactUs": "联系我们",
+    "readMore": "阅读更多",
+    "backToHome": "返回首页"
+  }
+}

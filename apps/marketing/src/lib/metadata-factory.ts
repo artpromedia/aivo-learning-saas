@@ -22,6 +22,14 @@ export function createPageMetadata(config: PageMetadataConfig): Metadata {
       languages: {
         "en-US": canonicalUrl,
         "es-ES": `${SITE_URL}/es${config.path}`,
+        "fr-FR": `${SITE_URL}/fr${config.path}`,
+        "ar-SA": `${SITE_URL}/ar${config.path}`,
+        "zh-CN": `${SITE_URL}/zh${config.path}`,
+        "pt-BR": `${SITE_URL}/pt${config.path}`,
+        "sw-KE": `${SITE_URL}/sw${config.path}`,
+        "ig-NG": `${SITE_URL}/ig${config.path}`,
+        "yo-NG": `${SITE_URL}/yo${config.path}`,
+        "ha-NG": `${SITE_URL}/ha${config.path}`,
       },
     },
     openGraph: {

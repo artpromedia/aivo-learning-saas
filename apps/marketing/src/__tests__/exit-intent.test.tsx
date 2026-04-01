@@ -1,5 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, act, cleanup } from "@testing-library/react";
+
+afterEach(() => {
+  cleanup();
+});
 
 vi.mock("framer-motion", () => ({
   motion: {
@@ -15,12 +19,12 @@ vi.mock("lucide-react", () => ({
   Loader2: () => <span>Loading</span>,
 }));
 
-const mockSubmitLead = vi.fn().mockResolvedValue({ lead: { id: "123" } });
+const mockSubmitLead = vi.hoisted(() => vi.fn().mockResolvedValue({ lead: { id: "123" } }));
 vi.mock("@/lib/leads-api", () => ({
   submitLead: (...args: unknown[]) => mockSubmitLead(...args),
 }));
 
-const mockEvents = { exitIntentCapture: vi.fn() };
+const mockEvents = vi.hoisted(() => ({ exitIntentCapture: vi.fn() }));
 vi.mock("@/lib/analytics", () => ({ events: mockEvents }));
 
 import { ExitIntentModal } from "@/components/cro/exit-intent-modal";

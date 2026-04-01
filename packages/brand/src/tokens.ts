@@ -56,9 +56,9 @@ export const AIVO_COLORS = {
     900: "#111827",
     950: "#030712",
   },
-  success: "#16a34a",
+  success: "#22c55e",
   warning: "#f59e0b",
-  error: "#ef4444",
+  danger: "#ef4444",
   white: "#ffffff",
 } as const;
 

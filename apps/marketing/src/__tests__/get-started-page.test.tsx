@@ -1,5 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { render, screen, fireEvent, waitFor, cleanup } from "@testing-library/react";
+
+afterEach(() => {
+  cleanup();
+});
 
 vi.mock("framer-motion", () => ({
   motion: {
@@ -25,12 +29,12 @@ vi.mock("next/navigation", () => ({
   useSearchParams: () => mockSearchParams,
 }));
 
-const mockSubmitLead = vi.fn().mockResolvedValue({ lead: { id: "123" } });
+const mockSubmitLead = vi.hoisted(() => vi.fn().mockResolvedValue({ lead: { id: "123" } }));
 vi.mock("@/lib/leads-api", () => ({
   submitLead: (...args: unknown[]) => mockSubmitLead(...args),
 }));
 
-const mockEvents = { signupClick: vi.fn() };
+const mockEvents = vi.hoisted(() => ({ signupClick: vi.fn() }));
 vi.mock("@/lib/analytics", () => ({ events: mockEvents }));
 
 vi.mock("@/lib/utils", () => ({
@@ -47,7 +51,7 @@ describe("GetStartedPage", () => {
 
   it("renders step 1 with all fields", () => {
     render(<GetStartedClient />);
-    expect(screen.getByText("About You")).toBeDefined();
+    expect(screen.getByRole("heading", { name: "About You" })).toBeDefined();
     expect(screen.getByLabelText(/Full Name/)).toBeDefined();
     expect(screen.getByLabelText(/Email/)).toBeDefined();
     expect(screen.getByLabelText(/Password/)).toBeDefined();
@@ -78,7 +82,7 @@ describe("GetStartedPage", () => {
     fireEvent.click(screen.getByText(/I confirm I am 13/));
     fireEvent.click(screen.getByText("Continue"));
 
-    expect(screen.getByText("Your Learner")).toBeDefined();
+    expect(screen.getByRole("heading", { name: "Your Learner" })).toBeDefined();
   });
 
   it("renders step 3 after step 2 completion", () => {
@@ -183,7 +187,7 @@ describe("GetStartedPage", () => {
     fireEvent.click(screen.getByText("Back"));
 
     // Should be back on step 1 with data preserved
-    expect(screen.getByText("About You")).toBeDefined();
+    expect(screen.getByRole("heading", { name: "About You" })).toBeDefined();
     expect((screen.getByLabelText(/Full Name/) as HTMLInputElement).value).toBe("John");
   });
 });

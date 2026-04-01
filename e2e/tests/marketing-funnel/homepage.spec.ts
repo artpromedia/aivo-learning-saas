@@ -5,12 +5,13 @@ test.describe("Homepage", () => {
     await page.goto("/");
   });
 
-  test("Hero loads with headline, CTAs, and walkthrough player", async ({ page }) => {
-    await expect(page.getByText("AI That Learns How Your Child Learns")).toBeVisible();
+  test("Hero loads with headline, CTAs, and 3-slide carousel", async ({ page }) => {
+    await expect(page.getByText("AI-Powered Learning That Adapts to Every Student")).toBeVisible();
     await expect(page.getByTestId("hero-cta-primary")).toBeVisible();
     await expect(page.getByTestId("hero-cta-secondary")).toBeVisible();
-    await expect(page.getByTestId("hero-cta-demo")).toBeVisible();
-    await expect(page.getByRole("region", { name: "Aivo product walkthrough" })).toBeVisible();
+    await expect(page.getByTestId("hero-slide-dots")).toBeVisible();
+    await expect(page.getByLabel("Previous slide")).toBeVisible();
+    await expect(page.getByLabel("Next slide")).toBeVisible();
   });
 
   test("Social proof bar shows logos", async ({ page }) => {

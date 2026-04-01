@@ -1,0 +1,77 @@
+{
+  "nav": {
+    "features": "Atụmatụ",
+    "pricing": "Ọnụahịa",
+    "about": "Maka Anyị",
+    "blog": "Blọgụ",
+    "howItWorks": "Otu Ọ Si Arụ Ọrụ",
+    "tutors": "Ndị nkụzi AI",
+    "login": "Banye",
+    "getStarted": "Bido N'efu"
+  },
+  "hero": {
+    "headline": "Mmụta AI Nke Na-emegharị maka Ọ Bụla Nwa Akwụkwọ",
+    "subheadline": "Ọ Dịghị Nwa Akwụkwọ A Hapụrụ N'azụ. Agụmakwụkwọ nke onwe ya nke teknụzụ Brain Clone AI na-emepụta profaịlụ mmụta pụrụ iche maka nwa akwụkwọ ọ bụla.",
+    "cta": "Bido N'efu",
+    "ctaSecondary": "Rịọ Demo",
+    "slide2Headline": "Ụzọ Nke Onwe maka Onye Ọ Bụla Na-amụ Ihe",
+    "slide2Subheadline": "AI anyị na-emegharị n'oge ya, na-achọpụta ike na ọdịiche iji mepụta usoro nkwukọrịta nke na-eme ka ụmụ akwụkwọ nọrọ na-arụ ọrụ.",
+    "slide2Cta": "Lee Ka Ọ Si Arụ Ọrụ",
+    "slide3Headline": "Soro Ọganihu n'Oge Ya",
+    "slide3Subheadline": "Dashboard mmụta mara mma na-enye ụmụ akwụkwọ, ndị nne na nna, na ndị nkụzi ịhụ ngwa ngwa nke ọganihu, streak, na atụmkparịta AI.",
+    "slide3Cta": "Bido N'efu",
+    "slide3CtaSecondary": "Lee Nyocha Ikpe"
+  },
+  "features": {
+    "title": "Ihe Niile Ụmụ Akwụkwọ Gị Chọrọ Iji Nweta Ihe Ịga Nke Ọma",
+    "subtitle": "AIVO na-ejikọ AI ọhụrụ na sayensị agụmakwụkwọ egosipụtara iji mepụta ahụmahụ mmụta nke na-emegharị maka nwa akwụkwọ ọ bụla."
+  },
+  "howItWorks": {
+    "title": "Otu AIVO Si Arụ Ọrụ",
+    "subtitle": "Nzọụkwụ atọ dị mfe maka mmụta nke onwe ya nke na-emegharị maka mkpa pụrụ iche nke nwa akwụkwọ ọ bụla."
+  },
+  "aiTutors": {
+    "title": "Zute Ndị Otu Mmụta AI Gị",
+    "subtitle": "Ndị nkụzi AI ise pụrụ iche, nke ọ bụla nwere àgwà na ụdị nkụzi pụrụ iche emere ka ihe ọmụmụ ọ bụla na-atọ ụtọ."
+  },
+  "pricing": {
+    "title": "Ọnụahịa Dị Mfe na Nkwụsị",
+    "subtitle": "Bido n'efu. Kwalite mgbe ị dị njikere.",
+    "monthly": "Kwa Ọnwa",
+    "annual": "Kwa Afọ",
+    "faqTitle": "Ajụjụ A Na-Ajụkarị"
+  },
+  "demo": {
+    "title": "Lee AIVO N'ọrụ",
+    "subtitle": "Họpụta oge demo nke onwe ya na ndị otu agụmakwụkwọ anyị.",
+    "successTitle": "Daalụ!",
+    "successMessage": "Ndị otu anyị ga-akpọtụrụ gị n'ime awa 24."
+  },
+  "contact": {
+    "title": "Kpọtụrụ Anyị",
+    "subtitle": "Ị nwere ajụjụ? Anyị ga-enwe obi ụtọ ịnụ site n'aka gị.",
+    "successTitle": "Ozi Ezigara!",
+    "successMessage": "Anyị ga-azaghachi gị n'ime ụbọchị 1-2 ọrụ."
+  },
+  "cta": {
+    "headline": "Ị Dị Njikere Ịgbanwe Mmụta?",
+    "subheadline": "Sonye na ụmụ akwụkwọ karịrị 150 na-amụ ihe ugbu a na AIVO. Bido nnwale efu gị taa — enweghị kaadị kredit.",
+    "button": "Bido N'efu",
+    "secondary": "Kwurịta na Ndị Ahịa",
+    "mobileNote": "Dịkwa na ekwentị"
+  },
+  "footer": {
+    "copyright": "© 2025 AIVO Learning. Ikike niile echekwara.",
+    "privacy": "Iwu Nzuzo",
+    "terms": "Usoro Ọrụ",
+    "newsletter": "Nọrọ na-enweta ozi",
+    "subscribe": "Debanye Aha"
+  },
+  "common": {
+    "learnMore": "Mụtakwuo",
+    "getStarted": "Bido N'efu",
+    "contactUs": "Kpọtụrụ Anyị",
+    "readMore": "Gụkwuo",
+    "backToHome": "Laghachi N'ụlọ"
+  }
+}

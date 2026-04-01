@@ -8,7 +8,13 @@ const locales = [
   { code: "en", label: "English", flag: "🇺🇸" },
   { code: "es", label: "Español", flag: "🇪🇸" },
   { code: "fr", label: "Français", flag: "🇫🇷" },
+  { code: "ar", label: "العربية", flag: "🇸🇦" },
+  { code: "zh", label: "中文", flag: "🇨🇳" },
+  { code: "pt", label: "Português", flag: "🇧🇷" },
   { code: "sw", label: "Kiswahili", flag: "🇰🇪" },
+  { code: "ig", label: "Asụsụ Igbo", flag: "🇳🇬" },
+  { code: "yo", label: "Èdè Yorùbá", flag: "🇳🇬" },
+  { code: "ha", label: "Hausa", flag: "🇳🇬" },
 ] as const;
 
 interface LocaleSwitcherProps {

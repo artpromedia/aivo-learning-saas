@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, fireEvent, act } from "@testing-library/react";
+import { render, screen, fireEvent, act, cleanup } from "@testing-library/react";
 
 vi.mock("framer-motion", () => ({
   motion: {
@@ -30,7 +30,7 @@ vi.mock("@/components/booking/booking-fallback-form", () => ({
   BookingFallbackForm: () => <div>Fallback Form</div>,
 }));
 
-const mockEvents = { ctaClicked: vi.fn() };
+const mockEvents = vi.hoisted(() => ({ ctaClicked: vi.fn() }));
 vi.mock("@/lib/analytics", () => ({ events: mockEvents }));
 
 vi.mock("@/lib/utils", () => ({
@@ -47,6 +47,7 @@ describe("FloatingDemoCta", () => {
   });
 
   afterEach(() => {
+    cleanup();
     vi.useRealTimers();
   });
 

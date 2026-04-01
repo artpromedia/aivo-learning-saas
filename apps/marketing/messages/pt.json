@@ -1,0 +1,77 @@
+{
+  "nav": {
+    "features": "Recursos",
+    "pricing": "Preços",
+    "about": "Sobre",
+    "blog": "Blog",
+    "howItWorks": "Como Funciona",
+    "tutors": "Tutores IA",
+    "login": "Entrar",
+    "getStarted": "Comece Grátis"
+  },
+  "hero": {
+    "headline": "Aprendizado com IA que se Adapta a Cada Aluno",
+    "subheadline": "Nenhum aluno fica para trás. Educação personalizada alimentada pela tecnologia Brain Clone AI que cria um perfil de aprendizado único para cada estudante.",
+    "cta": "Comece Grátis",
+    "ctaSecondary": "Solicitar uma Demo",
+    "slide2Headline": "Caminhos Personalizados para Cada Aprendiz",
+    "slide2Subheadline": "Nossa IA se adapta em tempo real, identificando pontos fortes e lacunas para criar um currículo personalizado que mantém os alunos engajados e no caminho certo.",
+    "slide2Cta": "Veja Como Funciona",
+    "slide3Headline": "Acompanhe o Progresso em Tempo Real",
+    "slide3Subheadline": "Um painel de aprendizado bonito que dá a alunos, pais e professores visibilidade instantânea do progresso, sequências e recomendações da IA.",
+    "slide3Cta": "Comece Grátis",
+    "slide3CtaSecondary": "Ver Estudos de Caso"
+  },
+  "features": {
+    "title": "Tudo que Seus Alunos Precisam para Ter Sucesso",
+    "subtitle": "AIVO combina IA de ponta com ciência educacional comprovada para criar uma experiência de aprendizado que se adapta a cada aluno."
+  },
+  "howItWorks": {
+    "title": "Como o AIVO Funciona",
+    "subtitle": "Três passos simples para um aprendizado personalizado que se adapta às necessidades únicas de cada aluno."
+  },
+  "aiTutors": {
+    "title": "Conheça Sua Equipe de Aprendizado IA",
+    "subtitle": "Cinco tutores de IA especializados, cada um com personalidade e estilo de ensino únicos, projetados para tornar cada matéria envolvente e divertida."
+  },
+  "pricing": {
+    "title": "Preços Simples e Transparentes",
+    "subtitle": "Comece grátis. Faça upgrade quando estiver pronto.",
+    "monthly": "Mensal",
+    "annual": "Anual",
+    "faqTitle": "Perguntas Frequentes"
+  },
+  "demo": {
+    "title": "Veja o AIVO em Ação",
+    "subtitle": "Agende uma demonstração personalizada com nossa equipe educacional.",
+    "successTitle": "Obrigado!",
+    "successMessage": "Nossa equipe entrará em contato em até 24 horas."
+  },
+  "contact": {
+    "title": "Entre em Contato",
+    "subtitle": "Tem alguma pergunta? Adoraríamos ouvir você.",
+    "successTitle": "Mensagem Enviada!",
+    "successMessage": "Responderemos em 1-2 dias úteis."
+  },
+  "cta": {
+    "headline": "Pronto para Transformar o Aprendizado?",
+    "subheadline": "Junte-se a mais de 150 alunos que já aprendem com AIVO. Comece seu teste gratuito hoje — sem cartão de crédito.",
+    "button": "Comece Grátis",
+    "secondary": "Falar com Vendas",
+    "mobileNote": "Também disponível no celular"
+  },
+  "footer": {
+    "copyright": "© 2025 AIVO Learning. Todos os direitos reservados.",
+    "privacy": "Política de Privacidade",
+    "terms": "Termos de Serviço",
+    "newsletter": "Fique atualizado",
+    "subscribe": "Inscrever-se"
+  },
+  "common": {
+    "learnMore": "Saiba Mais",
+    "getStarted": "Comece Grátis",
+    "contactUs": "Fale Conosco",
+    "readMore": "Leia Mais",
+    "backToHome": "Voltar ao Início"
+  }
+}
