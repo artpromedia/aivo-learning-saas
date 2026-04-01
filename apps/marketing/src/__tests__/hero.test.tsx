@@ -50,6 +50,11 @@ vi.mock("@/lib/analytics", () => ({
   },
 }));
 
+// Mock i18n — return null so hero uses English fallback strings
+vi.mock("@/lib/i18n", () => ({
+  useTranslations: () => null,
+}));
+
 import { Hero } from "@/components/home/hero";
 
 describe("Hero", () => {
