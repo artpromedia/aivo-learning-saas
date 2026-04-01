@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
 import { events } from "@/lib/analytics";
 import { AivoWalkthroughPlayer } from "@/components/walkthrough/aivo-walkthrough-player";
 

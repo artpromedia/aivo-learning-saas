@@ -1,29 +1,16 @@
-import { describe, it, expect, beforeEach } from "vitest";
-
-type MockStorage = {
-  _store: Record<string, string>;
-  getItem: (key: string) => string | null;
-  setItem: (key: string, val: string) => void;
-};
-
-type TestGlobals = typeof globalThis & {
-  window: Record<string, unknown>;
-  sessionStorage: MockStorage;
-  crypto: { randomUUID: () => string };
-};
+import { describe, it, expect, beforeEach, vi } from "vitest";
 
 describe("A/B Testing", () => {
   beforeEach(() => {
-    const g = globalThis as TestGlobals;
-    g.window = {};
-    g.sessionStorage = {
+    vi.stubGlobal("window", {});
+    vi.stubGlobal("sessionStorage", {
       _store: {} as Record<string, string>,
-      getItem(key: string) { return this._store[key] ?? null; },
-      setItem(key: string, val: string) { this._store[key] = val; },
-    };
-    g.crypto = {
+      getItem(key: string) { return (this._store as Record<string, string>)[key] ?? null; },
+      setItem(key: string, val: string) { (this._store as Record<string, string>)[key] = val; },
+    });
+    vi.stubGlobal("crypto", {
       randomUUID: () => "test-uuid-12345",
-    };
+    });
   });
 
   it("should return consistent variant for same visitor", async () => {

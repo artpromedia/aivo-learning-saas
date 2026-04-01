@@ -42,8 +42,8 @@ vi.mock("@/hooks/use-scroll-position", () => ({
 }));
 
 // Minimal framer-motion mock that preserves AnimatePresence children rendering
-vi.mock("framer-motion", () => {
-  const React = require("react");
+vi.mock("framer-motion", async () => {
+  const React = await import("react");
   return {
     AnimatePresence: ({ children }: { children: React.ReactNode }) => (
       <>{children}</>

@@ -4,7 +4,6 @@ import { useState, useCallback } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { submitLead } from "@/lib/leads-api";
-import { cn } from "@/lib/utils";
 import { LocaleSwitcher } from "./locale-switcher";
 
 // ─── Footer Link Data ───────────────────────────────────────────────────────────

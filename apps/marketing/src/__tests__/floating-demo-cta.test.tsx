@@ -3,11 +3,11 @@ import { render, screen, fireEvent, act, cleanup } from "@testing-library/react"
 
 vi.mock("framer-motion", () => ({
   motion: {
-    button: ({ children, onClick, ...props }: React.PropsWithChildren<{ onClick?: () => void }>) => (
+    button: ({ children, onClick }: React.PropsWithChildren<{ onClick?: () => void }>) => (
       <button onClick={onClick}>{children}</button>
     ),
-    div: ({ children, onClick, ...props }: React.PropsWithChildren<{ onClick?: () => void; className?: string }>) => (
-      <div onClick={onClick} className={props.className}>{children}</div>
+    div: ({ children, onClick, className }: React.PropsWithChildren<{ onClick?: () => void; className?: string }>) => (
+      <div onClick={onClick} className={className}>{children}</div>
     ),
   },
   AnimatePresence: ({ children }: React.PropsWithChildren) => <>{children}</>,

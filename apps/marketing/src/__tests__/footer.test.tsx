@@ -33,8 +33,8 @@ vi.mock("@/lib/utm", () => ({
   attachUtmToPayload: <T extends object>(p: T) => ({ ...p, utmParams: {} }),
 }));
 
-vi.mock("framer-motion", () => {
-  const React = require("react");
+vi.mock("framer-motion", async () => {
+  const React = await import("react");
   return {
     AnimatePresence: ({
       children,
