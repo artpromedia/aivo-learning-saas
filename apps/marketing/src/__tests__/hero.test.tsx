@@ -33,9 +33,9 @@ vi.mock("next/link", () => ({
   ),
 }));
 
-// Mock hero background
-vi.mock("@/components/home/hero-background", () => ({
-  HeroBackground: () => <div data-testid="hero-background">Background</div>,
+// Mock DashboardMockup
+vi.mock("@/components/home/dashboard-mockup", () => ({
+  DashboardMockup: () => <div data-testid="dashboard-mockup">Dashboard Mockup</div>,
 }));
 
 // Mock analytics
@@ -57,36 +57,23 @@ describe("Hero", () => {
     vi.useRealTimers();
   });
 
-  it("renders the first slide headline text", () => {
+  it("renders the first slide headline", () => {
     render(<Hero />);
-    expect(screen.getByText("AI That Learns How Your Child Learns")).toBeDefined();
+    expect(screen.getByText("AI-Powered Learning That Adapts to Every Student")).toBeDefined();
   });
 
-  it("renders all 3 CTAs with correct data-testid values", () => {
-    render(<Hero />);
-    expect(screen.getByTestId("hero-cta-primary")).toBeDefined();
-    expect(screen.getByTestId("hero-cta-secondary")).toBeDefined();
-    expect(screen.getByTestId("hero-cta-demo")).toBeDefined();
-  });
-
-  it("renders primary CTA linking to /get-started", () => {
+  it("renders primary CTA linking to /get-started on slide 1", () => {
     render(<Hero />);
     const cta = screen.getByTestId("hero-cta-primary");
     expect(cta.getAttribute("href")).toBe("/get-started");
-    expect(cta.textContent).toContain("Start Free Trial");
+    expect(cta.textContent).toContain("Get Started Free");
   });
 
-  it("renders demo link to /demo", () => {
+  it("renders secondary CTA linking to /demo on slide 1", () => {
     render(<Hero />);
-    const demo = screen.getByTestId("hero-cta-demo");
-    expect(demo.getAttribute("href")).toBe("/demo");
-    expect(demo.textContent).toContain("Book a Live Demo");
-  });
-
-  it("renders social proof line", () => {
-    render(<Hero />);
-    expect(screen.getByTestId("hero-social-proof")).toBeDefined();
-    expect(screen.getByText(/Trusted by 500\+ schools/)).toBeDefined();
+    const cta = screen.getByTestId("hero-cta-secondary");
+    expect(cta.getAttribute("href")).toBe("/demo");
+    expect(cta.textContent).toContain("Request a Demo");
   });
 
   it("renders 3 slide indicator dots", () => {
@@ -95,47 +82,55 @@ describe("Hero", () => {
     expect(dots).toHaveLength(3);
   });
 
-  it("autoplay advances to next slide after 6 seconds", () => {
+  it("renders prev/next navigation arrows", () => {
     render(<Hero />);
-    expect(screen.getByText("AI That Learns How Your Child Learns")).toBeDefined();
+    expect(screen.getByLabelText("Previous slide")).toBeDefined();
+    expect(screen.getByLabelText("Next slide")).toBeDefined();
+  });
+
+  it("autoplay advances to slide 2 after 6 seconds", () => {
+    render(<Hero />);
+    expect(screen.getByText("AI-Powered Learning That Adapts to Every Student")).toBeDefined();
 
     act(() => {
       vi.advanceTimersByTime(6001);
     });
 
-    expect(screen.getByText("5 Expert AI Tutors, One Personalized Journey")).toBeDefined();
+    expect(screen.getByText("Personalized Paths for Every Learner")).toBeDefined();
   });
 
-  it("clicking slide dot changes the active slide", () => {
+  it("clicking slide dot 3 shows dashboard slide with DashboardMockup", () => {
     render(<Hero />);
-    expect(screen.getByText("AI That Learns How Your Child Learns")).toBeDefined();
+    fireEvent.click(screen.getByLabelText("Go to slide 3"));
 
-    const dot3 = screen.getByLabelText("Go to slide 3");
-    fireEvent.click(dot3);
-
-    expect(screen.getByText("Real-Time Insights for Parents & Teachers")).toBeDefined();
+    expect(screen.getByText("Track Progress in Real Time")).toBeDefined();
+    expect(screen.getByTestId("dashboard-mockup")).toBeDefined();
   });
 
-  it("Watch How It Works button has an onClick handler", () => {
+  it("clicking next arrow advances the slide", () => {
     render(<Hero />);
-    const btn = screen.getByTestId("hero-cta-secondary");
-    expect(btn.textContent).toContain("Watch How It Works");
-    fireEvent.click(btn);
+    fireEvent.click(screen.getByLabelText("Next slide"));
+    expect(screen.getByText("Personalized Paths for Every Learner")).toBeDefined();
   });
 
-  it("renders hero background", () => {
+  it("clicking previous arrow wraps to last slide", () => {
     render(<Hero />);
-    expect(screen.getByTestId("hero-background")).toBeDefined();
+    fireEvent.click(screen.getByLabelText("Previous slide"));
+    expect(screen.getByText("Track Progress in Real Time")).toBeDefined();
   });
 
-  it("renders entry animations with correct Framer Motion props", () => {
+  it("slide 2 has no secondary CTA", () => {
     render(<Hero />);
-    expect(screen.getByText("AI That Learns How Your Child Learns")).toBeDefined();
-    expect(screen.getByText(/Aivo creates a unique Brain Clone/)).toBeDefined();
+    fireEvent.click(screen.getByLabelText("Go to slide 2"));
+    expect(screen.getByText("See How It Works")).toBeDefined();
+    expect(screen.queryByTestId("hero-cta-secondary")).toBeNull();
   });
 
-  it("disables background animation when prefers-reduced-motion is set", () => {
+  it("slide 3 has both CTAs and DashboardMockup visual", () => {
     render(<Hero />);
-    expect(screen.getByTestId("hero-background")).toBeDefined();
+    fireEvent.click(screen.getByLabelText("Go to slide 3"));
+    expect(screen.getByTestId("hero-cta-primary")).toBeDefined();
+    expect(screen.getByTestId("hero-cta-secondary")).toBeDefined();
+    expect(screen.getByTestId("dashboard-mockup")).toBeDefined();
   });
 });
