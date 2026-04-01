@@ -110,5 +110,13 @@ export default defineConfig({
       dependencies: ['module-0b-auth', 'module-1a-assessment', 'module-1b-brain', 'module-2b-tutors', 'module-3b-collaboration'],
       use: { ...devices['Desktop Chrome'] },
     },
+    {
+      name: 'marketing-funnel',
+      testMatch: /marketing-funnel/,
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: 'http://localhost:3001',
+      },
+    },
   ],
 });

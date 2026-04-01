@@ -1,5 +1,6 @@
 import { Hero } from "@/components/home/hero";
 import { SocialProofBar } from "@/components/home/social-proof-bar";
+import { WalkthroughShowcase } from "@/components/home/walkthrough-showcase";
 import { FeaturesGrid } from "@/components/home/features-grid";
 import { HowItWorks } from "@/components/home/how-it-works";
 import { AiTutors } from "@/components/home/ai-tutors";
@@ -14,6 +15,7 @@ export default function HomePage() {
     <>
       <Hero />
       <SocialProofBar />
+      <WalkthroughShowcase />
       <FeaturesGrid />
       <HowItWorks />
       <AiTutors />
