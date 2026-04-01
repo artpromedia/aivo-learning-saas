@@ -68,8 +68,16 @@ spec:
                 secretKeyRef:
                   name: {{ $global.dbSecretName | default "db-secrets" }}
                   key: database-url
+            {{- if $global.redisSecretName }}
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $global.redisSecretName }}
+                  key: redis-url
+            {{- else }}
             - name: REDIS_URL
               value: "redis://{{ $global.redis.host }}:{{ $global.redis.port }}"
+            {{- end }}
             - name: NATS_URL
               value: {{ $global.nats.url | quote }}
             {{- if not (has $svc (list "web" "marketing")) }}
