@@ -1,13 +1,17 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, act } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { render, screen, act, cleanup } from "@testing-library/react";
+
+afterEach(() => {
+  cleanup();
+});
 
 const mockObserve = vi.fn();
 const mockDisconnect = vi.fn();
 let intersectionCallback: (entries: { isIntersecting: boolean }[]) => void;
 
 beforeEach(() => {
-  global.IntersectionObserver = vi.fn((callback) => {
-    intersectionCallback = callback;
+  global.IntersectionObserver = vi.fn(function (this: IntersectionObserver, callback: IntersectionObserverCallback) {
+    intersectionCallback = callback as unknown as (entries: { isIntersecting: boolean }[]) => void;
     return {
       observe: mockObserve,
       disconnect: mockDisconnect,
