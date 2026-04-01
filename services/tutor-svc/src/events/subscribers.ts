@@ -1,5 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import { subscribeEvent } from "@aivo/events";
+import { subscribeEvent, type Subscription } from "@aivo/events";
 import { ProvisioningService } from "../services/provisioning.service.js";
 import { DeprovisioningService } from "../services/deprovisioning.service.js";
 
@@ -7,10 +7,11 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
   const nc = app.nats;
   const provisioning = new ProvisioningService(app);
   const deprovisioning = new DeprovisioningService(app);
+  const subs: Subscription[] = [];
 
   // Listen for tutor addon activated (from billing-svc after Stripe confirms)
   try {
-    await subscribeEvent(
+    const sub = await subscribeEvent(
       nc,
       "tutor.addon.activated",
       (await import("@aivo/events")).getSchema("tutor.addon.activated"),
@@ -23,13 +24,14 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
         }
       },
     );
+    subs.push(sub);
   } catch {
     app.log.warn("Could not subscribe to tutor.addon.activated");
   }
 
   // Listen for tutor addon deactivated
   try {
-    await subscribeEvent(
+    const sub = await subscribeEvent(
       nc,
       "tutor.addon.deactivated",
       (await import("@aivo/events")).getSchema("tutor.addon.deactivated"),
@@ -64,9 +66,17 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
         }
       },
     );
+    subs.push(sub);
   } catch {
     app.log.warn("Could not subscribe to tutor.addon.deactivated");
   }
+
+  // Clean up on close
+  app.addHook("onClose", async () => {
+    for (const sub of subs) {
+      sub.unsubscribe();
+    }
+  });
 
   app.log.info("Tutor-svc NATS subscribers set up");
 }

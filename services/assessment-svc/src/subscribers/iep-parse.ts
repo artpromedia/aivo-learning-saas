@@ -1,14 +1,15 @@
 import type { FastifyInstance } from "fastify";
 import { eq } from "drizzle-orm";
 import { iepDocuments } from "@aivo/db";
-import { subscribeEvent, publishEvent, ASSESSMENT_SCHEMAS } from "@aivo/events";
+import { subscribeEvent, publishEvent, ASSESSMENT_SCHEMAS, type Subscription } from "@aivo/events";
 
 export async function setupSubscribers(app: FastifyInstance): Promise<void> {
   const nc = app.nats;
+  const subs: Subscription[] = [];
 
   // assessment.iep.uploaded → call ai-svc IEP parser → emit assessment.iep.parsed
   try {
-    await subscribeEvent(
+    const sub = await subscribeEvent(
       nc,
       "assessment.iep.uploaded",
       ASSESSMENT_SCHEMAS["assessment.iep.uploaded"],
@@ -68,9 +69,17 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
         }
       },
     );
+    subs.push(sub);
   } catch {
     app.log.warn("Could not subscribe to assessment.iep.uploaded");
   }
+
+  // Clean up on close
+  app.addHook("onClose", async () => {
+    for (const sub of subs) {
+      sub.unsubscribe();
+    }
+  });
 
   app.log.info("Assessment-svc NATS subscribers set up");
 }

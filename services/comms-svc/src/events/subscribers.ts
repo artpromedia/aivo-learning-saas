@@ -1,5 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import { subscribeEvent, IDENTITY_SCHEMAS, BRAIN_SCHEMAS, TUTOR_SCHEMAS, HOMEWORK_SCHEMAS, ENGAGEMENT_SCHEMAS, BILLING_SCHEMAS, COMMS_SCHEMAS } from "@aivo/events";
+import { subscribeEvent, IDENTITY_SCHEMAS, BRAIN_SCHEMAS, TUTOR_SCHEMAS, HOMEWORK_SCHEMAS, ENGAGEMENT_SCHEMAS, BILLING_SCHEMAS, COMMS_SCHEMAS, type Subscription } from "@aivo/events";
 import { eq } from "drizzle-orm";
 import { users, learners } from "@aivo/db";
 import { EmailService } from "../services/email.service.js";
@@ -36,10 +36,11 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
   const emailService = new EmailService(app);
   const notificationService = new NotificationService(app);
   const pushService = new PushService(app);
+  const subs: Subscription[] = [];
 
   // ─── identity.user.created → welcome + verification emails ─────────────────
   try {
-    await subscribeEvent(nc, "identity.user.created", IDENTITY_SCHEMAS["identity.user.created"], async (data) => {
+    const sub = await subscribeEvent(nc, "identity.user.created", IDENTITY_SCHEMAS["identity.user.created"], async (data) => {
       try {
         const user = await getUserById(app, data.userId);
         if (!user) return;
@@ -60,11 +61,12 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
         app.log.error({ err, data }, "Failed to process identity.user.created");
       }
     });
+    subs.push(sub);
   } catch { app.log.warn("Could not subscribe to identity.user.created"); }
 
   // ─── identity.user.invited → invitation / caregiver-invite email ───────────
   try {
-    await subscribeEvent(nc, "identity.user.invited", IDENTITY_SCHEMAS["identity.user.invited"], async (data) => {
+    const sub = await subscribeEvent(nc, "identity.user.invited", IDENTITY_SCHEMAS["identity.user.invited"], async (data) => {
       try {
         const invitedUser = await getUserById(app, data.userId);
         const inviter = await getUserById(app, data.invitedBy);
@@ -88,11 +90,12 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
         app.log.error({ err, data }, "Failed to process identity.user.invited");
       }
     });
+    subs.push(sub);
   } catch { app.log.warn("Could not subscribe to identity.user.invited"); }
 
   // ─── brain.cloned → brain-profile-reveal email + push ──────────────────────
   try {
-    await subscribeEvent(nc, "brain.cloned", BRAIN_SCHEMAS["brain.cloned"], async (data) => {
+    const sub = await subscribeEvent(nc, "brain.cloned", BRAIN_SCHEMAS["brain.cloned"], async (data) => {
       try {
         const result = await getLearnerWithParent(app, data.learnerId);
         if (!result) return;
@@ -111,11 +114,12 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
         app.log.error({ err, data }, "Failed to process brain.cloned");
       }
     });
+    subs.push(sub);
   } catch { app.log.warn("Could not subscribe to brain.cloned"); }
 
   // ─── brain.recommendation.created → in-app + push + regression email + teacher_insight ─
   try {
-    await subscribeEvent(nc, "brain.recommendation.created", BRAIN_SCHEMAS["brain.recommendation.created"], async (data) => {
+    const sub = await subscribeEvent(nc, "brain.recommendation.created", BRAIN_SCHEMAS["brain.recommendation.created"], async (data) => {
       try {
         const result = await getLearnerWithParent(app, data.learnerId);
         if (!result) return;
@@ -173,11 +177,12 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
         app.log.error({ err, data }, "Failed to process brain.recommendation.created");
       }
     });
+    subs.push(sub);
   } catch { app.log.warn("Could not subscribe to brain.recommendation.created"); }
 
   // ─── brain.iep_goal.met → email + push + in-app ───────────────────────────
   try {
-    await subscribeEvent(nc, "brain.iep_goal.met", BRAIN_SCHEMAS["brain.iep_goal.met"], async (data) => {
+    const sub = await subscribeEvent(nc, "brain.iep_goal.met", BRAIN_SCHEMAS["brain.iep_goal.met"], async (data) => {
       try {
         const result = await getLearnerWithParent(app, data.learnerId);
         if (!result) return;
@@ -206,11 +211,12 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
         app.log.error({ err, data }, "Failed to process brain.iep_goal.met");
       }
     });
+    subs.push(sub);
   } catch { app.log.warn("Could not subscribe to brain.iep_goal.met"); }
 
   // ─── brain.functioning_level.changed → email ──────────────────────────────
   try {
-    await subscribeEvent(nc, "brain.functioning_level.changed", BRAIN_SCHEMAS["brain.functioning_level.changed"], async (data) => {
+    const sub = await subscribeEvent(nc, "brain.functioning_level.changed", BRAIN_SCHEMAS["brain.functioning_level.changed"], async (data) => {
       try {
         const result = await getLearnerWithParent(app, data.learnerId);
         if (!result) return;
@@ -226,11 +232,12 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
         app.log.error({ err, data }, "Failed to process brain.functioning_level.changed");
       }
     });
+    subs.push(sub);
   } catch { app.log.warn("Could not subscribe to brain.functioning_level.changed"); }
 
   // ─── brain.regression.detected → urgent push ──────────────────────────────
   try {
-    await subscribeEvent(nc, "brain.regression.detected", BRAIN_SCHEMAS["brain.regression.detected"], async (data) => {
+    const sub = await subscribeEvent(nc, "brain.regression.detected", BRAIN_SCHEMAS["brain.regression.detected"], async (data) => {
       try {
         const result = await getLearnerWithParent(app, data.learnerId);
         if (!result) return;
@@ -252,11 +259,12 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
         app.log.error({ err, data }, "Failed to process brain.regression.detected");
       }
     });
+    subs.push(sub);
   } catch { app.log.warn("Could not subscribe to brain.regression.detected"); }
 
   // ─── tutor.addon.activated → email ─────────────────────────────────────────
   try {
-    await subscribeEvent(nc, "tutor.addon.activated", TUTOR_SCHEMAS["tutor.addon.activated"], async (data) => {
+    const sub = await subscribeEvent(nc, "tutor.addon.activated", TUTOR_SCHEMAS["tutor.addon.activated"], async (data) => {
       try {
         const result = await getLearnerWithParent(app, data.learnerId);
         if (!result) return;
@@ -272,11 +280,12 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
         app.log.error({ err, data }, "Failed to process tutor.addon.activated");
       }
     });
+    subs.push(sub);
   } catch { app.log.warn("Could not subscribe to tutor.addon.activated"); }
 
   // ─── tutor.addon.deactivated → email ───────────────────────────────────────
   try {
-    await subscribeEvent(nc, "tutor.addon.deactivated", TUTOR_SCHEMAS["tutor.addon.deactivated"], async (data) => {
+    const sub = await subscribeEvent(nc, "tutor.addon.deactivated", TUTOR_SCHEMAS["tutor.addon.deactivated"], async (data) => {
       try {
         const result = await getLearnerWithParent(app, data.learnerId);
         if (!result) return;
@@ -296,11 +305,12 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
         app.log.error({ err, data }, "Failed to process tutor.addon.deactivated");
       }
     });
+    subs.push(sub);
   } catch { app.log.warn("Could not subscribe to tutor.addon.deactivated"); }
 
   // ─── homework.processed → email + push ─────────────────────────────────────
   try {
-    await subscribeEvent(nc, "homework.processed", HOMEWORK_SCHEMAS["homework.processed"], async (data) => {
+    const sub = await subscribeEvent(nc, "homework.processed", HOMEWORK_SCHEMAS["homework.processed"], async (data) => {
       try {
         const result = await getLearnerWithParent(app, data.learnerId);
         if (!result) return;
@@ -321,11 +331,12 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
         app.log.error({ err, data }, "Failed to process homework.processed");
       }
     });
+    subs.push(sub);
   } catch { app.log.warn("Could not subscribe to homework.processed"); }
 
   // ─── engagement.badge.earned → email + in-app ─────────────────────────────
   try {
-    await subscribeEvent(nc, "engagement.badge.earned", ENGAGEMENT_SCHEMAS["engagement.badge.earned"], async (data) => {
+    const sub = await subscribeEvent(nc, "engagement.badge.earned", ENGAGEMENT_SCHEMAS["engagement.badge.earned"], async (data) => {
       try {
         const result = await getLearnerWithParent(app, data.learnerId);
         if (!result) return;
@@ -354,11 +365,12 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
         app.log.error({ err, data }, "Failed to process engagement.badge.earned");
       }
     });
+    subs.push(sub);
   } catch { app.log.warn("Could not subscribe to engagement.badge.earned"); }
 
   // ─── engagement.streak.broken → email + push ──────────────────────────────
   try {
-    await subscribeEvent(nc, "engagement.streak.broken", ENGAGEMENT_SCHEMAS["engagement.streak.broken"], async (data) => {
+    const sub = await subscribeEvent(nc, "engagement.streak.broken", ENGAGEMENT_SCHEMAS["engagement.streak.broken"], async (data) => {
       try {
         const result = await getLearnerWithParent(app, data.learnerId);
         if (!result) return;
@@ -383,11 +395,12 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
         app.log.error({ err, data }, "Failed to process engagement.streak.broken");
       }
     });
+    subs.push(sub);
   } catch { app.log.warn("Could not subscribe to engagement.streak.broken"); }
 
   // ─── engagement.level.up → in-app celebration ─────────────────────────────
   try {
-    await subscribeEvent(nc, "engagement.level.up", ENGAGEMENT_SCHEMAS["engagement.level.up"], async (data) => {
+    const sub = await subscribeEvent(nc, "engagement.level.up", ENGAGEMENT_SCHEMAS["engagement.level.up"], async (data) => {
       try {
         const result = await getLearnerWithParent(app, data.learnerId);
         if (!result) return;
@@ -408,11 +421,12 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
         app.log.error({ err, data }, "Failed to process engagement.level.up");
       }
     });
+    subs.push(sub);
   } catch { app.log.warn("Could not subscribe to engagement.level.up"); }
 
   // ─── billing.subscription.created → email ──────────────────────────────────
   try {
-    await subscribeEvent(nc, "billing.subscription.created", BILLING_SCHEMAS["billing.subscription.created"], async (data) => {
+    const sub = await subscribeEvent(nc, "billing.subscription.created", BILLING_SCHEMAS["billing.subscription.created"], async (data) => {
       try {
         const tenantUsers = await app.db.select().from(users).where(eq(users.tenantId, data.tenantId)).limit(1);
         const owner = tenantUsers[0];
@@ -429,11 +443,12 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
         app.log.error({ err, data }, "Failed to process billing.subscription.created");
       }
     });
+    subs.push(sub);
   } catch { app.log.warn("Could not subscribe to billing.subscription.created"); }
 
   // ─── billing.payment.succeeded → invoice receipt email ─────────────────────
   try {
-    await subscribeEvent(nc, "billing.payment.succeeded", BILLING_SCHEMAS["billing.payment.succeeded"], async (data) => {
+    const sub = await subscribeEvent(nc, "billing.payment.succeeded", BILLING_SCHEMAS["billing.payment.succeeded"], async (data) => {
       try {
         const tenantUsers = await app.db.select().from(users).where(eq(users.tenantId, data.tenantId)).limit(1);
         const owner = tenantUsers[0];
@@ -450,11 +465,12 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
         app.log.error({ err, data }, "Failed to process billing.payment.succeeded");
       }
     });
+    subs.push(sub);
   } catch { app.log.warn("Could not subscribe to billing.payment.succeeded"); }
 
   // ─── billing.payment.failed → dunning email ───────────────────────────────
   try {
-    await subscribeEvent(nc, "billing.payment.failed", BILLING_SCHEMAS["billing.payment.failed"], async (data) => {
+    const sub = await subscribeEvent(nc, "billing.payment.failed", BILLING_SCHEMAS["billing.payment.failed"], async (data) => {
       try {
         const tenantUsers = await app.db.select().from(users).where(eq(users.tenantId, data.tenantId)).limit(1);
         const owner = tenantUsers[0];
@@ -482,11 +498,12 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
         app.log.error({ err, data }, "Failed to process billing.payment.failed");
       }
     });
+    subs.push(sub);
   } catch { app.log.warn("Could not subscribe to billing.payment.failed"); }
 
   // ─── comms.email.send → generic email send ─────────────────────────────────
   try {
-    await subscribeEvent(nc, "comms.email.send", COMMS_SCHEMAS["comms.email.send"], async (data) => {
+    const sub = await subscribeEvent(nc, "comms.email.send", COMMS_SCHEMAS["comms.email.send"], async (data) => {
       try {
         const { subject, html } = (await import("../email/renderer.js")).renderTemplate(
           data.templateSlug as any,
@@ -502,11 +519,12 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
         app.log.error({ err, data }, "Failed to process comms.email.send");
       }
     });
+    subs.push(sub);
   } catch { app.log.warn("Could not subscribe to comms.email.send"); }
 
   // ─── comms.push.send → generic push send ───────────────────────────────────
   try {
-    await subscribeEvent(nc, "comms.push.send", COMMS_SCHEMAS["comms.push.send"], async (data) => {
+    const sub = await subscribeEvent(nc, "comms.push.send", COMMS_SCHEMAS["comms.push.send"], async (data) => {
       try {
         await pushService.sendToUser(data.userId, "recommendation_pending", {
           title: data.title,
@@ -517,11 +535,12 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
         app.log.error({ err, data }, "Failed to process comms.push.send");
       }
     });
+    subs.push(sub);
   } catch { app.log.warn("Could not subscribe to comms.push.send"); }
 
   // ─── comms.notification.created → create in-app notification ───────────────
   try {
-    await subscribeEvent(nc, "comms.notification.created", COMMS_SCHEMAS["comms.notification.created"], async (data) => {
+    const sub = await subscribeEvent(nc, "comms.notification.created", COMMS_SCHEMAS["comms.notification.created"], async (data) => {
       try {
         await notificationService.create({
           userId: data.userId,
@@ -534,11 +553,12 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
         app.log.error({ err, data }, "Failed to process comms.notification.created");
       }
     });
+    subs.push(sub);
   } catch { app.log.warn("Could not subscribe to comms.notification.created"); }
 
   // ─── billing.subscription.grace.started → grace period email ─────────────
   try {
-    await subscribeEvent(nc, "billing.subscription.grace.started", BILLING_SCHEMAS["billing.subscription.grace.started"], async (data) => {
+    const sub = await subscribeEvent(nc, "billing.subscription.grace.started", BILLING_SCHEMAS["billing.subscription.grace.started"], async (data) => {
       try {
         const tenantUsers = await app.db.select().from(users).where(eq(users.tenantId, data.tenantId)).limit(1);
         const owner = tenantUsers[0];
@@ -558,11 +578,12 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
         app.log.error({ err, data }, "Failed to process billing.subscription.grace.started");
       }
     });
+    subs.push(sub);
   } catch { app.log.warn("Could not subscribe to billing.subscription.grace.started"); }
 
   // ─── billing.subscription.grace.warning_7day → warning email ──────────────
   try {
-    await subscribeEvent(nc, "billing.subscription.grace.warning_7day", BILLING_SCHEMAS["billing.subscription.grace.warning_7day"], async (data) => {
+    const sub = await subscribeEvent(nc, "billing.subscription.grace.warning_7day", BILLING_SCHEMAS["billing.subscription.grace.warning_7day"], async (data) => {
       try {
         const tenantUsers = await app.db.select().from(users).where(eq(users.tenantId, data.tenantId)).limit(1);
         const owner = tenantUsers[0];
@@ -587,11 +608,12 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
         app.log.error({ err, data }, "Failed to process billing.subscription.grace.warning_7day");
       }
     });
+    subs.push(sub);
   } catch { app.log.warn("Could not subscribe to billing.subscription.grace.warning_7day"); }
 
   // ─── brain.export.completed → export ready email ──────────────────────────
   try {
-    await subscribeEvent(nc, "brain.export.completed", BRAIN_SCHEMAS["brain.export.completed"], async (data) => {
+    const sub = await subscribeEvent(nc, "brain.export.completed", BRAIN_SCHEMAS["brain.export.completed"], async (data) => {
       try {
         const result = await getLearnerWithParent(app, data.learnerId);
         if (!result) return;
@@ -608,7 +630,15 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
         app.log.error({ err, data }, "Failed to process brain.export.completed");
       }
     });
+    subs.push(sub);
   } catch { app.log.warn("Could not subscribe to brain.export.completed"); }
+
+  // Clean up on close
+  app.addHook("onClose", async () => {
+    for (const sub of subs) {
+      sub.unsubscribe();
+    }
+  });
 
   app.log.info("Comms-svc NATS subscribers set up (25+ event handlers)");
 }
