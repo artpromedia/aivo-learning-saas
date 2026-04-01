@@ -38,6 +38,11 @@ vi.mock("@/components/home/dashboard-mockup", () => ({
   DashboardMockup: () => <div data-testid="dashboard-mockup">Dashboard Mockup</div>,
 }));
 
+// Mock AppStoreButtons
+vi.mock("@/components/shared/app-store-buttons", () => ({
+  AppStoreButtons: () => <div data-testid="app-store-buttons">App Store Buttons</div>,
+}));
+
 // Mock analytics
 vi.mock("@/lib/analytics", () => ({
   events: {

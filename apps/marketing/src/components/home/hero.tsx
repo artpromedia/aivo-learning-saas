@@ -6,6 +6,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { events } from "@/lib/analytics";
 import { DashboardMockup } from "./dashboard-mockup";
+import { AppStoreButtons } from "@/components/shared/app-store-buttons";
 
 interface Slide {
   image: string;
@@ -193,6 +194,13 @@ export function Hero() {
                     </Link>
                   )}
                 </div>
+                <AppStoreButtons
+                  variant="light"
+                  className={cn(
+                    "mt-6",
+                    hasSplitLayout ? "justify-center lg:justify-start" : "justify-center",
+                  )}
+                />
               </div>
 
               {/* Visual column (slide 3 dashboard) */}
