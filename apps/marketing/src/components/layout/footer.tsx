@@ -3,40 +3,55 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { AppStoreButtons } from "@/components/shared/app-store-buttons";
+import { useI18n } from "@/providers/i18n-provider";
 
 const HIDDEN_PREFIXES = ["/demo", "/get-started"];
 
-const footerLinks = {
-  Product: [
-    { label: "Features", href: "#features" },
-    { label: "Pricing", href: "/pricing" },
-    { label: "AI Tutors", href: "#ai-tutors" },
-    { label: "For Parents", href: "/parents" },
-    { label: "For Teachers", href: "/teachers" },
-    { label: "For Districts", href: "/districts" },
-  ],
-  Resources: [
-    { label: "Blog", href: "/blog" },
-    { label: "Help Center", href: "/help" },
-    { label: "Documentation", href: "/docs" },
-    { label: "API", href: "/api" },
-  ],
-  Company: [
-    { label: "About", href: "/about" },
-    { label: "Careers", href: "/careers" },
-    { label: "Contact", href: "/contact" },
-    { label: "Press", href: "/press" },
-  ],
-  Legal: [
-    { label: "Privacy Policy", href: "/privacy" },
-    { label: "Terms of Service", href: "/terms" },
-    { label: "FERPA Compliance", href: "/ferpa" },
-    { label: "COPPA Policy", href: "/coppa" },
-  ],
-};
+const footerColumns = [
+  {
+    key: "columnProduct",
+    links: [
+      { key: "linkFeatures", href: "#features" },
+      { key: "linkPricing", href: "/pricing" },
+      { key: "linkAiTutors", href: "#ai-tutors" },
+      { key: "linkForParents", href: "/parents" },
+      { key: "linkForTeachers", href: "/teachers" },
+      { key: "linkForDistricts", href: "/districts" },
+    ],
+  },
+  {
+    key: "columnResources",
+    links: [
+      { key: "linkBlog", href: "/blog" },
+      { key: "linkHelpCenter", href: "/help" },
+      { key: "linkDocumentation", href: "/docs" },
+      { key: "linkApi", href: "/api" },
+    ],
+  },
+  {
+    key: "columnCompany",
+    links: [
+      { key: "linkAbout", href: "/about" },
+      { key: "linkCareers", href: "/careers" },
+      { key: "linkContact", href: "/contact" },
+      { key: "linkPress", href: "/press" },
+    ],
+  },
+  {
+    key: "columnLegal",
+    links: [
+      { key: "linkPrivacyPolicy", href: "/privacy" },
+      { key: "linkTermsOfService", href: "/terms" },
+      { key: "linkFerpa", href: "/ferpa" },
+      { key: "linkCoppa", href: "/coppa" },
+    ],
+  },
+];
 
 export function Footer() {
   const pathname = usePathname();
+  const { t, locale } = useI18n();
+  const isRtl = locale === "ar";
 
   if (HIDDEN_PREFIXES.some((p) => pathname.startsWith(p))) return null;
 
@@ -44,7 +59,10 @@ export function Footer() {
     <footer className="bg-aivo-navy-800 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Top section: Brand + Newsletter */}
-        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8 mb-12 pb-12 border-b border-aivo-navy-700">
+        <div className={cn(
+          "flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8 mb-12 pb-12 border-b border-aivo-navy-700",
+          isRtl && "lg:flex-row-reverse",
+        )}>
           <div className="max-w-sm">
             <Link href="/" className="inline-block">
               <img
@@ -56,8 +74,7 @@ export function Footer() {
               />
             </Link>
             <p className="mt-3 text-sm text-aivo-navy-300">
-              AI-powered personalized learning that adapts to every student. No
-              learner left behind.
+              {t("footer", "tagline")}
             </p>
             <AppStoreButtons className="mt-4" variant="dark" />
           </div>
@@ -71,7 +88,7 @@ export function Footer() {
               htmlFor="footer-email"
               className="text-sm font-medium text-aivo-navy-200"
             >
-              Stay updated
+              {t("footer", "newsletter")}
             </label>
             <div className="mt-2 flex gap-2">
               <input
@@ -84,7 +101,7 @@ export function Footer() {
                 type="submit"
                 className="rounded-lg bg-aivo-purple-600 px-4 py-2 text-sm font-semibold text-white hover:bg-aivo-purple-700 transition-colors whitespace-nowrap"
               >
-                Subscribe
+                {t("footer", "subscribe")}
               </button>
             </div>
           </form>
@@ -92,19 +109,19 @@ export function Footer() {
 
         {/* Link columns */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-8">
-          {Object.entries(footerLinks).map(([category, links]) => (
-            <div key={category}>
-              <h3 className="text-sm font-semibold text-white mb-4">
-                {category}
+          {footerColumns.map((col) => (
+            <div key={col.key}>
+              <h3 className="text-sm font-semibold text-white mb-4 text-start">
+                {t("footer", col.key)}
               </h3>
               <ul className="space-y-3">
-                {links.map((link) => (
+                {col.links.map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
                       className="text-sm text-aivo-navy-300 hover:text-white transition-colors"
                     >
-                      {link.label}
+                      {t("footer", link.key)}
                     </Link>
                   </li>
                 ))}
@@ -114,29 +131,31 @@ export function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-12 pt-8 border-t border-aivo-navy-700 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className={cn(
+          "mt-12 pt-8 border-t border-aivo-navy-700 flex flex-col sm:flex-row items-center justify-between gap-4",
+          isRtl && "sm:flex-row-reverse",
+        )}>
           <p className="text-sm text-aivo-navy-400">
-            &copy; {new Date().getFullYear()} AIVO Learning. All rights
-            reserved.
+            {t("footer", "copyright")}
           </p>
           <div className="flex items-center gap-6">
             <Link
               href="/privacy"
               className="text-sm text-aivo-navy-400 hover:text-white transition-colors"
             >
-              Privacy
+              {t("footer", "privacy")}
             </Link>
             <Link
               href="/terms"
               className="text-sm text-aivo-navy-400 hover:text-white transition-colors"
             >
-              Terms
+              {t("footer", "terms")}
             </Link>
             <Link
               href="/cookies"
               className="text-sm text-aivo-navy-400 hover:text-white transition-colors"
             >
-              Cookies
+              {t("footer", "cookies")}
             </Link>
           </div>
         </div>

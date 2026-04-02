@@ -21,3 +21,65 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* ------------------------------------------------------------------ */
+/*  RTL-aware utilities                                                */
+/* ------------------------------------------------------------------ */
+
+/* Flip directional icons (chevrons, arrows) */
+.rtl-flip {
+  transform: scaleX(-1);
+}
+
+/* RTL overrides when dir="rtl" is set on <html> */
+[dir="rtl"] {
+  /* Text alignment: headings switch from left to right */
+  & .text-left {
+    text-align: right;
+  }
+
+  /* Flex row reversal for nav items and button groups */
+  & .flex-row {
+    flex-direction: row-reverse;
+  }
+
+  /* Absolutely positioned hero arrows: swap left/right */
+  & .left-4 {
+    left: auto;
+    right: 1rem;
+  }
+
+  & .right-4 {
+    right: auto;
+    left: 1rem;
+  }
+
+  /* Margin flips: ml-* → mr-* and mr-* → ml-* */
+  & .ml-0\.5 { margin-left: 0; margin-right: 0.125rem; }
+  & .ml-1 { margin-left: 0; margin-right: 0.25rem; }
+  & .ml-2 { margin-left: 0; margin-right: 0.5rem; }
+  & .ml-3 { margin-left: 0; margin-right: 0.75rem; }
+  & .ml-4 { margin-left: 0; margin-right: 1rem; }
+  & .ml-6 { margin-left: 0; margin-right: 1.5rem; }
+  & .ml-8 { margin-left: 0; margin-right: 2rem; }
+  & .mr-0\.5 { margin-right: 0; margin-left: 0.125rem; }
+  & .mr-1 { margin-right: 0; margin-left: 0.25rem; }
+  & .mr-2 { margin-right: 0; margin-left: 0.5rem; }
+  & .mr-3 { margin-right: 0; margin-left: 0.75rem; }
+  & .mr-4 { margin-right: 0; margin-left: 1rem; }
+  & .mr-6 { margin-right: 0; margin-left: 1.5rem; }
+  & .mr-8 { margin-right: 0; margin-left: 2rem; }
+
+  /* Padding flips: pl-* → pr-* and pr-* → pl-* */
+  & .pl-4 { padding-left: 0; padding-right: 1rem; }
+  & .pl-6 { padding-left: 0; padding-right: 1.5rem; }
+  & .pl-8 { padding-left: 0; padding-right: 2rem; }
+  & .pr-4 { padding-right: 0; padding-left: 1rem; }
+  & .pr-6 { padding-right: 0; padding-left: 1.5rem; }
+  & .pr-8 { padding-right: 0; padding-left: 2rem; }
+
+  /* Translate-x flip for centered elements */
+  & .-translate-y-1\/2 {
+    /* Keep vertical centering intact — no change */
+  }
+}

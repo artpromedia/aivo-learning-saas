@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { features } from "@/content/features";
 import { Icon } from "@/components/shared/icon-map";
 import { SectionHeader } from "@/components/shared/section-header";
+import { useI18n } from "@/providers/i18n-provider";
 
 const container = {
   hidden: {},
@@ -21,13 +22,24 @@ const item = {
   },
 };
 
+const FEATURE_KEYS: [string, string][] = [
+  ["brainCloneTitle", "brainCloneDesc"],
+  ["adaptiveTitle", "adaptiveDesc"],
+  ["iepTitle", "iepDesc"],
+  ["tutorsTitle", "tutorsDesc"],
+  ["homeworkTitle", "homeworkDesc"],
+  ["gamificationTitle", "gamificationDesc"],
+];
+
 export function FeaturesGrid() {
+  const { t } = useI18n();
+
   return (
     <section id="features" className="py-20 sm:py-28 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader
-          title="Everything Your Students Need to Succeed"
-          subtitle="AIVO combines cutting-edge AI with proven educational science to create a learning experience that adapts to every student."
+          title={t("features", "title")}
+          subtitle={t("features", "subtitle")}
         />
 
         <motion.div
@@ -37,9 +49,9 @@ export function FeaturesGrid() {
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
         >
-          {features.map((feature) => (
+          {features.map((feature, i) => (
             <motion.div
-              key={feature.title}
+              key={feature.icon}
               variants={item}
               className="group rounded-2xl border border-aivo-navy-100 bg-white p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
             >
@@ -47,10 +59,10 @@ export function FeaturesGrid() {
                 <Icon name={feature.icon} size={24} />
               </div>
               <h3 className="text-xl font-semibold text-aivo-navy-800 mb-2">
-                {feature.title}
+                {t("features", FEATURE_KEYS[i][0])}
               </h3>
               <p className="text-aivo-navy-400 leading-relaxed">
-                {feature.description}
+                {t("features", FEATURE_KEYS[i][1])}
               </p>
             </motion.div>
           ))}

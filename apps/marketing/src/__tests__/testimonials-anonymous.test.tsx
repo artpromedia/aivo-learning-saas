@@ -31,6 +31,18 @@ vi.mock("lucide-react", () => ({
   CheckCircle: () => <svg data-testid="check-circle-icon" />,
 }));
 
+vi.mock("@/providers/i18n-provider", () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const en = require("../../messages/en.json") as Record<string, Record<string, string>>;
+  return {
+    useI18n: () => ({
+      locale: "en",
+      messages: en,
+      t: (section: string, key: string) => en[section]?.[key] ?? key,
+    }),
+  };
+});
+
 import { Testimonials } from "@/components/home/testimonials";
 
 describe("Testimonials — Anonymous Identities", () => {
@@ -52,7 +64,7 @@ describe("Testimonials — Anonymous Identities", () => {
 
   it("renders Verified badge text", () => {
     render(<Testimonials />);
-    expect(screen.getByText("Verified Aivo Parent")).toBeDefined();
+    expect(screen.getByText(/Verified Aivo Parent/)).toBeDefined();
   });
 
   it("renders 6 navigation dots", () => {
@@ -84,7 +96,7 @@ describe("Testimonials — Anonymous Identities", () => {
     expect(screen.getByText("Special Education Teacher, 15 Years")).toBeDefined();
 
     await user.click(nextBtn);
-    expect(screen.getByText("Director of Special Ed, Public School District")).toBeDefined();
+    expect(screen.getByText("Director of Special Education")).toBeDefined();
 
     await user.click(nextBtn);
     expect(screen.getByText("Parent of 6th Grader with Dyscalculia")).toBeDefined();

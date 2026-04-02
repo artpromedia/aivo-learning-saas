@@ -1,12 +1,12 @@
 export interface NavLink {
-  label: string;
+  key: string;
   href: string;
 }
 
 export const navLinks: NavLink[] = [
-  { label: "Features", href: "#features" },
-  { label: "How It Works", href: "#how-it-works" },
-  { label: "AI Tutors", href: "#ai-tutors" },
-  { label: "Pricing", href: "/pricing" },
-  { label: "Blog", href: "/blog" },
+  { key: "features", href: "#features" },
+  { key: "howItWorks", href: "#how-it-works" },
+  { key: "tutors", href: "#ai-tutors" },
+  { key: "pricing", href: "/pricing" },
+  { key: "blog", href: "/blog" },
 ];

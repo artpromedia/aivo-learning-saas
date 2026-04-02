@@ -2,8 +2,11 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useI18n } from "@/providers/i18n-provider";
 
 export function CtaBand() {
+  const { t } = useI18n();
+
   return (
     <section
       className="py-20 sm:py-28"
@@ -19,7 +22,7 @@ export function CtaBand() {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          Ready to Transform Learning?
+          {t("cta", "headline")}
         </motion.h2>
         <motion.p
           className="text-lg text-purple-200 mb-10 max-w-2xl mx-auto"
@@ -28,7 +31,7 @@ export function CtaBand() {
           viewport={{ once: true }}
           transition={{ delay: 0.1, duration: 0.5 }}
         >
-          Join 150+ students already learning with AIVO. Start your free trial today, no credit card required.
+          {t("cta", "subheadline")}
         </motion.p>
         <motion.div
           className="flex flex-col sm:flex-row items-center justify-center gap-4"
@@ -41,13 +44,13 @@ export function CtaBand() {
             href="/get-started"
             className="inline-flex items-center justify-center rounded-lg bg-white text-aivo-purple-600 px-8 py-4 text-lg font-semibold hover:bg-white/90 transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
           >
-            Get Started Free
+            {t("cta", "button")}
           </Link>
           <Link
             href="/demo"
             className="inline-flex items-center text-white font-semibold hover:text-purple-200 transition-colors"
           >
-            Talk to Sales
+            {t("cta", "secondary")}
             <span className="ml-2">→</span>
           </Link>
         </motion.div>

@@ -6,11 +6,15 @@ import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { navLinks } from "@/content/nav";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/providers/i18n-provider";
+import { LocaleSwitcher } from "@/components/layout/locale-switcher";
 
 const HIDDEN_PREFIXES = ["/demo", "/get-started"];
 
 export function Nav() {
   const pathname = usePathname();
+  const { t, locale } = useI18n();
+  const isRtl = locale === "ar";
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const hidden = HIDDEN_PREFIXES.some((p) => pathname.startsWith(p));
@@ -46,7 +50,10 @@ export function Nav() {
       )}
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 lg:h-20">
+        <div className={cn(
+          "flex items-center justify-between h-16 lg:h-20",
+          isRtl && "flex-row-reverse",
+        )}>
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
             <img
@@ -84,13 +91,17 @@ export function Nav() {
                     : "text-white/90 hover:text-white",
                 )}
               >
-                {link.label}
+                {t("nav", link.key)}
               </Link>
             ))}
           </div>
 
           {/* Desktop CTA */}
-          <div className="hidden lg:flex items-center gap-4">
+          <div className={cn(
+            "hidden lg:flex items-center gap-4",
+            isRtl && "flex-row-reverse",
+          )}>
+            <LocaleSwitcher variant={isScrolled ? "dark" : "light"} />
             <Link
               href="/login"
               className={cn(
@@ -100,7 +111,7 @@ export function Nav() {
                   : "text-white/90 hover:text-white",
               )}
             >
-              Log In
+              {t("nav", "login")}
             </Link>
             <Link
               href="/get-started"
@@ -111,7 +122,7 @@ export function Nav() {
                   : "bg-white text-aivo-purple-600 hover:bg-white/90",
               )}
             >
-              Get Started Free
+              {t("nav", "getStarted")}
             </Link>
           </div>
 
@@ -139,26 +150,26 @@ export function Nav() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                className="block px-4 py-3 text-base font-medium text-aivo-navy-700 hover:bg-aivo-purple-50 hover:text-aivo-purple-600 rounded-lg transition-colors"
+                className="block ps-4 pe-4 py-3 text-base font-medium text-aivo-navy-700 hover:bg-aivo-purple-50 hover:text-aivo-purple-600 rounded-lg transition-colors"
               >
-                {link.label}
+                {t("nav", link.key)}
               </Link>
             ))}
             <hr className="my-4 border-aivo-navy-100" />
             <Link
               href="/login"
               onClick={() => setIsOpen(false)}
-              className="block px-4 py-3 text-base font-medium text-aivo-navy-700 hover:bg-aivo-purple-50 rounded-lg"
+              className="block ps-4 pe-4 py-3 text-base font-medium text-aivo-navy-700 hover:bg-aivo-purple-50 rounded-lg"
             >
-              Log In
+              {t("nav", "login")}
             </Link>
-            <div className="px-4 pt-2">
+            <div className="ps-4 pe-4 pt-2">
               <Link
                 href="/get-started"
                 onClick={() => setIsOpen(false)}
                 className="block w-full text-center rounded-lg bg-aivo-purple-600 px-5 py-3 text-sm font-semibold text-white hover:bg-aivo-purple-700 transition-colors"
               >
-                Get Started Free
+                {t("nav", "getStarted")}
               </Link>
             </div>
           </nav>

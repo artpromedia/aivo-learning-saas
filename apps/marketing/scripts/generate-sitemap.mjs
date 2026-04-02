@@ -7,6 +7,19 @@ const outDir = join(__dirname, "..", "out");
 
 const SITE_URL = "https://aivolearning.com";
 
+const LOCALE_HREFLANGS = [
+  { hreflang: "en-US", prefix: "" },
+  { hreflang: "es-ES", prefix: "/es" },
+  { hreflang: "fr-FR", prefix: "/fr" },
+  { hreflang: "ar-SA", prefix: "/ar" },
+  { hreflang: "zh-CN", prefix: "/zh" },
+  { hreflang: "pt-BR", prefix: "/pt" },
+  { hreflang: "sw-KE", prefix: "/sw" },
+  { hreflang: "ig-NG", prefix: "/ig" },
+  { hreflang: "yo-NG", prefix: "/yo" },
+  { hreflang: "ha-NG", prefix: "/ha" },
+];
+
 const staticRoutes = [
   { path: "/", priority: "1.0", changefreq: "weekly" },
   { path: "/pricing", priority: "0.8", changefreq: "monthly" },
@@ -41,40 +54,51 @@ const caseStudySlugs = [
   "martinez-family-adhd-transformation",
 ];
 
-function generateSitemap() {
+export function buildHreflangEntries(path) {
+  const entries = LOCALE_HREFLANGS.map(
+    ({ hreflang, prefix }) =>
+      `    <xhtml:link rel="alternate" hreflang="${hreflang}" href="${SITE_URL}${prefix}${path}" />`,
+  );
+  // x-default points to the English (no prefix) URL
+  entries.push(
+    `    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE_URL}${path}" />`,
+  );
+  return entries.join("\n");
+}
+
+export function buildUrlEntry(path, lastmod, changefreq, priority) {
+  return `  <url>
+    <loc>${SITE_URL}${path}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>${changefreq}</changefreq>
+    <priority>${priority}</priority>
+${buildHreflangEntries(path)}
+  </url>`;
+}
+
+export function buildSitemapXml() {
   const today = new Date().toISOString().split("T")[0];
 
   const urls = [
-    ...staticRoutes.map(
-      (route) => `  <url>
-    <loc>${SITE_URL}${route.path}</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>${route.changefreq}</changefreq>
-    <priority>${route.priority}</priority>
-  </url>`,
+    ...staticRoutes.map((route) =>
+      buildUrlEntry(route.path, today, route.changefreq, route.priority),
     ),
-    ...blogSlugs.map(
-      (slug) => `  <url>
-    <loc>${SITE_URL}/blog/${slug}</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>`,
+    ...blogSlugs.map((slug) =>
+      buildUrlEntry(`/blog/${slug}`, today, "monthly", "0.6"),
     ),
-    ...caseStudySlugs.map(
-      (slug) => `  <url>
-    <loc>${SITE_URL}/case-studies/${slug}</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>`,
+    ...caseStudySlugs.map((slug) =>
+      buildUrlEntry(`/case-studies/${slug}`, today, "monthly", "0.6"),
     ),
   ].join("\n");
 
-  const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 ${urls}
 </urlset>`;
+}
+
+function generateSitemap() {
+  const sitemap = buildSitemapXml();
 
   if (!existsSync(outDir)) {
     mkdirSync(outDir, { recursive: true });

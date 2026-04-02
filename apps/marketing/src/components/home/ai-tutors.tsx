@@ -2,49 +2,50 @@
 
 import { motion } from "framer-motion";
 import { SectionHeader } from "@/components/shared/section-header";
+import { useI18n } from "@/providers/i18n-provider";
 
 const tutors = [
   {
     name: "Nova",
-    subject: "Mathematics",
+    subjectKey: "novaSubject",
     emoji: "🌌",
-    personality: "A cosmic explorer who turns math into an intergalactic adventure. Nova makes algebra feel like navigating star charts and geometry like designing spacecraft.",
+    personalityKey: "novaPersonality",
     accent: "from-aivo-purple-500 to-aivo-purple-700",
     bg: "bg-aivo-purple-50",
     border: "border-aivo-purple-200",
   },
   {
     name: "Sage",
-    subject: "English Language Arts",
+    subjectKey: "sageSubject",
     emoji: "📚",
-    personality: "A master storyteller who brings literature to life. Sage turns reading comprehension into detective work and writing into world-building.",
+    personalityKey: "sagePersonality",
     accent: "from-aivo-teal-500 to-aivo-teal-700",
     bg: "bg-aivo-teal-50",
     border: "border-aivo-teal-200",
   },
   {
     name: "Spark",
-    subject: "Science",
+    subjectKey: "sparkSubject",
     emoji: "⚡",
-    personality: "An enthusiastic inventor who makes science experiments feel like magic. Spark turns every hypothesis into an exciting discovery mission.",
+    personalityKey: "sparkPersonality",
     accent: "from-amber-500 to-orange-600",
     bg: "bg-amber-50",
     border: "border-amber-200",
   },
   {
     name: "Chrono",
-    subject: "History",
+    subjectKey: "chronoSubject",
     emoji: "⏳",
-    personality: "A time-traveling guide who makes history feel like a personal adventure. Chrono transports students to ancient civilizations and pivotal moments.",
+    personalityKey: "chronoPersonality",
     accent: "from-rose-500 to-red-700",
     bg: "bg-rose-50",
     border: "border-rose-200",
   },
   {
     name: "Pixel",
-    subject: "Coding",
+    subjectKey: "pixelSubject",
     emoji: "💻",
-    personality: "A friendly pair-programming buddy who makes coding feel like building with digital LEGO. Pixel turns debugging into puzzle-solving and algorithms into game design.",
+    personalityKey: "pixelPersonality",
     accent: "from-emerald-500 to-green-700",
     bg: "bg-emerald-50",
     border: "border-emerald-200",
@@ -62,12 +63,14 @@ const item = {
 };
 
 export function AiTutors() {
+  const { t } = useI18n();
+
   return (
     <section id="ai-tutors" className="py-20 sm:py-28 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader
-          title="Meet Your AI Learning Team"
-          subtitle="Five specialized AI tutors, each with a unique personality and teaching style designed to make every subject engaging and fun."
+          title={t("aiTutors", "title")}
+          subtitle={t("aiTutors", "subtitle")}
         />
 
         <motion.div
@@ -91,10 +94,10 @@ export function AiTutors() {
                 {tutor.name}
               </h3>
               <p className="text-sm font-medium text-aivo-navy-500 mb-3">
-                {tutor.subject}
+                {t("aiTutors", tutor.subjectKey)}
               </p>
               <p className="text-sm text-aivo-navy-400 leading-relaxed">
-                {tutor.personality}
+                {t("aiTutors", tutor.personalityKey)}
               </p>
             </motion.div>
           ))}

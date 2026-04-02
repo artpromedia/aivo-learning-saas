@@ -3,19 +3,22 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Quote, User, CheckCircle } from "lucide-react";
-import { testimonials } from "@/content/testimonials";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/providers/i18n-provider";
+
+const TESTIMONIAL_COUNT = 6;
 
 export function Testimonials() {
   const [current, setCurrent] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const { t } = useI18n();
 
   const next = useCallback(() => {
-    setCurrent((prev) => (prev + 1) % testimonials.length);
+    setCurrent((prev) => (prev + 1) % TESTIMONIAL_COUNT);
   }, []);
 
   const prev = useCallback(() => {
-    setCurrent((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+    setCurrent((prev) => (prev - 1 + TESTIMONIAL_COUNT) % TESTIMONIAL_COUNT);
   }, []);
 
   useEffect(() => {
@@ -24,14 +27,14 @@ export function Testimonials() {
     return () => clearInterval(timer);
   }, [isPaused, next]);
 
-  const testimonial = testimonials[current];
+  const idx = current + 1;
 
   return (
     <section className="py-20 sm:py-28 bg-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold tracking-tight text-aivo-navy-800 sm:text-4xl">
-            What People Are Saying
+            {t("testimonials", "title")}
           </h2>
         </div>
 
@@ -51,16 +54,16 @@ export function Testimonials() {
             >
               <Quote className="w-10 h-10 text-aivo-purple-200 mx-auto mb-6" />
               <blockquote className="text-xl sm:text-2xl text-aivo-navy-700 leading-relaxed mb-8">
-                &ldquo;{testimonial.quote}&rdquo;
+                &ldquo;{t("testimonials", `quote${idx}`)}&rdquo;
               </blockquote>
               <div>
                 <div className="w-12 h-12 rounded-full bg-aivo-purple-100 text-aivo-purple-600 flex items-center justify-center mx-auto mb-3">
                   <User className="w-6 h-6" aria-hidden="true" />
                 </div>
-                <p className="font-semibold text-aivo-navy-800">{testimonial.name}</p>
+                <p className="font-semibold text-aivo-navy-800">{t("testimonials", `name${idx}`)}</p>
                 <p className="text-sm text-aivo-navy-400 flex items-center justify-center gap-1.5 mt-1">
                   <CheckCircle className="w-3.5 h-3.5 text-green-500" aria-hidden="true" />
-                  <span>{testimonial.role}</span>
+                  <span>{t("testimonials", `role${idx}`)}</span>
                 </p>
               </div>
             </motion.div>
@@ -85,7 +88,7 @@ export function Testimonials() {
 
         {/* Dots */}
         <div className="flex justify-center gap-2 mt-8">
-          {testimonials.map((_, i) => (
+          {Array.from({ length: TESTIMONIAL_COUNT }, (_, i) => (
             <button
               key={i}
               onClick={() => setCurrent(i)}

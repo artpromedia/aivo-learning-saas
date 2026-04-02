@@ -52,9 +52,33 @@ vi.mock("@/components/home/dashboard-mockup", () => ({
   ),
 }));
 
+vi.mock("@/components/home/brain-clone-mockup", () => ({
+  BrainCloneMockup: () => (
+    <div data-testid="brain-clone-mockup">Brain Clone Mockup</div>
+  ),
+}));
+
+vi.mock("@/components/home/tutors-mockup", () => ({
+  TutorsMockup: () => (
+    <div data-testid="tutors-mockup">Tutors Mockup</div>
+  ),
+}));
+
 vi.mock("@/lib/analytics", () => ({
   events: { signupClick: vi.fn() },
 }));
+
+vi.mock("@/providers/i18n-provider", () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const en = require("../../messages/en.json") as Record<string, Record<string, string>>;
+  return {
+    useI18n: () => ({
+      locale: "en",
+      messages: en,
+      t: (section: string, key: string) => en[section]?.[key] ?? key,
+    }),
+  };
+});
 
 import { Hero } from "@/components/home/hero";
 

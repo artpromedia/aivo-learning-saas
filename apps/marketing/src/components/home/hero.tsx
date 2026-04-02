@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { events } from "@/lib/analytics";
+import { useI18n } from "@/providers/i18n-provider";
 import { DashboardMockup } from "./dashboard-mockup";
 import { BrainCloneMockup } from "./brain-clone-mockup";
 import { TutorsMockup } from "./tutors-mockup";
@@ -19,80 +20,6 @@ interface Slide {
   visual?: ReactNode;
 }
 
-const slides: Slide[] = [
-  {
-    image: "/hero/slide-1.png",
-    headline: "AI-Powered Learning That Adapts to Every Student",
-    subheadline:
-      "No Learner Left Behind. Personalized education powered by Brain Clone AI technology that creates a unique learning profile for every student.",
-    cta: { label: "Get Started Free", href: "/get-started", event: "hero-slide1" },
-    ctaSecondary: {
-      label: "Request a Demo",
-      href: "/demo",
-      event: "hero-slide1-demo",
-    },
-  },
-  {
-    image: "/hero/slide-2.png",
-    headline: "Personalized Paths for Every Learner",
-    subheadline:
-      "Our AI adapts in real time, identifying strengths and gaps to create a custom curriculum that keeps students engaged and on track.",
-    cta: {
-      label: "See How It Works",
-      href: "#how-it-works",
-      event: "hero-slide2-how",
-    },
-    ctaSecondary: {
-      label: "Watch the Walkthrough",
-      href: "#product-walkthrough",
-      event: "hero-slide2-walkthrough",
-    },
-  },
-  {
-    image: "",
-    headline: "Built for IEP Students, Loved by All",
-    subheadline:
-      "Whether your child has an IEP, a 504 plan, or just needs extra support, Aivo\u2019s Brain Clone AI builds a learning experience as unique as they are.",
-    cta: { label: "Get Started Free", href: "/get-started", event: "hero-slide3" },
-    ctaSecondary: {
-      label: "Request a Demo",
-      href: "/demo",
-      event: "hero-slide3-demo",
-    },
-    visual: <BrainCloneMockup />,
-  },
-  {
-    image: "",
-    headline: "5 Expert AI Tutors, One Personalized Journey",
-    subheadline:
-      "From math to reading comprehension, our specialized AI tutors meet students where they are and guide them forward with patience, encouragement, and adaptive intelligence.",
-    cta: { label: "Meet the Tutors", href: "/tutors", event: "hero-slide4-tutors" },
-    ctaSecondary: {
-      label: "Book a Demo",
-      href: "/demo",
-      event: "hero-slide4-demo",
-    },
-    visual: <TutorsMockup />,
-  },
-  {
-    image: "",
-    headline: "Track Progress in Real Time",
-    subheadline:
-      "A beautiful learner dashboard gives students, parents, and teachers instant visibility into progress, streaks, and AI-powered recommendations.",
-    cta: {
-      label: "Get Started Free",
-      href: "/get-started",
-      event: "hero-slide5-dashboard",
-    },
-    ctaSecondary: {
-      label: "View Case Studies",
-      href: "/case-studies",
-      event: "hero-slide5-cases",
-    },
-    visual: <DashboardMockup />,
-  },
-];
-
 const AUTOPLAY_MS = 6000;
 
 const fallbackGradients = [
@@ -104,6 +31,78 @@ const fallbackGradients = [
 ];
 
 export function Hero() {
+  const { t, locale } = useI18n();
+  const isRtl = locale === "ar";
+
+  const slides: Slide[] = [
+    {
+      image: "/hero/slide-1.png",
+      headline: t("hero", "headline"),
+      subheadline: t("hero", "subheadline"),
+      cta: { label: t("hero", "cta"), href: "/get-started", event: "hero-slide1" },
+      ctaSecondary: {
+        label: t("hero", "ctaSecondary"),
+        href: "/demo",
+        event: "hero-slide1-demo",
+      },
+    },
+    {
+      image: "/hero/slide-2.png",
+      headline: t("hero", "slide2Headline"),
+      subheadline: t("hero", "slide2Subheadline"),
+      cta: {
+        label: t("hero", "slide2Cta"),
+        href: "#how-it-works",
+        event: "hero-slide2-how",
+      },
+      ctaSecondary: {
+        label: t("hero", "slide2CtaSecondary"),
+        href: "#product-walkthrough",
+        event: "hero-slide2-walkthrough",
+      },
+    },
+    {
+      image: "",
+      headline: t("hero", "slide3Headline"),
+      subheadline: t("hero", "slide3Subheadline"),
+      cta: { label: t("hero", "slide3Cta"), href: "/get-started", event: "hero-slide3" },
+      ctaSecondary: {
+        label: t("hero", "slide3CtaSecondary"),
+        href: "/demo",
+        event: "hero-slide3-demo",
+      },
+      visual: <BrainCloneMockup />,
+    },
+    {
+      image: "",
+      headline: t("hero", "slide4Headline"),
+      subheadline: t("hero", "slide4Subheadline"),
+      cta: { label: t("hero", "slide4Cta"), href: "/tutors", event: "hero-slide4-tutors" },
+      ctaSecondary: {
+        label: t("hero", "slide4CtaSecondary"),
+        href: "/demo",
+        event: "hero-slide4-demo",
+      },
+      visual: <TutorsMockup />,
+    },
+    {
+      image: "",
+      headline: t("hero", "slide5Headline"),
+      subheadline: t("hero", "slide5Subheadline"),
+      cta: {
+        label: t("hero", "slide5Cta"),
+        href: "/get-started",
+        event: "hero-slide5-dashboard",
+      },
+      ctaSecondary: {
+        label: t("hero", "slide5CtaSecondary"),
+        href: "/case-studies",
+        event: "hero-slide5-cases",
+      },
+      visual: <DashboardMockup />,
+    },
+  ];
+
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(1);
 
@@ -192,7 +191,7 @@ export function Hero() {
               <div
                 className={cn(
                   hasSplitLayout
-                    ? "flex-1 text-center lg:text-left"
+                    ? "flex-1 text-center lg:text-start"
                     : "max-w-5xl mx-auto",
                 )}
               >
@@ -220,6 +219,7 @@ export function Hero() {
                     hasSplitLayout
                       ? "justify-center lg:justify-start"
                       : "justify-center",
+                    isRtl && "flex-row-reverse",
                   )}
                 >
                   <Link
@@ -273,6 +273,7 @@ export function Hero() {
               hasSplitLayout
                 ? "justify-center lg:justify-start"
                 : "justify-center",
+              isRtl && "flex-row-reverse",
             )}
           >
             {slides.map((_, i) => (
@@ -298,7 +299,10 @@ export function Hero() {
           goTo((current - 1 + slides.length) % slides.length)
         }
         aria-label="Previous slide"
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-12 h-12 rounded-full bg-black/20 hover:bg-black/40 text-white transition-colors backdrop-blur-sm"
+        className={cn(
+          "absolute top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-12 h-12 rounded-full bg-black/20 hover:bg-black/40 text-white transition-colors backdrop-blur-sm",
+          isRtl ? "right-4" : "left-4",
+        )}
       >
         <svg
           width="24"
@@ -309,6 +313,7 @@ export function Hero() {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
+          className={isRtl ? "rtl-flip" : undefined}
         >
           <path d="M15 18l-6-6 6-6" />
         </svg>
@@ -316,7 +321,10 @@ export function Hero() {
       <button
         onClick={() => goTo((current + 1) % slides.length)}
         aria-label="Next slide"
-        className="absolute right-4 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-12 h-12 rounded-full bg-black/20 hover:bg-black/40 text-white transition-colors backdrop-blur-sm"
+        className={cn(
+          "absolute top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-12 h-12 rounded-full bg-black/20 hover:bg-black/40 text-white transition-colors backdrop-blur-sm",
+          isRtl ? "left-4" : "right-4",
+        )}
       >
         <svg
           width="24"
@@ -327,6 +335,7 @@ export function Hero() {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
+          className={isRtl ? "rtl-flip" : undefined}
         >
           <path d="M9 18l6-6-6-6" />
         </svg>

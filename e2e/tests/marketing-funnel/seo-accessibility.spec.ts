@@ -120,4 +120,34 @@ test.describe("SEO & Accessibility", () => {
     const main = page.locator("main");
     await expect(main).toBeVisible();
   });
+
+  test("HTML lang attribute matches selected locale", async ({ page }) => {
+    await page.goto("/");
+
+    // Default should be English
+    const defaultLang = await page.locator("html").getAttribute("lang");
+    expect(defaultLang).toBe("en");
+
+    // Switch to Spanish via the locale switcher
+    await page.getByRole("button", { name: /language/i }).click();
+    await page.getByRole("button", { name: /español/i }).click();
+    await page.waitForLoadState("domcontentloaded");
+
+    const esLang = await page.locator("html").getAttribute("lang");
+    expect(esLang).toBe("es");
+  });
+
+  test("RTL direction set for Arabic locale", async ({ page }) => {
+    await page.goto("/");
+
+    // Switch to Arabic via the locale switcher
+    await page.getByRole("button", { name: /language/i }).click();
+    await page.getByRole("button", { name: /العربية/i }).click();
+    await page.waitForLoadState("domcontentloaded");
+
+    const htmlEl = page.locator("html");
+    await expect(htmlEl).toHaveAttribute("lang", "ar");
+    await expect(htmlEl).toHaveAttribute("dir", "rtl");
+    await expect(htmlEl).toHaveClass(/rtl/);
+  });
 });

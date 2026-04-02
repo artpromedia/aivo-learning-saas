@@ -36,6 +36,18 @@ vi.mock("@/lib/analytics", () => ({
   events: { signupClick: vi.fn() },
 }));
 
+vi.mock("@/providers/i18n-provider", () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const en = require("../../messages/en.json") as Record<string, Record<string, string>>;
+  return {
+    useI18n: () => ({
+      locale: "en",
+      messages: en,
+      t: (section: string, key: string) => en[section]?.[key] ?? key,
+    }),
+  };
+});
+
 import { WalkthroughShowcase } from "@/components/home/walkthrough-showcase";
 
 describe("WalkthroughShowcase", () => {
