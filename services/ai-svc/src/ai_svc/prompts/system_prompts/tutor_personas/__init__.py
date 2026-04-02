@@ -8,6 +8,7 @@ from ai_svc.prompts.system_prompts.tutor_personas.spark_science import SPARK_PRO
 from ai_svc.prompts.system_prompts.tutor_personas.chrono_history import CHRONO_PROMPT
 from ai_svc.prompts.system_prompts.tutor_personas.pixel_coding import PIXEL_PROMPT
 from ai_svc.prompts.system_prompts.tutor_personas.harmony_sel import HARMONY_PROMPT
+from ai_svc.prompts.system_prompts.tutor_personas.echo_speech import ECHO_PROMPT
 
 _PERSONA_MAP: dict[str, str] = {
     "nova": NOVA_PROMPT,
@@ -16,6 +17,7 @@ _PERSONA_MAP: dict[str, str] = {
     "chrono": CHRONO_PROMPT,
     "pixel": PIXEL_PROMPT,
     "harmony": HARMONY_PROMPT,
+    "echo": ECHO_PROMPT,
     # Subject aliases
     "math": NOVA_PROMPT,
     "ela": SAGE_PROMPT,
@@ -23,6 +25,7 @@ _PERSONA_MAP: dict[str, str] = {
     "history": CHRONO_PROMPT,
     "coding": PIXEL_PROMPT,
     "sel": HARMONY_PROMPT,
+    "speech": ECHO_PROMPT,
 }
 
 

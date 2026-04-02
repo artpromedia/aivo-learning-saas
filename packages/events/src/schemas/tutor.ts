@@ -7,6 +7,7 @@ const TutorSkuSchema = z.enum([
   "ADDON_TUTOR_HISTORY",
   "ADDON_TUTOR_CODING",
   "ADDON_TUTOR_SEL",
+  "ADDON_TUTOR_SPEECH",
   "ADDON_TUTOR_BUNDLE",
 ]);
 
