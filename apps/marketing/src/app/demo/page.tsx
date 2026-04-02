@@ -2,13 +2,12 @@ import type { Metadata } from "next";
 import { DemoPageClient } from "./client";
 
 export const metadata: Metadata = {
-  title: "Book a Demo",
+  title: "Request a Demo | AIVO",
   description:
-    "Schedule a personalized demo of Aivo Learning. See Brain Clone™ AI, 5 expert tutors, and real-time analytics in action. No commitment required.",
+    "See AIVO Learning in action. Request a personalized demo for your school or district.",
   openGraph: {
-    title: "Book a Demo | AIVO",
-    description:
-      "Schedule a personalized demo of Aivo Learning with our education specialists.",
+    title: "Request a Demo | AIVO",
+    description: "See AIVO Learning in action.",
   },
 };
 

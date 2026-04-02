@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { features } from "@/content/features";
 import { Icon } from "@/components/shared/icon-map";
 import { SectionHeader } from "@/components/shared/section-header";
-import { useTranslations } from "@/lib/i18n";
 
 const container = {
   hidden: {},
@@ -23,13 +22,12 @@ const item = {
 };
 
 export function FeaturesGrid() {
-  const messages = useTranslations();
   return (
     <section id="features" className="py-20 sm:py-28 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader
-          title={messages?.features?.title ?? "Everything Your Students Need to Succeed"}
-          subtitle={messages?.features?.subtitle ?? "AIVO combines cutting-edge AI with proven educational science to create a learning experience that adapts to every student."}
+          title="Everything Your Students Need to Succeed"
+          subtitle="AIVO combines cutting-edge AI with proven educational science to create a learning experience that adapts to every student."
         />
 
         <motion.div
@@ -48,10 +46,10 @@ export function FeaturesGrid() {
               <div className="mb-4 inline-flex items-center justify-center w-12 h-12 rounded-xl bg-aivo-purple-50 text-aivo-purple-600 group-hover:bg-aivo-purple-100 transition-colors">
                 <Icon name={feature.icon} size={24} />
               </div>
-              <h3 className="text-2xl font-semibold text-aivo-navy-800 mb-2">
+              <h3 className="text-xl font-semibold text-aivo-navy-800 mb-2">
                 {feature.title}
               </h3>
-              <p className="text-lg text-aivo-navy-400 leading-relaxed">
+              <p className="text-aivo-navy-400 leading-relaxed">
                 {feature.description}
               </p>
             </motion.div>

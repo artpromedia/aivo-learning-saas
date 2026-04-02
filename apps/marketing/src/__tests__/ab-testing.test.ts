@@ -1,13 +1,19 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 
+type MockStorage = {
+  _store: Record<string, string>;
+  getItem: (key: string) => string | null;
+  setItem: (key: string, val: string) => void;
+};
+
 describe("A/B Testing", () => {
   beforeEach(() => {
     vi.stubGlobal("window", {});
     vi.stubGlobal("sessionStorage", {
       _store: {} as Record<string, string>,
-      getItem(key: string) { return (this._store as Record<string, string>)[key] ?? null; },
-      setItem(key: string, val: string) { (this._store as Record<string, string>)[key] = val; },
-    });
+      getItem(key: string) { return this._store[key] ?? null; },
+      setItem(key: string, val: string) { this._store[key] = val; },
+    } as MockStorage);
     vi.stubGlobal("crypto", {
       randomUUID: () => "test-uuid-12345",
     });

@@ -2,343 +2,383 @@
 
 import { useState, type FormEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, Loader2 } from "lucide-react";
+import { Check, Clock, MessageSquare, DollarSign, Users, Loader2 } from "lucide-react";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { submitLead } from "@/lib/leads-api";
 import { events } from "@/lib/analytics";
-import { OonrumailCalendar, type BookingConfirmation } from "@/components/booking/oonrumail-calendar";
-import { BookingConfirmationCard } from "@/components/booking/booking-confirmation-card";
 
-const checklist = [
-  "Brain Clone™ AI creating a unique student profile",
-  "5 AI tutors adapting to different learning styles",
-  "Real-time parent and teacher dashboards",
-  "IEP integration and accessibility features",
+/* ------------------------------------------------------------------ */
+/*  Form field helpers                                                  */
+/* ------------------------------------------------------------------ */
+
+function InputField({
+  id,
+  label,
+  type = "text",
+  required = true,
+  value,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  type?: string;
+  required?: boolean;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div>
+      <label
+        htmlFor={id}
+        className="block text-sm font-medium text-aivo-navy-700"
+      >
+        {label}
+        {required && <span className="text-red-500 ml-0.5">*</span>}
+      </label>
+      <input
+        id={id}
+        name={id}
+        type={type}
+        required={required}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        aria-required={required}
+        className="mt-1.5 block w-full rounded-lg border border-aivo-navy-200 bg-white px-4 py-2.5 text-aivo-navy-800 placeholder:text-aivo-navy-300 focus:border-aivo-purple-400 focus:outline-none focus:ring-2 focus:ring-aivo-purple-200 transition-colors"
+      />
+    </div>
+  );
+}
+
+function SelectField({
+  id,
+  label,
+  options,
+  required = true,
+  value,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  options: string[];
+  required?: boolean;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div>
+      <label
+        htmlFor={id}
+        className="block text-sm font-medium text-aivo-navy-700"
+      >
+        {label}
+        {required && <span className="text-red-500 ml-0.5">*</span>}
+      </label>
+      <select
+        id={id}
+        name={id}
+        required={required}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        aria-required={required}
+        className={cn(
+          "mt-1.5 block w-full rounded-lg border border-aivo-navy-200 bg-white px-4 py-2.5 text-aivo-navy-800 focus:border-aivo-purple-400 focus:outline-none focus:ring-2 focus:ring-aivo-purple-200 transition-colors",
+          value === "" && "text-aivo-navy-300"
+        )}
+      >
+        <option value="" disabled>
+          Select...
+        </option>
+        {options.map((opt) => (
+          <option key={opt} value={opt}>
+            {opt}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Animated checkmark                                                  */
+/* ------------------------------------------------------------------ */
+
+function AnimatedCheckmark() {
+  return (
+    <motion.div
+      initial={{ scale: 0 }}
+      animate={{ scale: 1 }}
+      transition={{ type: "spring", stiffness: 200, damping: 15 }}
+      className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-aivo-teal-50"
+    >
+      <motion.div
+        initial={{ pathLength: 0, opacity: 0 }}
+        animate={{ pathLength: 1, opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
+        <Check className="h-10 w-10 text-aivo-teal-600" strokeWidth={3} />
+      </motion.div>
+    </motion.div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  What to expect                                                      */
+/* ------------------------------------------------------------------ */
+
+const expectations = [
+  { icon: Clock, text: "30-minute call with our education team" },
+  { icon: Users, text: "Personalized walkthrough of AIVO" },
+  { icon: MessageSquare, text: "Q&A session to answer all your questions" },
+  { icon: DollarSign, text: "Custom pricing tailored to your needs" },
 ];
 
-const miniTestimonials = [
-  {
-    initials: "SC",
-    name: "Sarah Chen",
-    title: "5th Grade Teacher, Springfield USD",
-    quote: "Aivo transformed how I differentiate for each student.",
-  },
-  {
-    initials: "JR",
-    name: "Dr. James Rodriguez",
-    title: "Principal, Lincoln Academy",
-    quote: "The data insights are invaluable for our admin team.",
-  },
-  {
-    initials: "MP",
-    name: "Michelle Park",
-    title: "Parent",
-    quote: "My child's reading level jumped two grades in one semester.",
-  },
-];
-
-const trustBadges = [
-  { label: "SOC 2 Compliant", icon: "🔒" },
-  { label: "FERPA Certified", icon: "📋" },
-  { label: "COPPA Safe", icon: "🛡️" },
-  { label: "GDPR Ready", icon: "🌐" },
-];
-
-const CALENDAR_URL =
-  process.env.NEXT_PUBLIC_OONRUMAIL_URL ??
-  "https://calendar.oonrumail.com/embed/aivo-demo";
+/* ------------------------------------------------------------------ */
+/*  Page                                                                */
+/* ------------------------------------------------------------------ */
 
 export function DemoPageClient() {
-  // Qualification form state
-  const [fullName, setFullName] = useState("");
-  const [workEmail, setWorkEmail] = useState("");
-  const [schoolName, setSchoolName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [school, setSchool] = useState("");
   const [role, setRole] = useState("");
-  const [districtSize, setDistrictSize] = useState("");
-  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const [students, setStudents] = useState("");
+  const [message, setMessage] = useState("");
+  const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Flow state
-  const [qualified, setQualified] = useState(false);
-  const [booking, setBooking] = useState<BookingConfirmation | null>(null);
-
-  function validateForm(): boolean {
-    const errs: Record<string, string> = {};
-    if (!fullName.trim()) errs.fullName = "Name is required";
-    if (!workEmail.trim()) errs.workEmail = "Email is required";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(workEmail))
-      errs.workEmail = "Enter a valid email";
-    if (!schoolName.trim()) errs.schoolName = "School/District is required";
-    if (!role) errs.role = "Please select your role";
-    if (!districtSize) errs.districtSize = "Please select district size";
-    setFormErrors(errs);
-    return Object.keys(errs).length === 0;
-  }
-
-  async function handleQualificationSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!validateForm() || submitting) return;
+    if (!firstName || !lastName || !email || !school || !role || !students) return;
+    if (submitting) return;
 
     setSubmitting(true);
+    setError(null);
+
     try {
+      const sizeMap: Record<string, number> = {
+        "1-50": 25, "51-200": 125, "201-500": 350, "501-1000": 750, "1000+": 1500,
+      };
+
       await submitLead({
-        contactName: fullName,
-        contactEmail: workEmail,
-        organizationName: schoolName,
-        source: "demo-qualification",
-        stage: "qualified",
-        metadata: { role, districtSize },
+        organizationName: school,
+        contactName: `${firstName} ${lastName}`,
+        contactEmail: email,
+        source: "demo_form",
+        districtSize: sizeMap[students] ?? 0,
+        message,
+        metadata: { role, studentRange: students },
       });
-      events.demoBookingStarted("demo-page");
-      setQualified(true);
-    } catch {
-      // Still show calendar even if lead submission fails
-      setQualified(true);
+
+      events.demoRequest(sizeMap[students]);
+      setSubmitted(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to submit. Please try again.");
     } finally {
       setSubmitting(false);
     }
   }
 
-  function handleBookingConfirmed(data: BookingConfirmation) {
-    setBooking(data);
-    events.demoBookingCompleted("demo-page", data.dateTime);
-  }
-
   return (
-    <section className="py-12 sm:py-16">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid gap-12 lg:grid-cols-2">
-          {/* Left column — Value proposition */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
+    <>
+      {/* Hero */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-aivo-purple-50 to-white pt-20 pb-16">
+        <div className="mx-auto max-w-7xl px-6 text-center">
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="flex flex-col justify-center"
+            className="text-4xl font-bold tracking-tight text-aivo-navy-800 sm:text-5xl"
           >
-            <h1 className="text-3xl sm:text-4xl font-bold text-aivo-navy-800 leading-tight">
-              See Aivo Transform Learning in 30 Minutes
-            </h1>
-            <p className="mt-4 text-lg text-aivo-navy-500">
-              A personalized demo with our education specialists. No commitment,
-              no credit card.
-            </p>
-
-            {/* Checklist */}
-            <div className="mt-8">
-              <p className="text-sm font-semibold text-aivo-navy-700 mb-4">
-                What you&apos;ll see:
-              </p>
-              <ul className="space-y-3">
-                {checklist.map((item) => (
-                  <li key={item} className="flex items-start gap-3">
-                    <Check className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
-                    <span className="text-sm text-aivo-navy-600">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Mini testimonials */}
-            <div className="mt-10">
-              <p className="text-sm font-semibold text-aivo-navy-700 mb-4">
-                Join 500+ schools
-              </p>
-              <div className="space-y-4">
-                {miniTestimonials.map((t, i) => (
-                  <motion.div
-                    key={t.name}
-                    className="flex items-start gap-3"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: 0.1 * i }}
-                  >
-                    <div className="w-9 h-9 rounded-full bg-aivo-purple-100 text-aivo-purple-600 flex items-center justify-center text-xs font-bold shrink-0">
-                      {t.initials}
-                    </div>
-                    <div>
-                      <p className="text-sm text-aivo-navy-600 italic">
-                        &ldquo;{t.quote}&rdquo;
-                      </p>
-                      <p className="text-xs text-aivo-navy-400 mt-0.5">
-                        {t.name}, {t.title}
-                      </p>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-
-            {/* Trust badges */}
-            <div className="mt-8 flex flex-wrap gap-3">
-              {trustBadges.map((badge) => (
-                <div
-                  key={badge.label}
-                  className="flex items-center gap-1.5 rounded-full bg-aivo-navy-50 px-3 py-1.5 text-xs font-medium text-aivo-navy-600"
-                >
-                  <span>{badge.icon}</span>
-                  {badge.label}
-                </div>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Right column — Booking widget */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
+            See AIVO in Action
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
+            className="mt-4 text-lg text-aivo-navy-500 max-w-2xl mx-auto"
           >
+            Schedule a personalized demo with our education team
+          </motion.p>
+        </div>
+      </section>
+
+      {/* Two-column layout */}
+      <section className="py-16">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="grid gap-12 lg:grid-cols-2">
+            {/* Left: Form / Success */}
             <AnimatePresence mode="wait">
-              {booking ? (
-                <BookingConfirmationCard
-                  key="confirmed"
-                  booking={booking!}
-                />
-              ) : !qualified ? (
+              {!submitted ? (
                 <motion.div
                   key="form"
-                  initial={{ opacity: 1 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  className="rounded-2xl border border-aivo-navy-100 bg-white p-8 shadow-sm"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.4 }}
                 >
-                  <h2 className="text-xl font-bold text-aivo-navy-800 mb-6">
-                    Tell us about yourself
-                  </h2>
-                  <form onSubmit={handleQualificationSubmit} className="space-y-4" noValidate>
-                    <div>
-                      <label htmlFor="demo-name" className="block text-sm font-medium text-aivo-navy-700">
-                        Full Name <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        id="demo-name"
-                        type="text"
-                        required
-                        value={fullName}
-                        onChange={(e) => setFullName(e.target.value)}
-                        className="mt-1.5 block w-full rounded-lg border border-aivo-navy-200 px-4 py-2.5 text-aivo-navy-800 focus:border-aivo-purple-400 focus:outline-none focus:ring-2 focus:ring-aivo-purple-200 transition-colors"
+                  <form
+                    onSubmit={handleSubmit}
+                    className="space-y-5 rounded-2xl border border-aivo-navy-100 bg-white p-8 shadow-sm"
+                    noValidate
+                  >
+                    <div className="grid gap-5 sm:grid-cols-2">
+                      <InputField
+                        id="firstName"
+                        label="First Name"
+                        value={firstName}
+                        onChange={setFirstName}
                       />
-                      {formErrors.fullName && (
-                        <p className="mt-1 text-xs text-red-500">{formErrors.fullName}</p>
-                      )}
+                      <InputField
+                        id="lastName"
+                        label="Last Name"
+                        value={lastName}
+                        onChange={setLastName}
+                      />
                     </div>
 
-                    <div>
-                      <label htmlFor="demo-email" className="block text-sm font-medium text-aivo-navy-700">
-                        Work Email <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        id="demo-email"
-                        type="email"
-                        required
-                        value={workEmail}
-                        onChange={(e) => setWorkEmail(e.target.value)}
-                        className="mt-1.5 block w-full rounded-lg border border-aivo-navy-200 px-4 py-2.5 text-aivo-navy-800 focus:border-aivo-purple-400 focus:outline-none focus:ring-2 focus:ring-aivo-purple-200 transition-colors"
-                      />
-                      {formErrors.workEmail && (
-                        <p className="mt-1 text-xs text-red-500">{formErrors.workEmail}</p>
-                      )}
-                    </div>
+                    <InputField
+                      id="email"
+                      label="Work Email"
+                      type="email"
+                      value={email}
+                      onChange={setEmail}
+                    />
+
+                    <InputField
+                      id="school"
+                      label="School/District Name"
+                      value={school}
+                      onChange={setSchool}
+                    />
+
+                    <SelectField
+                      id="role"
+                      label="Role"
+                      options={[
+                        "Teacher",
+                        "Administrator",
+                        "IT Director",
+                        "Curriculum Director",
+                        "Other",
+                      ]}
+                      value={role}
+                      onChange={setRole}
+                    />
+
+                    <SelectField
+                      id="students"
+                      label="Number of Students"
+                      options={[
+                        "1-50",
+                        "51-200",
+                        "201-500",
+                        "501-1000",
+                        "1000+",
+                      ]}
+                      value={students}
+                      onChange={setStudents}
+                    />
 
                     <div>
-                      <label htmlFor="demo-school" className="block text-sm font-medium text-aivo-navy-700">
-                        School/District Name <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        id="demo-school"
-                        type="text"
-                        required
-                        value={schoolName}
-                        onChange={(e) => setSchoolName(e.target.value)}
-                        className="mt-1.5 block w-full rounded-lg border border-aivo-navy-200 px-4 py-2.5 text-aivo-navy-800 focus:border-aivo-purple-400 focus:outline-none focus:ring-2 focus:ring-aivo-purple-200 transition-colors"
-                      />
-                      {formErrors.schoolName && (
-                        <p className="mt-1 text-xs text-red-500">{formErrors.schoolName}</p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label htmlFor="demo-role" className="block text-sm font-medium text-aivo-navy-700">
-                        Role <span className="text-red-500">*</span>
-                      </label>
-                      <select
-                        id="demo-role"
-                        required
-                        value={role}
-                        onChange={(e) => setRole(e.target.value)}
-                        className={cn(
-                          "mt-1.5 block w-full rounded-lg border border-aivo-navy-200 px-4 py-2.5 text-aivo-navy-800 focus:border-aivo-purple-400 focus:outline-none focus:ring-2 focus:ring-aivo-purple-200 transition-colors",
-                          !role && "text-aivo-navy-300"
-                        )}
+                      <label
+                        htmlFor="message"
+                        className="block text-sm font-medium text-aivo-navy-700"
                       >
-                        <option value="" disabled>Select...</option>
-                        <option value="Teacher">Teacher</option>
-                        <option value="Principal">Principal</option>
-                        <option value="IT Director">IT Director</option>
-                        <option value="Superintendent">Superintendent</option>
-                        <option value="Parent">Parent</option>
-                        <option value="Other">Other</option>
-                      </select>
-                      {formErrors.role && (
-                        <p className="mt-1 text-xs text-red-500">{formErrors.role}</p>
-                      )}
+                        Message{" "}
+                        <span className="text-aivo-navy-400">(optional)</span>
+                      </label>
+                      <textarea
+                        id="message"
+                        name="message"
+                        rows={4}
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                        aria-required={false}
+                        className="mt-1.5 block w-full rounded-lg border border-aivo-navy-200 bg-white px-4 py-2.5 text-aivo-navy-800 placeholder:text-aivo-navy-300 focus:border-aivo-purple-400 focus:outline-none focus:ring-2 focus:ring-aivo-purple-200 transition-colors resize-y"
+                      />
                     </div>
 
-                    <div>
-                      <label htmlFor="demo-district-size" className="block text-sm font-medium text-aivo-navy-700">
-                        District Size <span className="text-red-500">*</span>
-                      </label>
-                      <select
-                        id="demo-district-size"
-                        required
-                        value={districtSize}
-                        onChange={(e) => setDistrictSize(e.target.value)}
-                        className={cn(
-                          "mt-1.5 block w-full rounded-lg border border-aivo-navy-200 px-4 py-2.5 text-aivo-navy-800 focus:border-aivo-purple-400 focus:outline-none focus:ring-2 focus:ring-aivo-purple-200 transition-colors",
-                          !districtSize && "text-aivo-navy-300"
-                        )}
-                      >
-                        <option value="" disabled>Select...</option>
-                        <option value="<500">&lt;500</option>
-                        <option value="500-2000">500–2,000</option>
-                        <option value="2000-10000">2,000–10,000</option>
-                        <option value="10000+">10,000+</option>
-                      </select>
-                      {formErrors.districtSize && (
-                        <p className="mt-1 text-xs text-red-500">{formErrors.districtSize}</p>
-                      )}
-                    </div>
+                    {error && (
+                      <p className="text-sm text-red-500">{error}</p>
+                    )}
 
                     <button
                       type="submit"
                       disabled={submitting}
-                      className="w-full rounded-lg bg-aivo-purple-600 px-6 py-3 font-semibold text-white hover:bg-aivo-purple-700 transition-colors disabled:opacity-60 flex items-center justify-center gap-2 mt-2"
+                      className="w-full rounded-lg bg-aivo-purple-600 px-6 py-3 font-semibold text-white shadow-sm transition-colors hover:bg-aivo-purple-700 focus:outline-none focus:ring-2 focus:ring-aivo-purple-500 focus:ring-offset-2 disabled:opacity-60 flex items-center justify-center gap-2"
                     >
                       {submitting && <Loader2 size={18} className="animate-spin" />}
-                      Continue to Booking
+                      Request Demo
                     </button>
                   </form>
                 </motion.div>
               ) : (
                 <motion.div
-                  key="calendar"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
+                  key="success"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.4 }}
+                  className="flex flex-col items-center justify-center rounded-2xl border border-aivo-navy-100 bg-white p-12 shadow-sm text-center"
                 >
-                  <OonrumailCalendar
-                    calendarUrl={CALENDAR_URL}
-                    prefillName={fullName}
-                    prefillEmail={workEmail}
-                    prefillOrganization={schoolName}
-                    onBookingConfirmed={handleBookingConfirmed}
-                    onBookingStarted={() => {}}
-                  />
+                  <AnimatedCheckmark />
+                  <h2 className="mt-6 text-2xl font-bold text-aivo-navy-800">
+                    Thank you!
+                  </h2>
+                  <p className="mt-3 text-lg text-aivo-navy-500 max-w-md">
+                    Our team will reach out within 24 hours to schedule your
+                    personalized demo.
+                  </p>
+                  <Link
+                    href="/"
+                    className="mt-8 inline-flex items-center gap-2 rounded-lg bg-aivo-purple-600 px-6 py-3 font-semibold text-white shadow-sm transition-colors hover:bg-aivo-purple-700"
+                  >
+                    Back to Home
+                  </Link>
                 </motion.div>
               )}
             </AnimatePresence>
-          </motion.div>
+
+            {/* Right: Info */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="flex flex-col justify-center"
+            >
+              <h2 className="text-2xl font-bold text-aivo-navy-800">
+                What to expect
+              </h2>
+              <ul className="mt-6 space-y-5">
+                {expectations.map(({ icon: Icon, text }) => (
+                  <li key={text} className="flex items-start gap-4">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-aivo-purple-50">
+                      <Icon className="h-5 w-5 text-aivo-purple-600" />
+                    </div>
+                    <span className="text-aivo-navy-600 leading-relaxed pt-1.5">
+                      {text}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="mt-10 rounded-xl bg-aivo-navy-50 p-6">
+                <p className="text-sm font-medium text-aivo-navy-700">
+                  Prefer to reach out directly?
+                </p>
+                <a
+                  href="mailto:sales@aivolearning.com"
+                  className="mt-1 text-aivo-purple-600 font-semibold hover:text-aivo-purple-700 transition-colors"
+                >
+                  sales@aivolearning.com
+                </a>
+              </div>
+            </motion.div>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }

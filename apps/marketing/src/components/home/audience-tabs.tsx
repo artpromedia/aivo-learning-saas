@@ -101,10 +101,10 @@ export function AudienceTabs() {
                 &ldquo;{audience.testimonial.quote}&rdquo;
               </blockquote>
               <p className="font-semibold text-aivo-navy-800">
-                {audience.testimonial.role}
+                {audience.testimonial.name}
               </p>
               <p className="text-sm text-aivo-navy-400">
-                {audience.testimonial.location}
+                {audience.testimonial.role}
               </p>
             </div>
 

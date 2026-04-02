@@ -1,13 +1,11 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo, type ReactNode } from "react";
+import { useState, useEffect, useCallback, type ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { events } from "@/lib/analytics";
 import { DashboardMockup } from "./dashboard-mockup";
-import { AppStoreButtons } from "@/components/shared/app-store-buttons";
-import { useTranslations, type Messages } from "@/lib/i18n";
 
 interface Slide {
   image: string;
@@ -19,37 +17,52 @@ interface Slide {
   visual?: ReactNode;
 }
 
-function buildSlides(t: Messages | null): Slide[] {
-  return [
-    {
-      image: "/hero/slide-1.png",
-      headline: t?.hero?.headline ?? "AI-Powered Learning That Adapts to Every Student",
-      subheadline: t?.hero?.subheadline ?? "No Learner Left Behind. Personalized education powered by Brain Clone AI technology that creates a unique learning profile for every student.",
-      cta: { label: t?.hero?.cta ?? "Get Started Free", href: "/get-started", event: "hero" },
-      ctaSecondary: { label: t?.hero?.ctaSecondary ?? "Request a Demo", href: "/demo", event: "hero-demo" },
+const slides: Slide[] = [
+  {
+    image: "/hero/slide-1.png",
+    headline: "AI-Powered Learning That Adapts to Every Student",
+    subheadline:
+      "No Learner Left Behind. Personalized education powered by Brain Clone AI technology that creates a unique learning profile for every student.",
+    cta: { label: "Get Started Free", href: "/get-started", event: "hero" },
+    ctaSecondary: {
+      label: "Request a Demo",
+      href: "/demo",
+      event: "hero-demo",
     },
-    {
-      image: "/hero/slide-2.png",
-      headline: t?.hero?.slide2Headline ?? "Personalized Paths for Every Learner",
-      subheadline: t?.hero?.slide2Subheadline ?? "Our AI adapts in real time, identifying strengths and gaps to create a custom curriculum that keeps students engaged and on track.",
-      cta: { label: t?.hero?.slide2Cta ?? "See How It Works", href: "#how-it-works", event: "hero-how" },
+  },
+  {
+    image: "/hero/slide-2.png",
+    headline: "Personalized Paths for Every Learner",
+    subheadline:
+      "Our AI adapts in real time, identifying strengths and gaps to create a custom curriculum that keeps students engaged and on track.",
+    cta: {
+      label: "See How It Works",
+      href: "#how-it-works",
+      event: "hero-how",
     },
-    {
-      image: "/hero/slide-3.png",
-      headline: t?.hero?.slide3Headline ?? "Track Progress in Real Time",
-      subheadline: t?.hero?.slide3Subheadline ?? "A beautiful learner dashboard gives students, parents, and teachers instant visibility into progress, streaks, and AI-powered recommendations.",
-      cta: { label: t?.hero?.slide3Cta ?? "Get Started Free", href: "/get-started", event: "hero-dashboard" },
-      ctaSecondary: { label: t?.hero?.slide3CtaSecondary ?? "View Case Studies", href: "/case-studies", event: "hero-cases" },
-      visual: <DashboardMockup />,
+  },
+  {
+    image: "/hero/slide-3.png",
+    headline: "Track Progress in Real Time",
+    subheadline:
+      "A beautiful learner dashboard gives students, parents, and teachers instant visibility into progress, streaks, and AI-powered recommendations.",
+    cta: {
+      label: "Get Started Free",
+      href: "/get-started",
+      event: "hero-dashboard",
     },
-  ];
-}
+    ctaSecondary: {
+      label: "View Case Studies",
+      href: "/case-studies",
+      event: "hero-cases",
+    },
+    visual: <DashboardMockup />,
+  },
+];
 
 const AUTOPLAY_MS = 6000;
 
 export function Hero() {
-  const messages = useTranslations();
-  const slides = useMemo(() => buildSlides(messages), [messages]);
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(1);
 
@@ -95,7 +108,12 @@ export function Hero() {
           transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
           className="absolute inset-0"
         >
-          {/* Fallback gradient (renders first / behind photo) */}
+          {/* Photo background — loads over the gradient */}
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${slide.image})` }}
+          />
+          {/* Fallback gradient */}
           <div
             className="absolute inset-0"
             style={{
@@ -106,11 +124,6 @@ export function Hero() {
                     ? "linear-gradient(135deg, #0d95a8 0%, #14b8c8 40%, #5b21b6 80%, #7c3aed 100%)"
                     : "linear-gradient(135deg, #1a1a2e 0%, #2d1b69 30%, #1a1a2e 70%, #0d3d47 100%)",
             }}
-          />
-          {/* Photo background — renders on top of gradient */}
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(${slide.image})` }}
           />
           {/* Dark overlay */}
           <div className="absolute inset-0 bg-black/30" />
@@ -149,8 +162,8 @@ export function Hero() {
               >
                 <h1
                   className={cn(
-                    "text-5xl sm:text-6xl font-extrabold text-white leading-tight",
-                    !hasSplitLayout && "lg:text-7xl",
+                    "text-4xl sm:text-5xl font-extrabold text-white leading-tight",
+                    !hasSplitLayout && "lg:text-6xl",
                   )}
                 >
                   {slide.headline}
@@ -158,7 +171,7 @@ export function Hero() {
 
                 <p
                   className={cn(
-                    "mt-6 text-xl sm:text-2xl text-white/90 leading-relaxed",
+                    "mt-6 text-lg sm:text-xl text-white/90",
                     hasSplitLayout ? "max-w-lg" : "max-w-3xl mx-auto",
                   )}
                 >
@@ -175,7 +188,6 @@ export function Hero() {
                 >
                   <Link
                     href={slide.cta.href}
-                    data-testid="hero-cta-primary"
                     onClick={() => events.signupClick(slide.cta.event)}
                     className={cn(
                       "inline-flex items-center justify-center rounded-lg px-8 py-4",
@@ -189,7 +201,6 @@ export function Hero() {
                   {slide.ctaSecondary && (
                     <Link
                       href={slide.ctaSecondary.href}
-                      data-testid="hero-cta-secondary"
                       onClick={() =>
                         events.signupClick(slide.ctaSecondary!.event)
                       }
@@ -203,13 +214,6 @@ export function Hero() {
                     </Link>
                   )}
                 </div>
-                <AppStoreButtons
-                  variant="light"
-                  className={cn(
-                    "mt-6",
-                    hasSplitLayout ? "justify-center lg:justify-start" : "justify-center",
-                  )}
-                />
               </div>
 
               {/* Visual column (slide 3 dashboard) */}
@@ -234,7 +238,6 @@ export function Hero() {
                 ? "justify-center lg:justify-start"
                 : "justify-center",
             )}
-            data-testid="hero-slide-dots"
           >
             {slides.map((_, i) => (
               <button

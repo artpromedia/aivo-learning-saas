@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import { UserPlus, Brain, Rocket } from "lucide-react";
 import { SectionHeader } from "@/components/shared/section-header";
-import { useTranslations } from "@/lib/i18n";
 
 const steps = [
   {
@@ -30,13 +29,12 @@ const steps = [
 ];
 
 export function HowItWorks() {
-  const messages = useTranslations();
   return (
     <section id="how-it-works" className="py-20 sm:py-28 bg-aivo-navy-50/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader
-          title={messages?.howItWorks?.title ?? "How AIVO Works"}
-          subtitle={messages?.howItWorks?.subtitle ?? "Three simple steps to personalized learning that adapts to every student's unique needs."}
+          title="How AIVO Works"
+          subtitle="Three simple steps to personalized learning that adapts to every student's unique needs."
         />
 
         <div className="relative">
@@ -63,10 +61,10 @@ export function HowItWorks() {
                   </span>
                 </div>
 
-                <h3 className="text-2xl font-semibold text-aivo-navy-800 mb-3">
+                <h3 className="text-xl font-semibold text-aivo-navy-800 mb-3">
                   {step.title}
                 </h3>
-                <p className="text-lg text-aivo-navy-400 leading-relaxed max-w-sm mx-auto">
+                <p className="text-aivo-navy-400 leading-relaxed max-w-sm mx-auto">
                   {step.description}
                 </p>
               </motion.div>

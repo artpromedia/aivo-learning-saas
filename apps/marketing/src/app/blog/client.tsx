@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { useNewsletter } from "@/lib/use-newsletter";
 import {
   blogPosts,
   blogCategories,
@@ -131,7 +130,6 @@ function PostCard({ post }: { post: BlogPost }) {
 export function BlogIndexClient() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
-  const { email, setEmail, status, errorMsg, subscribe } = useNewsletter();
 
   const filtered = blogPosts.filter((post) => {
     const matchesCategory =
@@ -240,31 +238,21 @@ export function BlogIndexClient() {
             inbox.
           </p>
           <form
-            onSubmit={subscribe}
+            onSubmit={(e) => e.preventDefault()}
             className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center"
           >
             <input
               type="email"
               placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={status === "loading" || status === "success"}
-              className="rounded-lg border-0 px-5 py-3 text-sm text-aivo-navy-800 shadow-sm placeholder:text-aivo-navy-300 focus:outline-none focus:ring-2 focus:ring-white sm:w-80 disabled:opacity-50"
+              className="rounded-lg border-0 px-5 py-3 text-sm text-aivo-navy-800 shadow-sm placeholder:text-aivo-navy-300 focus:outline-none focus:ring-2 focus:ring-white sm:w-80"
             />
             <button
               type="submit"
-              disabled={status === "loading" || status === "success"}
-              className="rounded-lg bg-white px-6 py-3 text-sm font-semibold text-aivo-purple-600 shadow-sm transition-colors hover:bg-aivo-purple-50 disabled:opacity-50"
+              className="rounded-lg bg-white px-6 py-3 text-sm font-semibold text-aivo-purple-600 shadow-sm transition-colors hover:bg-aivo-purple-50"
             >
-              {status === "loading" ? "..." : "Subscribe"}
+              Subscribe
             </button>
           </form>
-          {status === "success" && (
-            <p className="mt-3 text-sm text-green-300">Thanks for subscribing!</p>
-          )}
-          {status === "error" && (
-            <p className="mt-3 text-sm text-red-300">{errorMsg}</p>
-          )}
           <p className="mt-3 text-xs text-aivo-purple-200">
             No spam. Unsubscribe anytime.
           </p>

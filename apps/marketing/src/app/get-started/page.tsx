@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import type { Metadata } from "next";
 import { GetStartedClient } from "./client";
 
@@ -14,9 +13,5 @@ export const metadata: Metadata = {
 };
 
 export default function GetStartedPage() {
-  return (
-    <Suspense>
-      <GetStartedClient />
-    </Suspense>
-  );
+  return <GetStartedClient />;
 }

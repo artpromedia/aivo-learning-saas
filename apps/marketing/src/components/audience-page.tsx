@@ -169,10 +169,10 @@ export function AudiencePage({ audience }: AudiencePageProps) {
             </blockquote>
             <div className="mt-6">
               <p className="font-semibold text-white">
-                {audience.testimonial.role}
+                {audience.testimonial.name}
               </p>
               <p className="text-sm text-aivo-purple-200">
-                {audience.testimonial.location}
+                {audience.testimonial.role}
               </p>
             </div>
           </motion.div>
