@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { AppStoreButtons } from "@/components/shared/app-store-buttons";
+import { cn } from "@/lib/utils";
 import { useI18n } from "@/providers/i18n-provider";
 
 const HIDDEN_PREFIXES = ["/demo", "/get-started"];
