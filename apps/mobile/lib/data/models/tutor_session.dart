@@ -15,6 +15,7 @@ class TutorSession {
   final List<ChatMessage> messages;
   final DateTime startedAt;
   final DateTime? endedAt;
+  final String? emotionZone;
 
   const TutorSession({
     required this.id,
@@ -27,6 +28,7 @@ class TutorSession {
     required this.messages,
     required this.startedAt,
     this.endedAt,
+    this.emotionZone,
   });
 
   TutorSession copyWith({
@@ -40,6 +42,7 @@ class TutorSession {
     List<ChatMessage>? messages,
     DateTime? startedAt,
     DateTime? Function()? endedAt,
+    String? Function()? emotionZone,
   }) {
     return TutorSession(
       id: id ?? this.id,
@@ -52,6 +55,7 @@ class TutorSession {
       messages: messages ?? this.messages,
       startedAt: startedAt ?? this.startedAt,
       endedAt: endedAt != null ? endedAt() : this.endedAt,
+      emotionZone: emotionZone != null ? emotionZone() : this.emotionZone,
     );
   }
 
@@ -71,6 +75,7 @@ class TutorSession {
       endedAt: json['endedAt'] != null
           ? DateTime.parse(json['endedAt'] as String)
           : null,
+      emotionZone: json['emotionZone'] as String?,
     );
   }
 
@@ -86,6 +91,7 @@ class TutorSession {
       'messages': messages.map((e) => e.toJson()).toList(),
       'startedAt': startedAt.toIso8601String(),
       'endedAt': endedAt?.toIso8601String(),
+      'emotionZone': emotionZone,
     };
   }
 
@@ -102,7 +108,8 @@ class TutorSession {
         other.status == status &&
         listEquals(other.messages, messages) &&
         other.startedAt == startedAt &&
-        other.endedAt == endedAt;
+        other.endedAt == endedAt &&
+        other.emotionZone == emotionZone;
   }
 
   @override
@@ -118,6 +125,7 @@ class TutorSession {
       Object.hashAll(messages),
       startedAt,
       endedAt,
+      emotionZone,
     );
   }
 

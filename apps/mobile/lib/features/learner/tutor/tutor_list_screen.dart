@@ -253,6 +253,21 @@ class TutorListScreen extends ConsumerWidget {
 }
 
 // ---------------------------------------------------------------------------
+// Tutor accent colours — used for avatar glow on 2D avatars
+// ---------------------------------------------------------------------------
+
+Color? _tutorAccentColor(TutorCatalogItem tutor) {
+  switch (tutor.subject.toLowerCase()) {
+    case 'sel':
+      return const Color(0xFFB39DDB); // Harmony – lavender
+    case 'speech':
+      return const Color(0xFFFF7675); // Echo – coral
+    default:
+      return null;
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Tutor tile
 // ---------------------------------------------------------------------------
 
@@ -273,6 +288,9 @@ class _TutorTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final dateFormatter = DateFormat.yMMMd();
+    final accentColor = _tutorAccentColor(tutor);
+    final hasGlow =
+        accentColor != null && tutor.avatar.endsWith('-avatar-2d.png');
 
     return Semantics(
       button: true,
@@ -282,17 +300,32 @@ class _TutorTile extends StatelessWidget {
       child: ListTile(
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: CircleAvatar(
-          radius: 28,
-          backgroundImage: tutor.avatar.isNotEmpty
-              ? CachedNetworkImageProvider(tutor.avatar)
-              : null,
-          child: tutor.avatar.isEmpty
-              ? Text(
-                  tutor.name.isNotEmpty ? tutor.name[0].toUpperCase() : 'T',
-                  style: const TextStyle(fontSize: 20),
+        leading: Container(
+          decoration: hasGlow
+              ? BoxDecoration(
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: accentColor.withValues(alpha: 0.45),
+                      blurRadius: 10,
+                      spreadRadius: 2,
+                    ),
+                  ],
                 )
               : null,
+          child: CircleAvatar(
+            radius: 28,
+            backgroundColor: accentColor?.withValues(alpha: 0.15),
+            backgroundImage: tutor.avatar.isNotEmpty
+                ? CachedNetworkImageProvider(tutor.avatar)
+                : null,
+            child: tutor.avatar.isEmpty
+                ? Text(
+                    tutor.name.isNotEmpty ? tutor.name[0].toUpperCase() : 'T',
+                    style: const TextStyle(fontSize: 20),
+                  )
+                : null,
+          ),
         ),
         title: Text(tutor.name, style: theme.textTheme.titleMedium),
         subtitle: Column(
