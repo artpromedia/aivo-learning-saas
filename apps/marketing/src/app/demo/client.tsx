@@ -2,11 +2,53 @@
 
 import { useState, type FormEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, Clock, MessageSquare, DollarSign, Users, Loader2 } from "lucide-react";
+import {
+  Check,
+  Clock,
+  MessageSquare,
+  DollarSign,
+  Users,
+  Loader2,
+  ArrowLeft,
+  ArrowRight,
+} from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { submitLead } from "@/lib/leads-api";
 import { events } from "@/lib/analytics";
+import {
+  OonrumailCalendar,
+  type BookingConfirmation,
+} from "@/components/booking/oonrumail-calendar";
+import { BookingConfirmationCard } from "@/components/booking/booking-confirmation-card";
+
+/* ------------------------------------------------------------------ */
+/*  Constants                                                           */
+/* ------------------------------------------------------------------ */
+
+const CALENDAR_URL =
+  process.env.NEXT_PUBLIC_OONRUMAIL_CALENDAR_URL ??
+  "https://calendar.oonrumail.com/aivo/demo";
+
+const ROLES = [
+  "Teacher",
+  "Administrator",
+  "IT Director",
+  "Curriculum Director",
+  "Special Education Coordinator",
+  "Parent / Guardian",
+  "Other",
+];
+
+const STUDENT_RANGES = ["1-50", "51-200", "201-500", "501-1000", "1000+"];
+
+const SIZE_MAP: Record<string, number> = {
+  "1-50": 25,
+  "51-200": 125,
+  "201-500": 350,
+  "501-1000": 750,
+  "1000+": 1500,
+};
 
 /* ------------------------------------------------------------------ */
 /*  Form field helpers                                                  */
@@ -19,6 +61,7 @@ function InputField({
   required = true,
   value,
   onChange,
+  error,
 }: {
   id: string;
   label: string;
@@ -26,6 +69,7 @@ function InputField({
   required?: boolean;
   value: string;
   onChange: (v: string) => void;
+  error?: string;
 }) {
   return (
     <div>
@@ -44,8 +88,20 @@ function InputField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         aria-required={required}
-        className="mt-1.5 block w-full rounded-lg border border-aivo-navy-200 bg-white px-4 py-2.5 text-aivo-navy-800 placeholder:text-aivo-navy-300 focus:border-aivo-purple-400 focus:outline-none focus:ring-2 focus:ring-aivo-purple-200 transition-colors"
+        aria-invalid={!!error}
+        aria-describedby={error ? `${id}-error` : undefined}
+        className={cn(
+          "mt-1.5 block w-full rounded-lg border bg-white px-4 py-2.5 text-aivo-navy-800 placeholder:text-aivo-navy-300 focus:outline-none focus:ring-2 transition-colors",
+          error
+            ? "border-red-400 focus:border-red-400 focus:ring-red-200"
+            : "border-aivo-navy-200 focus:border-aivo-purple-400 focus:ring-aivo-purple-200",
+        )}
       />
+      {error && (
+        <p id={`${id}-error`} className="mt-1 text-xs text-red-500">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
@@ -57,6 +113,7 @@ function SelectField({
   required = true,
   value,
   onChange,
+  error,
 }: {
   id: string;
   label: string;
@@ -64,6 +121,7 @@ function SelectField({
   required?: boolean;
   value: string;
   onChange: (v: string) => void;
+  error?: string;
 }) {
   return (
     <div>
@@ -81,9 +139,13 @@ function SelectField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         aria-required={required}
+        aria-invalid={!!error}
         className={cn(
-          "mt-1.5 block w-full rounded-lg border border-aivo-navy-200 bg-white px-4 py-2.5 text-aivo-navy-800 focus:border-aivo-purple-400 focus:outline-none focus:ring-2 focus:ring-aivo-purple-200 transition-colors",
-          value === "" && "text-aivo-navy-300"
+          "mt-1.5 block w-full rounded-lg border bg-white px-4 py-2.5 text-aivo-navy-800 focus:outline-none focus:ring-2 transition-colors",
+          error
+            ? "border-red-400 focus:border-red-400 focus:ring-red-200"
+            : "border-aivo-navy-200 focus:border-aivo-purple-400 focus:ring-aivo-purple-200",
+          value === "" && "text-aivo-navy-300",
         )}
       >
         <option value="" disabled>
@@ -95,30 +157,69 @@ function SelectField({
           </option>
         ))}
       </select>
+      {error && (
+        <p id={`${id}-error`} className="mt-1 text-xs text-red-500">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
 
 /* ------------------------------------------------------------------ */
-/*  Animated checkmark                                                  */
+/*  Step indicator                                                      */
 /* ------------------------------------------------------------------ */
 
-function AnimatedCheckmark() {
+const steps = [
+  { label: "Your Info", number: 1 },
+  { label: "Pick a Time", number: 2 },
+  { label: "Confirmed", number: 3 },
+];
+
+function StepIndicator({ currentStep }: { currentStep: number }) {
   return (
-    <motion.div
-      initial={{ scale: 0 }}
-      animate={{ scale: 1 }}
-      transition={{ type: "spring", stiffness: 200, damping: 15 }}
-      className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-aivo-teal-50"
-    >
-      <motion.div
-        initial={{ pathLength: 0, opacity: 0 }}
-        animate={{ pathLength: 1, opacity: 1 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-      >
-        <Check className="h-10 w-10 text-aivo-teal-600" strokeWidth={3} />
-      </motion.div>
-    </motion.div>
+    <div className="flex items-center justify-center gap-2 mb-8">
+      {steps.map((step, i) => (
+        <div key={step.number} className="flex items-center gap-2">
+          <div
+            className={cn(
+              "flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold transition-colors",
+              currentStep > step.number
+                ? "bg-aivo-teal-500 text-white"
+                : currentStep === step.number
+                  ? "bg-aivo-purple-600 text-white"
+                  : "bg-aivo-navy-100 text-aivo-navy-400",
+            )}
+          >
+            {currentStep > step.number ? (
+              <Check className="h-4 w-4" />
+            ) : (
+              step.number
+            )}
+          </div>
+          <span
+            className={cn(
+              "text-sm font-medium hidden sm:inline",
+              currentStep >= step.number
+                ? "text-aivo-navy-800"
+                : "text-aivo-navy-400",
+            )}
+          >
+            {step.label}
+          </span>
+          {i < steps.length - 1 && (
+            <div
+              className={cn(
+                "w-8 sm:w-12 h-0.5 mx-1",
+                currentStep > step.number
+                  ? "bg-aivo-teal-500"
+                  : "bg-aivo-navy-200",
+              )}
+            />
+          )}
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -138,6 +239,9 @@ const expectations = [
 /* ------------------------------------------------------------------ */
 
 export function DemoPageClient() {
+  const [step, setStep] = useState(1);
+
+  // Step 1 fields
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -145,40 +249,64 @@ export function DemoPageClient() {
   const [role, setRole] = useState("");
   const [students, setStudents] = useState("");
   const [message, setMessage] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  // Step 3
+  const [booking, setBooking] = useState<BookingConfirmation | null>(null);
+
+  function validateStep1(): boolean {
+    const newErrors: Record<string, string> = {};
+    if (!firstName.trim()) newErrors.firstName = "First name is required";
+    if (!lastName.trim()) newErrors.lastName = "Last name is required";
+    if (!email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      newErrors.email = "Please enter a valid email";
+    }
+    if (!school.trim()) newErrors.school = "School/district is required";
+    if (!role) newErrors.role = "Please select a role";
+    if (!students) newErrors.students = "Please select student count";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  }
+
+  async function handleStep1Submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!firstName || !lastName || !email || !school || !role || !students) return;
-    if (submitting) return;
+    if (!validateStep1() || submitting) return;
 
     setSubmitting(true);
-    setError(null);
+    setSubmitError(null);
 
     try {
-      const sizeMap: Record<string, number> = {
-        "1-50": 25, "51-200": 125, "201-500": 350, "501-1000": 750, "1000+": 1500,
-      };
-
       await submitLead({
         organizationName: school,
         contactName: `${firstName} ${lastName}`,
         contactEmail: email,
-        source: "demo_form",
-        districtSize: sizeMap[students] ?? 0,
-        message,
+        source: "demo_booking_step1",
+        districtSize: SIZE_MAP[students] ?? 0,
+        stage: "demo-info-submitted",
+        message: message || undefined,
         metadata: { role, studentRange: students },
       });
 
-      events.demoRequest(sizeMap[students]);
-      setSubmitted(true);
+      events.demoRequest(SIZE_MAP[students]);
+      setStep(2);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to submit. Please try again.");
+      setSubmitError(
+        err instanceof Error
+          ? err.message
+          : "Failed to submit. Please try again.",
+      );
     } finally {
       setSubmitting(false);
     }
+  }
+
+  function handleBookingConfirmed(data: BookingConfirmation) {
+    setBooking(data);
+    setStep(3);
   }
 
   return (
@@ -205,22 +333,27 @@ export function DemoPageClient() {
         </div>
       </section>
 
-      {/* Two-column layout */}
+      {/* Main content */}
       <section className="py-16">
         <div className="mx-auto max-w-7xl px-6">
+          <StepIndicator currentStep={step} />
+
           <div className="grid gap-12 lg:grid-cols-2">
-            {/* Left: Form / Success */}
+            {/* Left: Multi-step flow */}
             <AnimatePresence mode="wait">
-              {!submitted ? (
+              {step === 1 && (
                 <motion.div
-                  key="form"
+                  key="step1"
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.4 }}
                 >
+                  <h2 className="text-xl font-bold text-aivo-navy-800 mb-6">
+                    Tell Us About You
+                  </h2>
                   <form
-                    onSubmit={handleSubmit}
+                    onSubmit={handleStep1Submit}
                     className="space-y-5 rounded-2xl border border-aivo-navy-100 bg-white p-8 shadow-sm"
                     noValidate
                   >
@@ -230,12 +363,14 @@ export function DemoPageClient() {
                         label="First Name"
                         value={firstName}
                         onChange={setFirstName}
+                        error={errors.firstName}
                       />
                       <InputField
                         id="lastName"
                         label="Last Name"
                         value={lastName}
                         onChange={setLastName}
+                        error={errors.lastName}
                       />
                     </div>
 
@@ -245,6 +380,7 @@ export function DemoPageClient() {
                       type="email"
                       value={email}
                       onChange={setEmail}
+                      error={errors.email}
                     />
 
                     <InputField
@@ -252,34 +388,25 @@ export function DemoPageClient() {
                       label="School/District Name"
                       value={school}
                       onChange={setSchool}
+                      error={errors.school}
                     />
 
                     <SelectField
                       id="role"
                       label="Role"
-                      options={[
-                        "Teacher",
-                        "Administrator",
-                        "IT Director",
-                        "Curriculum Director",
-                        "Other",
-                      ]}
+                      options={ROLES}
                       value={role}
                       onChange={setRole}
+                      error={errors.role}
                     />
 
                     <SelectField
                       id="students"
                       label="Number of Students"
-                      options={[
-                        "1-50",
-                        "51-200",
-                        "201-500",
-                        "501-1000",
-                        "1000+",
-                      ]}
+                      options={STUDENT_RANGES}
                       value={students}
                       onChange={setStudents}
+                      error={errors.students}
                     />
 
                     <div>
@@ -301,8 +428,8 @@ export function DemoPageClient() {
                       />
                     </div>
 
-                    {error && (
-                      <p className="text-sm text-red-500">{error}</p>
+                    {submitError && (
+                      <p className="text-sm text-red-500">{submitError}</p>
                     )}
 
                     <button
@@ -310,33 +437,74 @@ export function DemoPageClient() {
                       disabled={submitting}
                       className="w-full rounded-lg bg-aivo-purple-600 px-6 py-3 font-semibold text-white shadow-sm transition-colors hover:bg-aivo-purple-700 focus:outline-none focus:ring-2 focus:ring-aivo-purple-500 focus:ring-offset-2 disabled:opacity-60 flex items-center justify-center gap-2"
                     >
-                      {submitting && <Loader2 size={18} className="animate-spin" />}
-                      Request Demo
+                      {submitting ? (
+                        <Loader2 size={18} className="animate-spin" />
+                      ) : (
+                        <ArrowRight size={18} />
+                      )}
+                      {submitting ? "Submitting..." : "Continue to Scheduling"}
                     </button>
                   </form>
                 </motion.div>
-              ) : (
+              )}
+
+              {step === 2 && (
                 <motion.div
-                  key="success"
+                  key="step2"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  <div className="flex items-center gap-3 mb-6">
+                    <button
+                      onClick={() => setStep(1)}
+                      className="flex items-center gap-1 text-sm text-aivo-purple-600 hover:text-aivo-purple-700 font-medium transition-colors"
+                      aria-label="Go back to step 1"
+                    >
+                      <ArrowLeft size={16} />
+                      Back
+                    </button>
+                    <h2 className="text-xl font-bold text-aivo-navy-800">
+                      Pick a Time
+                    </h2>
+                  </div>
+                  <div className="rounded-2xl border border-aivo-navy-100 bg-white p-4 sm:p-6 shadow-sm">
+                    <p className="text-sm text-aivo-navy-500 mb-4">
+                      Hi {firstName}, select a convenient time for your
+                      personalized demo below.
+                    </p>
+                    <OonrumailCalendar
+                      calendarUrl={CALENDAR_URL}
+                      prefillName={`${firstName} ${lastName}`}
+                      prefillEmail={email}
+                      prefillOrganization={school}
+                      onBookingConfirmed={handleBookingConfirmed}
+                      onBookingStarted={() =>
+                        events.signupClick("demo-calendar-started")
+                      }
+                      theme="light"
+                    />
+                  </div>
+                </motion.div>
+              )}
+
+              {step === 3 && booking && (
+                <motion.div
+                  key="step3"
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.4 }}
-                  className="flex flex-col items-center justify-center rounded-2xl border border-aivo-navy-100 bg-white p-12 shadow-sm text-center"
                 >
-                  <AnimatedCheckmark />
-                  <h2 className="mt-6 text-2xl font-bold text-aivo-navy-800">
-                    Thank you!
-                  </h2>
-                  <p className="mt-3 text-lg text-aivo-navy-500 max-w-md">
-                    Our team will reach out within 24 hours to schedule your
-                    personalized demo.
-                  </p>
-                  <Link
-                    href="/"
-                    className="mt-8 inline-flex items-center gap-2 rounded-lg bg-aivo-purple-600 px-6 py-3 font-semibold text-white shadow-sm transition-colors hover:bg-aivo-purple-700"
-                  >
-                    Back to Home
-                  </Link>
+                  <BookingConfirmationCard booking={booking} />
+                  <div className="mt-6 text-center">
+                    <Link
+                      href="/"
+                      className="inline-flex items-center gap-2 rounded-lg bg-aivo-purple-600 px-6 py-3 font-semibold text-white shadow-sm transition-colors hover:bg-aivo-purple-700"
+                    >
+                      Back to Home
+                    </Link>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>

@@ -7,17 +7,17 @@ import { AivoWalkthroughPlayer } from "@/components/walkthrough/aivo-walkthrough
 
 const featureCards = [
   {
-    emoji: "🧠",
-    title: "Brain Clone™ Technology",
+    emoji: "\ud83e\udde0",
+    title: "Brain Clone\u2122 Technology",
     description: "A unique AI model for every student",
   },
   {
-    emoji: "👨‍🏫",
+    emoji: "\ud83d\udc68\u200d\ud83c\udfeb",
     title: "5 Expert AI Tutors",
     description: "Specialized in every subject area",
   },
   {
-    emoji: "📊",
+    emoji: "\ud83d\udcca",
     title: "Real-Time Analytics",
     description: "Parents & teachers always in the loop",
   },
@@ -44,6 +44,18 @@ export function WalkthroughShowcase() {
           <p className="mt-4 text-lg text-aivo-navy-500 max-w-2xl mx-auto">
             Watch how Aivo creates a personalized learning experience in under
             60 seconds.
+          </p>
+          <p className="mt-3 text-base text-aivo-navy-500">
+            Want a personalized walkthrough?{" "}
+            <Link
+              href="/demo"
+              onClick={() =>
+                events.signupClick("walkthrough-request-demo-top")
+              }
+              className="font-semibold text-aivo-purple-600 hover:text-aivo-purple-700 transition-colors"
+            >
+              Request a Demo &rarr;
+            </Link>
           </p>
         </motion.div>
 
@@ -79,6 +91,32 @@ export function WalkthroughShowcase() {
             </motion.div>
           ))}
         </div>
+
+        {/* Request a Demo CTA card */}
+        <motion.div
+          className="mt-14 max-w-[900px] mx-auto rounded-2xl p-8 sm:p-10 text-center"
+          style={{ background: "var(--aivo-purple-gradient)" }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.15 }}
+        >
+          <h3 className="text-2xl sm:text-3xl font-bold text-white">
+            See how Aivo can transform your classroom
+          </h3>
+          <p className="mt-3 text-lg text-white/90 max-w-xl mx-auto">
+            Get a personalized demo from our education specialists
+          </p>
+          <Link
+            href="/demo"
+            onClick={() =>
+              events.signupClick("walkthrough-request-demo-bottom")
+            }
+            className="mt-6 inline-flex items-center justify-center rounded-lg bg-white px-8 py-3.5 font-semibold text-aivo-purple-600 hover:bg-white/90 transition-colors shadow-sm"
+          >
+            Request a Demo
+          </Link>
+        </motion.div>
 
         {/* CTA */}
         <motion.div

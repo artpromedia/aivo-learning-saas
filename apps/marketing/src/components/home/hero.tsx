@@ -23,11 +23,11 @@ const slides: Slide[] = [
     headline: "AI-Powered Learning That Adapts to Every Student",
     subheadline:
       "No Learner Left Behind. Personalized education powered by Brain Clone AI technology that creates a unique learning profile for every student.",
-    cta: { label: "Get Started Free", href: "/get-started", event: "hero" },
+    cta: { label: "Get Started Free", href: "/get-started", event: "hero-slide1" },
     ctaSecondary: {
       label: "Request a Demo",
       href: "/demo",
-      event: "hero-demo",
+      event: "hero-slide1-demo",
     },
   },
   {
@@ -38,29 +38,66 @@ const slides: Slide[] = [
     cta: {
       label: "See How It Works",
       href: "#how-it-works",
-      event: "hero-how",
+      event: "hero-slide2-how",
+    },
+    ctaSecondary: {
+      label: "Watch the Walkthrough",
+      href: "#product-walkthrough",
+      event: "hero-slide2-walkthrough",
     },
   },
   {
-    image: "/hero/slide-3.png",
+    image: "/hero/slide-1.png",
+    headline: "Built for IEP Students — Loved by All",
+    subheadline:
+      "Whether your child has an IEP, a 504 plan, or just needs extra support, Aivo\u2019s Brain Clone AI builds a learning experience as unique as they are.",
+    cta: { label: "Get Started Free", href: "/get-started", event: "hero-slide3" },
+    ctaSecondary: {
+      label: "Request a Demo",
+      href: "/demo",
+      event: "hero-slide3-demo",
+    },
+  },
+  {
+    image: "/hero/slide-2.png",
+    headline: "5 Expert AI Tutors, One Personalized Journey",
+    subheadline:
+      "From math to reading comprehension, our specialized AI tutors meet students where they are and guide them forward \u2014 with patience, encouragement, and adaptive intelligence.",
+    cta: { label: "Meet the Tutors", href: "/tutors", event: "hero-slide4-tutors" },
+    ctaSecondary: {
+      label: "Book a Demo",
+      href: "/demo",
+      event: "hero-slide4-demo",
+    },
+  },
+  {
+    image: "/hero/slide-1.png",
     headline: "Track Progress in Real Time",
     subheadline:
       "A beautiful learner dashboard gives students, parents, and teachers instant visibility into progress, streaks, and AI-powered recommendations.",
     cta: {
       label: "Get Started Free",
       href: "/get-started",
-      event: "hero-dashboard",
+      event: "hero-slide5-dashboard",
     },
     ctaSecondary: {
       label: "View Case Studies",
       href: "/case-studies",
-      event: "hero-cases",
+      event: "hero-slide5-cases",
     },
     visual: <DashboardMockup />,
   },
 ];
 
 const AUTOPLAY_MS = 6000;
+
+const fallbackGradients = [
+  "linear-gradient(135deg, #7c3aed 0%, #5b21b6 40%, #0d95a8 80%, #14b8c8 100%)",
+  "linear-gradient(135deg, #0d95a8 0%, #14b8c8 40%, #5b21b6 80%, #7c3aed 100%)",
+  "linear-gradient(135deg, #7c3aed 0%, #1a1a2e 40%, #14b8c8 80%, #5b21b6 100%)",
+  "linear-gradient(135deg, #1a1a2e 0%, #7c3aed 40%, #0d95a8 80%, #14b8c8 100%)",
+  "linear-gradient(135deg, #1a1a2e 0%, #2d1b69 30%, #1a1a2e 70%, #0d3d47 100%)",
+];
 
 export function Hero() {
   const [current, setCurrent] = useState(0);
@@ -116,14 +153,7 @@ export function Hero() {
           {/* Fallback gradient */}
           <div
             className="absolute inset-0"
-            style={{
-              background:
-                current === 0
-                  ? "linear-gradient(135deg, #7c3aed 0%, #5b21b6 40%, #0d95a8 80%, #14b8c8 100%)"
-                  : current === 1
-                    ? "linear-gradient(135deg, #0d95a8 0%, #14b8c8 40%, #5b21b6 80%, #7c3aed 100%)"
-                    : "linear-gradient(135deg, #1a1a2e 0%, #2d1b69 30%, #1a1a2e 70%, #0d3d47 100%)",
-            }}
+            style={{ background: fallbackGradients[current % fallbackGradients.length] }}
           />
           {/* Dark overlay */}
           <div className="absolute inset-0 bg-black/30" />
@@ -216,7 +246,7 @@ export function Hero() {
                 </div>
               </div>
 
-              {/* Visual column (slide 3 dashboard) */}
+              {/* Visual column (slide 5 dashboard) */}
               {hasSplitLayout && (
                 <motion.div
                   className="flex-1 w-full max-w-xl hidden md:block"

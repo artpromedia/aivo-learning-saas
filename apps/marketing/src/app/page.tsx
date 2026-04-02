@@ -2,6 +2,7 @@ import { Hero } from "@/components/home/hero";
 import { SocialProofBar } from "@/components/home/social-proof-bar";
 import { FeaturesGrid } from "@/components/home/features-grid";
 import { HowItWorks } from "@/components/home/how-it-works";
+import { WalkthroughShowcase } from "@/components/home/walkthrough-showcase";
 import { AiTutors } from "@/components/home/ai-tutors";
 import { AudienceTabs } from "@/components/home/audience-tabs";
 import { StatsBand } from "@/components/home/stats-band";
@@ -16,6 +17,7 @@ export default function HomePage() {
       <SocialProofBar />
       <FeaturesGrid />
       <HowItWorks />
+      <WalkthroughShowcase />
       <AiTutors />
       <AudienceTabs />
       <StatsBand />

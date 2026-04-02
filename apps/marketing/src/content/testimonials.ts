@@ -9,31 +9,37 @@ export const testimonials: Testimonial[] = [
   {
     quote:
       "My son has ADHD and was struggling in traditional school. With AIVO, he actually asks to do his lessons. The AI tutors keep him engaged in a way his textbooks never could.",
-    name: "Sarah M.",
-    role: "Parent of a 4th grader",
+    name: "Parent of 4th Grader with ASD",
+    role: "Verified Aivo Parent",
   },
   {
     quote:
-      "I have 28 students with 8 different IEPs. AIVO lets me actually differentiate for each one without working until midnight. It's the tool I've been waiting 15 years for.",
-    name: "Marcus T.",
-    role: "5th Grade Special Education Teacher",
+      "I have 28 students with 8 different IEPs. AIVO lets me actually differentiate for each one without working until midnight. It\u2019s the tool I\u2019ve been waiting 15 years for.",
+    name: "Special Education Teacher, 15 Years",
+    role: "Verified Aivo Educator",
   },
   {
     quote:
-      "We piloted AIVO in 12 classrooms and saw a 31% improvement in reading scores for students with IEPs. We're now rolling it out district-wide.",
-    name: "Dr. Lisa Chen",
-    role: "Director of Special Education, Riverside USD",
+      "We piloted AIVO in 12 classrooms and saw a 31% improvement in reading scores for students with IEPs. We\u2019re now rolling it out district-wide.",
+    name: "Director of Special Ed, Public School District",
+    role: "Verified District Administrator",
   },
   {
     quote:
       "The Brain Clone AI is remarkable. It figured out that my daughter learns math better with visual models in just two sessions. Her confidence has skyrocketed.",
-    name: "David K.",
-    role: "Parent of a 6th grader",
+    name: "Parent of 6th Grader with Dyscalculia",
+    role: "Verified Aivo Parent",
   },
   {
     quote:
-      "AIVO's IEP tracking saves me hours every week. Progress reports that used to take all weekend are now generated automatically with data I actually trust.",
-    name: "Jennifer P.",
-    role: "Special Education Coordinator",
+      "AIVO\u2019s IEP tracking saves me hours every week. Progress reports that used to take all weekend are now generated automatically with data I actually trust.",
+    name: "Special Education Coordinator",
+    role: "Verified Aivo Educator",
+  },
+  {
+    quote:
+      "As a homeschool parent with three kids at different levels, Aivo has been a game-changer. Each child gets exactly what they need, and I can track it all from one dashboard.",
+    name: "Homeschool Parent of 3 (Grades 2, 5, 8)",
+    role: "Verified Aivo Parent",
   },
 ];

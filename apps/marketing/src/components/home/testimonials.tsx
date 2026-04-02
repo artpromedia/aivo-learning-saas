@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
+import { ChevronLeft, ChevronRight, Quote, User, CheckCircle } from "lucide-react";
 import { testimonials } from "@/content/testimonials";
 import { cn } from "@/lib/utils";
 
@@ -54,11 +54,14 @@ export function Testimonials() {
                 &ldquo;{testimonial.quote}&rdquo;
               </blockquote>
               <div>
-                <div className="w-12 h-12 rounded-full bg-aivo-purple-100 text-aivo-purple-600 flex items-center justify-center mx-auto mb-3 text-lg font-bold">
-                  {testimonial.name.charAt(0)}
+                <div className="w-12 h-12 rounded-full bg-aivo-purple-100 text-aivo-purple-600 flex items-center justify-center mx-auto mb-3">
+                  <User className="w-6 h-6" aria-hidden="true" />
                 </div>
                 <p className="font-semibold text-aivo-navy-800">{testimonial.name}</p>
-                <p className="text-sm text-aivo-navy-400">{testimonial.role}</p>
+                <p className="text-sm text-aivo-navy-400 flex items-center justify-center gap-1.5 mt-1">
+                  <CheckCircle className="w-3.5 h-3.5 text-green-500" aria-hidden="true" />
+                  <span>{testimonial.role}</span>
+                </p>
               </div>
             </motion.div>
           </AnimatePresence>
