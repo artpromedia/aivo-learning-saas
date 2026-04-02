@@ -7,8 +7,10 @@ export function HtmlLangSetter() {
   const { locale } = useI18n();
 
   useEffect(() => {
+    const isRtl = locale === "ar";
     document.documentElement.lang = locale;
-    document.documentElement.dir = locale === "ar" ? "rtl" : "ltr";
+    document.documentElement.dir = isRtl ? "rtl" : "ltr";
+    document.documentElement.classList.toggle("rtl", isRtl);
   }, [locale]);
 
   return null;

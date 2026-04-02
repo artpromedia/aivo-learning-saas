@@ -21,3 +21,51 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* ------------------------------------------------------------------ */
+/*  RTL support                                                        */
+/* ------------------------------------------------------------------ */
+
+[dir="rtl"] {
+  /* Flip flex-row to flex-row-reverse for nav and CTA groups */
+  & .flex-row {
+    flex-direction: row-reverse;
+  }
+
+  /* Flip absolutely positioned hero arrows */
+  & .left-4 {
+    left: auto;
+    right: 1rem;
+  }
+  & .right-4 {
+    right: auto;
+    left: 1rem;
+  }
+
+  /* Flip start-aligned text for section headings in split layouts */
+  & .lg\:text-left {
+    text-align: right;
+  }
+
+  /* Flip justify-start to justify-end in split layouts */
+  & .lg\:justify-start {
+    justify-content: flex-end;
+  }
+
+  /* Common margin flips */
+  & .ml-0\.5 { margin-left: 0; margin-right: 0.125rem; }
+  & .ml-2 { margin-left: 0; margin-right: 0.5rem; }
+  & .mr-2 { margin-right: 0; margin-left: 0.5rem; }
+  & .ml-1 { margin-left: 0; margin-right: 0.25rem; }
+
+  /* Flip translate-x for hero arrow offsets */
+  & .-translate-x-4 { transform: translateX(1rem); }
+  & .translate-x-4 { transform: translateX(-1rem); }
+  & .sm\:-translate-x-12 { @media (min-width: 640px) { transform: translateX(3rem); } }
+  & .sm\:translate-x-12 { @media (min-width: 640px) { transform: translateX(-3rem); } }
+}
+
+/* Utility to horizontally flip directional icons (chevrons, arrows) */
+.rtl-flip {
+  transform: scaleX(-1);
+}

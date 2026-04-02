@@ -42,7 +42,7 @@ export function Nav() {
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+        "fixed top-0 inset-x-0 z-50 transition-all duration-300",
         isScrolled
           ? "bg-white/95 backdrop-blur-md shadow-[0_4px_6px_-1px_rgb(0_0_0/0.1)]"
           : "bg-transparent",
@@ -109,7 +109,7 @@ export function Nav() {
             <Link
               href="/get-started"
               className={cn(
-                "inline-flex items-center justify-center rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-200",
+                "inline-flex items-center justify-center rounded-lg ps-5 pe-5 py-2.5 text-sm font-semibold transition-all duration-200",
                 isScrolled
                   ? "bg-aivo-purple-600 text-white hover:bg-aivo-purple-700"
                   : "bg-white text-aivo-purple-600 hover:bg-white/90",
@@ -163,7 +163,7 @@ export function Nav() {
               <Link
                 href="/get-started"
                 onClick={() => setIsOpen(false)}
-                className="block w-full text-center rounded-lg bg-aivo-purple-600 px-5 py-3 text-sm font-semibold text-white hover:bg-aivo-purple-700 transition-colors"
+                className="block w-full text-center rounded-lg bg-aivo-purple-600 ps-5 pe-5 py-3 text-sm font-semibold text-white hover:bg-aivo-purple-700 transition-colors"
               >
                 {t("nav.getStarted")}
               </Link>

@@ -97,7 +97,8 @@ const fallbackGradients = [
 export function Hero() {
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(1);
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
+  const isRtl = locale === "ar";
 
   const goTo = useCallback(
     (index: number) => {
@@ -158,8 +159,8 @@ export function Hero() {
 
       {/* Decorative blobs */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full bg-white/10 blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full bg-white/5 blur-3xl" />
+        <div className="absolute -top-40 -end-40 w-80 h-80 rounded-full bg-white/10 blur-3xl" />
+        <div className="absolute -bottom-40 -start-40 w-96 h-96 rounded-full bg-white/5 blur-3xl" />
       </div>
 
       {/* Content */}
@@ -182,7 +183,7 @@ export function Hero() {
               <div
                 className={cn(
                   hasSplitLayout
-                    ? "flex-1 text-center lg:text-left"
+                    ? "flex-1 text-center lg:text-start"
                     : "max-w-5xl mx-auto",
                 )}
               >
@@ -282,7 +283,7 @@ export function Hero() {
         </div>
       </div>
 
-      {/* Prev / Next arrows */}
+      {/* Prev / Next arrows — positions flip via CSS [dir="rtl"] rules */}
       <button
         onClick={() =>
           goTo((current - 1 + slideConfigs.length) % slideConfigs.length)
@@ -299,6 +300,7 @@ export function Hero() {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
+          className={cn(isRtl && "rtl-flip")}
         >
           <path d="M15 18l-6-6 6-6" />
         </svg>
@@ -317,6 +319,7 @@ export function Hero() {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
+          className={cn(isRtl && "rtl-flip")}
         >
           <path d="M9 18l6-6-6-6" />
         </svg>

@@ -52,7 +52,7 @@ export function Footer() {
                 className="h-10 w-auto"
               />
             </Link>
-            <p className="mt-3 text-sm text-aivo-navy-300">
+            <p className="mt-3 text-sm text-aivo-navy-300 text-start">
               AI-powered personalized learning that adapts to every student. No
               learner left behind.
             </p>
@@ -74,11 +74,11 @@ export function Footer() {
                 id="footer-email"
                 type="email"
                 placeholder="your@email.com"
-                className="flex-1 min-w-0 rounded-lg bg-aivo-navy-700 border border-aivo-navy-600 px-3 py-2 text-sm text-white placeholder:text-aivo-navy-400 focus:outline-none focus:ring-2 focus:ring-aivo-purple-500"
+                className="flex-1 min-w-0 rounded-lg bg-aivo-navy-700 border border-aivo-navy-600 ps-3 pe-3 py-2 text-sm text-white placeholder:text-aivo-navy-400 focus:outline-none focus:ring-2 focus:ring-aivo-purple-500"
               />
               <button
                 type="submit"
-                className="rounded-lg bg-aivo-purple-600 px-4 py-2 text-sm font-semibold text-white hover:bg-aivo-purple-700 transition-colors whitespace-nowrap"
+                className="rounded-lg bg-aivo-purple-600 ps-4 pe-4 py-2 text-sm font-semibold text-white hover:bg-aivo-purple-700 transition-colors whitespace-nowrap"
               >
                 {t("footer.subscribe")}
               </button>
@@ -90,7 +90,7 @@ export function Footer() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-8">
           {Object.entries(footerLinks).map(([category, links]) => (
             <div key={category}>
-              <h3 className="text-sm font-semibold text-white mb-4">
+              <h3 className="text-sm font-semibold text-white mb-4 text-start">
                 {category}
               </h3>
               <ul className="space-y-3">
@@ -111,7 +111,7 @@ export function Footer() {
 
         {/* Bottom bar */}
         <div className="mt-12 pt-8 border-t border-aivo-navy-700 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-aivo-navy-400">
+          <p className="text-sm text-aivo-navy-400 text-start">
             {t("footer.copyright")}
           </p>
           <div className="flex items-center gap-6">
