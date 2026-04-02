@@ -1,15 +1,19 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useCallback, useState, useRef, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, Bot, Send, Loader2, StopCircle, User } from "lucide-react";
+import { ArrowLeft, Send, Loader2, StopCircle, User, Mic } from "lucide-react";
 import Link from "next/link";
-import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { TutorAvatar, type TutorPersona } from "@/components/tutors/tutor-avatar";
+import { EmotionCheckIn, type EmotionZone } from "@/components/tutors/emotion-check-in";
+import { SpeechPracticeRecorder } from "@/components/tutors/speech-practice-recorder";
 import { apiFetch } from "@/lib/api";
 import { useTutorChat, type ChatMessage } from "@/hooks/useTutorChat";
 import { useLearnerStore } from "@/stores/learner.store";
+import { cn } from "@/lib/utils";
 
 interface TutorInfo {
   id: string;
@@ -19,6 +23,28 @@ interface TutorInfo {
   specialty: string;
   greeting: string;
   sessionId: string;
+}
+
+const KNOWN_PERSONAS = new Set<string>([
+  "nova", "sage", "spark", "chrono", "pixel", "harmony", "echo",
+]);
+
+function isKnownPersona(slug: string): slug is TutorPersona {
+  return KNOWN_PERSONAS.has(slug);
+}
+
+/** Heuristic: extract practice target from Echo's message. */
+function parseTargetSound(content: string): string | null {
+  const tryMatch = content.match(/try saying[:\s]*["']?([^"'\n.!]+)/i);
+  if (tryMatch) return tryMatch[1].trim();
+  const soundMatch = content.match(/the (\/.+?\/)\s*sound/i);
+  if (soundMatch) return soundMatch[1];
+  return null;
+}
+
+/** Check if Echo's message contains a practice prompt. */
+function isPracticePrompt(content: string): boolean {
+  return /try saying|your turn|let's practice/i.test(content);
 }
 
 export default function TutorChatPage() {
@@ -31,6 +57,14 @@ export default function TutorChatPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [inputValue, setInputValue] = useState("");
+
+  // Harmony: emotion check-in state
+  const [emotionZone, setEmotionZone] = useState<EmotionZone | null>(null);
+  const isHarmony = tutor?.slug === "harmony" || tutor?.specialty === "SEL";
+
+  // Echo: recorder state
+  const [showRecorder, setShowRecorder] = useState(false);
+  const isEcho = tutor?.slug === "echo" || tutor?.specialty === "Speech";
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -54,7 +88,6 @@ export default function TutorChatPage() {
         setLoading(false);
       }
     }
-
     fetchTutor();
   }, [tutorSlug]);
 
@@ -62,17 +95,25 @@ export default function TutorChatPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleSend = async () => {
+  // Inject emotion zone into first message for Harmony
+  const handleSend = useCallback(async () => {
     const text = inputValue.trim();
     if (!text || isStreaming) return;
     setInputValue("");
+
+    const isFirstMessage = messages.length === 0;
+    const extraContext =
+      isFirstMessage && isHarmony && emotionZone
+        ? { emotion_check_in: emotionZone }
+        : undefined;
+
     try {
-      await sendMessage(text);
+      await sendMessage(text, extraContext);
     } catch {
       // Error handled in hook
     }
     inputRef.current?.focus();
-  };
+  }, [inputValue, isStreaming, messages.length, isHarmony, emotionZone, sendMessage]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -80,6 +121,38 @@ export default function TutorChatPage() {
       handleSend();
     }
   };
+
+  const handleRecordingComplete = useCallback(
+    (audioBlob: Blob, durationMs: number) => {
+      const lastTarget = getLastTargetSound();
+      const label = lastTarget ?? "target sound";
+      const durSec = (durationMs / 1000).toFixed(1);
+      sendMessage(
+        `[Practiced: ${label} \u2014 ${durSec}s recording]`,
+        { audio_practice: { targetSound: label, durationMs } },
+      );
+      setShowRecorder(false);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [sendMessage],
+  );
+
+  function getLastTargetSound(): string | null {
+    for (let i = allMessages.length - 1; i >= 0; i--) {
+      const msg = allMessages[i];
+      if (msg.role === "tutor") {
+        const target = parseTargetSound(msg.content);
+        if (target) return target;
+      }
+    }
+    return null;
+  }
+
+  // Determine if Echo's last message is a practice prompt
+  const lastTutorMsg = [...(messages.length ? messages : [])].reverse().find(
+    (m) => m.role === "tutor",
+  );
+  const showMicPulse = isEcho && lastTutorMsg && isPracticePrompt(lastTutorMsg.content);
 
   if (loading) {
     return (
@@ -101,11 +174,25 @@ export default function TutorChatPage() {
   if (error) {
     return (
       <div className="text-center py-16">
-        <Bot className="mx-auto mb-4 text-gray-400" size={48} />
         <p className="text-red-500 mb-4">{error}</p>
-        <Button variant="outline" onClick={() => router.push("/learner/tutors")}>
+        <Button
+          variant="outline"
+          onClick={() => router.push("/learner/tutors")}
+        >
           Back to Tutors
         </Button>
+      </div>
+    );
+  }
+
+  // Harmony: show emotion check-in before chat
+  if (isHarmony && emotionZone === null) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <EmotionCheckIn
+          learnerName={activeLearner?.firstName}
+          onComplete={setEmotionZone}
+        />
       </div>
     );
   }
@@ -132,22 +219,22 @@ export default function TutorChatPage() {
         >
           <ArrowLeft size={20} />
         </Link>
-        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#7C4DFF] flex items-center justify-center shrink-0 overflow-hidden">
-          {tutor?.avatarUrl ? (
-            <img
-              src={tutor.avatarUrl}
-              alt={tutor.name}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <Bot className="text-white" size={20} />
-          )}
-        </div>
+        {isKnownPersona(tutor!.slug) ? (
+          <TutorAvatar
+            persona={tutor!.slug}
+            size="sm"
+            showOnlineIndicator
+          />
+        ) : (
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#7C4DFF] flex items-center justify-center shrink-0" />
+        )}
         <div>
           <h2 className="font-semibold text-gray-900 dark:text-white">
             {tutor?.name}
           </h2>
-          <p className="text-xs text-gray-500">{tutor?.specialty}</p>
+          <Badge variant="secondary" className="text-xs">
+            {tutor?.specialty}
+          </Badge>
         </div>
         {isStreaming && (
           <span className="ml-auto text-xs text-[#7C3AED] animate-pulse font-medium">
@@ -161,34 +248,38 @@ export default function TutorChatPage() {
         {allMessages.map((msg) => (
           <div
             key={msg.id}
-            className={`flex ${
-              msg.role === "user" ? "justify-end" : "justify-start"
-            }`}
+            className={cn(
+              "flex",
+              msg.role === "user" ? "justify-end" : "justify-start",
+            )}
           >
             <div
-              className={`flex items-start gap-2 max-w-[80%] ${
-                msg.role === "user" ? "flex-row-reverse" : "flex-row"
-              }`}
+              className={cn(
+                "flex items-start gap-2 max-w-[80%]",
+                msg.role === "user" ? "flex-row-reverse" : "flex-row",
+              )}
             >
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-                  msg.role === "user"
-                    ? "bg-[#7C3AED]"
-                    : "bg-gradient-to-br from-[#7C3AED] to-[#7C4DFF]"
-                }`}
-              >
+              {/* Avatar */}
+              <div className="shrink-0">
                 {msg.role === "user" ? (
-                  <User className="text-white" size={14} />
+                  <div className="w-8 h-8 rounded-full bg-[#7C3AED] flex items-center justify-center">
+                    <User className="text-white" size={14} />
+                  </div>
+                ) : isKnownPersona(tutor!.slug) ? (
+                  <TutorAvatar persona={tutor!.slug} size="sm" />
                 ) : (
-                  <Bot className="text-white" size={14} />
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#7C4DFF]" />
                 )}
               </div>
+
+              {/* Bubble */}
               <div
-                className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${
+                className={cn(
+                  "px-4 py-3 rounded-2xl text-sm leading-relaxed",
                   msg.role === "user"
                     ? "bg-[#7C3AED] text-white rounded-br-sm"
-                    : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-bl-sm"
-                }`}
+                    : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-bl-sm",
+                )}
               >
                 {msg.content || (
                   <span className="inline-flex items-center gap-1">
@@ -217,6 +308,16 @@ export default function TutorChatPage() {
         </div>
       )}
 
+      {/* Echo Recorder Panel */}
+      {isEcho && showRecorder && (
+        <div className="mb-3">
+          <SpeechPracticeRecorder
+            targetSound={getLastTargetSound() ?? "the target sound"}
+            onRecordingComplete={handleRecordingComplete}
+          />
+        </div>
+      )}
+
       {/* Input */}
       <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
         <div className="flex items-center gap-2">
@@ -230,6 +331,23 @@ export default function TutorChatPage() {
             disabled={isStreaming}
             className="flex-1 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none disabled:opacity-50"
           />
+
+          {/* Echo: mic button */}
+          {isEcho && (
+            <button
+              onClick={() => setShowRecorder((v) => !v)}
+              aria-label="Open speech practice recorder"
+              className={cn(
+                "w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-400 focus-visible:ring-offset-2",
+                showMicPulse
+                  ? "bg-pink-200 text-pink-600 animate-pulse"
+                  : "bg-pink-100 text-pink-600 hover:bg-pink-200",
+              )}
+            >
+              <Mic className="w-5 h-5" />
+            </button>
+          )}
+
           {isStreaming ? (
             <Button
               variant="outline"
