@@ -26,20 +26,25 @@ const SEED_SERVICES = [
 ];
 
 export async function seedMonitoredServices(app: FastifyInstance): Promise<void> {
-  for (const svc of SEED_SERVICES) {
-    await app.db
-      .insert(monitoredServices)
-      .values({
-        name: svc.name,
-        displayName: svc.displayName,
-        description: svc.description,
-        groupName: svc.groupName,
-        healthEndpoint: "/health",
-        port: svc.port,
-        isCritical: svc.isCritical,
-        displayOrder: svc.displayOrder,
-        isEnabled: true,
-      })
-      .onConflictDoNothing();
+  try {
+    for (const svc of SEED_SERVICES) {
+      await app.db
+        .insert(monitoredServices)
+        .values({
+          name: svc.name,
+          displayName: svc.displayName,
+          description: svc.description,
+          groupName: svc.groupName,
+          healthEndpoint: "/health",
+          port: svc.port,
+          isCritical: svc.isCritical,
+          displayOrder: svc.displayOrder,
+          isEnabled: true,
+        })
+        .onConflictDoNothing();
+    }
+  } catch (err) {
+    app.log.warn("Seed skipped — monitored_services table may not exist yet. Run migrations first.");
+    app.log.warn(err);
   }
 }
