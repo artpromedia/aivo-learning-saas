@@ -155,7 +155,7 @@ AIVO is built to WCAG AA standards:
 
 ### Real Results
 
-In our pilot program at Riverside USD, students with IEPs using AIVO showed a 31% improvement in reading scores over one semester. Teachers reported saving 6+ hours per week on differentiation and IEP documentation.
+In our pilot program across multiple districts, students with IEPs using AIVO showed a 31% improvement in reading scores over one semester. Teachers reported saving 6+ hours per week on differentiation and IEP documentation.
 
 [Start your child's personalized learning journey →](/get-started)
     `.trim(),

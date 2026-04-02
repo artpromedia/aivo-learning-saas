@@ -9,10 +9,27 @@ import { StatsBand } from "@/components/home/stats-band";
 import { TrustBadges } from "@/components/cro/trust-badges";
 import { Testimonials } from "@/components/home/testimonials";
 import { CtaBand } from "@/components/home/cta-band";
+import { createPageMetadata } from "@/lib/metadata-factory";
+import {
+  organizationSchema,
+  websiteSchema,
+  productSchema,
+  toScriptProps,
+} from "@/lib/structured-data";
+
+export const metadata = createPageMetadata({
+  title: "AIVO Learning — AI-Powered Personalized Education",
+  description:
+    "AI-powered personalized learning that adapts to every student. Brain Clone AI technology, 5 specialized AI tutors, IEP integration, and gamification. No learner left behind.",
+  path: "/",
+});
 
 export default function HomePage() {
   return (
     <>
+      <script {...toScriptProps(organizationSchema())} />
+      <script {...toScriptProps(websiteSchema())} />
+      <script {...toScriptProps(productSchema())} />
       <Hero />
       <SocialProofBar />
       <FeaturesGrid />

@@ -28,7 +28,7 @@ export function CtaBand() {
           viewport={{ once: true }}
           transition={{ delay: 0.1, duration: 0.5 }}
         >
-          Join 150+ students already learning with AIVO. Start your free trial today — no credit card required.
+          Join 150+ students already learning with AIVO. Start your free trial today, no credit card required.
         </motion.p>
         <motion.div
           className="flex flex-col sm:flex-row items-center justify-center gap-4"

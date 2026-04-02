@@ -27,13 +27,13 @@ export const features: Feature[] = [
     icon: "Users",
     title: "AI Tutors",
     description:
-      "Five specialized AI tutors — Nova, Sage, Spark, Chrono, and Pixel — each with unique personalities and teaching styles across every subject.",
+      "Five specialized AI tutors, Nova, Sage, Spark, Chrono, and Pixel, each with unique personalities and teaching styles across every subject.",
   },
   {
     icon: "BookOpen",
     title: "Homework Helper",
     description:
-      "Students can snap a photo of any assignment and get step-by-step guidance — not answers — that builds real understanding and problem-solving skills.",
+      "Students can snap a photo of any assignment and get step-by-step guidance (not answers) that builds real understanding and problem-solving skills.",
   },
   {
     icon: "Trophy",

@@ -28,7 +28,7 @@ const principles = [
     icon: Brain,
     title: "Truly Personalized",
     description:
-      "Every interaction adapts to the individual learner's Brain Clone — a unique AI profile that understands how each student learns best.",
+      "Every interaction adapts to the individual learner's Brain Clone, a unique AI profile that understands how each student learns best.",
   },
   {
     icon: Heart,
@@ -67,7 +67,7 @@ const values = [
     icon: Users,
     title: "Inclusion",
     description:
-      "Every decision we make is guided by our commitment to serving all learners — regardless of ability, background, or learning style.",
+      "Every decision we make is guided by our commitment to serving all learners, regardless of ability, background, or learning style.",
   },
   {
     icon: Shield,
@@ -105,8 +105,8 @@ export default function AboutPage() {
           <p className="mt-6 text-lg text-aivo-navy-500 max-w-3xl mx-auto leading-relaxed">
             AIVO Learning was founded on a simple belief: every student deserves
             a learning experience that adapts to them, not the other way around.
-            Our AI-powered platform creates a unique learning profile — a Brain
-            Clone — for every student, ensuring that no learner is left behind
+            Our AI-powered platform creates a unique learning profile, a Brain
+            Clone, for every student, ensuring that no learner is left behind
             regardless of their learning differences, disabilities, or
             functioning level.
           </p>

@@ -3,12 +3,12 @@
 import { motion } from "framer-motion";
 
 const partners = [
-  "Riverside USD",
-  "Lakewood Schools",
-  "Summit Academy",
-  "Bright Futures Charter",
-  "Maplewood ISD",
-  "Harbor View Elementary",
+  "Washington DC",
+  "Chicago",
+  "Minneapolis",
+  "Dallas",
+  "San Francisco",
+  "Denver",
 ];
 
 export function SocialProofBar() {

@@ -39,7 +39,7 @@ export function WalkthroughShowcase() {
           transition={{ duration: 0.5 }}
         >
           <h2 className="text-3xl sm:text-4xl font-bold text-aivo-navy-800">
-            See Aivo in Action — No Signup Required
+            See Aivo in Action: No Signup Required
           </h2>
           <p className="mt-4 text-lg text-aivo-navy-500 max-w-2xl mx-auto">
             Watch how Aivo creates a personalized learning experience in under

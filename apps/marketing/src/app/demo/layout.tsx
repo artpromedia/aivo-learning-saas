@@ -10,8 +10,14 @@ export default function DemoLayout({
       {/* Minimal header */}
       <header className="border-b border-aivo-navy-100 bg-white">
         <div className="mx-auto max-w-7xl flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4">
-          <Link href="/" className="text-2xl font-extrabold text-aivo-purple-600">
-            AIVO
+          <Link href="/">
+            <img
+              src="/logos/aivo-logo-horizontal-purple.svg"
+              alt="AIVO Learning"
+              width={120}
+              height={48}
+              className="h-10 w-auto"
+            />
           </Link>
           <p className="text-sm text-aivo-navy-500">
             Questions?{" "}

@@ -6,6 +6,8 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { events } from "@/lib/analytics";
 import { DashboardMockup } from "./dashboard-mockup";
+import { BrainCloneMockup } from "./brain-clone-mockup";
+import { TutorsMockup } from "./tutors-mockup";
 
 interface Slide {
   image: string;
@@ -47,8 +49,8 @@ const slides: Slide[] = [
     },
   },
   {
-    image: "/hero/slide-1.png",
-    headline: "Built for IEP Students — Loved by All",
+    image: "",
+    headline: "Built for IEP Students, Loved by All",
     subheadline:
       "Whether your child has an IEP, a 504 plan, or just needs extra support, Aivo\u2019s Brain Clone AI builds a learning experience as unique as they are.",
     cta: { label: "Get Started Free", href: "/get-started", event: "hero-slide3" },
@@ -57,21 +59,23 @@ const slides: Slide[] = [
       href: "/demo",
       event: "hero-slide3-demo",
     },
+    visual: <BrainCloneMockup />,
   },
   {
-    image: "/hero/slide-2.png",
+    image: "",
     headline: "5 Expert AI Tutors, One Personalized Journey",
     subheadline:
-      "From math to reading comprehension, our specialized AI tutors meet students where they are and guide them forward \u2014 with patience, encouragement, and adaptive intelligence.",
+      "From math to reading comprehension, our specialized AI tutors meet students where they are and guide them forward with patience, encouragement, and adaptive intelligence.",
     cta: { label: "Meet the Tutors", href: "/tutors", event: "hero-slide4-tutors" },
     ctaSecondary: {
       label: "Book a Demo",
       href: "/demo",
       event: "hero-slide4-demo",
     },
+    visual: <TutorsMockup />,
   },
   {
-    image: "/hero/slide-1.png",
+    image: "",
     headline: "Track Progress in Real Time",
     subheadline:
       "A beautiful learner dashboard gives students, parents, and teachers instant visibility into progress, streaks, and AI-powered recommendations.",
@@ -145,16 +149,18 @@ export function Hero() {
           transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
           className="absolute inset-0"
         >
-          {/* Photo background — loads over the gradient */}
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(${slide.image})` }}
-          />
-          {/* Fallback gradient */}
+          {/* Fallback gradient (behind the photo) */}
           <div
             className="absolute inset-0"
             style={{ background: fallbackGradients[current % fallbackGradients.length] }}
           />
+          {/* Photo background (on top of the gradient, shifted right) */}
+          {slide.image && (
+            <div
+              className="absolute inset-0 bg-no-repeat"
+              style={{ backgroundImage: `url(${slide.image})`, backgroundSize: '70%', backgroundPosition: '85% center' }}
+            />
+          )}
           {/* Dark overlay */}
           <div className="absolute inset-0 bg-black/30" />
         </motion.div>

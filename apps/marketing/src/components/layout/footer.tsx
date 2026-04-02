@@ -1,6 +1,10 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { AppStoreButtons } from "@/components/shared/app-store-buttons";
+
+const HIDDEN_PREFIXES = ["/demo", "/get-started"];
 
 const footerLinks = {
   Product: [
@@ -32,6 +36,10 @@ const footerLinks = {
 };
 
 export function Footer() {
+  const pathname = usePathname();
+
+  if (HIDDEN_PREFIXES.some((p) => pathname.startsWith(p))) return null;
+
   return (
     <footer className="bg-aivo-navy-800 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -51,6 +59,7 @@ export function Footer() {
               AI-powered personalized learning that adapts to every student. No
               learner left behind.
             </p>
+            <AppStoreButtons className="mt-4" variant="dark" />
           </div>
 
           {/* Newsletter */}

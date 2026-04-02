@@ -8,8 +8,9 @@ import { MobileStickyCta } from "@/components/cro/mobile-sticky-cta";
 import { UtmCapture } from "@/components/cro/utm-capture";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://aivolearning.com"),
   title: {
-    default: "AIVO Learning — AI-Powered Personalized Education",
+    default: "AIVO Learning: AI-Powered Personalized Education",
     template: "%s | AIVO",
   },
   description:
@@ -23,20 +24,32 @@ export const metadata: Metadata = {
     "AI tutors",
     "edtech",
   ],
+  alternates: {
+    canonical: "https://aivolearning.com",
+  },
   openGraph: {
-    title: "AIVO Learning — AI-Powered Personalized Education",
+    title: "AIVO Learning: AI-Powered Personalized Education",
     description:
       "Personalized education powered by Brain Clone AI technology that creates a unique learning profile for every student.",
     url: "https://aivolearning.com",
     siteName: "AIVO Learning",
     locale: "en_US",
     type: "website",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "AIVO Learning — AI-Powered Personalized Education",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "AIVO Learning — AI-Powered Personalized Education",
+    title: "AIVO Learning: AI-Powered Personalized Education",
     description:
       "Personalized education powered by Brain Clone AI. No learner left behind.",
+    images: ["/og-image.png"],
   },
   robots: {
     index: true,

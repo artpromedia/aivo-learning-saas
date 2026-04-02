@@ -1,14 +1,19 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { navLinks } from "@/content/nav";
 import { cn } from "@/lib/utils";
 
+const HIDDEN_PREFIXES = ["/demo", "/get-started"];
+
 export function Nav() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const hidden = HIDDEN_PREFIXES.some((p) => pathname.startsWith(p));
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,6 +33,8 @@ export function Nav() {
       document.body.style.overflow = "";
     };
   }, [isOpen]);
+
+  if (hidden) return null;
 
   return (
     <header

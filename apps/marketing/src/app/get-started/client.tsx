@@ -107,7 +107,7 @@ export function GetStartedClient() {
                 she needs help.&rdquo;
               </p>
               <p className="mt-3 text-sm font-medium text-aivo-navy-500">
-                — Sarah M., Parent of a 3rd grader
+                — Parent of a 3rd grader, Washington DC
               </p>
             </div>
           </motion.div>

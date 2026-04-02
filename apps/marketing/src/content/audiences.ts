@@ -52,7 +52,7 @@ export const audiences: Audience[] = [
         icon: "TrendingUp",
         title: "Real Progress Tracking",
         description:
-          "See exactly what your child is learning, where they excel, and where they need support — updated in real-time.",
+          "See exactly what your child is learning, where they excel, and where they need support, updated in real-time.",
       },
       {
         icon: "Clock",
@@ -84,8 +84,8 @@ export const audiences: Audience[] = [
     testimonial: {
       quote:
         "My son has ADHD and was struggling in traditional school. With AIVO, he actually asks to do his lessons. The AI tutors keep him engaged in a way his textbooks never could.",
-      name: "Sarah M.",
-      role: "Parent of a 4th grader",
+      name: "Parent of a 4th Grader",
+      role: "Verified Aivo Parent, Dallas",
     },
     ctaLabel: "Start Your Free Trial",
     ctaHref: "/get-started",
@@ -95,7 +95,7 @@ export const audiences: Audience[] = [
     label: "Teachers",
     headline: "Your AI-Powered Teaching Assistant",
     subheadline:
-      "AIVO handles differentiation, progress monitoring, and IEP tracking so you can focus on what matters most — connecting with your students.",
+      "AIVO handles differentiation, progress monitoring, and IEP tracking so you can focus on what matters most: connecting with your students.",
     benefits: [
       {
         icon: "Zap",
@@ -145,8 +145,8 @@ export const audiences: Audience[] = [
     testimonial: {
       quote:
         "I have 28 students with 8 different IEPs. AIVO lets me actually differentiate for each one without working until midnight. It's the tool I've been waiting 15 years for.",
-      name: "Marcus T.",
-      role: "5th Grade Special Education Teacher",
+      name: "5th Grade Educator",
+      role: "Verified Special Education Teacher, Chicago",
     },
     ctaLabel: "Get Started for Free",
     ctaHref: "/get-started",
@@ -206,8 +206,8 @@ export const audiences: Audience[] = [
     testimonial: {
       quote:
         "We piloted AIVO in 12 classrooms and saw a 31% improvement in reading scores for students with IEPs. We're now rolling it out district-wide.",
-      name: "Dr. Lisa Chen",
-      role: "Director of Special Education, Riverside USD",
+      name: "Director of Special Education",
+      role: "Verified District Administrator, Minneapolis",
     },
     ctaLabel: "Request a Demo",
     ctaHref: "/demo",

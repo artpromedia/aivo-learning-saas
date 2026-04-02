@@ -28,8 +28,43 @@ test.describe("SEO & Accessibility", () => {
     await page.goto("/");
 
     const scripts = await page.locator('script[type="application/ld+json"]').all();
-    // At least one JSON-LD script should exist
-    expect(scripts.length).toBeGreaterThanOrEqual(0);
+    expect(scripts.length).toBeGreaterThanOrEqual(3);
+  });
+
+  test("Demo page has JSON-LD structured data", async ({ page }) => {
+    await page.goto("/demo");
+
+    const scripts = await page.locator('script[type="application/ld+json"]').all();
+    expect(scripts.length).toBeGreaterThanOrEqual(2);
+  });
+
+  test("Homepage has canonical URL", async ({ page }) => {
+    await page.goto("/");
+
+    const canonical = await page.locator('link[rel="canonical"]').getAttribute("href");
+    expect(canonical).toBeTruthy();
+    expect(canonical).toContain("aivolearning.com");
+  });
+
+  test("Demo page has canonical URL", async ({ page }) => {
+    await page.goto("/demo");
+
+    const canonical = await page.locator('link[rel="canonical"]').getAttribute("href");
+    expect(canonical).toBe("https://aivolearning.com/demo");
+  });
+
+  test("All pages have Open Graph image", async ({ page }) => {
+    for (const pageInfo of pages) {
+      await page.goto(pageInfo.path);
+
+      const ogImage = await page
+        .locator('meta[property="og:image"]')
+        .getAttribute("content");
+      expect(
+        ogImage,
+        `${pageInfo.name} missing og:image`,
+      ).toBeTruthy();
+    }
   });
 
   test("All images have alt text", async ({ page }) => {

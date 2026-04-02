@@ -40,7 +40,7 @@ export default function AccessibilityPage() {
               people with disabilities. We continually improve the user
               experience for everyone and apply the relevant accessibility
               standards. As a platform built specifically for learners of all
-              abilities, accessibility is not just a compliance goal — it is core
+              abilities, accessibility is not just a compliance goal, it is core
               to our mission.
             </p>
 
