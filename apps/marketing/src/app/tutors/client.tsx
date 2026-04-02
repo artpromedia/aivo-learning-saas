@@ -150,6 +150,56 @@ const tutors: Tutor[] = [
       },
     ],
   },
+  {
+    name: "Harmony",
+    emoji: "\u{1F33F}",
+    subject: "SEL",
+    accent: "violet",
+    accentBg: "bg-violet-50",
+    accentText: "text-violet-600",
+    accentBorder: "border-violet-200",
+    accentLight: "bg-violet-100",
+    persona:
+      "Harmony is a warm, calming presence who helps learners navigate their inner world. Using nature metaphors and CASEL-aligned techniques, Harmony guides children through understanding emotions, building empathy, and developing healthy relationships. Whether your child is dealing with frustration, friendship challenges, or self-confidence, Harmony meets them with patience and genuine care.",
+    expectations: [
+      "Emotion identification and vocabulary building",
+      "Mindfulness breathing and grounding exercises",
+      "Social scenario role-play for conflict resolution",
+      "Self-regulation strategies using Zones of Regulation",
+    ],
+    sampleChat: [
+      { role: "student", text: "I got really mad at my friend today" },
+      {
+        role: "tutor",
+        text: "Thank you for sharing that with me \u{1F33F} It sounds like you felt really angry, and that's completely okay. Anger is like a storm \u2014 it passes. Can you tell me what happened? Together we can figure out what might help.",
+      },
+    ],
+  },
+  {
+    name: "Echo",
+    emoji: "\u{1F3B5}",
+    subject: "Speech",
+    accent: "orange",
+    accentBg: "bg-orange-50",
+    accentText: "text-orange-600",
+    accentBorder: "border-orange-200",
+    accentLight: "bg-orange-100",
+    persona:
+      "Echo is a playful, musical companion who makes speech and language practice feel like a fun adventure. With endless patience and a knack for turning tricky sounds into games, Echo helps learners build articulation skills, expand vocabulary, and grow their confidence in communication. Every attempt is celebrated, every sound is progress.",
+    expectations: [
+      "Articulation drills disguised as fun sound games",
+      "Phonological awareness through rhyming and rhythm",
+      "Language expansion and sentence-building practice",
+      "Pragmatic conversation skills through role-play",
+    ],
+    sampleChat: [
+      { role: "student", text: "I can't say my R sounds" },
+      {
+        role: "tutor",
+        text: "You know what? The /r/ sound is one of the trickiest ones \u2014 even for grown-ups! \u{1F3B5} Let's start with a fun warm-up. Say 'rrrrr' like a race car engine. Ready? Rrrrrr! \u{1F3CE}\u{FE0F} How did that feel?",
+      },
+    ],
+  },
 ];
 
 export function TutorsPageClient() {
@@ -165,7 +215,7 @@ export function TutorsPageClient() {
             className="inline-flex items-center gap-2 rounded-full bg-aivo-purple-100 px-4 py-1.5 text-sm font-semibold text-aivo-purple-700"
           >
             <Sparkles className="h-4 w-4" />
-            5 Specialized AI Tutors
+            7 Specialized AI Tutors
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
@@ -261,7 +311,11 @@ export function TutorsPageClient() {
                           ? "bg-amber-500 hover:bg-amber-600"
                           : tutor.accent === "rose"
                             ? "bg-rose-500 hover:bg-rose-600"
-                            : "bg-emerald-500 hover:bg-emerald-600"
+                            : tutor.accent === "violet"
+                              ? "bg-violet-500 hover:bg-violet-600"
+                              : tutor.accent === "orange"
+                                ? "bg-orange-500 hover:bg-orange-600"
+                                : "bg-emerald-500 hover:bg-emerald-600"
                   )}
                 >
                   Learn with {tutor.name}

@@ -49,6 +49,24 @@ const tutors = [
     bg: "bg-emerald-50",
     border: "border-emerald-200",
   },
+  {
+    name: "Harmony",
+    subject: "Social-Emotional Learning",
+    emoji: "🌿",
+    personality: "A warm and calming coach who helps learners understand their emotions, build empathy, and develop healthy relationships. Harmony turns feelings into growth opportunities.",
+    accent: "from-violet-400 to-teal-500",
+    bg: "bg-violet-50",
+    border: "border-violet-200",
+  },
+  {
+    name: "Echo",
+    subject: "Speech & Language",
+    emoji: "🎵",
+    personality: "A playful speech companion who makes articulation practice feel like a musical adventure. Echo turns tricky sounds into fun challenges and celebrates every attempt.",
+    accent: "from-orange-400 to-sky-500",
+    bg: "bg-orange-50",
+    border: "border-orange-200",
+  },
 ];
 
 const container = {
@@ -67,7 +85,7 @@ export function AiTutors() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader
           title="Meet Your AI Learning Team"
-          subtitle="Five specialized AI tutors, each with a unique personality and teaching style designed to make every subject engaging and fun."
+          subtitle="Seven specialized AI tutors, each with a unique personality and teaching style designed to make every subject engaging and fun."
         />
 
         <motion.div
