@@ -6,6 +6,8 @@ import { CookieBanner } from "@/components/layout/cookie-banner";
 import { ExitIntentModal } from "@/components/cro/exit-intent-modal";
 import { MobileStickyCta } from "@/components/cro/mobile-sticky-cta";
 import { UtmCapture } from "@/components/cro/utm-capture";
+import { I18nProvider } from "@/providers/i18n-provider";
+import { HtmlLangSetter } from "@/components/layout/html-lang-setter";
 
 export const metadata: Metadata = {
   title: {
@@ -61,13 +63,16 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-white antialiased">
-        <UtmCapture />
-        <Nav />
-        <main>{children}</main>
-        <Footer />
-        <CookieBanner />
-        <ExitIntentModal />
-        <MobileStickyCta />
+        <I18nProvider>
+          <HtmlLangSetter />
+          <UtmCapture />
+          <Nav />
+          <main>{children}</main>
+          <Footer />
+          <CookieBanner />
+          <ExitIntentModal />
+          <MobileStickyCta />
+        </I18nProvider>
       </body>
     </html>
   );

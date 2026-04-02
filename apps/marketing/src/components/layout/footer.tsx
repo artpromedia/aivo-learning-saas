@@ -1,7 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { useI18n } from "@/providers/i18n-provider";
 
+// TODO: Footer column headers and link labels need translation keys in a future sprint.
+// For now, these remain in English.
 const footerLinks = {
   Product: [
     { label: "Features", href: "#features" },
@@ -32,6 +35,8 @@ const footerLinks = {
 };
 
 export function Footer() {
+  const { t } = useI18n();
+
   return (
     <footer className="bg-aivo-navy-800 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -62,7 +67,7 @@ export function Footer() {
               htmlFor="footer-email"
               className="text-sm font-medium text-aivo-navy-200"
             >
-              Stay updated
+              {t("footer.newsletter")}
             </label>
             <div className="mt-2 flex gap-2">
               <input
@@ -75,7 +80,7 @@ export function Footer() {
                 type="submit"
                 className="rounded-lg bg-aivo-purple-600 px-4 py-2 text-sm font-semibold text-white hover:bg-aivo-purple-700 transition-colors whitespace-nowrap"
               >
-                Subscribe
+                {t("footer.subscribe")}
               </button>
             </div>
           </form>
@@ -107,21 +112,20 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="mt-12 pt-8 border-t border-aivo-navy-700 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-aivo-navy-400">
-            &copy; {new Date().getFullYear()} AIVO Learning. All rights
-            reserved.
+            {t("footer.copyright")}
           </p>
           <div className="flex items-center gap-6">
             <Link
               href="/privacy"
               className="text-sm text-aivo-navy-400 hover:text-white transition-colors"
             >
-              Privacy
+              {t("footer.privacy")}
             </Link>
             <Link
               href="/terms"
               className="text-sm text-aivo-navy-400 hover:text-white transition-colors"
             >
-              Terms
+              {t("footer.terms")}
             </Link>
             <Link
               href="/cookies"
