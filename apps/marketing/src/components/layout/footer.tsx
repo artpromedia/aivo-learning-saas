@@ -41,10 +41,12 @@ const footerColumns = [
   {
     key: "columnLegal",
     links: [
-      { key: "linkPrivacyPolicy", href: "/privacy" },
-      { key: "linkTermsOfService", href: "/terms" },
-      { key: "linkFerpa", href: "/ferpa" },
-      { key: "linkCoppa", href: "/coppa" },
+      { key: "linkPrivacyPolicy", href: "/legal/privacy" },
+      { key: "linkTermsOfService", href: "/legal/terms" },
+      { key: "linkCookiePolicy", href: "/cookies" },
+      { key: "linkAccessibility", href: "/accessibility" },
+      { key: "linkFerpa", href: "/legal/ferpa" },
+      { key: "linkCoppa", href: "/legal/coppa" },
     ],
   },
 ];
@@ -141,13 +143,13 @@ export function Footer() {
           </p>
           <div className="flex items-center gap-6">
             <Link
-              href="/privacy"
+              href="/legal/privacy"
               className="text-sm text-aivo-navy-400 hover:text-white transition-colors"
             >
               {t("footer", "privacy")}
             </Link>
             <Link
-              href="/terms"
+              href="/legal/terms"
               className="text-sm text-aivo-navy-400 hover:text-white transition-colors"
             >
               {t("footer", "terms")}

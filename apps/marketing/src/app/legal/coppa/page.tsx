@@ -547,7 +547,7 @@ export default function CoppaPage() {
           </Link>
           <span className="text-aivo-navy-300">|</span>
           <Link
-            href="/ferpa"
+            href="/legal/ferpa"
             className="font-medium text-aivo-navy-600 hover:text-aivo-purple-600 transition-colors"
           >
             FERPA Compliance

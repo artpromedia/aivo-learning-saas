@@ -263,8 +263,8 @@
     "linkPrivacyPolicy": "隐私政策",
     "linkTermsOfService": "服务条款",
     "linkFerpa": "FERPA合规",
-    "linkCoppa": "COPPA政策",
-    "cookies": "Cookie设置"
+    "linkCoppa": "COPPA政策",    "linkCookiePolicy": "Cookie政策",
+    "linkAccessibility": "无障碍",    "cookies": "Cookie设置"
   },
   "common": {
     "learnMore": "了解更多",
