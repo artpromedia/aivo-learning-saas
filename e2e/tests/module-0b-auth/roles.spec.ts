@@ -90,6 +90,7 @@ test.describe('Module 0b: Role Enforcement', () => {
     await page.waitForURL(/\/(parent|learner|teacher|admin|add-child)/, { timeout: 15_000 });
 
     await page.goto(`${BASE_URL}/admin`);
+    await page.waitForLoadState('networkidle');
     const url = page.url();
     const isBlocked =
       url.includes('/parent') ||

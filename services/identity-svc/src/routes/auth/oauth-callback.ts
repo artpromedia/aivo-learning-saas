@@ -51,6 +51,13 @@ export async function oauthCallbackRoute(app: FastifyInstance) {
         sameSite: "lax",
         path: "/api/auth/refresh",
         maxAge: 7 * 24 * 60 * 60,
+      })
+      .setCookie("user_role", user.role, {
+        httpOnly: false,
+        secure: config.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+        maxAge: 7 * 24 * 60 * 60,
       });
 
     return reply.redirect(`${config.APP_URL}/dashboard`);

@@ -96,8 +96,36 @@ async function globalSetup(_config: FullConfig): Promise<void> {
 
   // Wait for infrastructure services
   console.log('[setup] Waiting for services to be healthy...');
-  await waitForService('http://localhost:5433', 'PostgreSQL (test)', { required: false }).catch(() => {
-    console.log('  [info] PostgreSQL health check via HTTP not available, assuming ready via Docker healthcheck');
+  // PostgreSQL does not speak HTTP — rely on Docker/CI health check instead.
+  // Verify connectivity by attempting a lightweight TCP connection.
+  await new Promise<void>((resolve) => {
+    import('node:net').then(({ createConnection }) => {
+      let attempts = 0;
+      const tryConnect = () => {
+        attempts++;
+        const sock = createConnection({ host: '127.0.0.1', port: 5433 }, () => {
+          sock.destroy();
+          console.log('  [ok] PostgreSQL (test) is reachable');
+          resolve();
+        });
+        sock.on('error', () => {
+          sock.destroy();
+          if (attempts >= 15) {
+            console.warn('  [skip] PostgreSQL (test) not available — tests that depend on it will be skipped');
+            resolve();
+          } else {
+            if (attempts % 5 === 0) {
+              console.log(`  [wait] PostgreSQL (test) not ready (attempt ${attempts}/15)`);
+            }
+            setTimeout(tryConnect, 2_000);
+          }
+        });
+        sock.setTimeout(2_000, () => {
+          sock.destroy();
+        });
+      };
+      tryConnect();
+    });
   });
 
   await waitForService(`${API_BASE}/health`, 'identity-svc');
