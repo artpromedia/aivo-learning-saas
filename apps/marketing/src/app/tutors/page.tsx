@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import { TutorsPageClient } from "./client";
 
 export const metadata: Metadata = {
-  title: "AI Tutors",
+  title: "AI Tutors | AIVO Learning",
   description:
-    "Meet AIVO's five AI tutors: Nova for Math, Sage for ELA, Spark for Science, Chrono for History, and Pixel for Coding. Each with a unique personality built to engage every learner.",
+    "Meet AIVO's seven AI tutors: Nova for Math, Sage for ELA, Spark for Science, Chrono for History, Pixel for Coding, Harmony for Social-Emotional Learning, and Echo for Speech & Language Practice. Each adapts to every learner.",
   openGraph: {
-    title: "AI Tutors | AIVO",
+    title: "Meet AIVO's Seven AI Tutors",
     description:
-      "Meet AIVO's five AI tutors: Nova, Sage, Spark, Chrono, and Pixel. Each with a unique personality built to engage every learner.",
+      "Seven specialized AI tutors, each with a unique personality and real teaching methods. They adapt to every learner \u2014 including those with IEPs and varying needs.",
     url: "https://aivolearning.com/tutors",
     siteName: "AIVO Learning",
     locale: "en_US",
@@ -16,9 +16,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "AI Tutors | AIVO",
+    title: "Meet AIVO's Seven AI Tutors",
     description:
-      "Meet AIVO's five AI tutors, each with a unique personality built to engage every learner.",
+      "Seven AI tutors, each with a unique personality built to engage every learner. From math to social-emotional learning to speech practice.",
   },
 };
 
