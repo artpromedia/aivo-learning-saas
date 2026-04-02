@@ -58,7 +58,7 @@ vi.mock("next/link", () => ({
   ),
 }));
 
-const mockSubmitLead = vi.fn().mockResolvedValue({ id: "lead-123" });
+const mockSubmitLead = vi.fn().mockResolvedValue({ lead: { id: "lead-123" } });
 vi.mock("@/lib/leads-api", () => ({
   submitLead: (...args: unknown[]) => mockSubmitLead(...args),
 }));
@@ -103,6 +103,10 @@ vi.mock("@/components/booking/booking-confirmation-card", () => ({
   ),
 }));
 
+vi.mock("@/components/booking/booking-fallback-form", () => ({
+  BookingFallbackForm: () => <div data-testid="booking-fallback">Fallback</div>,
+}));
+
 import { DemoPageClient } from "@/app/demo/client";
 
 describe("DemoPageClient — Multi-step Booking", () => {
@@ -113,26 +117,25 @@ describe("DemoPageClient — Multi-step Booking", () => {
   it("renders step 1 heading and form", () => {
     render(<DemoPageClient />);
     expect(screen.getByText("Tell Us About You")).toBeDefined();
-    expect(screen.getByLabelText(/First Name/)).toBeDefined();
-    expect(screen.getByLabelText(/Last Name/)).toBeDefined();
-    expect(screen.getByLabelText(/Work Email/)).toBeDefined();
-    expect(screen.getByLabelText(/School\/District/)).toBeDefined();
+    expect(screen.getByLabelText(/^Name/)).toBeDefined();
+    expect(screen.getByLabelText(/^Email/)).toBeDefined();
+    expect(screen.getByLabelText(/Organization/)).toBeDefined();
     expect(screen.getByLabelText(/^Role/)).toBeDefined();
     expect(screen.getByLabelText(/Number of Students/)).toBeDefined();
   });
 
   it("renders step indicator with 3 steps", () => {
     render(<DemoPageClient />);
-    expect(screen.getByText("Your Info")).toBeDefined();
-    expect(screen.getByText("Pick a Time")).toBeDefined();
-    expect(screen.getByText("Confirmed")).toBeDefined();
+    expect(screen.getByText("Step 1 of 3")).toBeDefined();
+    expect(screen.getByText("Step 2 of 3")).toBeDefined();
+    expect(screen.getByText("Step 3 of 3")).toBeDefined();
   });
 
-  it("renders What to expect section", () => {
+  it("renders sidebar with See Aivo in Action", () => {
     render(<DemoPageClient />);
-    expect(screen.getByText("What to expect")).toBeDefined();
+    expect(screen.getByText("See Aivo in Action")).toBeDefined();
     expect(
-      screen.getByText("30-minute call with our education team"),
+      screen.getByText("Personalized 30-min walkthrough of the platform"),
     ).toBeDefined();
   });
 
@@ -140,72 +143,41 @@ describe("DemoPageClient — Multi-step Booking", () => {
     const user = userEvent.setup();
     render(<DemoPageClient />);
 
-    const submitBtn = screen.getByRole("button", {
-      name: /Continue to Scheduling/,
-    });
+    const submitBtn = screen.getByRole("button", { name: /Continue/ });
     await user.click(submitBtn);
 
-    expect(screen.getByText("First name is required")).toBeDefined();
+    expect(screen.getByText("Name is required")).toBeDefined();
     expect(screen.getByText("Email is required")).toBeDefined();
   });
 
-  it("advances to step 2 after successful form submission", async () => {
+  it("advances to step 2 when valid name and email are entered", async () => {
     const user = userEvent.setup();
     render(<DemoPageClient />);
 
-    await user.type(screen.getByLabelText(/First Name/), "Jane");
-    await user.type(screen.getByLabelText(/Last Name/), "Doe");
-    await user.type(screen.getByLabelText(/Work Email/), "jane@school.org");
-    await user.type(
-      screen.getByLabelText(/School\/District/),
-      "Springfield USD",
-    );
+    await user.type(screen.getByLabelText(/^Name/), "Jane Doe");
+    await user.type(screen.getByLabelText(/^Email/), "jane@school.org");
 
-    const roleSelect = screen.getByLabelText(/^Role/);
-    await user.selectOptions(roleSelect, "Teacher");
-
-    const studentSelect = screen.getByLabelText(/Number of Students/);
-    await user.selectOptions(studentSelect, "51-200");
-
-    const submitBtn = screen.getByRole("button", {
-      name: /Continue to Scheduling/,
-    });
+    const submitBtn = screen.getByRole("button", { name: /Continue/ });
     await user.click(submitBtn);
 
     await waitFor(() => {
       expect(screen.getByTestId("oonrumail-calendar")).toBeDefined();
     });
-
-    expect(mockSubmitLead).toHaveBeenCalledOnce();
   });
 
   it("advances to step 3 after booking confirmation", async () => {
     const user = userEvent.setup();
     render(<DemoPageClient />);
 
-    // Fill step 1
-    await user.type(screen.getByLabelText(/First Name/), "Jane");
-    await user.type(screen.getByLabelText(/Last Name/), "Doe");
-    await user.type(screen.getByLabelText(/Work Email/), "jane@school.org");
-    await user.type(
-      screen.getByLabelText(/School\/District/),
-      "Springfield USD",
-    );
-    await user.selectOptions(screen.getByLabelText(/^Role/), "Teacher");
-    await user.selectOptions(
-      screen.getByLabelText(/Number of Students/),
-      "51-200",
-    );
+    await user.type(screen.getByLabelText(/^Name/), "Jane Doe");
+    await user.type(screen.getByLabelText(/^Email/), "jane@school.org");
 
-    await user.click(
-      screen.getByRole("button", { name: /Continue to Scheduling/ }),
-    );
+    await user.click(screen.getByRole("button", { name: /Continue/ }));
 
     await waitFor(() => {
       expect(screen.getByTestId("oonrumail-calendar")).toBeDefined();
     });
 
-    // Confirm booking
     await user.click(screen.getByTestId("mock-confirm"));
 
     await waitFor(() => {
@@ -215,8 +187,8 @@ describe("DemoPageClient — Multi-step Booking", () => {
     expect(screen.getByText(/Booking confirmed: bk-123/)).toBeDefined();
   });
 
-  it("renders direct contact email", () => {
+  it("renders prefer email block with demo@aivolearning.com", () => {
     render(<DemoPageClient />);
-    expect(screen.getByText("sales@aivolearning.com")).toBeDefined();
+    expect(screen.getByText("demo@aivolearning.com")).toBeDefined();
   });
 });
