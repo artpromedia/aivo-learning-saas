@@ -2,7 +2,7 @@
 
 import { useState, useEffect, type FormEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
+import { Check, ArrowLeft, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { submitLead } from "@/lib/leads-api";

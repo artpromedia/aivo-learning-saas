@@ -35,7 +35,6 @@ import { Testimonials } from "@/components/home/testimonials";
 
 describe("Testimonials — Anonymous Identities", () => {
   it("does NOT render any real names", () => {
-    const user = userEvent.setup();
     const { container } = render(<Testimonials />);
     const html = container.innerHTML;
     const realNames = ["Sarah", "Marcus", "Lisa", "David", "Jennifer"];
