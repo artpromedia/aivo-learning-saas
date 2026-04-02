@@ -26,10 +26,10 @@ const categories = [
     title: "Getting Started",
     description: "Everything you need to begin your AIVO journey.",
     articles: [
-      "Creating your account",
-      "Setting up your first student",
-      "Taking the learning assessment",
-      "Understanding your dashboard",
+      { title: "Creating your account", href: "/help/getting-started/creating-your-account" },
+      { title: "Setting up your first student", href: "/help/getting-started/setting-up-your-first-student" },
+      { title: "Taking the learning assessment", href: "/help/getting-started/taking-the-learning-assessment" },
+      { title: "Understanding your dashboard", href: "/help/getting-started/understanding-your-dashboard" },
     ],
   },
   {
@@ -37,10 +37,10 @@ const categories = [
     title: "Account & Billing",
     description: "Manage your subscription, payments, and plan details.",
     articles: [
-      "Managing your subscription",
-      "Updating payment info",
-      "Canceling your plan",
-      "Requesting a refund",
+      { title: "Managing your subscription", href: "/help/account-billing/managing-your-subscription" },
+      { title: "Updating payment info", href: "/help/account-billing/updating-payment-info" },
+      { title: "Canceling your plan", href: "/help/account-billing/canceling-your-plan" },
+      { title: "Requesting a refund", href: "/help/account-billing/requesting-a-refund" },
     ],
   },
   {
@@ -48,10 +48,10 @@ const categories = [
     title: "AI Tutors",
     description: "Learn how to get the most from your AI tutoring sessions.",
     articles: [
-      "Meeting your AI tutors",
-      "Switching between tutors",
-      "Tutor session settings",
-      "Reporting tutor issues",
+      { title: "Meeting your AI tutors", href: "/help/ai-tutors/meeting-your-ai-tutors" },
+      { title: "Switching between tutors", href: "/help/ai-tutors/switching-between-tutors" },
+      { title: "Tutor session settings", href: "/help/ai-tutors/tutor-session-settings" },
+      { title: "Reporting tutor issues", href: "/help/ai-tutors/reporting-tutor-issues" },
     ],
   },
   {
@@ -59,10 +59,10 @@ const categories = [
     title: "IEP Support",
     description: "Tools for managing and tracking IEP goals and progress.",
     articles: [
-      "Uploading IEP documents",
-      "Tracking IEP goals",
-      "Generating progress reports",
-      "Sharing with your IEP team",
+      { title: "Uploading IEP documents", href: "/help/iep-support/uploading-iep-documents" },
+      { title: "Tracking IEP goals", href: "/help/iep-support/tracking-iep-goals" },
+      { title: "Generating progress reports", href: "/help/iep-support/generating-progress-reports" },
+      { title: "Sharing with your IEP team", href: "/help/iep-support/sharing-with-your-iep-team" },
     ],
   },
   {
@@ -70,10 +70,10 @@ const categories = [
     title: "Technical",
     description: "System requirements, troubleshooting, and compatibility.",
     articles: [
-      "System requirements",
-      "Troubleshooting login",
-      "Offline mode setup",
-      "Browser compatibility",
+      { title: "System requirements", href: "/help/technical/system-requirements" },
+      { title: "Troubleshooting login", href: "/help/technical/troubleshooting-login" },
+      { title: "Offline mode setup", href: "/help/technical/offline-mode-setup" },
+      { title: "Browser compatibility", href: "/help/technical/browser-compatibility" },
     ],
   },
   {
@@ -81,10 +81,10 @@ const categories = [
     title: "Privacy & Security",
     description: "How we protect your data and comply with regulations.",
     articles: [
-      "Data privacy overview",
-      "Exporting your data",
-      "Deleting your account",
-      "FERPA compliance details",
+      { title: "Data privacy overview", href: "/help/privacy-security/data-privacy-overview" },
+      { title: "Exporting your data", href: "/help/privacy-security/exporting-your-data" },
+      { title: "Deleting your account", href: "/help/privacy-security/deleting-your-account" },
+      { title: "FERPA compliance details", href: "/help/privacy-security/ferpa-compliance-details" },
     ],
   },
 ];
@@ -93,7 +93,7 @@ export default function HelpPage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-aivo-purple-50 to-white pt-20 pb-16">
+      <section className="relative overflow-hidden bg-linear-to-b from-aivo-purple-50 to-white pt-20 pb-16">
         <div className="mx-auto max-w-7xl px-6 text-center">
           <h1 className="text-4xl font-bold tracking-tight text-aivo-navy-800 sm:text-5xl">
             Help Center
@@ -107,7 +107,7 @@ export default function HelpPage() {
               href="/faq"
               className="inline-flex items-center gap-1 text-aivo-purple-600 font-semibold hover:text-aivo-purple-700 transition-colors"
             >
-              Looking for something specific? Try our FAQ
+              Looking for something specific? Try our FAQ{" "}
               <span aria-hidden="true">&rarr;</span>
             </Link>
           </p>
@@ -136,9 +136,9 @@ export default function HelpPage() {
                   </p>
                   <ul className="mt-5 space-y-2.5">
                     {category.articles.map((article) => (
-                      <li key={article}>
-                        <a
-                          href="#"
+                      <li key={article.title}>
+                        <Link
+                          href={article.href}
                           className="inline-flex items-center gap-1.5 text-sm text-aivo-navy-600 hover:text-aivo-purple-600 transition-colors"
                         >
                           <span
@@ -147,8 +147,8 @@ export default function HelpPage() {
                           >
                             &rsaquo;
                           </span>
-                          {article}
-                        </a>
+                          {article.title}
+                        </Link>
                       </li>
                     ))}
                   </ul>
@@ -172,7 +172,7 @@ export default function HelpPage() {
             href="/contact"
             className="mt-6 inline-flex items-center gap-2 rounded-lg bg-aivo-purple-600 px-6 py-3 font-semibold text-white shadow-sm transition-colors hover:bg-aivo-purple-700"
           >
-            Contact Support
+            Contact Support{" "}
             <span aria-hidden="true">&rarr;</span>
           </Link>
         </div>

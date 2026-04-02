@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
+import { TutorAvatar, type TutorPersona } from "@/components/tutors/tutor-avatar";
 import { apiFetch } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
 import { useLearnerStore } from "@/stores/learner.store";
@@ -80,7 +81,7 @@ export default function LearnerTutorsPage() {
           <div>
             <h1 className="text-2xl font-bold">My Tutors</h1>
             <p className="text-white/80 text-sm">
-              Chat with your AI tutors to get help and learn new things.
+              Chat with your 7 AI tutors to get help and learn new things.
             </p>
           </div>
         </div>
@@ -104,17 +105,10 @@ export default function LearnerTutorsPage() {
             <Link key={tutor.id} href={`/learner/tutors/${tutor.slug}`}>
               <Card className="hover:shadow-lg transition-shadow cursor-pointer group">
                 <CardBody className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#7C4DFF] flex items-center justify-center shrink-0 overflow-hidden">
-                    {tutor.avatarUrl ? (
-                      <img
-                        src={tutor.avatarUrl}
-                        alt={tutor.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <Bot className="text-white" size={24} />
-                    )}
-                  </div>
+                  <TutorAvatar
+                    persona={tutor.slug as TutorPersona}
+                    size="sm"
+                  />
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-gray-900 dark:text-white">
                       {tutor.name}

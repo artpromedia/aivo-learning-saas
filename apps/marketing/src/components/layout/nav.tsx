@@ -10,6 +10,7 @@ import { useI18n } from "@/providers/i18n-provider";
 import { LocaleSwitcher } from "@/components/layout/locale-switcher";
 
 const HIDDEN_PREFIXES = ["/demo", "/get-started"];
+const LIGHT_BG_PREFIXES = ["/help", "/legal", "/faq"];
 
 export function Nav() {
   const pathname = usePathname();
@@ -18,6 +19,8 @@ export function Nav() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const hidden = HIDDEN_PREFIXES.some((p) => pathname.startsWith(p));
+  const lightBg = LIGHT_BG_PREFIXES.some((p) => pathname.startsWith(p));
+  const useDarkNav = isScrolled || lightBg;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -44,7 +47,7 @@ export function Nav() {
     <header
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-        isScrolled
+        useDarkNav
           ? "bg-white/95 backdrop-blur-md shadow-[0_4px_6px_-1px_rgb(0_0_0/0.1)]"
           : "bg-transparent",
       )}
@@ -63,7 +66,7 @@ export function Nav() {
               height={48}
               className={cn(
                 "h-10 w-auto transition-opacity",
-                isScrolled ? "hidden" : "block",
+                useDarkNav ? "hidden" : "block",
               )}
             />
             <img
@@ -73,7 +76,7 @@ export function Nav() {
               height={48}
               className={cn(
                 "h-10 w-auto transition-opacity",
-                isScrolled ? "block" : "hidden",
+                useDarkNav ? "block" : "hidden",
               )}
             />
           </Link>
@@ -86,7 +89,7 @@ export function Nav() {
                 href={link.href}
                 className={cn(
                   "text-sm font-medium transition-colors",
-                  isScrolled
+                  useDarkNav
                     ? "text-aivo-navy-600 hover:text-aivo-purple-600"
                     : "text-white/90 hover:text-white",
                 )}
@@ -101,12 +104,12 @@ export function Nav() {
             "hidden lg:flex items-center gap-4",
             isRtl && "flex-row-reverse",
           )}>
-            <LocaleSwitcher variant={isScrolled ? "dark" : "light"} />
+            <LocaleSwitcher variant={useDarkNav ? "dark" : "light"} />
             <Link
               href="/login"
               className={cn(
                 "text-sm font-medium transition-colors",
-                isScrolled
+                useDarkNav
                   ? "text-aivo-navy-600 hover:text-aivo-purple-600"
                   : "text-white/90 hover:text-white",
               )}
@@ -117,7 +120,7 @@ export function Nav() {
               href="/get-started"
               className={cn(
                 "inline-flex items-center justify-center rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-200",
-                isScrolled
+                useDarkNav
                   ? "bg-aivo-purple-600 text-white hover:bg-aivo-purple-700"
                   : "bg-white text-aivo-purple-600 hover:bg-white/90",
               )}
@@ -131,7 +134,7 @@ export function Nav() {
             onClick={() => setIsOpen(!isOpen)}
             className={cn(
               "lg:hidden p-2 rounded-lg transition-colors",
-              isScrolled ? "text-aivo-navy-800" : "text-white",
+              useDarkNav ? "text-aivo-navy-800" : "text-white",
             )}
             aria-label={isOpen ? "Close menu" : "Open menu"}
             aria-expanded={isOpen}
