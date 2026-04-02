@@ -24,7 +24,7 @@ export const AIVO_FLUTTER_COLORS = {
   gray: buildPaletteMap(AIVO_COLORS.gray as unknown as Record<string, string>),
   success: hexToArgb(AIVO_COLORS.success),
   warning: hexToArgb(AIVO_COLORS.warning),
-  danger: hexToArgb(AIVO_COLORS.danger),
+  error: hexToArgb(AIVO_COLORS.error),
   white: hexToArgb(AIVO_COLORS.white),
 } as const;
 

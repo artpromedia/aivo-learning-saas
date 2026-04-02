@@ -1,42 +1,39 @@
 @theme {
   /* ─── Purple Palette ──────────────────────────────────────────────────── */
-  --color-primary-50: #faf5ff;
-  --color-primary-100: #f3e8ff;
-  --color-primary-200: #e9d5ff;
-  --color-primary-300: #d8b4fe;
-  --color-primary-400: #c084fc;
-  --color-primary-500: #7c3aed;
-  --color-primary-600: #6d28d9;
-  --color-primary-700: #5b21b6;
-  --color-primary-800: #4c1d95;
-  --color-primary-900: #3b0764;
-  --color-primary-950: #2e1065;
+  --color-aivo-purple-50: #f5f0ff;
+  --color-aivo-purple-100: #ede5ff;
+  --color-aivo-purple-200: #d9c7ff;
+  --color-aivo-purple-300: #b99aff;
+  --color-aivo-purple-400: #9666e3;
+  --color-aivo-purple-500: #7c3aed;
+  --color-aivo-purple-600: #6d28d9;
+  --color-aivo-purple-700: #5b21b6;
+  --color-aivo-purple-800: #4c1d95;
+  --color-aivo-purple-900: #3b0d7e;
 
-  /* ─── Teal / Secondary ────────────────────────────────────────────────── */
-  --color-secondary-50: #f0fdfa;
-  --color-secondary-100: #ccfbf1;
-  --color-secondary-200: #99f6e4;
-  --color-secondary-300: #5eead4;
-  --color-secondary-400: #2dd4bf;
-  --color-secondary-500: #14b8c8;
-  --color-secondary-600: #0d95a8;
-  --color-secondary-700: #0f766e;
-  --color-secondary-800: #115e59;
-  --color-secondary-900: #134e4a;
-  --color-secondary-950: #042f2e;
+  /* ─── Teal Palette ────────────────────────────────────────────────────── */
+  --color-aivo-teal-50: #effcfd;
+  --color-aivo-teal-100: #d5f7fa;
+  --color-aivo-teal-200: #a5eef4;
+  --color-aivo-teal-300: #67e0eb;
+  --color-aivo-teal-400: #35cbda;
+  --color-aivo-teal-500: #14b8c8;
+  --color-aivo-teal-600: #0d95a8;
+  --color-aivo-teal-700: #0e7a8a;
+  --color-aivo-teal-800: #126271;
+  --color-aivo-teal-900: #14505f;
 
-  /* ─── Navy ────────────────────────────────────────────────────────────── */
-  --color-navy-50: #f8fafc;
-  --color-navy-100: #f1f5f9;
-  --color-navy-200: #e2e8f0;
-  --color-navy-300: #cbd5e1;
-  --color-navy-400: #94a3b8;
-  --color-navy-500: #64748b;
-  --color-navy-600: #475569;
-  --color-navy-700: #334155;
-  --color-navy-800: #1e293b;
-  --color-navy-900: #0f172a;
-  --color-navy-950: #020617;
+  /* ─── Navy Palette ────────────────────────────────────────────────────── */
+  --color-aivo-navy-50: #eef0f6;
+  --color-aivo-navy-100: #d4d8e8;
+  --color-aivo-navy-200: #a8b0d0;
+  --color-aivo-navy-300: #7c88b8;
+  --color-aivo-navy-400: #5060a0;
+  --color-aivo-navy-500: #2d3a6e;
+  --color-aivo-navy-600: #252f5a;
+  --color-aivo-navy-700: #1d2448;
+  --color-aivo-navy-800: #161a36;
+  --color-aivo-navy-900: #0f1024;
 
   /* ─── Gray Scale ──────────────────────────────────────────────────────── */
   --color-gray-50: #f9fafb;
@@ -52,9 +49,10 @@
   --color-gray-950: #030712;
 
   /* ─── Semantic Colors ─────────────────────────────────────────────────── */
-  --color-success: #22c55e;
-  --color-warning: #f59e0b;
-  --color-danger: #ef4444;
+  --color-aivo-success: #10B981;
+  --color-aivo-warning: #F59E0B;
+  --color-aivo-error: #EF4444;
+  --color-aivo-white: #FFFFFF;
 
   /* ─── Typography ──────────────────────────────────────────────────────── */
   --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;

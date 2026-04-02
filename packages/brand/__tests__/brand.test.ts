@@ -57,13 +57,13 @@ describe("AIVO_COLORS", () => {
   });
 
   it("should have navy 900 as dark navy", () => {
-    expect(AIVO_COLORS.navy[900]).toBe("#0f172a");
+    expect(AIVO_COLORS.navy[900]).toBe("#0f1024");
   });
 
   it("should have semantic colors", () => {
-    expect(AIVO_COLORS.success).toBe("#22c55e");
-    expect(AIVO_COLORS.warning).toBe("#f59e0b");
-    expect(AIVO_COLORS.danger).toBe("#ef4444");
+    expect(AIVO_COLORS.success).toBe("#10B981");
+    expect(AIVO_COLORS.warning).toBe("#F59E0B");
+    expect(AIVO_COLORS.error).toBe("#EF4444");
   });
 });
 

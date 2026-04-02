@@ -64,7 +64,7 @@ describe("Color palette completeness", () => {
   it("semantic colors are valid hex", () => {
     expect(AIVO_COLORS.success).toMatch(hexRegex);
     expect(AIVO_COLORS.warning).toMatch(hexRegex);
-    expect(AIVO_COLORS.danger).toMatch(hexRegex);
+    expect(AIVO_COLORS.error).toMatch(hexRegex);
     expect(AIVO_COLORS.white).toMatch(hexRegex);
   });
 });
@@ -222,7 +222,7 @@ describe("WCAG contrast ratios", () => {
   });
 
   it("danger red on white meets AA for large text (≥ 3:1)", () => {
-    const ratio = contrastRatio(AIVO_COLORS.danger, WHITE);
+    const ratio = contrastRatio(AIVO_COLORS.error, WHITE);
     expect(ratio).toBeGreaterThanOrEqual(3);
   });
 
