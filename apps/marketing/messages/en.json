@@ -54,7 +54,24 @@
     "title": "See AIVO in Action",
     "subtitle": "Schedule a personalized demo with our education team.",
     "successTitle": "Thank You!",
-    "successMessage": "Our team will reach out within 24 hours."
+    "successMessage": "Our team will reach out within 24 hours.",
+    "step1Title": "Tell Us About You",
+    "step2Title": "Pick a Time",
+    "step3Title": "You're All Set!",
+    "nameLabel": "Name",
+    "emailLabel": "Email",
+    "orgLabel": "Organization",
+    "roleLabel": "Role",
+    "studentsLabel": "Number of Students",
+    "continue": "Continue",
+    "back": "Back",
+    "sidebarTitle": "See Aivo in Action",
+    "sidebarSubtitle": "Book a free 30-minute personalized demo",
+    "bullet1": "Personalized 30-min walkthrough of the platform",
+    "bullet2": "See how Brain Clone AI adapts to each student",
+    "bullet3": "Get answers to all your questions",
+    "preferEmail": "Prefer email?",
+    "emailAddress": "Reach us at"
   },
   "contact": {
     "title": "Get in Touch",
@@ -82,5 +99,35 @@
     "contactUs": "Contact Us",
     "readMore": "Read More",
     "backToHome": "Back to Home"
+  },
+  "socialProof": {
+    "badge": "Trusted by 150+ students in pilot programs across the country"
+  },
+  "audienceTabs": {
+    "title": "Built for Everyone in Education",
+    "subtitle": "Whether you are a parent, teacher, or district administrator, AIVO has the tools you need.",
+    "parents": "Parents",
+    "teachers": "Teachers",
+    "districts": "Districts"
+  },
+  "statsBand": {
+    "students": "Students in pilot programs",
+    "improvement": "Reading score improvement",
+    "hoursSaved": "Hours saved per teacher/week",
+    "tutors": "Specialized AI Tutors"
+  },
+  "testimonials": {
+    "title": "What People Are Saying"
+  },
+  "walkthrough": {
+    "title": "See Aivo in Action — No Signup Required",
+    "subtitle": "Watch how Aivo creates a personalized learning experience in under 60 seconds.",
+    "requestDemoPrompt": "Want a personalized walkthrough?",
+    "requestDemo": "Request a Demo",
+    "ctaTitle": "See how Aivo can transform your classroom",
+    "ctaSubtitle": "Get a personalized demo from our education specialists",
+    "readyTitle": "Ready to Transform Learning?",
+    "startTrial": "Start Free Trial",
+    "bookDemo": "Book a Demo"
   }
 }

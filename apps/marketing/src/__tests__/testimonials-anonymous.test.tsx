@@ -31,6 +31,20 @@ vi.mock("lucide-react", () => ({
   CheckCircle: () => <svg data-testid="check-circle-icon" />,
 }));
 
+vi.mock("@/providers/i18n-provider", () => ({
+  useI18n: () => ({
+    locale: "en",
+    messages: null,
+    t: (key: string) => {
+      const translations: Record<string, string> = {
+        "testimonials.title": "What People Are Saying",
+      };
+      return translations[key] ?? key;
+    },
+  }),
+  I18nProvider: ({ children }: { children: React.ReactNode }) => children,
+}));
+
 import { Testimonials } from "@/components/home/testimonials";
 
 describe("Testimonials — Anonymous Identities", () => {

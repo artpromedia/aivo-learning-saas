@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useI18n } from "@/providers/i18n-provider";
 
 const partners = [
   "Riverside USD",
@@ -12,6 +13,8 @@ const partners = [
 ];
 
 export function SocialProofBar() {
+  const { t } = useI18n();
+
   return (
     <section className="py-12 bg-aivo-navy-50/50 border-y border-aivo-navy-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -21,7 +24,7 @@ export function SocialProofBar() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
         >
-          Trusted by 150+ students in pilot programs across the country
+          {t("socialProof.badge")}
         </motion.p>
         <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
           {partners.map((partner) => (

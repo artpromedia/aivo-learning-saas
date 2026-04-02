@@ -54,7 +54,24 @@
     "title": "Découvrez AIVO en Action",
     "subtitle": "Planifiez une démonstration personnalisée avec notre équipe pédagogique.",
     "successTitle": "Merci !",
-    "successMessage": "Notre équipe vous contactera dans les 24 heures."
+    "successMessage": "Notre équipe vous contactera dans les 24 heures.",
+    "step1Title": "Parlez-nous de Vous",
+    "step2Title": "Choisissez un Créneau",
+    "step3Title": "Tout est Prêt !",
+    "nameLabel": "Nom",
+    "emailLabel": "E-mail",
+    "orgLabel": "Organisation",
+    "roleLabel": "Rôle",
+    "studentsLabel": "Nombre d'Élèves",
+    "continue": "Continuer",
+    "back": "Retour",
+    "sidebarTitle": "Découvrez Aivo en Action",
+    "sidebarSubtitle": "Réservez une démo personnalisée gratuite de 30 minutes",
+    "bullet1": "Visite guidée personnalisée de 30 minutes de la plateforme",
+    "bullet2": "Découvrez comment Brain Clone AI s'adapte à chaque élève",
+    "bullet3": "Obtenez des réponses à toutes vos questions",
+    "preferEmail": "Vous préférez l'e-mail ?",
+    "emailAddress": "Contactez-nous à"
   },
   "contact": {
     "title": "Contactez-nous",
@@ -82,5 +99,35 @@
     "contactUs": "Contactez-nous",
     "readMore": "Lire la Suite",
     "backToHome": "Retour à l'Accueil"
+  },
+  "socialProof": {
+    "badge": "Plus de 150 élèves nous font confiance dans des programmes pilotes à travers le pays"
+  },
+  "audienceTabs": {
+    "title": "Conçu pour Tous les Acteurs de l'Éducation",
+    "subtitle": "Que vous soyez parent, enseignant ou administrateur de district, AIVO a les outils dont vous avez besoin.",
+    "parents": "Parents",
+    "teachers": "Enseignants",
+    "districts": "Districts"
+  },
+  "statsBand": {
+    "students": "Élèves dans les programmes pilotes",
+    "improvement": "Amélioration des scores en lecture",
+    "hoursSaved": "Heures économisées par enseignant/semaine",
+    "tutors": "Tuteurs IA Spécialisés"
+  },
+  "testimonials": {
+    "title": "Ce que Disent Nos Utilisateurs"
+  },
+  "walkthrough": {
+    "title": "Découvrez Aivo en Action — Sans Inscription",
+    "subtitle": "Voyez comment Aivo crée une expérience d'apprentissage personnalisée en moins de 60 secondes.",
+    "requestDemoPrompt": "Vous souhaitez une visite guidée personnalisée ?",
+    "requestDemo": "Demander une Démo",
+    "ctaTitle": "Découvrez comment Aivo peut transformer votre classe",
+    "ctaSubtitle": "Obtenez une démo personnalisée de nos spécialistes en éducation",
+    "readyTitle": "Prêt à Transformer l'Apprentissage ?",
+    "startTrial": "Commencer l'Essai Gratuit",
+    "bookDemo": "Réserver une Démo"
   }
 }

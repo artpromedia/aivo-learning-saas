@@ -6,20 +6,24 @@ import { audiences } from "@/content/audiences";
 import { Icon } from "@/components/shared/icon-map";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { useI18n } from "@/providers/i18n-provider";
+
+const tabKeys = ["audienceTabs.parents", "audienceTabs.teachers", "audienceTabs.districts"] as const;
 
 export function AudienceTabs() {
   const [activeTab, setActiveTab] = useState(0);
   const audience = audiences[activeTab];
+  const { t } = useI18n();
 
   return (
     <section className="py-20 sm:py-28 bg-aivo-navy-50/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold tracking-tight text-aivo-navy-800 sm:text-4xl">
-            Built for Everyone in Education
+            {t("audienceTabs.title")}
           </h2>
           <p className="mt-4 text-lg text-aivo-navy-400">
-            Whether you are a parent, teacher, or district administrator, AIVO has the tools you need.
+            {t("audienceTabs.subtitle")}
           </p>
         </div>
 
@@ -37,13 +41,14 @@ export function AudienceTabs() {
                     : "text-aivo-navy-500 hover:text-aivo-navy-800 hover:bg-aivo-navy-50",
                 )}
               >
-                {a.label}
+                {t(tabKeys[i])}
               </button>
             ))}
           </div>
         </div>
 
         {/* Tab content */}
+        {/* TODO: Audience content (headlines, benefits, walkthrough steps, testimonials, CTA labels) needs per-audience translation keys in a future sprint */}
         <AnimatePresence mode="wait">
           <motion.div
             key={audience.id}

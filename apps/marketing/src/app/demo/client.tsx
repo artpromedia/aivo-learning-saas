@@ -13,6 +13,7 @@ import {
 } from "@/components/booking/oonrumail-calendar";
 import { BookingConfirmationCard } from "@/components/booking/booking-confirmation-card";
 import { BookingFallbackForm } from "@/components/booking/booking-fallback-form";
+import { useI18n } from "@/providers/i18n-provider";
 
 /* ------------------------------------------------------------------ */
 /*  Constants                                                           */
@@ -138,12 +139,12 @@ function SelectField({
 /*  Step indicator                                                      */
 /* ------------------------------------------------------------------ */
 
-const stepLabels = ["Tell Us About You", "Pick a Time", "You\u2019re All Set!"];
+function StepIndicator({ currentStep, t }: { currentStep: number; t: (key: string) => string }) {
+  const stepTitleKeys = ["demo.step1Title", "demo.step2Title", "demo.step3Title"];
 
-function StepIndicator({ currentStep }: { currentStep: number }) {
   return (
     <div className="flex items-center justify-center gap-2 mb-8" role="navigation" aria-label="Booking progress">
-      {stepLabels.map((label, i) => {
+      {stepTitleKeys.map((key, i) => {
         const stepNum = i + 1;
         return (
           <div key={stepNum} className="flex items-center gap-2">
@@ -172,9 +173,9 @@ function StepIndicator({ currentStep }: { currentStep: number }) {
                   : "text-aivo-navy-400",
               )}
             >
-              Step {stepNum} of 3
+              {t(key)}
             </span>
-            {i < stepLabels.length - 1 && (
+            {i < stepTitleKeys.length - 1 && (
               <div
                 className={cn(
                   "w-8 sm:w-12 h-0.5 mx-1",
@@ -195,13 +196,9 @@ function StepIndicator({ currentStep }: { currentStep: number }) {
 /*  Sidebar                                                             */
 /* ------------------------------------------------------------------ */
 
-const bulletPoints = [
-  "Personalized 30-min walkthrough of the platform",
-  "See how Brain Clone AI adapts to each student",
-  "Get answers to all your questions",
-];
+function SidebarContent({ t }: { t: (key: string) => string }) {
+  const bulletKeys = ["demo.bullet1", "demo.bullet2", "demo.bullet3"];
 
-function Sidebar() {
   return (
     <motion.div
       initial={{ opacity: 0, x: -20 }}
@@ -210,29 +207,29 @@ function Sidebar() {
       className="flex flex-col justify-center"
     >
       <h2 className="text-2xl sm:text-3xl font-bold text-aivo-navy-800">
-        See Aivo in Action
+        {t("demo.sidebarTitle")}
       </h2>
       <p className="mt-3 text-lg text-aivo-navy-500">
-        Book a free 30-minute personalized demo
+        {t("demo.sidebarSubtitle")}
       </p>
 
       <ul className="mt-8 space-y-4">
-        {bulletPoints.map((text) => (
-          <li key={text} className="flex items-start gap-3">
+        {bulletKeys.map((key) => (
+          <li key={key} className="flex items-start gap-3">
             <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-aivo-teal-100 mt-0.5">
               <Check className="h-3.5 w-3.5 text-aivo-teal-600" />
             </div>
-            <span className="text-aivo-navy-600 leading-relaxed">{text}</span>
+            <span className="text-aivo-navy-600 leading-relaxed">{t(key)}</span>
           </li>
         ))}
       </ul>
 
       <div className="mt-10 rounded-xl bg-aivo-navy-50 p-6">
         <p className="text-sm font-medium text-aivo-navy-700">
-          Prefer email?
+          {t("demo.preferEmail")}
         </p>
         <p className="mt-1 text-sm text-aivo-navy-500">
-          Reach us at{" "}
+          {t("demo.emailAddress")}{" "}
           <a
             href="mailto:demo@aivolearning.com"
             className="text-aivo-purple-600 font-semibold hover:text-aivo-purple-700 transition-colors"
@@ -252,6 +249,7 @@ function Sidebar() {
 export function DemoPageClient() {
   const [step, setStep] = useState(1);
   const [calendarFailed, setCalendarFailed] = useState(false);
+  const { t } = useI18n();
 
   // Step 1 fields
   const [name, setName] = useState("");
@@ -326,7 +324,7 @@ export function DemoPageClient() {
             transition={{ duration: 0.5 }}
             className="text-4xl font-bold tracking-tight text-aivo-navy-800 sm:text-5xl"
           >
-            See AIVO in Action
+            {t("demo.title")}
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -334,7 +332,7 @@ export function DemoPageClient() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="mt-4 text-lg text-aivo-navy-500 max-w-2xl mx-auto"
           >
-            Book a free 30-minute personalized demo
+            {t("demo.sidebarSubtitle")}
           </motion.p>
         </div>
       </section>
@@ -342,12 +340,12 @@ export function DemoPageClient() {
       {/* Main content */}
       <section className="py-16">
         <div className="mx-auto max-w-7xl px-6">
-          <StepIndicator currentStep={step} />
+          <StepIndicator currentStep={step} t={t} />
 
           <div className="grid gap-12 lg:grid-cols-5">
             {/* Sidebar — 2 cols on desktop, stacked above on mobile */}
             <div className="lg:col-span-2 order-first">
-              <Sidebar />
+              <SidebarContent t={t} />
             </div>
 
             {/* Main content — 3 cols on desktop */}
@@ -362,7 +360,7 @@ export function DemoPageClient() {
                     transition={{ duration: 0.4 }}
                   >
                     <h2 className="text-xl font-bold text-aivo-navy-800 mb-6">
-                      Tell Us About You
+                      {t("demo.step1Title")}
                     </h2>
                     <form
                       onSubmit={handleStep1Submit}
@@ -371,7 +369,7 @@ export function DemoPageClient() {
                     >
                       <InputField
                         id="name"
-                        label="Name"
+                        label={t("demo.nameLabel")}
                         value={name}
                         onChange={setName}
                         error={errors.name}
@@ -379,7 +377,7 @@ export function DemoPageClient() {
 
                       <InputField
                         id="email"
-                        label="Email"
+                        label={t("demo.emailLabel")}
                         type="email"
                         value={email}
                         onChange={setEmail}
@@ -388,7 +386,7 @@ export function DemoPageClient() {
 
                       <InputField
                         id="organization"
-                        label="Organization"
+                        label={t("demo.orgLabel")}
                         required={false}
                         value={organization}
                         onChange={setOrganization}
@@ -396,7 +394,7 @@ export function DemoPageClient() {
 
                       <SelectField
                         id="role"
-                        label="Role"
+                        label={t("demo.roleLabel")}
                         options={ROLES}
                         value={role}
                         onChange={setRole}
@@ -404,7 +402,7 @@ export function DemoPageClient() {
 
                       <InputField
                         id="students"
-                        label="Number of Students"
+                        label={t("demo.studentsLabel")}
                         required={false}
                         value={students}
                         onChange={setStudents}
@@ -415,7 +413,7 @@ export function DemoPageClient() {
                         type="submit"
                         className="w-full rounded-lg bg-aivo-purple-600 px-6 py-3 font-semibold text-white shadow-sm transition-colors hover:bg-aivo-purple-700 focus:outline-none focus:ring-2 focus:ring-aivo-purple-500 focus:ring-offset-2 flex items-center justify-center gap-2"
                       >
-                        Continue
+                        {t("demo.continue")}
                         <ArrowRight size={18} />
                       </button>
                     </form>
@@ -437,10 +435,10 @@ export function DemoPageClient() {
                         aria-label="Go back to step 1"
                       >
                         <ArrowLeft size={16} />
-                        Back
+                        {t("demo.back")}
                       </button>
                       <h2 className="text-xl font-bold text-aivo-navy-800">
-                        Pick a Time
+                        {t("demo.step2Title")}
                       </h2>
                     </div>
                     <div className="rounded-2xl border border-aivo-navy-100 bg-white p-4 sm:p-6 shadow-sm">
@@ -475,7 +473,7 @@ export function DemoPageClient() {
                     transition={{ duration: 0.4 }}
                   >
                     <h2 className="text-xl font-bold text-aivo-navy-800 mb-6">
-                      You&apos;re All Set!
+                      {t("demo.step3Title")}
                     </h2>
                     <BookingConfirmationCard booking={booking} />
                     <div className="mt-6 text-center">
@@ -483,7 +481,7 @@ export function DemoPageClient() {
                         href="/"
                         className="inline-flex items-center gap-2 rounded-lg bg-aivo-purple-600 px-6 py-3 font-semibold text-white shadow-sm transition-colors hover:bg-aivo-purple-700"
                       >
-                        Back to Home
+                        {t("common.backToHome")}
                       </Link>
                     </div>
                   </motion.div>

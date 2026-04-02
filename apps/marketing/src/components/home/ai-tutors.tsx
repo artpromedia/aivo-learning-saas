@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { SectionHeader } from "@/components/shared/section-header";
+import { useI18n } from "@/providers/i18n-provider";
 
 const tutors = [
   {
@@ -62,12 +63,14 @@ const item = {
 };
 
 export function AiTutors() {
+  const { t } = useI18n();
+
   return (
     <section id="ai-tutors" className="py-20 sm:py-28 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader
-          title="Meet Your AI Learning Team"
-          subtitle="Five specialized AI tutors, each with a unique personality and teaching style designed to make every subject engaging and fun."
+          title={t("aiTutors.title")}
+          subtitle={t("aiTutors.subtitle")}
         />
 
         <motion.div
@@ -77,6 +80,7 @@ export function AiTutors() {
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
         >
+          {/* TODO: Individual tutor card content (name, subject, personality) needs per-tutor translation keys in a future sprint */}
           {tutors.map((tutor) => (
             <motion.div
               key={tutor.name}

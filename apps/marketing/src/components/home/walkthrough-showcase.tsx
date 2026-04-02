@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { events } from "@/lib/analytics";
 import { AivoWalkthroughPlayer } from "@/components/walkthrough/aivo-walkthrough-player";
+import { useI18n } from "@/providers/i18n-provider";
 
 const featureCards = [
   {
@@ -24,6 +25,8 @@ const featureCards = [
 ];
 
 export function WalkthroughShowcase() {
+  const { t } = useI18n();
+
   return (
     <section
       id="product-walkthrough"
@@ -39,14 +42,13 @@ export function WalkthroughShowcase() {
           transition={{ duration: 0.5 }}
         >
           <h2 className="text-3xl sm:text-4xl font-bold text-aivo-navy-800">
-            See Aivo in Action — No Signup Required
+            {t("walkthrough.title")}
           </h2>
           <p className="mt-4 text-lg text-aivo-navy-500 max-w-2xl mx-auto">
-            Watch how Aivo creates a personalized learning experience in under
-            60 seconds.
+            {t("walkthrough.subtitle")}
           </p>
           <p className="mt-3 text-base text-aivo-navy-500">
-            Want a personalized walkthrough?{" "}
+            {t("walkthrough.requestDemoPrompt")}{" "}
             <Link
               href="/demo"
               onClick={() =>
@@ -54,7 +56,7 @@ export function WalkthroughShowcase() {
               }
               className="font-semibold text-aivo-purple-600 hover:text-aivo-purple-700 transition-colors"
             >
-              Request a Demo &rarr;
+              {t("walkthrough.requestDemo")} &rarr;
             </Link>
           </p>
         </motion.div>
@@ -71,6 +73,7 @@ export function WalkthroughShowcase() {
         </motion.div>
 
         {/* Feature callout cards */}
+        {/* TODO: Feature card titles and descriptions need translation keys in a future sprint */}
         <div className="grid sm:grid-cols-3 gap-6 mt-14 max-w-[900px] mx-auto">
           {featureCards.map((card, i) => (
             <motion.div
@@ -102,10 +105,10 @@ export function WalkthroughShowcase() {
           transition={{ duration: 0.5, delay: 0.15 }}
         >
           <h3 className="text-2xl sm:text-3xl font-bold text-white">
-            See how Aivo can transform your classroom
+            {t("walkthrough.ctaTitle")}
           </h3>
           <p className="mt-3 text-lg text-white/90 max-w-xl mx-auto">
-            Get a personalized demo from our education specialists
+            {t("walkthrough.ctaSubtitle")}
           </p>
           <Link
             href="/demo"
@@ -114,7 +117,7 @@ export function WalkthroughShowcase() {
             }
             className="mt-6 inline-flex items-center justify-center rounded-lg bg-white px-8 py-3.5 font-semibold text-aivo-purple-600 hover:bg-white/90 transition-colors shadow-sm"
           >
-            Request a Demo
+            {t("walkthrough.requestDemo")}
           </Link>
         </motion.div>
 
@@ -127,7 +130,7 @@ export function WalkthroughShowcase() {
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           <p className="text-xl font-semibold text-aivo-navy-800 mb-6">
-            Ready to Transform Learning?
+            {t("walkthrough.readyTitle")}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
@@ -135,14 +138,14 @@ export function WalkthroughShowcase() {
               onClick={() => events.signupClick("walkthrough-showcase")}
               className="inline-flex items-center justify-center rounded-lg bg-aivo-purple-600 px-8 py-3.5 font-semibold text-white hover:bg-aivo-purple-700 transition-colors shadow-sm"
             >
-              Start Free Trial
+              {t("walkthrough.startTrial")}
             </Link>
             <Link
               href="/demo"
               onClick={() => events.signupClick("walkthrough-showcase-demo")}
               className="inline-flex items-center justify-center rounded-lg border-2 border-aivo-purple-600 px-8 py-3.5 font-semibold text-aivo-purple-600 hover:bg-aivo-purple-50 transition-colors"
             >
-              Book a Demo
+              {t("walkthrough.bookDemo")}
             </Link>
           </div>
         </motion.div>

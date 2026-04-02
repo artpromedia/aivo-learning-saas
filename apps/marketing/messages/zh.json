@@ -54,7 +54,24 @@
     "title": "观看AIVO演示",
     "subtitle": "与我们的教育团队预约个性化演示。",
     "successTitle": "谢谢！",
-    "successMessage": "我们的团队将在24小时内与您联系。"
+    "successMessage": "我们的团队将在24小时内与您联系。",
+    "step1Title": "告诉我们关于您的信息",
+    "step2Title": "选择时间",
+    "step3Title": "一切就绪！",
+    "nameLabel": "姓名",
+    "emailLabel": "电子邮箱",
+    "orgLabel": "机构名称",
+    "roleLabel": "角色",
+    "studentsLabel": "学生人数",
+    "continue": "继续",
+    "back": "返回",
+    "sidebarTitle": "观看Aivo实际演示",
+    "sidebarSubtitle": "预约30分钟免费个性化演示",
+    "bullet1": "30分钟平台个性化导览",
+    "bullet2": "了解Brain Clone AI如何适应每位学生",
+    "bullet3": "获取所有问题的解答",
+    "preferEmail": "更喜欢邮件沟通？",
+    "emailAddress": "联系我们"
   },
   "contact": {
     "title": "联系我们",
@@ -82,5 +99,35 @@
     "contactUs": "联系我们",
     "readMore": "阅读更多",
     "backToHome": "返回首页"
+  },
+  "socialProof": {
+    "badge": "全国试点项目中已有150多名学生信赖我们"
+  },
+  "audienceTabs": {
+    "title": "为教育界每一位参与者打造",
+    "subtitle": "无论您是家长、教师还是学区管理者，AIVO都有您需要的工具。",
+    "parents": "家长",
+    "teachers": "教师",
+    "districts": "学区"
+  },
+  "statsBand": {
+    "students": "试点项目学生数",
+    "improvement": "阅读成绩提升",
+    "hoursSaved": "每位教师每周节省时间",
+    "tutors": "专业AI导师"
+  },
+  "testimonials": {
+    "title": "用户怎么说"
+  },
+  "walkthrough": {
+    "title": "体验Aivo — 无需注册",
+    "subtitle": "观看Aivo如何在60秒内创建个性化学习体验。",
+    "requestDemoPrompt": "想要个性化导览？",
+    "requestDemo": "预约演示",
+    "ctaTitle": "了解Aivo如何改变您的课堂",
+    "ctaSubtitle": "获取我们教育专家的个性化演示",
+    "readyTitle": "准备好改变学习方式了吗？",
+    "startTrial": "开始免费试用",
+    "bookDemo": "预约演示"
   }
 }

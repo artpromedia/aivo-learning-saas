@@ -54,7 +54,24 @@
     "title": "Veja o AIVO em Ação",
     "subtitle": "Agende uma demonstração personalizada com nossa equipe educacional.",
     "successTitle": "Obrigado!",
-    "successMessage": "Nossa equipe entrará em contato em até 24 horas."
+    "successMessage": "Nossa equipe entrará em contato em até 24 horas.",
+    "step1Title": "Conte-nos Sobre Você",
+    "step2Title": "Escolha um Horário",
+    "step3Title": "Tudo Pronto!",
+    "nameLabel": "Nome",
+    "emailLabel": "E-mail",
+    "orgLabel": "Organização",
+    "roleLabel": "Função",
+    "studentsLabel": "Número de Alunos",
+    "continue": "Continuar",
+    "back": "Voltar",
+    "sidebarTitle": "Veja o Aivo em Ação",
+    "sidebarSubtitle": "Agende uma demonstração gratuita e personalizada de 30 minutos",
+    "bullet1": "Tour personalizado de 30 minutos pela plataforma",
+    "bullet2": "Veja como o Brain Clone AI se adapta a cada aluno",
+    "bullet3": "Tire todas as suas dúvidas",
+    "preferEmail": "Prefere e-mail?",
+    "emailAddress": "Fale conosco em"
   },
   "contact": {
     "title": "Entre em Contato",
@@ -82,5 +99,35 @@
     "contactUs": "Fale Conosco",
     "readMore": "Leia Mais",
     "backToHome": "Voltar ao Início"
+  },
+  "socialProof": {
+    "badge": "Mais de 150 alunos confiam em nós em programas piloto por todo o país"
+  },
+  "audienceTabs": {
+    "title": "Feito para Todos na Educação",
+    "subtitle": "Seja você pai, professor ou administrador de distrito, AIVO tem as ferramentas que você precisa.",
+    "parents": "Pais",
+    "teachers": "Professores",
+    "districts": "Distritos"
+  },
+  "statsBand": {
+    "students": "Alunos em programas piloto",
+    "improvement": "Melhoria nas notas de leitura",
+    "hoursSaved": "Horas economizadas por professor/semana",
+    "tutors": "Tutores IA Especializados"
+  },
+  "testimonials": {
+    "title": "O que Dizem Nossos Usuários"
+  },
+  "walkthrough": {
+    "title": "Veja o Aivo em Ação — Sem Cadastro",
+    "subtitle": "Veja como o Aivo cria uma experiência de aprendizado personalizada em menos de 60 segundos.",
+    "requestDemoPrompt": "Quer um tour personalizado?",
+    "requestDemo": "Solicitar uma Demo",
+    "ctaTitle": "Veja como o Aivo pode transformar sua sala de aula",
+    "ctaSubtitle": "Obtenha uma demo personalizada dos nossos especialistas em educação",
+    "readyTitle": "Pronto para Transformar o Aprendizado?",
+    "startTrial": "Iniciar Teste Grátis",
+    "bookDemo": "Agendar uma Demo"
   }
 }

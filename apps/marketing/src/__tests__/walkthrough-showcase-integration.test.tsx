@@ -56,6 +56,28 @@ vi.mock("@/lib/analytics", () => ({
   events: { signupClick: vi.fn() },
 }));
 
+vi.mock("@/providers/i18n-provider", () => ({
+  useI18n: () => ({
+    locale: "en",
+    messages: null,
+    t: (key: string) => {
+      const translations: Record<string, string> = {
+        "walkthrough.title": "See Aivo in Action \u2014 No Signup Required",
+        "walkthrough.subtitle": "Watch how Aivo creates a personalized learning experience in under 60 seconds.",
+        "walkthrough.requestDemoPrompt": "Want a personalized walkthrough?",
+        "walkthrough.requestDemo": "Request a Demo",
+        "walkthrough.ctaTitle": "See how Aivo can transform your classroom",
+        "walkthrough.ctaSubtitle": "Get a personalized demo from our education specialists",
+        "walkthrough.readyTitle": "Ready to Transform Learning?",
+        "walkthrough.startTrial": "Start Free Trial",
+        "walkthrough.bookDemo": "Book a Demo",
+      };
+      return translations[key] ?? key;
+    },
+  }),
+  I18nProvider: ({ children }: { children: React.ReactNode }) => children,
+}));
+
 import { WalkthroughShowcase } from "@/components/home/walkthrough-showcase";
 
 describe("WalkthroughShowcase Integration", () => {

@@ -54,7 +54,24 @@
     "title": "Tazama AIVO Ikifanya Kazi",
     "subtitle": "Panga onyesho la kibinafsi na timu yetu ya elimu.",
     "successTitle": "Asante!",
-    "successMessage": "Timu yetu itawasiliana nawe ndani ya masaa 24."
+    "successMessage": "Timu yetu itawasiliana nawe ndani ya masaa 24.",
+    "step1Title": "Tuambie Kuhusu Wewe",
+    "step2Title": "Chagua Wakati",
+    "step3Title": "Uko Tayari!",
+    "nameLabel": "Jina",
+    "emailLabel": "Barua pepe",
+    "orgLabel": "Shirika",
+    "roleLabel": "Jukumu",
+    "studentsLabel": "Idadi ya Wanafunzi",
+    "continue": "Endelea",
+    "back": "Rudi",
+    "sidebarTitle": "Tazama Aivo Ikifanya Kazi",
+    "sidebarSubtitle": "Hifadhi onyesho la bure la dakika 30 la kibinafsi",
+    "bullet1": "Ziara ya kibinafsi ya dakika 30 ya jukwaa",
+    "bullet2": "Tazama jinsi Brain Clone AI inavyobadilika kwa kila mwanafunzi",
+    "bullet3": "Pata majibu ya maswali yako yote",
+    "preferEmail": "Unapendelea barua pepe?",
+    "emailAddress": "Wasiliana nasi kupitia"
   },
   "contact": {
     "title": "Wasiliana Nasi",
@@ -82,5 +99,35 @@
     "contactUs": "Wasiliana Nasi",
     "readMore": "Soma Zaidi",
     "backToHome": "Rudi Nyumbani"
+  },
+  "socialProof": {
+    "badge": "Wanafunzi zaidi ya 150 wanatutumia katika programu za majaribio nchi nzima"
+  },
+  "audienceTabs": {
+    "title": "Imeundwa kwa Kila Mtu katika Elimu",
+    "subtitle": "Iwe wewe ni mzazi, mwalimu, au msimamizi wa wilaya, AIVO ina zana unazohitaji.",
+    "parents": "Wazazi",
+    "teachers": "Walimu",
+    "districts": "Wilaya"
+  },
+  "statsBand": {
+    "students": "Wanafunzi katika programu za majaribio",
+    "improvement": "Uboreshaji wa alama za kusoma",
+    "hoursSaved": "Masaa yaliyookolewa kwa mwalimu/wiki",
+    "tutors": "Walimu wa AI Wenye Utaalamu"
+  },
+  "testimonials": {
+    "title": "Watu Wanasema Nini"
+  },
+  "walkthrough": {
+    "title": "Tazama Aivo Ikifanya Kazi — Bila Kusajili",
+    "subtitle": "Tazama jinsi Aivo inavyounda uzoefu wa kujifunza wa kibinafsi kwa chini ya sekunde 60.",
+    "requestDemoPrompt": "Unataka ziara ya kibinafsi?",
+    "requestDemo": "Omba Onyesho",
+    "ctaTitle": "Tazama jinsi Aivo inavyoweza kubadilisha darasa lako",
+    "ctaSubtitle": "Pata onyesho la kibinafsi kutoka kwa wataalamu wetu wa elimu",
+    "readyTitle": "Uko Tayari Kubadilisha Ujifunzaji?",
+    "startTrial": "Anza Jaribio la Bure",
+    "bookDemo": "Hifadhi Onyesho"
   }
 }

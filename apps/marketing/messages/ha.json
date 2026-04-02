@@ -54,7 +54,24 @@
     "title": "Duba AIVO Yana Aiki",
     "subtitle": "Shirya demo na musamman tare da ƙungiyar ilimi namu.",
     "successTitle": "Na Gode!",
-    "successMessage": "Ƙungiyarmu za ta tuntuɓe ka cikin awanni 24."
+    "successMessage": "Ƙungiyarmu za ta tuntuɓe ka cikin awanni 24.",
+    "step1Title": "Gaya Mana Game da Kai",
+    "step2Title": "Zaɓi Lokaci",
+    "step3Title": "Kana Shirye!",
+    "nameLabel": "Suna",
+    "emailLabel": "Imel",
+    "orgLabel": "Ƙungiya",
+    "roleLabel": "Matsayi",
+    "studentsLabel": "Adadin Ɗalibai",
+    "continue": "Ci Gaba",
+    "back": "Komawa",
+    "sidebarTitle": "Duba Aivo Yana Aiki",
+    "sidebarSubtitle": "Shirya demo na kyauta na minti 30 na musamman",
+    "bullet1": "Rangadin musamman na minti 30 na dandamali",
+    "bullet2": "Ga yadda Brain Clone AI ke daidaitawa ga kowane ɗalibi",
+    "bullet3": "Samu amsoshin duk tambayoyinka",
+    "preferEmail": "Kana son imel?",
+    "emailAddress": "Tuntuɓe mu a"
   },
   "contact": {
     "title": "Tuntuɓe Mu",
@@ -82,5 +99,35 @@
     "contactUs": "Tuntuɓe Mu",
     "readMore": "Ƙara Karantawa",
     "backToHome": "Koma Gida"
+  },
+  "socialProof": {
+    "badge": "Ɗalibai sama da 150 suna aminta da mu a shirye-shiryen gwaji a ko'ina cikin ƙasa"
+  },
+  "audienceTabs": {
+    "title": "An Ƙera Shi don Kowa a Fagen Ilimi",
+    "subtitle": "Ko kai iyaye ne, malami, ko shugaban gundumar ilimi, AIVO yana da kayan aikin da kake bukata.",
+    "parents": "Iyaye",
+    "teachers": "Malamai",
+    "districts": "Gundumomi"
+  },
+  "statsBand": {
+    "students": "Ɗalibai a shirye-shiryen gwaji",
+    "improvement": "Ingantawar maki na karatu",
+    "hoursSaved": "Awannin da aka ceci ga malami/mako",
+    "tutors": "Malamai na AI Ƙwararru"
+  },
+  "testimonials": {
+    "title": "Abin da Mutane Ke Cewa"
+  },
+  "walkthrough": {
+    "title": "Duba Aivo Yana Aiki — Ba Tare da Rajista Ba",
+    "subtitle": "Duba yadda Aivo ke ƙirƙira ƙwarewar koyo na musamman cikin ƙasa da daƙiƙa 60.",
+    "requestDemoPrompt": "Kana son rangadin musamman?",
+    "requestDemo": "Nemi Demo",
+    "ctaTitle": "Ga yadda Aivo zai iya canza ajinku",
+    "ctaSubtitle": "Samu demo na musamman daga ƙwararrun ilimi namu",
+    "readyTitle": "Kuna Shirye Don Canza Koyo?",
+    "startTrial": "Fara Gwajin Kyauta",
+    "bookDemo": "Shirya Demo"
   }
 }

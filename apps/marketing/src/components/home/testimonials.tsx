@@ -5,10 +5,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Quote, User, CheckCircle } from "lucide-react";
 import { testimonials } from "@/content/testimonials";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/providers/i18n-provider";
 
 export function Testimonials() {
   const [current, setCurrent] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const { t } = useI18n();
 
   const next = useCallback(() => {
     setCurrent((prev) => (prev + 1) % testimonials.length);
@@ -31,7 +33,7 @@ export function Testimonials() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold tracking-tight text-aivo-navy-800 sm:text-4xl">
-            What People Are Saying
+            {t("testimonials.title")}
           </h2>
         </div>
 
@@ -58,6 +60,7 @@ export function Testimonials() {
                   <User className="w-6 h-6" aria-hidden="true" />
                 </div>
                 <p className="font-semibold text-aivo-navy-800">{testimonial.name}</p>
+                {/* TODO: Testimonial role/badge text needs translation keys in a future sprint */}
                 <p className="text-sm text-aivo-navy-400 flex items-center justify-center gap-1.5 mt-1">
                   <CheckCircle className="w-3.5 h-3.5 text-green-500" aria-hidden="true" />
                   <span>{testimonial.role}</span>

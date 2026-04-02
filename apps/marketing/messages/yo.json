@@ -54,7 +54,24 @@
     "title": "Wo AIVO Ní Iṣẹ́",
     "subtitle": "Ṣètò ìfihàn àkànṣe pẹ̀lú ẹgbẹ́ ẹ̀kọ́ wa.",
     "successTitle": "O Ṣeun!",
-    "successMessage": "Ẹgbẹ́ wa yóò kàn sí ọ láàrin wákàtí 24."
+    "successMessage": "Ẹgbẹ́ wa yóò kàn sí ọ láàrin wákàtí 24.",
+    "step1Title": "Sọ Fún Wa Nípa Rẹ",
+    "step2Title": "Yan Àkókò Kan",
+    "step3Title": "O Ti Ṣetán!",
+    "nameLabel": "Orúkọ",
+    "emailLabel": "Ímeèlì",
+    "orgLabel": "Àjọ",
+    "roleLabel": "Ipò",
+    "studentsLabel": "Iye Àwọn Akẹ́kọ̀ọ́",
+    "continue": "Tẹ̀síwájú",
+    "back": "Padà",
+    "sidebarTitle": "Wo Aivo Ní Iṣẹ́",
+    "sidebarSubtitle": "Ṣètò ìfihàn ọ̀fẹ́ àkànṣe fún ìṣẹ́jú 30",
+    "bullet1": "Ìrìn-àjò àkànṣe ìṣẹ́jú 30 ti pẹpẹ náà",
+    "bullet2": "Wo bí Brain Clone AI ṣe ń báramu pẹ̀lú akẹ́kọ̀ọ́ kọ̀ọ̀kan",
+    "bullet3": "Gba ìdáhùn sí gbogbo ìbéèrè rẹ",
+    "preferEmail": "Ṣé o fẹ́ ímeèlì?",
+    "emailAddress": "Kàn sí wa ní"
   },
   "contact": {
     "title": "Kàn Sí Wa",
@@ -82,5 +99,35 @@
     "contactUs": "Kàn Sí Wa",
     "readMore": "Ka Síi",
     "backToHome": "Padà Sí Ilé"
+  },
+  "socialProof": {
+    "badge": "Àwọn akẹ́kọ̀ọ́ tí ó ju 150 lọ gbẹ́kẹ̀lé wa nínú àwọn ètò àdánwò káàkiri orílẹ̀-èdè"
+  },
+  "audienceTabs": {
+    "title": "A Ṣe É fún Gbogbo Ènìyàn Nínú Ẹ̀kọ́",
+    "subtitle": "Bóyá ìwọ jẹ́ òbí, olùkọ́, tàbí alákòóso ìpínlẹ̀, AIVO ní àwọn irinṣẹ́ tí o nílò.",
+    "parents": "Àwọn Òbí",
+    "teachers": "Àwọn Olùkọ́",
+    "districts": "Àwọn Ìpínlẹ̀"
+  },
+  "statsBand": {
+    "students": "Àwọn akẹ́kọ̀ọ́ nínú àwọn ètò àdánwò",
+    "improvement": "Ìlọsíwájú nínú àmì kíkà",
+    "hoursSaved": "Wákàtí tí a fi pamọ́ fún olùkọ́/ọ̀sẹ̀",
+    "tutors": "Àwọn Olùkọ́ AI Àkànṣe"
+  },
+  "testimonials": {
+    "title": "Ohun Tí Àwọn Ènìyàn Ń Sọ"
+  },
+  "walkthrough": {
+    "title": "Wo Aivo Ní Iṣẹ́ — Láìsí Ìforúkọsílẹ̀",
+    "subtitle": "Wo bí Aivo ṣe ń ṣẹ̀dá ìrírí ẹ̀kọ́ àkànṣe ní àbọ́ ìṣẹ́jú 60.",
+    "requestDemoPrompt": "Ṣé o fẹ́ ìrìn-àjò àkànṣe?",
+    "requestDemo": "Béèrè fún Ìfihàn",
+    "ctaTitle": "Wo bí Aivo ṣe lè yí kíláàsì rẹ padà",
+    "ctaSubtitle": "Gba ìfihàn àkànṣe láti ọ̀dọ̀ àwọn amọ̀ràn ẹ̀kọ́ wa",
+    "readyTitle": "Ṣé O Ti Ṣetán Láti Yí Ẹ̀kọ́ Padà?",
+    "startTrial": "Bẹ̀rẹ̀ Ìdánwò Ọ̀fẹ́",
+    "bookDemo": "Ṣètò Ìfihàn"
   }
 }

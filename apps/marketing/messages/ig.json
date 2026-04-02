@@ -54,7 +54,24 @@
     "title": "Lee AIVO N'ọrụ",
     "subtitle": "Họpụta oge demo nke onwe ya na ndị otu agụmakwụkwọ anyị.",
     "successTitle": "Daalụ!",
-    "successMessage": "Ndị otu anyị ga-akpọtụrụ gị n'ime awa 24."
+    "successMessage": "Ndị otu anyị ga-akpọtụrụ gị n'ime awa 24.",
+    "step1Title": "Gwa Anyị Maka Onwe Gị",
+    "step2Title": "Họrọ Oge",
+    "step3Title": "Ị Dị Njikere!",
+    "nameLabel": "Aha",
+    "emailLabel": "Email",
+    "orgLabel": "Nzukọ",
+    "roleLabel": "Ọrụ",
+    "studentsLabel": "Ọnụọgụ Ụmụ Akwụkwọ",
+    "continue": "Gaa N'ihu",
+    "back": "Laghachi",
+    "sidebarTitle": "Lee Aivo N'ọrụ",
+    "sidebarSubtitle": "Debe demo efu nke nkeji 30 nke onwe gị",
+    "bullet1": "Njem nke nkeji 30 nke onwe gị n'ime ikpo okwu",
+    "bullet2": "Lee ka Brain Clone AI si emegharị maka nwa akwụkwọ ọ bụla",
+    "bullet3": "Nweta azịza ajụjụ gị niile",
+    "preferEmail": "Ị chọrọ email?",
+    "emailAddress": "Kpọtụrụ anyị na"
   },
   "contact": {
     "title": "Kpọtụrụ Anyị",
@@ -82,5 +99,35 @@
     "contactUs": "Kpọtụrụ Anyị",
     "readMore": "Gụkwuo",
     "backToHome": "Laghachi N'ụlọ"
+  },
+  "socialProof": {
+    "badge": "Ụmụ akwụkwọ karịrị 150 tụkwasịrị anyị obi n'ime mmemme nnwale n'obodo niile"
+  },
+  "audienceTabs": {
+    "title": "Emere maka Onye Ọ Bụla N'agụmakwụkwọ",
+    "subtitle": "Ma ị bụ nne na nna, onye nkụzi, ma ọ bụ onye nlekọta mpaghara, AIVO nwere ngwá ọrụ ị chọrọ.",
+    "parents": "Ndị Nne na Nna",
+    "teachers": "Ndị Nkụzi",
+    "districts": "Mpaghara"
+  },
+  "statsBand": {
+    "students": "Ụmụ akwụkwọ na mmemme nnwale",
+    "improvement": "Mmeziwanye na akara ịgụ ihe",
+    "hoursSaved": "Awa echekwara maka onye nkụzi/izu",
+    "tutors": "Ndị Nkụzi AI Pụrụ Iche"
+  },
+  "testimonials": {
+    "title": "Ihe Ndị Mmadụ Na-ekwu"
+  },
+  "walkthrough": {
+    "title": "Lee Aivo N'ọrụ — Enweghị Ndebanye Aha",
+    "subtitle": "Lee ka Aivo si emepụta ahụmahụ mmụta nke onwe ya na nkeji 60.",
+    "requestDemoPrompt": "Ị chọrọ njem nke onwe gị?",
+    "requestDemo": "Rịọ Demo",
+    "ctaTitle": "Lee ka Aivo nwere ike ịgbanwe klaasị gị",
+    "ctaSubtitle": "Nweta demo nke onwe gị site n'aka ndị ọkachamara agụmakwụkwọ anyị",
+    "readyTitle": "Ị Dị Njikere Ịgbanwe Mmụta?",
+    "startTrial": "Bido Nnwale Efu",
+    "bookDemo": "Debe Demo"
   }
 }

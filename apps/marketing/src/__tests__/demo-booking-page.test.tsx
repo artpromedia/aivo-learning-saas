@@ -107,6 +107,38 @@ vi.mock("@/components/booking/booking-fallback-form", () => ({
   BookingFallbackForm: () => <div data-testid="booking-fallback">Fallback</div>,
 }));
 
+vi.mock("@/providers/i18n-provider", () => ({
+  useI18n: () => ({
+    locale: "en",
+    messages: null,
+    t: (key: string) => {
+      const translations: Record<string, string> = {
+        "demo.title": "See AIVO in Action",
+        "demo.sidebarTitle": "See Aivo in Action",
+        "demo.sidebarSubtitle": "Book a free 30-minute personalized demo",
+        "demo.step1Title": "Tell Us About You",
+        "demo.step2Title": "Pick a Time",
+        "demo.step3Title": "You're All Set!",
+        "demo.nameLabel": "Name",
+        "demo.emailLabel": "Email",
+        "demo.orgLabel": "Organization",
+        "demo.roleLabel": "Role",
+        "demo.studentsLabel": "Number of Students",
+        "demo.continue": "Continue",
+        "demo.back": "Back",
+        "demo.bullet1": "Personalized 30-min walkthrough of the platform",
+        "demo.bullet2": "See how Brain Clone AI adapts to each student",
+        "demo.bullet3": "Get answers to all your questions",
+        "demo.preferEmail": "Prefer email?",
+        "demo.emailAddress": "Reach us at",
+        "common.backToHome": "Back to Home",
+      };
+      return translations[key] ?? key;
+    },
+  }),
+  I18nProvider: ({ children }: { children: React.ReactNode }) => children,
+}));
+
 import { DemoPageClient } from "@/app/demo/client";
 
 describe("DemoPageClient — Multi-step Booking", () => {
@@ -116,7 +148,7 @@ describe("DemoPageClient — Multi-step Booking", () => {
 
   it("renders step 1 heading and form", () => {
     render(<DemoPageClient />);
-    expect(screen.getByText("Tell Us About You")).toBeDefined();
+    expect(screen.getAllByText("Tell Us About You").length).toBeGreaterThan(0);
     expect(screen.getByLabelText(/^Name/)).toBeDefined();
     expect(screen.getByLabelText(/^Email/)).toBeDefined();
     expect(screen.getByLabelText(/Organization/)).toBeDefined();
@@ -126,9 +158,9 @@ describe("DemoPageClient — Multi-step Booking", () => {
 
   it("renders step indicator with 3 steps", () => {
     render(<DemoPageClient />);
-    expect(screen.getByText("Step 1 of 3")).toBeDefined();
-    expect(screen.getByText("Step 2 of 3")).toBeDefined();
-    expect(screen.getByText("Step 3 of 3")).toBeDefined();
+    expect(screen.getAllByText("Tell Us About You").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Pick a Time").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("You're All Set!").length).toBeGreaterThan(0);
   });
 
   it("renders sidebar with See Aivo in Action", () => {
