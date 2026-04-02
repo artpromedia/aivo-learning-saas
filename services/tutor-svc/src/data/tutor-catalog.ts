@@ -60,24 +60,15 @@ export const TUTOR_CATALOG: CatalogItem[] = [
     persona: "harmony",
     price: 4.99,
     description:
-      "Empathetic social-emotional learning coach with CASEL-aligned guidance",
-  },
-  {
-    sku: "ADDON_TUTOR_SPEECH",
-    name: "Echo — Speech & Language Companion",
-    subject: "speech",
-    persona: "echo",
-    price: 4.99,
-    description:
-      "Playful speech and language practice companion with articulation support",
+      "Garden-themed social-emotional learning coach with CASEL-aligned competency building",
   },
   {
     sku: "ADDON_TUTOR_BUNDLE",
     name: "All Tutors Bundle",
     subject: "all",
     persona: "bundle",
-    price: 19.99,
-    description: "Full access to all 7 AI tutors at 40% savings",
+    price: 14.99,
+    description: "Full access to all 5 AI tutors at 40% savings",
   },
 ];
 
