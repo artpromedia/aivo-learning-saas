@@ -17,10 +17,19 @@
     "slide2Headline": "为每个学习者量身定制路径",
     "slide2Subheadline": "我们的AI实时适应，识别优势和不足，创建个性化课程，让学生保持参与和进步。",
     "slide2Cta": "了解工作原理",
-    "slide3Headline": "实时追踪进度",
-    "slide3Subheadline": "精美的学习仪表板让学生、家长和教师即时了解进度、连续学习天数和AI个性化建议。",
+    "slide2CtaSecondary": "观看产品演示",
+    "slide3Headline": "专为IEP学生打造 — 深受所有人喜爱",
+    "slide3Subheadline": "无论您的孩子有IEP个别化教育计划、504计划，还是只需要额外支持，Aivo的Brain Clone AI都能打造与他们一样独特的学习体验。",
     "slide3Cta": "免费开始",
-    "slide3CtaSecondary": "查看案例研究"
+    "slide3CtaSecondary": "预约演示",
+    "slide4Headline": "5位专家级AI导师，一段个性化学习之旅",
+    "slide4Subheadline": "从数学到阅读理解，我们的专业AI导师在学生所在之处与他们相遇，耐心引导他们前行——充满鼓励与自适应智能。",
+    "slide4Cta": "认识导师团队",
+    "slide4CtaSecondary": "预约演示",
+    "slide5Headline": "实时追踪进度",
+    "slide5Subheadline": "精美的学习仪表板让学生、家长和教师即时了解进度、连续学习天数和AI个性化建议。",
+    "slide5Cta": "免费开始",
+    "slide5CtaSecondary": "查看案例研究"
   },
   "features": {
     "title": "学生成功所需的一切",

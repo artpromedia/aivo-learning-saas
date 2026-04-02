@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { features } from "@/content/features";
 import { Icon } from "@/components/shared/icon-map";
 import { SectionHeader } from "@/components/shared/section-header";
+import { useI18n } from "@/providers/i18n-provider";
 
 const container = {
   hidden: {},
@@ -22,12 +23,14 @@ const item = {
 };
 
 export function FeaturesGrid() {
+  const { t } = useI18n();
+
   return (
     <section id="features" className="py-20 sm:py-28 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader
-          title="Everything Your Students Need to Succeed"
-          subtitle="AIVO combines cutting-edge AI with proven educational science to create a learning experience that adapts to every student."
+          title={t("features.title")}
+          subtitle={t("features.subtitle")}
         />
 
         <motion.div
@@ -46,6 +49,7 @@ export function FeaturesGrid() {
               <div className="mb-4 inline-flex items-center justify-center w-12 h-12 rounded-xl bg-aivo-purple-50 text-aivo-purple-600 group-hover:bg-aivo-purple-100 transition-colors">
                 <Icon name={feature.icon} size={24} />
               </div>
+              {/* TODO: Individual feature card titles and descriptions need per-feature translation keys in a future sprint */}
               <h3 className="text-xl font-semibold text-aivo-navy-800 mb-2">
                 {feature.title}
               </h3>

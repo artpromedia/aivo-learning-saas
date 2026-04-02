@@ -56,6 +56,50 @@ vi.mock("@/lib/analytics", () => ({
   events: { signupClick: vi.fn() },
 }));
 
+// Mock i18n provider — return keys as-is so English hardcoded expectations still work
+// since the en.json values match the original hardcoded strings
+const enMessages: Record<string, Record<string, string>> = {
+  hero: {
+    headline: "AI-Powered Learning That Adapts to Every Student",
+    subheadline: "No Learner Left Behind. Personalized education powered by Brain Clone AI technology that creates a unique learning profile for every student.",
+    cta: "Get Started Free",
+    ctaSecondary: "Request a Demo",
+    slide2Headline: "Personalized Paths for Every Learner",
+    slide2Subheadline: "Our AI adapts in real time, identifying strengths and gaps to create a custom curriculum that keeps students engaged and on track.",
+    slide2Cta: "See How It Works",
+    slide2CtaSecondary: "Watch the Walkthrough",
+    slide3Headline: "Built for IEP Students — Loved by All",
+    slide3Subheadline: "Whether your child has an IEP, a 504 plan, or just needs extra support, Aivo\u2019s Brain Clone AI builds a learning experience as unique as they are.",
+    slide3Cta: "Get Started Free",
+    slide3CtaSecondary: "Request a Demo",
+    slide4Headline: "5 Expert AI Tutors, One Personalized Journey",
+    slide4Subheadline: "From math to reading comprehension, our specialized AI tutors meet students where they are and guide them forward \u2014 with patience, encouragement, and adaptive intelligence.",
+    slide4Cta: "Meet the Tutors",
+    slide4CtaSecondary: "Book a Demo",
+    slide5Headline: "Track Progress in Real Time",
+    slide5Subheadline: "A beautiful learner dashboard gives students, parents, and teachers instant visibility into progress, streaks, and AI-powered recommendations.",
+    slide5Cta: "Get Started Free",
+    slide5CtaSecondary: "View Case Studies",
+  },
+};
+
+vi.mock("@/providers/i18n-provider", () => ({
+  useI18n: () => ({
+    locale: "en",
+    messages: enMessages,
+    t: (key: string): string => {
+      const parts = key.split(".");
+      let current: any = enMessages;
+      for (const part of parts) {
+        if (current == null || typeof current !== "object") return key;
+        current = current[part];
+      }
+      return typeof current === "string" ? current : key;
+    },
+  }),
+  I18nProvider: ({ children }: { children: React.ReactNode }) => children,
+}));
+
 import { Hero } from "@/components/home/hero";
 
 describe("Hero Slider", () => {

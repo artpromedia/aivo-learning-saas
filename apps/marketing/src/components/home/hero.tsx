@@ -6,82 +6,77 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { events } from "@/lib/analytics";
 import { DashboardMockup } from "./dashboard-mockup";
+import { useI18n } from "@/providers/i18n-provider";
 
-interface Slide {
+interface SlideConfig {
   image: string;
-  headline: string;
-  subheadline: string;
-  cta: { label: string; href: string; event: string };
-  ctaSecondary?: { label: string; href: string; event: string };
-  /** Optional component rendered beside the text (split layout) */
+  headlineKey: string;
+  subheadlineKey: string;
+  cta: { labelKey: string; href: string; event: string };
+  ctaSecondary?: { labelKey: string; href: string; event: string };
   visual?: ReactNode;
 }
 
-const slides: Slide[] = [
+const slideConfigs: SlideConfig[] = [
   {
     image: "/hero/slide-1.png",
-    headline: "AI-Powered Learning That Adapts to Every Student",
-    subheadline:
-      "No Learner Left Behind. Personalized education powered by Brain Clone AI technology that creates a unique learning profile for every student.",
-    cta: { label: "Get Started Free", href: "/get-started", event: "hero-slide1" },
+    headlineKey: "hero.headline",
+    subheadlineKey: "hero.subheadline",
+    cta: { labelKey: "hero.cta", href: "/get-started", event: "hero-slide1" },
     ctaSecondary: {
-      label: "Request a Demo",
+      labelKey: "hero.ctaSecondary",
       href: "/demo",
       event: "hero-slide1-demo",
     },
   },
   {
     image: "/hero/slide-2.png",
-    headline: "Personalized Paths for Every Learner",
-    subheadline:
-      "Our AI adapts in real time, identifying strengths and gaps to create a custom curriculum that keeps students engaged and on track.",
+    headlineKey: "hero.slide2Headline",
+    subheadlineKey: "hero.slide2Subheadline",
     cta: {
-      label: "See How It Works",
+      labelKey: "hero.slide2Cta",
       href: "#how-it-works",
       event: "hero-slide2-how",
     },
     ctaSecondary: {
-      label: "Watch the Walkthrough",
+      labelKey: "hero.slide2CtaSecondary",
       href: "#product-walkthrough",
       event: "hero-slide2-walkthrough",
     },
   },
   {
     image: "/hero/slide-1.png",
-    headline: "Built for IEP Students — Loved by All",
-    subheadline:
-      "Whether your child has an IEP, a 504 plan, or just needs extra support, Aivo\u2019s Brain Clone AI builds a learning experience as unique as they are.",
-    cta: { label: "Get Started Free", href: "/get-started", event: "hero-slide3" },
+    headlineKey: "hero.slide3Headline",
+    subheadlineKey: "hero.slide3Subheadline",
+    cta: { labelKey: "hero.slide3Cta", href: "/get-started", event: "hero-slide3" },
     ctaSecondary: {
-      label: "Request a Demo",
+      labelKey: "hero.slide3CtaSecondary",
       href: "/demo",
       event: "hero-slide3-demo",
     },
   },
   {
     image: "/hero/slide-2.png",
-    headline: "5 Expert AI Tutors, One Personalized Journey",
-    subheadline:
-      "From math to reading comprehension, our specialized AI tutors meet students where they are and guide them forward \u2014 with patience, encouragement, and adaptive intelligence.",
-    cta: { label: "Meet the Tutors", href: "/tutors", event: "hero-slide4-tutors" },
+    headlineKey: "hero.slide4Headline",
+    subheadlineKey: "hero.slide4Subheadline",
+    cta: { labelKey: "hero.slide4Cta", href: "/tutors", event: "hero-slide4-tutors" },
     ctaSecondary: {
-      label: "Book a Demo",
+      labelKey: "hero.slide4CtaSecondary",
       href: "/demo",
       event: "hero-slide4-demo",
     },
   },
   {
     image: "/hero/slide-1.png",
-    headline: "Track Progress in Real Time",
-    subheadline:
-      "A beautiful learner dashboard gives students, parents, and teachers instant visibility into progress, streaks, and AI-powered recommendations.",
+    headlineKey: "hero.slide5Headline",
+    subheadlineKey: "hero.slide5Subheadline",
     cta: {
-      label: "Get Started Free",
+      labelKey: "hero.slide5Cta",
       href: "/get-started",
       event: "hero-slide5-dashboard",
     },
     ctaSecondary: {
-      label: "View Case Studies",
+      labelKey: "hero.slide5CtaSecondary",
       href: "/case-studies",
       event: "hero-slide5-cases",
     },
@@ -102,6 +97,7 @@ const fallbackGradients = [
 export function Hero() {
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(1);
+  const { t } = useI18n();
 
   const goTo = useCallback(
     (index: number) => {
@@ -113,7 +109,7 @@ export function Hero() {
 
   const next = useCallback(() => {
     setDirection(1);
-    setCurrent((prev) => (prev + 1) % slides.length);
+    setCurrent((prev) => (prev + 1) % slideConfigs.length);
   }, []);
 
   // Autoplay
@@ -122,7 +118,7 @@ export function Hero() {
     return () => clearInterval(timer);
   }, [next]);
 
-  const slide = slides[current];
+  const slide = slideConfigs[current];
   const hasSplitLayout = !!slide.visual;
 
   const slideVariants = {
@@ -196,7 +192,7 @@ export function Hero() {
                     !hasSplitLayout && "lg:text-6xl",
                   )}
                 >
-                  {slide.headline}
+                  {t(slide.headlineKey)}
                 </h1>
 
                 <p
@@ -205,7 +201,7 @@ export function Hero() {
                     hasSplitLayout ? "max-w-lg" : "max-w-3xl mx-auto",
                   )}
                 >
-                  {slide.subheadline}
+                  {t(slide.subheadlineKey)}
                 </p>
 
                 <div
@@ -226,7 +222,7 @@ export function Hero() {
                       "shadow-lg hover:shadow-xl hover:-translate-y-0.5",
                     )}
                   >
-                    {slide.cta.label}
+                    {t(slide.cta.labelKey)}
                   </Link>
                   {slide.ctaSecondary && (
                     <Link
@@ -240,7 +236,7 @@ export function Hero() {
                         "hover:bg-white/10 transition-all duration-200",
                       )}
                     >
-                      {slide.ctaSecondary.label}
+                      {t(slide.ctaSecondary.labelKey)}
                     </Link>
                   )}
                 </div>
@@ -269,7 +265,7 @@ export function Hero() {
                 : "justify-center",
             )}
           >
-            {slides.map((_, i) => (
+            {slideConfigs.map((_, i) => (
               <button
                 key={i}
                 onClick={() => goTo(i)}
@@ -289,7 +285,7 @@ export function Hero() {
       {/* Prev / Next arrows */}
       <button
         onClick={() =>
-          goTo((current - 1 + slides.length) % slides.length)
+          goTo((current - 1 + slideConfigs.length) % slideConfigs.length)
         }
         aria-label="Previous slide"
         className="absolute left-4 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-12 h-12 rounded-full bg-black/20 hover:bg-black/40 text-white transition-colors backdrop-blur-sm"
@@ -308,7 +304,7 @@ export function Hero() {
         </svg>
       </button>
       <button
-        onClick={() => goTo((current + 1) % slides.length)}
+        onClick={() => goTo((current + 1) % slideConfigs.length)}
         aria-label="Next slide"
         className="absolute right-4 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-12 h-12 rounded-full bg-black/20 hover:bg-black/40 text-white transition-colors backdrop-blur-sm"
       >

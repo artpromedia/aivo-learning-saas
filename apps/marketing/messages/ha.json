@@ -17,10 +17,19 @@
     "slide2Headline": "Hanyoyi Na Musamman ga Kowane Mai Koyo",
     "slide2Subheadline": "AI dinmu na daidaitawa a lokaci guda, yana gano ƙarfi da giɓi don ƙirƙira tsarin karatu na musamman da ke sa ɗalibai su ci gaba.",
     "slide2Cta": "Duba Yadda Yake Aiki",
-    "slide3Headline": "Bi Ci Gaba a Lokaci Guda",
-    "slide3Subheadline": "Dashboard mai kyau na koyo wanda ke ba ɗalibai, iyaye, da malamai ganin nan take na ci gaba, jerin nasarori, da shawarwarin AI.",
+    "slide2CtaSecondary": "Kalli Rangadin Samfurin",
+    "slide3Headline": "An Ƙera shi don Ɗalibai na IEP — Kowa Ya So Shi",
+    "slide3Subheadline": "Ko ɗanka yana da IEP, shirin 504, ko kuma kawai yana buƙatar ƙarin tallafi, Brain Clone AI na Aivo na gina gogewa ta koyo mai musamman kamar su.",
     "slide3Cta": "Fara Kyauta",
-    "slide3CtaSecondary": "Duba Nazarin Shari'o'i"
+    "slide3CtaSecondary": "Nemi Demo",
+    "slide4Headline": "Malamai 5 na AI Ƙwararru, Tafiya Ɗaya ta Musamman",
+    "slide4Subheadline": "Daga lissafi zuwa fahimtar karatu, malaman AI na musamman suna haɗuwa da ɗalibai inda suke kuma suna jagorantar su gaba — da haƙuri, ƙarfafawa, da hankali mai daidaitawa.",
+    "slide4Cta": "Sadu da Malamai",
+    "slide4CtaSecondary": "Shirya Demo",
+    "slide5Headline": "Bi Ci Gaba a Lokaci Guda",
+    "slide5Subheadline": "Dashboard mai kyau na koyo wanda ke ba ɗalibai, iyaye, da malamai ganin nan take na ci gaba, jerin nasarori, da shawarwarin AI.",
+    "slide5Cta": "Fara Kyauta",
+    "slide5CtaSecondary": "Duba Nazarin Shari'o'i"
   },
   "features": {
     "title": "Duk Abin da Ɗalibanka Ke Bukata don Cin Nasara",

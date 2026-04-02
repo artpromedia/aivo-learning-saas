@@ -17,10 +17,19 @@
     "slide2Headline": "Personalized Paths for Every Learner",
     "slide2Subheadline": "Our AI adapts in real time, identifying strengths and gaps to create a custom curriculum that keeps students engaged and on track.",
     "slide2Cta": "See How It Works",
-    "slide3Headline": "Track Progress in Real Time",
-    "slide3Subheadline": "A beautiful learner dashboard gives students, parents, and teachers instant visibility into progress, streaks, and AI-powered recommendations.",
+    "slide2CtaSecondary": "Watch the Walkthrough",
+    "slide3Headline": "Built for IEP Students — Loved by All",
+    "slide3Subheadline": "Whether your child has an IEP, a 504 plan, or just needs extra support, Aivo\u2019s Brain Clone AI builds a learning experience as unique as they are.",
     "slide3Cta": "Get Started Free",
-    "slide3CtaSecondary": "View Case Studies"
+    "slide3CtaSecondary": "Request a Demo",
+    "slide4Headline": "5 Expert AI Tutors, One Personalized Journey",
+    "slide4Subheadline": "From math to reading comprehension, our specialized AI tutors meet students where they are and guide them forward \u2014 with patience, encouragement, and adaptive intelligence.",
+    "slide4Cta": "Meet the Tutors",
+    "slide4CtaSecondary": "Book a Demo",
+    "slide5Headline": "Track Progress in Real Time",
+    "slide5Subheadline": "A beautiful learner dashboard gives students, parents, and teachers instant visibility into progress, streaks, and AI-powered recommendations.",
+    "slide5Cta": "Get Started Free",
+    "slide5CtaSecondary": "View Case Studies"
   },
   "features": {
     "title": "Everything Your Students Need to Succeed",

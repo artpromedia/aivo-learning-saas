@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { UserPlus, Brain, Rocket } from "lucide-react";
 import { SectionHeader } from "@/components/shared/section-header";
+import { useI18n } from "@/providers/i18n-provider";
 
 const steps = [
   {
@@ -29,12 +30,14 @@ const steps = [
 ];
 
 export function HowItWorks() {
+  const { t } = useI18n();
+
   return (
     <section id="how-it-works" className="py-20 sm:py-28 bg-aivo-navy-50/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader
-          title="How AIVO Works"
-          subtitle="Three simple steps to personalized learning that adapts to every student's unique needs."
+          title={t("howItWorks.title")}
+          subtitle={t("howItWorks.subtitle")}
         />
 
         <div className="relative">
@@ -61,6 +64,7 @@ export function HowItWorks() {
                   </span>
                 </div>
 
+                {/* TODO: Individual step titles and descriptions need per-step translation keys in a future sprint */}
                 <h3 className="text-xl font-semibold text-aivo-navy-800 mb-3">
                   {step.title}
                 </h3>
