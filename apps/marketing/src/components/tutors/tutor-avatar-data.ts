@@ -30,11 +30,11 @@ export const TUTOR_AVATARS: Record<TutorPersona, TutorAvatarConfig> = {
     name: "Nova",
     subject: "Mathematics",
     tagline:
-      "Turn math anxiety into cosmic confidence \u2014 one orbit at a time",
+      "Turn math anxiety into cosmic confidence, one orbit at a time",
     sellingPoints: [
-      "Adapts difficulty in real-time to your child\u2019s level",
+      "Adapts difficulty in real-time to your child's level",
       "Visual-first explanations that make abstract math tangible",
-      "Celebrates every attempt \u2014 wrong answers are just \u2018different orbits\u2019",
+      "Celebrates every attempt. Wrong answers are just 'different orbits'",
     ],
     primaryColor: "#7C3AED",
     accentColor: "#A78BFA",
@@ -44,7 +44,7 @@ export const TUTOR_AVATARS: Record<TutorPersona, TutorAvatarConfig> = {
     tailwindGradientFrom: "from-purple-500",
     tailwindGradientTo: "to-violet-700",
     heroImage: "/assets/tutors/optimized/nova-hero.webp",
-    avatarImage: "/assets/tutors/optimized/nova-avatar.webp",
+    avatarImage: "/assets/tutors/optimized/nova-hero.webp",
   },
   sage: {
     persona: "sage",
@@ -65,7 +65,7 @@ export const TUTOR_AVATARS: Record<TutorPersona, TutorAvatarConfig> = {
     tailwindGradientFrom: "from-teal-500",
     tailwindGradientTo: "to-emerald-700",
     heroImage: "/assets/tutors/optimized/sage-hero.webp",
-    avatarImage: "/assets/tutors/optimized/sage-avatar.webp",
+    avatarImage: "/assets/tutors/optimized/sage-hero.webp",
   },
   spark: {
     persona: "spark",
@@ -76,7 +76,7 @@ export const TUTOR_AVATARS: Record<TutorPersona, TutorAvatarConfig> = {
     sellingPoints: [
       "Virtual experiments your child can run themselves",
       "Builds real scientific thinking, not just memorization",
-      "Connects every concept to your child\u2019s everyday world",
+      "Connects every concept to your child's everyday world",
     ],
     primaryColor: "#F59E0B",
     accentColor: "#FCD34D",
@@ -86,14 +86,14 @@ export const TUTOR_AVATARS: Record<TutorPersona, TutorAvatarConfig> = {
     tailwindGradientFrom: "from-amber-500",
     tailwindGradientTo: "to-orange-600",
     heroImage: "/assets/tutors/optimized/spark-hero.webp",
-    avatarImage: "/assets/tutors/optimized/spark-avatar.webp",
+    avatarImage: "/assets/tutors/optimized/spark-hero.webp",
   },
   chrono: {
     persona: "chrono",
     name: "Chrono",
     subject: "History",
     tagline:
-      "History isn\u2019t dates to memorize \u2014 it\u2019s the greatest story ever told",
+      "History isn't dates to memorize. It's the greatest story ever told",
     sellingPoints: [
       "Time-travel adventures through key historical eras",
       "Teaches perspective-taking and empathy through history",
@@ -107,7 +107,7 @@ export const TUTOR_AVATARS: Record<TutorPersona, TutorAvatarConfig> = {
     tailwindGradientFrom: "from-rose-500",
     tailwindGradientTo: "to-red-700",
     heroImage: "/assets/tutors/optimized/chrono-hero.webp",
-    avatarImage: "/assets/tutors/optimized/chrono-avatar.webp",
+    avatarImage: "/assets/tutors/optimized/chrono-hero.webp",
   },
   pixel: {
     persona: "pixel",
@@ -118,7 +118,7 @@ export const TUTOR_AVATARS: Record<TutorPersona, TutorAvatarConfig> = {
     sellingPoints: [
       "Smooth progression from visual blocks to real code",
       "Every bug is a puzzle, every project is shareable",
-      "Pair-programming style \u2014 your child leads, Pixel guides",
+      "Pair-programming style: your child leads, Pixel guides",
     ],
     primaryColor: "#10B981",
     accentColor: "#6EE7B7",
@@ -128,7 +128,7 @@ export const TUTOR_AVATARS: Record<TutorPersona, TutorAvatarConfig> = {
     tailwindGradientFrom: "from-emerald-500",
     tailwindGradientTo: "to-green-700",
     heroImage: "/assets/tutors/optimized/pixel-hero.webp",
-    avatarImage: "/assets/tutors/optimized/pixel-avatar.webp",
+    avatarImage: "/assets/tutors/optimized/pixel-hero.webp",
   },
   harmony: {
     persona: "harmony",
@@ -149,18 +149,18 @@ export const TUTOR_AVATARS: Record<TutorPersona, TutorAvatarConfig> = {
     tailwindGradientFrom: "from-violet-500",
     tailwindGradientTo: "to-purple-700",
     heroImage: "/assets/tutors/optimized/harmony-hero.webp",
-    avatarImage: "/assets/tutors/optimized/harmony-avatar.webp",
+    avatarImage: "/assets/tutors/optimized/harmony-hero.webp",
   },
   echo: {
     persona: "echo",
     name: "Echo",
     subject: "Speech & Language",
     tagline:
-      "Find your voice, one sound at a time \u2014 with a practice buddy who never gives up",
+      "Find your voice, one sound at a time, with a practice buddy who never gives up",
     sellingPoints: [
       "Gamified speech and language practice (Sound Safari!)",
       "Reinforces SLP-assigned exercises with fun repetition",
-      "Celebrates every attempt \u2014 building confidence with each sound",
+      "Celebrates every attempt, building confidence with each sound",
     ],
     primaryColor: "#F472B6",
     accentColor: "#FBCFE8",
@@ -170,7 +170,7 @@ export const TUTOR_AVATARS: Record<TutorPersona, TutorAvatarConfig> = {
     tailwindGradientFrom: "from-pink-400",
     tailwindGradientTo: "to-rose-600",
     heroImage: "/assets/tutors/optimized/echo-hero.webp",
-    avatarImage: "/assets/tutors/optimized/echo-avatar.webp",
+    avatarImage: "/assets/tutors/optimized/echo-hero.webp",
   },
 };
 

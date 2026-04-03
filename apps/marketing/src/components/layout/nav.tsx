@@ -10,7 +10,7 @@ import { useI18n } from "@/providers/i18n-provider";
 import { LocaleSwitcher } from "@/components/layout/locale-switcher";
 
 const HIDDEN_PREFIXES = ["/demo", "/get-started"];
-const LIGHT_BG_PREFIXES = ["/help", "/legal", "/faq"];
+const DARK_BG_ROUTES = ["/", "/case-studies/"];
 
 export function Nav() {
   const pathname = usePathname();
@@ -19,8 +19,10 @@ export function Nav() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const hidden = HIDDEN_PREFIXES.some((p) => pathname.startsWith(p));
-  const lightBg = LIGHT_BG_PREFIXES.some((p) => pathname.startsWith(p));
-  const useDarkNav = isScrolled || lightBg;
+  const darkBg =
+    pathname === "/" ||
+    (pathname.startsWith("/case-studies/") && pathname !== "/case-studies");
+  const useDarkNav = isScrolled || !darkBg;
 
   useEffect(() => {
     const handleScroll = () => {
