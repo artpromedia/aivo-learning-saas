@@ -128,7 +128,7 @@ export default function AboutPage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-aivo-purple-50 to-white pt-20 pb-16">
+      <section className="relative overflow-hidden bg-linear-to-b from-aivo-purple-50 to-white pt-20 pb-16">
         <div className="mx-auto max-w-7xl px-6 text-center">
           <p className="text-sm font-semibold uppercase tracking-widest text-aivo-purple-600">
             Our Mission
@@ -298,8 +298,7 @@ export default function AboutPage() {
             href="/careers"
             className="mt-8 inline-flex items-center gap-2 rounded-lg bg-white px-8 py-3.5 font-semibold text-aivo-purple-600 shadow-sm transition-colors hover:bg-aivo-purple-50"
           >
-            View Open Positions
-            <span aria-hidden="true">&rarr;</span>
+            <span>View Open Positions</span><span aria-hidden="true">&rarr;</span>
           </Link>
         </div>
       </section>
