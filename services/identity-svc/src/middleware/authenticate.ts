@@ -9,8 +9,8 @@ declare module "fastify" {
 
 export async function authenticate(request: FastifyRequest, reply: FastifyReply): Promise<void> {
   const token =
-    request.cookies?.access_token ??
-    request.headers.authorization?.replace("Bearer ", "");
+    request.headers.authorization?.replace("Bearer ", "") ??
+    request.cookies?.access_token;
 
   if (!token) {
     return reply.status(401).send({ error: "Authentication required" });

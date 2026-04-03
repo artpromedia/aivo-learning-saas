@@ -98,6 +98,7 @@ test.describe('Module 0b: Session Management', () => {
 
     expect(token1).toBeTruthy();
     expect(token2).toBeTruthy();
+    expect(token1).not.toBe(token2);
 
     const session1Res = await page.request.get(`${API_BASE}/auth/session`, {
       headers: { Authorization: `Bearer ${token1}` },
@@ -109,14 +110,18 @@ test.describe('Module 0b: Session Management', () => {
     });
     expect(session2Res.ok()).toBeTruthy();
 
-    await page.request.post(`${API_BASE}/auth/sign-out`, {
+    const signOutRes = await page.request.post(`${API_BASE}/auth/sign-out`, {
       headers: { Authorization: `Bearer ${token1}` },
     });
+    expect(signOutRes.ok()).toBeTruthy();
 
     const session2AfterLogout = await page2.request.get(`${API_BASE}/auth/session`, {
       headers: { Authorization: `Bearer ${token2}` },
     });
-    expect(session2AfterLogout.ok()).toBeTruthy();
+    const afterLogoutBody = await session2AfterLogout.text();
+    expect(session2AfterLogout.ok(),
+      `Expected device 2 session to remain valid after device 1 logout, got ${session2AfterLogout.status()}: ${afterLogoutBody}`
+    ).toBeTruthy();
 
     await page2.close();
     await context2.close();
