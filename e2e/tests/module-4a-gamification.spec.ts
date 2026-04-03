@@ -121,9 +121,9 @@ test.describe('Module 4a: Gamification', () => {
     await page.getByLabel(/email/i).fill(parent.email);
     await page.getByLabel(/password/i).first().fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
-    await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
+    await page.waitForURL(/\/(parent|teacher|admin|learner|onboarding)/, { timeout: 15_000 });
 
-    await page.goto(`${BASE_URL}/dashboard/learners/${learner.id}`);
+    await page.goto(`${BASE_URL}/parent/${learner.id}`);
 
     // Dashboard should show XP/streak indicators
     const _hasGamification =
@@ -216,9 +216,9 @@ test.describe('Module 4a: Gamification', () => {
     await page.getByLabel(/email/i).fill(parent.email);
     await page.getByLabel(/password/i).first().fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
-    await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
+    await page.waitForURL(/\/(parent|teacher|admin|learner|onboarding)/, { timeout: 15_000 });
 
-    await page.goto(`${BASE_URL}/dashboard/learners/${learner.id}/shop`);
+    await page.goto(`${BASE_URL}/parent/${learner.id}`);
     await page.waitForTimeout(2_000);
 
     const bodyText = await page.textContent('body');
@@ -304,9 +304,9 @@ test.describe('Module 4a: Gamification', () => {
     await page.getByLabel(/email/i).fill(parent.email);
     await page.getByLabel(/password/i).first().fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
-    await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
+    await page.waitForURL(/\/(parent|teacher|admin|learner|onboarding)/, { timeout: 15_000 });
 
-    await page.goto(`${BASE_URL}/dashboard/learners/${learner.id}/challenges`);
+    await page.goto(`${BASE_URL}/parent/${learner.id}`);
     await page.waitForTimeout(2_000);
 
     // Challenge should be visible

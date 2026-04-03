@@ -67,10 +67,10 @@ test.describe('Module 1b: Brain Profile', () => {
     await page.getByLabel(/email/i).fill(parent.email);
     await page.getByLabel(/password/i).first().fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
-    await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
+    await page.waitForURL(/\/(parent|teacher|admin|learner|onboarding)/, { timeout: 15_000 });
 
     // Navigate to brain profile page
-    await page.goto(`${BASE_URL}/dashboard/learners/${learner.id}/brain`);
+    await page.goto(`${BASE_URL}/parent/${learner.id}/brain`);
 
     // Check that the brain profile page has key elements
     await expect(page.locator('body')).toContainText(/brain|profile|cognitive|learning/i);
@@ -114,9 +114,9 @@ test.describe('Module 1b: Brain Profile', () => {
     await page.getByLabel(/email/i).fill(parent.email);
     await page.getByLabel(/password/i).first().fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
-    await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
+    await page.waitForURL(/\/(parent|teacher|admin|learner|onboarding)/, { timeout: 15_000 });
 
-    await page.goto(`${BASE_URL}/dashboard/learners/${learner.id}/brain`);
+    await page.goto(`${BASE_URL}/parent/${learner.id}/brain`);
 
     // The brain should show as active/approved
     const statusIndicator = page.locator(

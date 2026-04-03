@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import { coverageTracker } from '../../helpers/coverage-tracker';
 import { waitForBrainCloned } from '../../helpers/wait-for-nats';
 import { isBrainAvailable } from '../../fixtures/brain.fixture';
+import { isAssessmentAvailable } from '../../fixtures/assessment.fixture';
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
 const API_BASE = process.env.API_BASE_URL || 'http://localhost:3101';
@@ -14,6 +15,7 @@ test.describe('Integration: Full Onboarding Flow', () => {
 
   test.beforeEach(async () => {
     test.skip(!(await isBrainAvailable()), 'brain-svc not available');
+    test.skip(!(await isAssessmentAvailable()), 'assessment-svc not available');
   });
 
   test('complete onboarding: signup → child → assessment → IEP → baseline → brain → approve', async ({ page }) => {
@@ -38,13 +40,12 @@ test.describe('Integration: Full Onboarding Flow', () => {
     const parentToken = signInData.token || signInData.session?.token;
     expect(parentToken).toBeTruthy();
 
-    const learnerRes = await page.request.post(`${API_BASE}/family/learners`, {
+    const learnerRes = await page.request.post(`${API_BASE}/api/learners`, {
       data: {
         name: 'Onboarding Test Child',
-        dateOfBirth: '2016-06-15',
-        gradeLevel: '3rd',
-        functioningLevel: 3,
-        specialNeeds: [],
+        dateOfBirth: '2016-06-15T00:00:00.000Z',
+        enrolledGrade: 3,
+        functioningLevel: 'LOW_VERBAL',
       },
       headers: { Authorization: `Bearer ${parentToken}` },
     });
@@ -115,7 +116,7 @@ test.describe('Integration: Full Onboarding Flow', () => {
     await page.getByLabel(/email/i).fill(email);
     await page.getByLabel(/password/i).first().fill(password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
-    await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
+    await page.waitForURL(/\/(parent|teacher|admin|learner|onboarding)/, { timeout: 15_000 });
     await expect(page).not.toHaveURL(/\/login/);
   });
 });

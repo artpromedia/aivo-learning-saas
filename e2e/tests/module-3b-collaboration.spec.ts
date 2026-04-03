@@ -42,10 +42,10 @@ test.describe('Module 3b: Collaboration', () => {
     await page.getByLabel(/email/i).fill(parent.email);
     await page.getByLabel(/password/i).first().fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
-    await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
+    await page.waitForURL(/\/(parent|teacher|admin|learner|onboarding)/, { timeout: 15_000 });
 
     // Navigate to notifications/recommendations
-    await page.goto(`${BASE_URL}/dashboard/notifications`);
+    await page.goto(`${BASE_URL}/notifications`);
     await page.waitForTimeout(2_000);
 
     if (notifRes.ok()) {
@@ -151,9 +151,9 @@ test.describe('Module 3b: Collaboration', () => {
     await page.getByLabel(/email/i).fill(parent.email);
     await page.getByLabel(/password/i).first().fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
-    await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
+    await page.waitForURL(/\/(parent|teacher|admin|learner|onboarding)/, { timeout: 15_000 });
 
-    await page.goto(`${BASE_URL}/dashboard/notifications`);
+    await page.goto(`${BASE_URL}/notifications`);
 
     // Page should show notifications
     await page.waitForTimeout(2_000);

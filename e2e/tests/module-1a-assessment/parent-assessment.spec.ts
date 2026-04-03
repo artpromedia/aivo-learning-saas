@@ -1,15 +1,22 @@
 import { test, expect } from '@playwright/test';
 import { createTestParent, type TestUser } from '../../fixtures/auth.fixture';
 import { coverageTracker } from '../../helpers/coverage-tracker';
+import { isAssessmentAvailable } from '../../fixtures/assessment.fixture';
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
 const API_BASE = process.env.API_BASE_URL || 'http://localhost:3101';
 
 test.describe('Module 1a: Parent Assessment', () => {
   let parent: TestUser;
+  let assessmentUp: boolean;
 
   test.beforeAll(async () => {
+    assessmentUp = await isAssessmentAvailable();
     parent = await createTestParent();
+  });
+
+  test.beforeEach(async ({}, testInfo) => {
+    if (!assessmentUp) testInfo.skip(true, 'assessment-svc not available');
   });
 
   test.afterAll(async () => {
@@ -24,7 +31,7 @@ test.describe('Module 1a: Parent Assessment', () => {
     await page.getByLabel(/email/i).fill(parent.email);
     await page.getByLabel(/password/i).first().fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
-    await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
+    await page.waitForURL(/\/(parent|teacher|admin|learner|onboarding)/, { timeout: 15_000 });
 
     const addChildButton = page.getByRole('button', { name: /add child|add learner|get started/i });
     if (await addChildButton.isVisible({ timeout: 5_000 }).catch(() => false)) {

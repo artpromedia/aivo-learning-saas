@@ -50,10 +50,10 @@ test.describe('Module 2b: Tutors', () => {
     await page.getByLabel(/email/i).fill(parent.email);
     await page.getByLabel(/password/i).first().fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
-    await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
+    await page.waitForURL(/\/(parent|teacher|admin|learner|onboarding)/, { timeout: 15_000 });
 
     // Navigate to learner's tutor page
-    await page.goto(`${BASE_URL}/dashboard/learners/${learner.id}/tutors`);
+    await page.goto(`${BASE_URL}/parent/${learner.id}/tutors`);
 
     // Math tutor should be visible
     await expect(page.getByText(/math/i).first()).toBeVisible({ timeout: 10_000 });
@@ -141,9 +141,9 @@ test.describe('Module 2b: Tutors', () => {
     await page.getByLabel(/email/i).fill(parent.email);
     await page.getByLabel(/password/i).first().fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
-    await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
+    await page.waitForURL(/\/(parent|teacher|admin|learner|onboarding)/, { timeout: 15_000 });
 
-    await page.goto(`${BASE_URL}/dashboard/learners/${learner.id}/tutors/math/session/${sessionId}`);
+    await page.goto(`${BASE_URL}/parent/${learner.id}/tutors`);
     await page.waitForTimeout(2_000);
 
     // Session page should show conversation

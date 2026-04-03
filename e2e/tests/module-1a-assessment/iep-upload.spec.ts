@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import { createTestParent, type TestUser } from '../../fixtures/auth.fixture';
 import { createTestLearner, type TestLearner } from '../../fixtures/learner.fixture';
 import { coverageTracker } from '../../helpers/coverage-tracker';
+import { isAssessmentAvailable } from '../../fixtures/assessment.fixture';
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
 const API_BASE = process.env.API_BASE_URL || 'http://localhost:3101';
@@ -9,10 +10,16 @@ const API_BASE = process.env.API_BASE_URL || 'http://localhost:3101';
 test.describe('Module 1a: IEP Upload', () => {
   let parent: TestUser;
   let learner: TestLearner;
+  let assessmentUp: boolean;
 
   test.beforeAll(async () => {
+    assessmentUp = await isAssessmentAvailable();
     parent = await createTestParent();
     learner = await createTestLearner(parent.token, 3);
+  });
+
+  test.beforeEach(async ({}, testInfo) => {
+    if (!assessmentUp) testInfo.skip(true, 'assessment-svc not available');
   });
 
   test.afterAll(async () => {
@@ -51,7 +58,7 @@ test.describe('Module 1a: IEP Upload', () => {
     await page.getByLabel(/email/i).fill(parent.email);
     await page.getByLabel(/password/i).first().fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
-    await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
+    await page.waitForURL(/\/(parent|teacher|admin|learner|onboarding)/, { timeout: 15_000 });
 
     const iepRes = await page.request.post(`${API_BASE}/family/learners/${learner.id}/iep`, {
       data: {

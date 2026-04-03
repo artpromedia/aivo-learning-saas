@@ -36,10 +36,10 @@ const MODULE_API_ROUTES: Record<string, string[]> = {
     'POST /auth/password-reset/confirm',
   ],
   'module-1a-assessment': [
-    'POST /family/learners',
+    'POST /api/learners',
     'GET /family/learners',
-    'POST /family/learners/:id/assessment',
-    'POST /family/learners/:id/iep',
+    'POST /assessment/parent',
+    'POST /iep/upload',
   ],
   'module-1b-brain': [
     'POST /brain/profiles',
@@ -77,13 +77,13 @@ const MODULE_API_ROUTES: Record<string, string[]> = {
 };
 
 const MODULE_UI_PAGES: Record<string, string[]> = {
-  'module-0b-auth': ['/signup', '/login', '/forgot-password', '/dashboard'],
+  'module-0b-auth': ['/signup', '/login', '/forgot-password', '/parent'],
   'module-1a-assessment': ['/onboarding/add-child', '/onboarding/assessment', '/onboarding/iep'],
-  'module-1b-brain': ['/dashboard/brain', '/dashboard/brain/:id'],
-  'module-2b-tutors': ['/dashboard/tutors', '/dashboard/tutors/:subject'],
-  'module-3a-homework': ['/dashboard/homework', '/dashboard/homework/:id'],
-  'module-3b-collaboration': ['/dashboard/notifications', '/dashboard/team'],
-  'module-4a-gamification': ['/dashboard/rewards', '/dashboard/challenges'],
+  'module-1b-brain': ['/parent/:learnerId/brain'],
+  'module-2b-tutors': ['/parent/:learnerId/tutors'],
+  'module-3a-homework': ['/learner/homework', '/learner/homework/:id'],
+  'module-3b-collaboration': ['/notifications'],
+  'module-4a-gamification': ['/learner/shop', '/learner/challenges'],
 };
 
 const MODULE_NATS_EVENTS: Record<string, string[]> = {

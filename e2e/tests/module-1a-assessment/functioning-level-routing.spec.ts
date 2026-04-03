@@ -2,14 +2,21 @@ import { test, expect } from '@playwright/test';
 import { createTestParent, type TestUser } from '../../fixtures/auth.fixture';
 import { createTestLearner } from '../../fixtures/learner.fixture';
 import { coverageTracker } from '../../helpers/coverage-tracker';
+import { isAssessmentAvailable } from '../../fixtures/assessment.fixture';
 
 const API_BASE = process.env.API_BASE_URL || 'http://localhost:3101';
 
 test.describe('Module 1a: Functioning Level Routing', () => {
   let parent: TestUser;
+  let assessmentUp: boolean;
 
   test.beforeAll(async () => {
+    assessmentUp = await isAssessmentAvailable();
     parent = await createTestParent();
+  });
+
+  test.beforeEach(async ({}, testInfo) => {
+    if (!assessmentUp) testInfo.skip(true, 'assessment-svc not available');
   });
 
   test.afterAll(async () => {

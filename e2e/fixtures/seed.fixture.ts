@@ -141,13 +141,20 @@ export async function createSeededLearner(
 
   const ctx = await createContext(API_BASE, parentToken);
 
-  const learnerRes = await ctx.post('/family/learners', {
+  const LEVEL_ENUM: Record<number, string> = {
+    1: 'PRE_SYMBOLIC',
+    2: 'NON_VERBAL',
+    3: 'LOW_VERBAL',
+    4: 'SUPPORTED',
+    5: 'STANDARD',
+  };
+
+  const learnerRes = await ctx.post('/api/learners', {
     data: {
       name: learnerName,
-      dateOfBirth: '2016-06-15',
-      gradeLevel,
-      functioningLevel,
-      specialNeeds: functioningLevel <= 2 ? ['speech', 'motor'] : [],
+      dateOfBirth: '2016-06-15T00:00:00.000Z',
+      enrolledGrade: parseInt(gradeLevel, 10),
+      functioningLevel: LEVEL_ENUM[functioningLevel] || 'LOW_VERBAL',
     },
   });
 

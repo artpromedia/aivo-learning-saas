@@ -157,8 +157,8 @@ export class ApiClient {
     return this.get('/family/learners');
   }
 
-  async createLearner(data: { name: string; dateOfBirth: string; gradeLevel: string; functioningLevel: number; specialNeeds?: string[] }) {
-    return this.post('/family/learners', data);
+  async createLearner(data: { name: string; dateOfBirth: string; enrolledGrade: number; functioningLevel: string }) {
+    return this.post('/api/learners', data);
   }
 
   async getLearner(learnerId: string) {

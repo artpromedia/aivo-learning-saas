@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import { createTestParent, type TestUser } from '../fixtures/auth.fixture';
 import { createTestLearner, type FunctioningLevel } from '../fixtures/learner.fixture';
 import { coverageTracker } from '../helpers/coverage-tracker';
+import { isAssessmentAvailable } from '../fixtures/assessment.fixture';
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
 const API_BASE = process.env.API_BASE_URL || 'http://localhost:3101';
@@ -31,7 +32,7 @@ test.describe('Module 1a: Assessment & Onboarding', () => {
     await page.getByLabel(/email/i).fill(parent.email);
     await page.getByLabel(/password/i).first().fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
-    await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
+    await page.waitForURL(/\/(parent|teacher|admin|learner|onboarding)/, { timeout: 15_000 });
 
     // Step 1: Navigate to add child flow
     const addChildButton = page.getByRole('button', { name: /add child|add learner/i });
@@ -104,7 +105,7 @@ test.describe('Module 1a: Assessment & Onboarding', () => {
     }
 
     // Verify we reach a completion or dashboard state
-    await page.waitForURL(/\/(dashboard|onboarding\/complete|brain)/, { timeout: 20_000 });
+    await page.waitForURL(/\/(parent|teacher|admin|learner|onboarding\/complete|brain)/, { timeout: 20_000 });
 
     // Verify learner was created via API
     const learnersRes = await page.request.get(`${API_BASE}/family/learners`, {
@@ -117,6 +118,7 @@ test.describe('Module 1a: Assessment & Onboarding', () => {
   });
 
   test('assessment mode adapts per functioning level', async ({ page }) => {
+    test.skip(!(await isAssessmentAvailable()), 'assessment-svc not available');
     coverageTracker.setContext(
       'assessment mode adapts per functioning level',
       'module-1a-assessment',
@@ -162,6 +164,7 @@ test.describe('Module 1a: Assessment & Onboarding', () => {
   });
 
   test('IEP data extracted and displayed', async ({ page }) => {
+    test.skip(!(await isAssessmentAvailable()), 'assessment-svc not available');
     coverageTracker.setContext('IEP data extracted and displayed', 'module-1a-assessment');
     await coverageTracker.attach(page);
 
@@ -204,9 +207,9 @@ test.describe('Module 1a: Assessment & Onboarding', () => {
         await page.getByLabel(/email/i).fill(parent.email);
         await page.getByLabel(/password/i).first().fill(parent.password);
         await page.getByRole('button', { name: /sign in|log in/i }).click();
-        await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 15_000 });
+        await page.waitForURL(/\/(parent|teacher|admin|learner|onboarding)/, { timeout: 15_000 });
 
-        await page.goto(`${BASE_URL}/dashboard/learners/${learner.id}`);
+        await page.goto(`${BASE_URL}/parent/${learner.id}`);
 
         // Check that IEP-related information is visible on the page
         const pageContent = await page.textContent('body');
