@@ -19,7 +19,7 @@ export function useTutorChat(sessionId: string | undefined) {
   const token = useAuthStore((s) => s.token);
 
   const sendMessage = useCallback(
-    async (content: string) => {
+    async (content: string, extraContext?: Record<string, unknown>) => {
       if (!sessionId) throw new Error("No session ID");
 
       // Add user message immediately
@@ -54,7 +54,7 @@ export function useTutorChat(sessionId: string | undefined) {
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
-          body: JSON.stringify({ message: content }),
+          body: JSON.stringify({ message: content, ...extraContext }),
           signal: abortRef.current.signal,
         });
 
