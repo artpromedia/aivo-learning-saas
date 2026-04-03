@@ -190,7 +190,7 @@ export default function TutorChatPage() {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <EmotionCheckIn
-          learnerName={activeLearner?.firstName}
+          learnerName={activeLearner?.name}
           onComplete={setEmotionZone}
         />
       </div>
