@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { createTestParent, type TestUser } from '../fixtures/auth.fixture';
 import { createTestLearner, type TestLearner } from '../fixtures/learner.fixture';
-import { createBrainProfile, waitForBrainReady, approveBrain } from '../fixtures/brain.fixture';
+import { createBrainProfile, waitForBrainReady, approveBrain, isBrainAvailable } from '../fixtures/brain.fixture';
 import { coverageTracker } from '../helpers/coverage-tracker';
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
@@ -10,14 +10,20 @@ const BRAIN_API = process.env.BRAIN_API_URL || 'http://localhost:3102';
 test.describe('Module 1b: Brain Profile', () => {
   let parent: TestUser;
   let learner: TestLearner;
+  let brainUp = false;
 
   test.beforeAll(async () => {
+    brainUp = await isBrainAvailable();
     parent = await createTestParent();
     learner = await createTestLearner(parent.token, 3);
   });
 
   test.afterAll(async () => {
     coverageTracker.flush();
+  });
+
+  test.beforeEach(async () => {
+    test.skip(!brainUp, 'brain-svc not available');
   });
 
   test('brain state created after assessment', async ({ page }) => {

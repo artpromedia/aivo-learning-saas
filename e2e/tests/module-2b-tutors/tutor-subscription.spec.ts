@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { createTestParent, type TestUser } from '../../fixtures/auth.fixture';
 import { createTestLearner, type TestLearner } from '../../fixtures/learner.fixture';
-import { getPreClonedBrainState } from '../../fixtures/brain.fixture';
+import { getPreClonedBrainState, isBrainAvailable } from '../../fixtures/brain.fixture';
 import { coverageTracker } from '../../helpers/coverage-tracker';
 
 const API_BASE = process.env.API_BASE_URL || 'http://localhost:3101';
@@ -9,15 +9,21 @@ const API_BASE = process.env.API_BASE_URL || 'http://localhost:3101';
 test.describe('Module 2b: Tutor Subscription', () => {
   let parent: TestUser;
   let learner: TestLearner;
+  let brainUp = false;
 
   test.beforeAll(async () => {
+    brainUp = await isBrainAvailable();
     parent = await createTestParent();
     learner = await createTestLearner(parent.token, 3);
-    await getPreClonedBrainState(parent.token, learner.id);
+    if (brainUp) await getPreClonedBrainState(parent.token, learner.id);
   });
 
   test.afterAll(async () => {
     coverageTracker.flush();
+  });
+
+  test.beforeEach(async () => {
+    test.skip(!brainUp, 'brain-svc not available');
   });
 
   test('subscribe activates tutor', async ({ page }) => {
@@ -85,7 +91,7 @@ test.describe('Module 2b: Tutor Subscription', () => {
     await coverageTracker.attach(page);
 
     const newLearner = await createTestLearner(parent.token, 3);
-    await getPreClonedBrainState(parent.token, newLearner.id);
+    if (brainUp) await getPreClonedBrainState(parent.token, newLearner.id);
 
     const subjects = ['math', 'reading', 'writing', 'science', 'social-studies'];
     const activatedTutors: string[] = [];

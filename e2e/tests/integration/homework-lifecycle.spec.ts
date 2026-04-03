@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { createTestParent, type TestUser } from '../../fixtures/auth.fixture';
 import { createTestLearner, type TestLearner } from '../../fixtures/learner.fixture';
-import { getPreClonedBrainState, type BrainState } from '../../fixtures/brain.fixture';
+import { getPreClonedBrainState, isBrainAvailable, type BrainState } from '../../fixtures/brain.fixture';
 import { createFullSubscriptionWithTutors } from '../../fixtures/subscription.fixture';
 import { coverageTracker } from '../../helpers/coverage-tracker';
 import { waitForHomeworkProcessed } from '../../helpers/wait-for-nats';
@@ -13,16 +13,24 @@ test.describe('Integration: Homework Lifecycle', () => {
   let parent: TestUser;
   let learner: TestLearner;
   let brainState: BrainState;
+  let brainUp = false;
 
   test.beforeAll(async () => {
+    brainUp = await isBrainAvailable();
     parent = await createTestParent();
     learner = await createTestLearner(parent.token, 3);
-    brainState = await getPreClonedBrainState(parent.token, learner.id);
-    await createFullSubscriptionWithTutors(parent.token, learner.id, ['math']);
+    if (brainUp) {
+      brainState = await getPreClonedBrainState(parent.token, learner.id);
+      await createFullSubscriptionWithTutors(parent.token, learner.id, ['math']);
+    }
   });
 
   test.afterAll(async () => {
     coverageTracker.flush();
+  });
+
+  test.beforeEach(async () => {
+    test.skip(!brainUp, 'brain-svc not available');
   });
 
   test('subscribe → homework unlock → upload → OCR → adapt → session → mastery', async ({ page }) => {

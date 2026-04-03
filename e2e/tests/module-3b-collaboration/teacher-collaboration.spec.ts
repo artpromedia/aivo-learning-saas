@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { createTestParent, createTestTeacher, type TestUser } from '../../fixtures/auth.fixture';
 import { createTestLearner, type TestLearner } from '../../fixtures/learner.fixture';
-import { getPreClonedBrainState } from '../../fixtures/brain.fixture';
+import { getPreClonedBrainState, isBrainAvailable } from '../../fixtures/brain.fixture';
 import { coverageTracker } from '../../helpers/coverage-tracker';
 
 const API_BASE = process.env.API_BASE_URL || 'http://localhost:3101';
@@ -10,16 +10,22 @@ test.describe('Module 3b: Teacher Collaboration', () => {
   let parent: TestUser;
   let teacher: TestUser;
   let learner: TestLearner;
+  let brainUp = false;
 
   test.beforeAll(async () => {
+    brainUp = await isBrainAvailable();
     parent = await createTestParent();
     teacher = await createTestTeacher();
     learner = await createTestLearner(parent.token, 3);
-    await getPreClonedBrainState(parent.token, learner.id);
+    if (brainUp) await getPreClonedBrainState(parent.token, learner.id);
   });
 
   test.afterAll(async () => {
     coverageTracker.flush();
+  });
+
+  test.beforeEach(async () => {
+    test.skip(!brainUp, 'brain-svc not available');
   });
 
   test('invite teacher who accepts and sees learner profile', async ({ page }) => {

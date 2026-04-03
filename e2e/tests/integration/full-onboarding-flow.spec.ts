@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { coverageTracker } from '../../helpers/coverage-tracker';
 import { waitForBrainCloned } from '../../helpers/wait-for-nats';
+import { isBrainAvailable } from '../../fixtures/brain.fixture';
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
 const API_BASE = process.env.API_BASE_URL || 'http://localhost:3101';
@@ -9,6 +10,10 @@ const BRAIN_API = process.env.BRAIN_API_URL || 'http://localhost:3102';
 test.describe('Integration: Full Onboarding Flow', () => {
   test.afterAll(async () => {
     coverageTracker.flush();
+  });
+
+  test.beforeEach(async () => {
+    test.skip(!(await isBrainAvailable()), 'brain-svc not available');
   });
 
   test('complete onboarding: signup → child → assessment → IEP → baseline → brain → approve', async ({ page }) => {

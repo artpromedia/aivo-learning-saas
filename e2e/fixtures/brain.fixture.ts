@@ -2,6 +2,21 @@ import { request } from '@playwright/test';
 
 const BRAIN_API = process.env.BRAIN_API_URL || 'http://localhost:3102';
 
+let _brainAvailable: boolean | null = null;
+
+export async function isBrainAvailable(): Promise<boolean> {
+  if (_brainAvailable !== null) return _brainAvailable;
+  try {
+    const ctx = await request.newContext({ baseURL: BRAIN_API });
+    const res = await ctx.get('/health');
+    _brainAvailable = res.ok();
+    await ctx.dispose();
+  } catch {
+    _brainAvailable = false;
+  }
+  return _brainAvailable;
+}
+
 export interface BrainState {
   brainId: string;
   learnerId: string;

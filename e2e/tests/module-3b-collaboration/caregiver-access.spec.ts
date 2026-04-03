@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { createTestParent, type TestUser } from '../../fixtures/auth.fixture';
 import { createTestLearner, type TestLearner } from '../../fixtures/learner.fixture';
-import { getPreClonedBrainState } from '../../fixtures/brain.fixture';
+import { getPreClonedBrainState, isBrainAvailable } from '../../fixtures/brain.fixture';
 import { coverageTracker } from '../../helpers/coverage-tracker';
 
 const API_BASE = process.env.API_BASE_URL || 'http://localhost:3101';
@@ -10,15 +10,21 @@ test.describe('Module 3b: Caregiver Access', () => {
   let parent: TestUser;
   let learner: TestLearner;
   let caregiverToken: string;
+  let brainUp = false;
 
   test.beforeAll(async () => {
+    brainUp = await isBrainAvailable();
     parent = await createTestParent();
     learner = await createTestLearner(parent.token, 3);
-    await getPreClonedBrainState(parent.token, learner.id);
+    if (brainUp) await getPreClonedBrainState(parent.token, learner.id);
   });
 
   test.afterAll(async () => {
     coverageTracker.flush();
+  });
+
+  test.beforeEach(async () => {
+    test.skip(!brainUp, 'brain-svc not available');
   });
 
   test('invite caregiver who sees learner summary', async ({ page }) => {
