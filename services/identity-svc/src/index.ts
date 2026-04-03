@@ -99,7 +99,7 @@ export async function buildApp() {
     credentials: true,
   });
   await app.register(rateLimit, {
-    max: 100,
+    max: config.NODE_ENV === "test" ? 10_000 : 100,
     timeWindow: "1 minute",
   });
 

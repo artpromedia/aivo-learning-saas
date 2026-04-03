@@ -30,36 +30,61 @@ function generateEmail(role: string): string {
   return `e2e+${id}@aivo.test`;
 }
 
+async function retryOn429<T>(fn: () => Promise<T>, label: string, maxRetries = 5): Promise<T> {
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      if (msg.includes('429') && attempt < maxRetries - 1) {
+        const delay = Math.min(2000 * 2 ** attempt, 30000);
+        console.warn(`[retry] ${label} rate-limited, retrying in ${delay}ms (attempt ${attempt + 1}/${maxRetries})`);
+        await new Promise((r) => setTimeout(r, delay));
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw new Error(`${label} failed after ${maxRetries} retries`);
+}
+
 async function createUser(role: UserRole, namePrefix: string): Promise<TestUser> {
   const ctx = await getRequestContext();
   const email = generateEmail(role);
   const password = 'E2eTest!Secure456';
   const name = `${namePrefix} ${Date.now().toString(36)}`;
 
-  const signUpRes = await ctx.post('/auth/sign-up', {
-    data: { email, password, name, role },
-  });
-
-  if (!signUpRes.ok()) {
-    const body = await signUpRes.text();
-    throw new Error(`Failed to create ${role}: ${signUpRes.status()} ${body}`);
-  }
+  const signUpRes = await retryOn429(async () => {
+    const res = await ctx.post('/auth/sign-up', {
+      data: { email, password, name, role },
+    });
+    if (!res.ok()) {
+      const body = await res.text();
+      throw new Error(`Failed to create ${role}: ${res.status()} ${body}`);
+    }
+    return res;
+  }, `sign-up ${role}`);
 
   const signUpData = await signUpRes.json();
 
   // Auto-verify email in test mode
-  await ctx.post('/test/verify-email', {
-    data: { email },
-  });
+  await retryOn429(async () => {
+    const res = await ctx.post('/test/verify-email', {
+      data: { email },
+    });
+    return res;
+  }, `verify-email ${role}`);
 
   // Sign in to get a valid token
-  const signInRes = await ctx.post('/auth/sign-in', {
-    data: { email, password },
-  });
-
-  if (!signInRes.ok()) {
-    throw new Error(`Failed to sign in as ${role}: ${signInRes.status()}`);
-  }
+  const signInRes = await retryOn429(async () => {
+    const res = await ctx.post('/auth/sign-in', {
+      data: { email, password },
+    });
+    if (!res.ok()) {
+      throw new Error(`Failed to sign in as ${role}: ${res.status()}`);
+    }
+    return res;
+  }, `sign-in ${role}`);
 
   const signInData = await signInRes.json();
 

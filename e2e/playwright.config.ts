@@ -2,6 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 import path from 'node:path';
 
 const isCI = !!process.env.CI;
+const marketingURL = process.env.MARKETING_URL || 'http://localhost:3001';
 
 export default defineConfig({
   testDir: './tests',
@@ -115,8 +116,16 @@ export default defineConfig({
       testMatch: /marketing-funnel/,
       use: {
         ...devices['Desktop Chrome'],
-        baseURL: 'http://localhost:3001',
+        baseURL: marketingURL,
       },
     },
-  ],
+    // Marketing tests require the marketing app to be running on port 3001.
+    // Set MARKETING_URL or start the marketing app before running these tests.
+  ].filter((p) => {
+    // Skip marketing-funnel in CI unless MARKETING_URL is explicitly set
+    if (isCI && !process.env.MARKETING_URL && p.name === 'marketing-funnel') {
+      return false;
+    }
+    return true;
+  }),
 });
