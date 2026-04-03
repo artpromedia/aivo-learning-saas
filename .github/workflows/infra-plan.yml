@@ -37,7 +37,7 @@ jobs:
       - name: Helm template (dry-run)
         id: template
         run: |
-          helm template aivolearning infra/helm \
+          helm template aivo-learning-saas infra/helm \
             -f infra/helm/values/hetzner.yaml \
             -n aivo \
             --debug 2>&1 | tee /tmp/helm-output.txt

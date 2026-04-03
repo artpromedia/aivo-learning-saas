@@ -17,19 +17,19 @@ metadata:
   labels:
     app.kubernetes.io/name: {{ $svc }}
     app.kubernetes.io/part-of: aivolearning
-    app.kubernetes.io/managed-by: helm
+    app.kubernetes.io/part-of: aivo-learning-saas
 spec:
   replicas: {{ $svcValues.replicaCount | default 1 }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ $svc }}
-      app.kubernetes.io/instance: aivolearning
+      app.kubernetes.io/instance: aivo-learning-saas
   template:
     metadata:
       labels:
         app.kubernetes.io/name: {{ $svc }}
-        app.kubernetes.io/instance: aivolearning
-        app.kubernetes.io/part-of: aivolearning
+        app.kubernetes.io/instance: aivo-learning-saas
+        app.kubernetes.io/part-of: aivo-learning-saas
     spec:
       containers:
         - name: {{ $svc }}

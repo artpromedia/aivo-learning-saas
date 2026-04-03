@@ -96,7 +96,7 @@ jobs:
           VERSION="${{ needs.build-push.outputs.version }}"
           IMAGE="${{ env.IMAGE_PREFIX }}/marketing"
 
-          helm upgrade --install aivolearning infra/helm \
+          helm upgrade --install aivo-learning-saas infra/helm \
             -f infra/helm/values/hetzner.yaml \
             --set marketing.image.repository="$IMAGE" \
             --set marketing.image.tag="$VERSION" \

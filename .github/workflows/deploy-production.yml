@@ -231,17 +231,17 @@ jobs:
 
       - name: Clear stuck Helm releases
         run: |
-          STATUS=$(helm status aivolearning -n aivo -o json 2>/dev/null | jq -r '.info.status' 2>/dev/null || echo "not-found")
+          STATUS=$(helm status aivo-learning-saas -n aivo -o json 2>/dev/null | jq -r '.info.status' 2>/dev/null || echo "not-found")
           echo "Current Helm release status: $STATUS"
           if [ "$STATUS" = "pending-install" ] || [ "$STATUS" = "pending-upgrade" ] || [ "$STATUS" = "pending-rollback" ]; then
             echo "::warning::Found stuck Helm release in '$STATUS' state — rolling back"
-            helm rollback aivolearning 0 -n aivo --timeout 5m || \
-              helm uninstall aivolearning -n aivo --no-hooks 2>/dev/null || true
+            helm rollback aivo-learning-saas 0 -n aivo --timeout 5m || \
+              helm uninstall aivo-learning-saas -n aivo --no-hooks 2>/dev/null || true
           fi
 
       - name: Helm deploy (canary)
         run: |
-          helm upgrade --install aivolearning infra/helm \
+          helm upgrade --install aivo-learning-saas infra/helm \
             -f infra/helm/values/hetzner-production.yaml \
             -f /tmp/image-tags.yaml \
             -n aivo \
@@ -302,7 +302,7 @@ jobs:
 
           if [ "$FAIL" -eq 1 ]; then
             echo "::error::Canary deployment failed health checks"
-            echo "Consider rolling back: helm rollback aivolearning -n aivo"
+            echo "Consider rolling back: helm rollback aivo-learning-saas -n aivo"
             exit 1
           fi
 
@@ -420,7 +420,7 @@ jobs:
 
       - name: Helm upgrade (production — atomic)
         run: |
-          helm upgrade --install aivolearning infra/helm \
+          helm upgrade --install aivo-learning-saas infra/helm \
             -f infra/helm/values/hetzner-production.yaml \
             -f /tmp/image-tags.yaml \
             -n aivo \
