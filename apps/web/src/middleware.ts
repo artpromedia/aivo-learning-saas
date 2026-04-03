@@ -82,6 +82,18 @@ export function middleware(request: NextRequest) {
   // Check for role cookie/header
   const roleCookie = request.cookies.get("user_role")?.value;
   if (!roleCookie) {
+    // Redirect unauthenticated users away from dashboard routes
+    const isDashboard =
+      pathname.startsWith("/parent") ||
+      pathname.startsWith("/learner") ||
+      pathname.startsWith("/teacher") ||
+      pathname.startsWith("/admin") ||
+      pathname.startsWith("/notifications");
+    if (isDashboard) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/login";
+      return NextResponse.redirect(url);
+    }
     return response;
   }
 

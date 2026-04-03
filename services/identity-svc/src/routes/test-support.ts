@@ -230,7 +230,17 @@ export async function testSupportRoutes(app: FastifyInstance) {
     if (auth?.startsWith("Bearer ")) {
       revokedTokens.add(auth.slice(7));
     }
-    return reply.status(200).send({ ok: true });
+    // Also revoke cookie-based token
+    const cookieToken = request.cookies?.access_token;
+    if (cookieToken) {
+      revokedTokens.add(cookieToken);
+    }
+    return reply
+      .clearCookie("access_token", { path: "/" })
+      .clearCookie("refresh_token", { path: "/api/auth/refresh" })
+      .clearCookie("user_role", { path: "/" })
+      .status(200)
+      .send({ ok: true });
   });
 
   // ── POST /auth/refresh ────────────────────────────────────────────

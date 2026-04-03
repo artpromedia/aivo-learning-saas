@@ -13,7 +13,8 @@ export async function logoutRoute(app: FastifyInstance) {
 
     reply
       .clearCookie("access_token", { path: "/" })
-      .clearCookie("refresh_token", { path: "/api/auth/refresh" });
+      .clearCookie("refresh_token", { path: "/api/auth/refresh" })
+      .clearCookie("user_role", { path: "/" });
 
     return reply.status(200).send({ success: true });
   });

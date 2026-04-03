@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import type { FastifyInstance } from "fastify";
 import fp from "fastify-plugin";
 import * as jose from "jose";
@@ -42,6 +43,7 @@ export default fp(async (fastify: FastifyInstance) => {
       })
         .setProtectedHeader({ alg: "RS256", typ: "JWT" })
         .setSubject(payload.sub)
+        .setJti(randomUUID())
         .setIssuedAt()
         .setExpirationTime("15m")
         .setIssuer("identity-svc")
