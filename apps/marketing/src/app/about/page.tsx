@@ -83,11 +83,45 @@ const values = [
   },
 ];
 
-const team = [
-  { name: "Coming Soon", role: "CEO & Co-Founder" },
-  { name: "Coming Soon", role: "CTO & Co-Founder" },
-  { name: "Coming Soon", role: "VP of Education" },
-  { name: "Coming Soon", role: "Head of AI Research" },
+interface TeamMember {
+  name: string;
+  role: string;
+  bio: string;
+  linkedin?: string;
+  image?: string;
+}
+
+const team: TeamMember[] = [
+  {
+    name: "Dr. Ikechukwu Osuji",
+    role: "Co-Founder & Chairman",
+    bio: "Ikechukwu Osuji, MD, MPH, is a distinguished Internal Medicine physician and healthcare executive with over 35 years of global experience. A graduate of the University of Jos (Nigeria), he completed his Internal Medicine residency at Howard University \u2014 graduating top of his class \u2014 and earned a Master of Public Health from George Washington University specializing in International Health. Ike served as Chief of Staff at the Medical Center of Lancaster and Hampton Community Hospital, and spent roughly a decade as Medical Director of Ernest Health International overseeing 26 hospitals nationwide. As an entrepreneur he built a private practice into five locations before its acquisition by WellMed (UnitedHealth Group) in 2024. He brings deep expertise in clinical operations, healthcare governance, and scaling medical organizations to AIVO's mission.",
+    linkedin: "https://www.linkedin.com/",
+  },
+  {
+    name: "Ofem Ekapong Ofem",
+    role: "Co-Founder & Chief Strategy Officer",
+    bio: "Ofem Ofem is a business executive with nearly two decades of international acclaim in workforce development, human capital optimization, and strategic leadership. After thirteen years at KPMG Nigeria \u2014 where he built the firm's Strategy Practice and led landmark engagements for Shell Nigeria, Unilever Nigeria, and the Dangote Group \u2014 he created a workforce development methodology documented by Lagos Business School, adopted by 15 major corporations, and credited by the Federal Government of Nigeria as a foundation for national policy under Vision 2020. He served as Managing Director of SmartCity Lagos, a $10 billion initiative assessed by PwC as one of the largest single FDIs in Nigerian history. A published scholar with three peer-reviewed articles (including publications in Human Resource Development Review and AI & Society), Ofem is currently completing his Doctor of Business Administration at Saint Mary's University of Minnesota with a concentration in Organizational Dynamics in AI.",
+    linkedin: "https://www.linkedin.com/in/ofem-ofem",
+  },
+  {
+    name: "Nnamdi Uzokwe",
+    role: "Co-Founder & Chief Commercial Officer",
+    bio: "Nnamdi Uzokwe is a retired U.S. Navy Reserves officer with over three decades of experience in medical device sales and entrepreneurship. His extensive career in the healthcare and life-sciences industries gives AIVO a powerful commercial lens \u2014 from go-to-market strategy and channel partnerships to enterprise sales execution.",
+    linkedin: "https://www.linkedin.com/",
+  },
+  {
+    name: "Edward Hamilton",
+    role: "VP, Special Education & Sales",
+    bio: "Edward Hamilton is a veteran of the NYPD 911 system and a passionate special education advocate. His frontline public-service career instilled a deep commitment to serving vulnerable communities, which he now channels into AIVO's mission. Edward bridges the gap between families navigating the special education system and the technology that can transform their children's outcomes. As VP of Special Education & Sales, he leads AIVO's outreach to school districts, therapy practices, and parent communities \u2014 ensuring the platform reaches the families who need it most.",
+    linkedin: "https://www.linkedin.com/",
+  },
+  {
+    name: "Dr. Patrick Ukata",
+    role: "VP, Curriculum Design & Compliance",
+    bio: "Patrick Ukata, PhD, brings over three decades of experience in the education sector, including positions at American University (Washington, D.C.), George Washington University, and Johns Hopkins University. His deep expertise in curriculum development, instructional design, and regulatory compliance ensures that AIVO's learning content meets the highest academic and accessibility standards.",
+    linkedin: "https://www.linkedin.com/",
+  },
 ];
 
 export default function AboutPage() {
@@ -185,41 +219,65 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Team */}
+      {/* Leadership */}
       <section className="py-20">
         <div className="mx-auto max-w-7xl px-6">
-          <div className="text-center mb-12">
+          <div className="text-center mb-16">
             <h2 className="text-3xl font-bold tracking-tight text-aivo-navy-800 sm:text-4xl">
-              Meet the Team
+              Meet Our Leadership
             </h2>
             <p className="mt-4 text-lg text-aivo-navy-400 max-w-3xl mx-auto">
-              Passionate educators, engineers, and researchers building the
-              future of learning.
+              AIVO is led by a team of seasoned executives who bring decades of
+              cross-sector experience in healthcare, business strategy, education,
+              public service, and technology.
             </p>
           </div>
 
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {team.map((member, i) => (
+          <div className="space-y-12">
+            {team.map((member) => (
               <div
-                key={i}
-                className="group rounded-2xl border border-aivo-navy-100 bg-white p-8 text-center shadow-sm"
+                key={member.name}
+                className="flex flex-col md:flex-row items-start gap-8 rounded-2xl border border-aivo-navy-100 bg-white p-8 shadow-sm"
               >
-                {/* Avatar placeholder */}
-                <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-aivo-purple-50">
-                  <Users className="h-10 w-10 text-aivo-purple-300" />
+                {/* Avatar / Photo placeholder */}
+                <div className="shrink-0 mx-auto md:mx-0">
+                  <div className="flex h-32 w-32 items-center justify-center rounded-full bg-aivo-purple-50">
+                    {member.image ? (
+                      <img
+                        src={member.image}
+                        alt={member.name}
+                        className="h-32 w-32 rounded-full object-cover"
+                      />
+                    ) : (
+                      <Users className="h-14 w-14 text-aivo-purple-300" />
+                    )}
+                  </div>
                 </div>
-                <h3 className="text-lg font-bold text-aivo-navy-800">
-                  {member.name}
-                </h3>
-                <p className="mt-1 text-sm text-aivo-navy-400">
-                  {member.role}
-                </p>
-                <Link
-                  href="/careers"
-                  className="mt-4 inline-block text-sm font-semibold text-aivo-purple-600 hover:text-aivo-purple-700 transition-colors"
-                >
-                  We&apos;re hiring!
-                </Link>
+
+                {/* Text */}
+                <div className="flex-1 text-center md:text-left">
+                  <h3 className="text-xl font-bold text-aivo-navy-800">
+                    {member.name}
+                  </h3>
+                  <p className="mt-1 text-sm font-semibold text-aivo-purple-600">
+                    {member.role}
+                  </p>
+                  <p className="mt-4 text-aivo-navy-500 leading-relaxed">
+                    {member.bio}
+                  </p>
+                  {member.linkedin && (
+                    <a
+                      href={member.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-aivo-purple-600 hover:text-aivo-purple-700 transition-colors"
+                    >
+                      LinkedIn Profile
+                      {" "}
+                      <span aria-hidden="true">&rarr;</span>
+                    </a>
+                  )}
+                </div>
               </div>
             ))}
           </div>
