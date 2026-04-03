@@ -148,7 +148,7 @@ function StepIndicator({ currentStep, t }: { currentStep: number; t: (section: s
     <div className="flex items-center justify-center gap-2 mb-8" role="navigation" aria-label="Booking progress">
       {stepLabels.map((label, i) => {
         const stepNum = i + 1;
-        const stepKey = i === 0 ? "step1Title" : i === 1 ? "step2Title" : "step3Title";
+        const _stepKey = i === 0 ? "step1Title" : i === 1 ? "step2Title" : "step3Title";
         return (
           <div key={stepNum} className="flex items-center gap-2">
             <div

@@ -502,7 +502,7 @@ export default function TermsOfServicePage() {
               shall be resolved through binding arbitration administered by the
               American Arbitration Association (AAA) in accordance with its
               Commercial Arbitration Rules. The arbitration shall take place in
-              San Francisco, California, and the language of the arbitration
+              Minneapolis, Minnesota, and the language of the arbitration
               shall be English.
             </p>
             <p className="text-aivo-navy-600 leading-relaxed mb-4">

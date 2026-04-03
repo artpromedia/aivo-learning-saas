@@ -553,7 +553,7 @@ export default function FerpaPage() {
                 privacy@aivolearning.com
               </a>
               <p className="mt-2 text-sm text-aivo-navy-500">
-                AIVO Learning, 123 Education Lane, San Francisco, CA 94105
+                AIVO Learning, 1400 Van Buren Street, Suite 200, Minneapolis, MN 55413
               </p>
               <p className="mt-2 text-sm text-aivo-navy-500">
                 We respond to all privacy inquiries within two (2) business

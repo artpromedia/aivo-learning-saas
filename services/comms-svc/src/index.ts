@@ -1,6 +1,7 @@
 import Fastify from "fastify";
 import cookie from "@fastify/cookie";
 import cors from "@fastify/cors";
+import multipart from "@fastify/multipart";
 import rateLimit from "@fastify/rate-limit";
 import { ZodError } from "zod";
 
@@ -26,6 +27,7 @@ import { registerPushRoute } from "./routes/push/register.js";
 import { unregisterPushRoute } from "./routes/push/unregister.js";
 import { websocketRoute } from "./routes/websocket/connect.js";
 import { newsletterSubscribeRoute } from "./routes/newsletter/subscribe.js";
+import { careersApplyRoute } from "./routes/careers/apply.js";
 
 // Events
 import { setupSubscribers } from "./events/subscribers.js";
@@ -70,8 +72,11 @@ export async function buildApp() {
   // Core plugins
   await app.register(cookie);
   await app.register(cors, {
-    origin: config.APP_URL,
+    origin: [config.APP_URL, "http://localhost:3100"],
     credentials: true,
+  });
+  await app.register(multipart, {
+    limits: { fileSize: 5 * 1024 * 1024 },
   });
   await app.register(rateLimit, {
     max: 100,
@@ -103,6 +108,7 @@ export async function buildApp() {
   await app.register(unregisterPushRoute);
   await app.register(websocketRoute);
   await app.register(newsletterSubscribeRoute);
+  await app.register(careersApplyRoute);
 
   // Set up NATS event subscribers
   await setupSubscribers(app);

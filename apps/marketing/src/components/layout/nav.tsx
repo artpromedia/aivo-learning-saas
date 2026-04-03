@@ -10,7 +10,6 @@ import { useI18n } from "@/providers/i18n-provider";
 import { LocaleSwitcher } from "@/components/layout/locale-switcher";
 
 const HIDDEN_PREFIXES = ["/demo", "/get-started"];
-const DARK_BG_ROUTES = ["/", "/case-studies/"];
 
 export function Nav() {
   const pathname = usePathname();

@@ -8,7 +8,7 @@ const partners = [
   "Chicago",
   "Minneapolis",
   "Dallas",
-  "San Francisco",
+  "Atlanta",
   "Denver",
 ];
 

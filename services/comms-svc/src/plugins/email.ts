@@ -2,6 +2,12 @@ import type { FastifyInstance } from "fastify";
 import fp from "fastify-plugin";
 import { getConfig } from "../config.js";
 
+export interface EmailAttachment {
+  filename: string;
+  content: string; // base64-encoded
+  contentType: string;
+}
+
 export interface EmailClient {
   send(params: {
     to: string;
@@ -9,6 +15,7 @@ export interface EmailClient {
     html: string;
     from?: string;
     tags?: string[];
+    attachments?: EmailAttachment[];
   }): Promise<void>;
 }
 
@@ -24,7 +31,7 @@ class OonrumailClient implements EmailClient {
     private readonly baseUrl: string,
   ) {}
 
-  async send(params: { to: string; subject: string; html: string; from?: string; tags?: string[] }): Promise<void> {
+  async send(params: { to: string; subject: string; html: string; from?: string; tags?: string[]; attachments?: EmailAttachment[] }): Promise<void> {
     const response = await fetch(`${this.baseUrl}/send`, {
       method: "POST",
       headers: {
@@ -37,6 +44,7 @@ class OonrumailClient implements EmailClient {
         subject: params.subject,
         html: params.html,
         tags: params.tags ?? [],
+        attachments: params.attachments ?? [],
       }),
     });
 
@@ -48,12 +56,15 @@ class OonrumailClient implements EmailClient {
 }
 
 class ConsoleEmailClient implements EmailClient {
-  async send(params: { to: string; subject: string; html: string; tags?: string[] }): Promise<void> {
+  async send(params: { to: string; subject: string; html: string; tags?: string[]; attachments?: EmailAttachment[] }): Promise<void> {
     console.log("──── DEV EMAIL ────");
     console.log(`To: ${params.to}`);
     console.log(`Subject: ${params.subject}`);
     console.log(`HTML length: ${params.html.length} chars`);
     console.log(`Tags: ${(params.tags ?? []).join(", ")}`);
+    if (params.attachments?.length) {
+      console.log(`Attachments: ${params.attachments.map((a) => `${a.filename} (${a.contentType})`).join(", ")}`);
+    }
     console.log("───────────────────");
   }
 }

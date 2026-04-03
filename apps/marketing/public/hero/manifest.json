@@ -1,0 +1,77 @@
+{
+  "generated": "2026-04-03T16:33:40.509Z",
+  "slides": {
+    "parent-teacher-conference": {
+      "srcSet": {
+        "avif": "/hero/optimized/parent-teacher-conference-640w.avif 640w, /hero/optimized/parent-teacher-conference-1024w.avif 1024w, /hero/optimized/parent-teacher-conference-1536w.avif 1536w",
+        "webp": "/hero/optimized/parent-teacher-conference-640w.webp 640w, /hero/optimized/parent-teacher-conference-1024w.webp 1024w, /hero/optimized/parent-teacher-conference-1536w.webp 1536w",
+        "jpeg": "/hero/optimized/parent-teacher-conference-640w.jpg 640w, /hero/optimized/parent-teacher-conference-1024w.jpg 1024w, /hero/optimized/parent-teacher-conference-1536w.jpg 1536w"
+      },
+      "sizes": "(max-width: 768px) 100vw, 60vw",
+      "blurDataURL": "data:image/jpeg;base64,/9j/2wBDABALDA4MChAODQ4SERATGCgaGBYWGDEjJR0oOjM9PDkzODdASFxOQERXRTc4UG1RV19iZ2hnPk1xeXBkeFxlZ2P/2wBDARESEhgVGC8aGi9jQjhCY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2P/wAARCAAHAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAEC/8QAGxAAAgMBAQEAAAAAAAAAAAAAAQIAAxEEIUH/xAAUAQEAAAAAAAAAAAAAAAAAAAAD/8QAFxEBAQEBAAAAAAAAAAAAAAAAAQARAv/aAAwDAQACEQMRAD8Aj9Dc1Tq1jMtjZv0GbXuKqB6cGbEQTpyVDb//2Q==",
+      "width": 1536,
+      "height": 1024,
+      "aspectRatio": "3/2"
+    },
+    "mother-son-sofa": {
+      "srcSet": {
+        "avif": "/hero/optimized/mother-son-sofa-640w.avif 640w, /hero/optimized/mother-son-sofa-1024w.avif 1024w, /hero/optimized/mother-son-sofa-1536w.avif 1536w, /hero/optimized/mother-son-sofa-1920w.avif 1920w, /hero/optimized/mother-son-sofa-2560w.avif 2560w",
+        "webp": "/hero/optimized/mother-son-sofa-640w.webp 640w, /hero/optimized/mother-son-sofa-1024w.webp 1024w, /hero/optimized/mother-son-sofa-1536w.webp 1536w, /hero/optimized/mother-son-sofa-1920w.webp 1920w, /hero/optimized/mother-son-sofa-2560w.webp 2560w",
+        "jpeg": "/hero/optimized/mother-son-sofa-640w.jpg 640w, /hero/optimized/mother-son-sofa-1024w.jpg 1024w, /hero/optimized/mother-son-sofa-1536w.jpg 1536w, /hero/optimized/mother-son-sofa-1920w.jpg 1920w, /hero/optimized/mother-son-sofa-2560w.jpg 2560w"
+      },
+      "sizes": "(max-width: 768px) 100vw, 60vw",
+      "blurDataURL": "data:image/jpeg;base64,/9j/2wBDABALDA4MChAODQ4SERATGCgaGBYWGDEjJR0oOjM9PDkzODdASFxOQERXRTc4UG1RV19iZ2hnPk1xeXBkeFxlZ2P/2wBDARESEhgVGC8aGi9jQjhCY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2P/wAARCAAGAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAT/xAAfEAAABQQDAAAAAAAAAAAAAAAAAQIDMQQFESESFEH/xAAVAQEBAAAAAAAAAAAAAAAAAAACA//EABcRAQEBAQAAAAAAAAAAAAAAAAEAESH/2gAMAwEAAhEDEQA/AJXbkuhawjkazk/BJ33lbzO5ABMDJqjy/9k=",
+      "width": 2752,
+      "height": 1536,
+      "aspectRatio": "43/24"
+    },
+    "mobile-latino-boy-ipad": {
+      "srcSet": {
+        "avif": "/hero/optimized/mobile-latino-boy-ipad-375w.avif 375w, /hero/optimized/mobile-latino-boy-ipad-640w.avif 640w, /hero/optimized/mobile-latino-boy-ipad-1024w.avif 1024w",
+        "webp": "/hero/optimized/mobile-latino-boy-ipad-375w.webp 375w, /hero/optimized/mobile-latino-boy-ipad-640w.webp 640w, /hero/optimized/mobile-latino-boy-ipad-1024w.webp 1024w",
+        "jpeg": "/hero/optimized/mobile-latino-boy-ipad-375w.jpg 375w, /hero/optimized/mobile-latino-boy-ipad-640w.jpg 640w, /hero/optimized/mobile-latino-boy-ipad-1024w.jpg 1024w"
+      },
+      "sizes": "(max-width: 768px) 100vw, 50vw",
+      "blurDataURL": "data:image/jpeg;base64,/9j/2wBDABALDA4MChAODQ4SERATGCgaGBYWGDEjJR0oOjM9PDkzODdASFxOQERXRTc4UG1RV19iZ2hnPk1xeXBkeFxlZ2P/2wBDARESEhgVGC8aGi9jQjhCY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2P/wAARCAASAAoDASIAAhEBAxEB/8QAGQAAAgMBAAAAAAAAAAAAAAAAAAUBAgQG/8QAJBAAAQMEAQMFAAAAAAAAAAAAAQACAwQFERMiBhIhMTJBUZH/xAAVAQEBAAAAAAAAAAAAAAAAAAADBP/EABgRAQEBAQEAAAAAAAAAAAAAAAEAUTFB/9oADAMBAAIRAxEAPwCnUVymmuGyCVmhowRlc05shcTqHk/aa0ttpGSFtU+XYTxYU0FsiwMMKndJzGiv94Pzn1WAyydx5u/UIRvZPC//2Q==",
+      "width": 1536,
+      "height": 2752,
+      "aspectRatio": "24/43"
+    },
+    "father-daughter-breakfast": {
+      "srcSet": {
+        "avif": "/hero/optimized/father-daughter-breakfast-640w.avif 640w, /hero/optimized/father-daughter-breakfast-1024w.avif 1024w, /hero/optimized/father-daughter-breakfast-1536w.avif 1536w, /hero/optimized/father-daughter-breakfast-1920w.avif 1920w, /hero/optimized/father-daughter-breakfast-2560w.avif 2560w",
+        "webp": "/hero/optimized/father-daughter-breakfast-640w.webp 640w, /hero/optimized/father-daughter-breakfast-1024w.webp 1024w, /hero/optimized/father-daughter-breakfast-1536w.webp 1536w, /hero/optimized/father-daughter-breakfast-1920w.webp 1920w, /hero/optimized/father-daughter-breakfast-2560w.webp 2560w",
+        "jpeg": "/hero/optimized/father-daughter-breakfast-640w.jpg 640w, /hero/optimized/father-daughter-breakfast-1024w.jpg 1024w, /hero/optimized/father-daughter-breakfast-1536w.jpg 1536w, /hero/optimized/father-daughter-breakfast-1920w.jpg 1920w, /hero/optimized/father-daughter-breakfast-2560w.jpg 2560w"
+      },
+      "sizes": "(max-width: 768px) 100vw, 60vw",
+      "blurDataURL": "data:image/jpeg;base64,/9j/2wBDABALDA4MChAODQ4SERATGCgaGBYWGDEjJR0oOjM9PDkzODdASFxOQERXRTc4UG1RV19iZ2hnPk1xeXBkeFxlZ2P/2wBDARESEhgVGC8aGi9jQjhCY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2P/wAARCAAGAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAQF/8QAHhAAAgEDBQAAAAAAAAAAAAAAAQIABAUREhMUImH/xAAUAQEAAAAAAAAAAAAAAAAAAAAE/8QAFREBAQAAAAAAAAAAAAAAAAAAAQD/2gAMAwEAAhEDEQA/AKLjyGYrugMcdhM41NUDjUhx5EQwshC//9k=",
+      "width": 2752,
+      "height": 1536,
+      "aspectRatio": "43/24"
+    },
+    "black-girl-tablet": {
+      "srcSet": {
+        "avif": "/hero/optimized/black-girl-tablet-640w.avif 640w, /hero/optimized/black-girl-tablet-1024w.avif 1024w, /hero/optimized/black-girl-tablet-1536w.avif 1536w, /hero/optimized/black-girl-tablet-1920w.avif 1920w, /hero/optimized/black-girl-tablet-2560w.avif 2560w",
+        "webp": "/hero/optimized/black-girl-tablet-640w.webp 640w, /hero/optimized/black-girl-tablet-1024w.webp 1024w, /hero/optimized/black-girl-tablet-1536w.webp 1536w, /hero/optimized/black-girl-tablet-1920w.webp 1920w, /hero/optimized/black-girl-tablet-2560w.webp 2560w",
+        "jpeg": "/hero/optimized/black-girl-tablet-640w.jpg 640w, /hero/optimized/black-girl-tablet-1024w.jpg 1024w, /hero/optimized/black-girl-tablet-1536w.jpg 1536w, /hero/optimized/black-girl-tablet-1920w.jpg 1920w, /hero/optimized/black-girl-tablet-2560w.jpg 2560w"
+      },
+      "sizes": "(max-width: 768px) 100vw, 60vw",
+      "blurDataURL": "data:image/jpeg;base64,/9j/2wBDABALDA4MChAODQ4SERATGCgaGBYWGDEjJR0oOjM9PDkzODdASFxOQERXRTc4UG1RV19iZ2hnPk1xeXBkeFxlZ2P/2wBDARESEhgVGC8aGi9jQjhCY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2P/wAARCAAGAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAQF/8QAHRAAAgEEAwAAAAAAAAAAAAAAAAIBAwUSIRNBUf/EABUBAQEAAAAAAAAAAAAAAAAAAAME/8QAFhEAAwAAAAAAAAAAAAAAAAAAAAEx/9oADAMBAAIRAxEAPwC+9U6rrizxim9emTyR2oBO6Oof/9k=",
+      "width": 2752,
+      "height": 1536,
+      "aspectRatio": "43/24"
+    },
+    "arab-boy-chromebook": {
+      "srcSet": {
+        "avif": "/hero/optimized/arab-boy-chromebook-640w.avif 640w, /hero/optimized/arab-boy-chromebook-1024w.avif 1024w, /hero/optimized/arab-boy-chromebook-1536w.avif 1536w, /hero/optimized/arab-boy-chromebook-1920w.avif 1920w, /hero/optimized/arab-boy-chromebook-2560w.avif 2560w",
+        "webp": "/hero/optimized/arab-boy-chromebook-640w.webp 640w, /hero/optimized/arab-boy-chromebook-1024w.webp 1024w, /hero/optimized/arab-boy-chromebook-1536w.webp 1536w, /hero/optimized/arab-boy-chromebook-1920w.webp 1920w, /hero/optimized/arab-boy-chromebook-2560w.webp 2560w",
+        "jpeg": "/hero/optimized/arab-boy-chromebook-640w.jpg 640w, /hero/optimized/arab-boy-chromebook-1024w.jpg 1024w, /hero/optimized/arab-boy-chromebook-1536w.jpg 1536w, /hero/optimized/arab-boy-chromebook-1920w.jpg 1920w, /hero/optimized/arab-boy-chromebook-2560w.jpg 2560w"
+      },
+      "sizes": "(max-width: 768px) 100vw, 60vw",
+      "blurDataURL": "data:image/jpeg;base64,/9j/2wBDABALDA4MChAODQ4SERATGCgaGBYWGDEjJR0oOjM9PDkzODdASFxOQERXRTc4UG1RV19iZ2hnPk1xeXBkeFxlZ2P/2wBDARESEhgVGC8aGi9jQjhCY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2P/wAARCAAGAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAMF/8QAHRAAAgIBBQAAAAAAAAAAAAAAAQIABAMFESExUf/EABQBAQAAAAAAAAAAAAAAAAAAAAL/xAAXEQADAQAAAAAAAAAAAAAAAAAAAQIR/9oADAMBAAIRAxEAPwCF23lYLjAQFej5NFNcuhFG6cCIgkVLD//Z",
+      "width": 2752,
+      "height": 1536,
+      "aspectRatio": "43/24"
+    }
+  }
+}

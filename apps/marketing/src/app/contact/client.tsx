@@ -306,9 +306,9 @@ export function ContactPageClient() {
                   <div>
                     <p className="font-medium text-aivo-navy-700">Office</p>
                     <p className="mt-0.5 text-aivo-navy-500">
-                      123 Education Lane
+                      1400 Van Buren Street, Suite 200
                       <br />
-                      San Francisco, CA 94105
+                      Minneapolis, MN 55413
                     </p>
                   </div>
                 </li>
@@ -333,10 +333,10 @@ export function ContactPageClient() {
                   <div>
                     <p className="font-medium text-aivo-navy-700">Phone</p>
                     <a
-                      href="tel:+15551234567"
+                      href="tel:+17639005372"
                       className="mt-0.5 text-aivo-purple-600 hover:text-aivo-purple-700 transition-colors"
                     >
-                      (555) 123-4567
+                      (763) 900-5372
                     </a>
                   </div>
                 </li>

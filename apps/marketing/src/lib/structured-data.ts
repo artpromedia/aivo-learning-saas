@@ -15,7 +15,7 @@ export function organizationSchema() {
     ],
     contactPoint: {
       "@type": "ContactPoint",
-      telephone: "+1-555-123-4567",
+      telephone: "+1-763-900-5372",
       contactType: "customer service",
       email: "support@aivolearning.com",
       availableLanguage: ["English", "Spanish"],

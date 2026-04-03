@@ -34,7 +34,7 @@ export const testimonials: Testimonial[] = [
     quote:
       "AIVO's IEP tracking saves me hours every week. Progress reports that used to take all weekend are now generated automatically with data I actually trust.",
     name: "Special Education Coordinator",
-    role: "Verified Aivo Educator, San Francisco",
+    role: "Verified Aivo Educator, Minneapolis",
   },
   {
     quote:

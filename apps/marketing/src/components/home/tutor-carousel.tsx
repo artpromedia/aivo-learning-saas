@@ -10,7 +10,7 @@ import { SectionHeader } from "@/components/shared/section-header";
 import {
   TUTOR_ORDER,
   getTutorConfig,
-  type TutorPersona,
+  type TutorPersona as _TutorPersona,
   type TutorAvatarConfig,
 } from "@/components/tutors/tutor-avatar-data";
 

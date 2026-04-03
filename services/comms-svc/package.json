@@ -15,11 +15,12 @@
   },
   "dependencies": {
     "@aivo/brand": "workspace:*",
-    "@aivo/observability": "workspace:*",
     "@aivo/db": "workspace:*",
     "@aivo/events": "workspace:*",
+    "@aivo/observability": "workspace:*",
     "@fastify/cookie": "^11.0.2",
     "@fastify/cors": "^11.0.0",
+    "@fastify/multipart": "^9.0.0",
     "@fastify/rate-limit": "^10.2.1",
     "@fastify/websocket": "^11.0.1",
     "dotenv": "^17.3.1",

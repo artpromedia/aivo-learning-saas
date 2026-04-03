@@ -20,8 +20,8 @@ export default function GetStartedLayout({
           </Link>
           <p className="text-sm text-aivo-navy-500">
             Questions?{" "}
-            <a href="tel:+15551234567" className="font-medium text-aivo-purple-600 hover:underline">
-              +1 (555) 123-4567
+            <a href="tel:+17639005372" className="font-medium text-aivo-purple-600 hover:underline">
+              +1 (763) 900-5372
             </a>
           </p>
         </div>

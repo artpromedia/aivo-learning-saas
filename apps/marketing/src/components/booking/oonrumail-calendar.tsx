@@ -98,8 +98,8 @@ export function OonrumailCalendar({
             demo@aivolearning.com
           </a>{" "}
           or call{" "}
-          <a href="tel:+15551234567" className="text-aivo-purple-600 hover:underline">
-            +1 (555) 123-4567
+          <a href="tel:+17639005372" className="text-aivo-purple-600 hover:underline">
+            +1 (763) 900-5372
           </a>
           .
         </p>
