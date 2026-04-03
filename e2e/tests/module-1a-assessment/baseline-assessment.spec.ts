@@ -15,7 +15,7 @@ test.describe('Module 1a: Baseline Assessment', () => {
     parent = await createTestParent();
   });
 
-  test.beforeEach(async ({}, testInfo) => {
+  test.beforeEach(async (_fixtures, testInfo) => {
     if (!assessmentUp) testInfo.skip(true, 'assessment-svc not available');
   });
 
