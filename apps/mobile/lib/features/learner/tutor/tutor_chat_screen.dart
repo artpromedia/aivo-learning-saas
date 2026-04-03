@@ -13,6 +13,8 @@ import 'package:aivo_mobile/core/api/api_client.dart';
 import 'package:aivo_mobile/core/api/endpoints.dart';
 import 'package:aivo_mobile/core/connectivity/connectivity_provider.dart';
 import 'package:aivo_mobile/data/models/tutor_session.dart';
+import 'package:aivo_mobile/features/learner/tutor/widgets/emotion_check_in_widget.dart';
+import 'package:aivo_mobile/features/learner/tutor/widgets/speech_practice_widget.dart';
 
 // ---------------------------------------------------------------------------
 // Providers
@@ -48,7 +50,10 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
   String? _sessionId;
   String _tutorName = 'Tutor';
   String _tutorAvatar = '';
+  String _tutorSubject = '';
   bool _isStreaming = false;
+  bool _emotionCheckInComplete = false;
+  EmotionZone? _selectedEmotion;
   StreamSubscription<List<int>>? _streamSub;
 
   @override
@@ -64,9 +69,55 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
     _sessionId = session.id;
     _tutorName = session.tutorName;
     _tutorAvatar = session.tutorAvatar;
+    _tutorSubject = session.subject;
     if (session.messages.isNotEmpty) {
       _messages.addAll(session.messages);
+      // If session already has messages, skip the emotion check-in
+      if (_isSel) _emotionCheckInComplete = true;
     }
+  }
+
+  bool get _isSel => _tutorSubject.toLowerCase() == 'sel';
+  bool get _isSpeech => _tutorSubject.toLowerCase() == 'speech';
+
+  void _onEmotionSelected(EmotionZone zone) {
+    setState(() {
+      _selectedEmotion = zone;
+      _emotionCheckInComplete = true;
+    });
+    // Include selected emotion in session start context
+    final api = ref.read(apiClientProvider);
+    if (_sessionId != null) {
+      api.post(
+        Endpoints.tutorSessionMessage(_sessionId!),
+        data: {'message': '[emotion:${zone.name}]'},
+      );
+    }
+  }
+
+  void _showSpeechPracticeSheet(String targetSound) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: SpeechPracticeWidget(
+          targetSound: targetSound,
+          onComplete: (recording) {
+            Navigator.of(context).pop();
+            _sendMessage(
+              '[speech_recording:${recording.filePath},'
+              'duration:${recording.duration.inSeconds}s]',
+            );
+          },
+        ),
+      ),
+    );
   }
 
   void _scrollToBottom() {
@@ -362,11 +413,29 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
           ),
         ],
       ),
+      // Speech practice FAB
+      floatingActionButton: _isSpeech
+          ? Semantics(
+              button: true,
+              label: 'Open speech practice recorder',
+              child: FloatingActionButton(
+                backgroundColor: const Color(0xFFFF7675),
+                onPressed: () => _showSpeechPracticeSheet('/r/'),
+                child: const Icon(Icons.mic, color: Colors.white),
+              ),
+            )
+          : null,
       body: Column(
         children: [
+          // Emotion check-in for SEL (Harmony) sessions
+          if (_isSel && !_emotionCheckInComplete)
+            EmotionCheckInWidget(
+              onComplete: _onEmotionSelected,
+            ),
+
           // Messages
           Expanded(
-            child: _messages.isEmpty
+            child: _messages.isEmpty && (!_isSel || _emotionCheckInComplete)
                 ? Center(
                     child: Padding(
                       padding: const EdgeInsets.all(32),
@@ -379,20 +448,22 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
                       ),
                     ),
                   )
-                : ListView.builder(
-                    controller: _scrollController,
-                    padding: const EdgeInsets.all(16),
-                    itemCount: _messages.length,
-                    itemBuilder: (context, index) {
-                      final msg = _messages[index];
-                      return _MessageBubble(
-                        message: msg,
-                        tutorAvatar: _tutorAvatar,
-                        tutorName: _tutorName,
-                        isLowVerbal: isLowVerbal,
-                      );
-                    },
-                  ),
+                : _messages.isEmpty
+                    ? const SizedBox.shrink()
+                    : ListView.builder(
+                        controller: _scrollController,
+                        padding: const EdgeInsets.all(16),
+                        itemCount: _messages.length,
+                        itemBuilder: (context, index) {
+                          final msg = _messages[index];
+                          return _MessageBubble(
+                            message: msg,
+                            tutorAvatar: _tutorAvatar,
+                            tutorName: _tutorName,
+                            isLowVerbal: isLowVerbal,
+                          );
+                        },
+                      ),
           ),
 
           // Quick replies for LOW_VERBAL
