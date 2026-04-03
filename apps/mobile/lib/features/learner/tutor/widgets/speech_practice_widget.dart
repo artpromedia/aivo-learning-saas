@@ -116,8 +116,8 @@ class _SpeechPracticeWidgetState extends State<SpeechPracticeWidget>
     if (!status.isGranted) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text(
+        const SnackBar(
+          content: Text(
             'Microphone access is needed for speech practice. '
             'Please enable it in Settings.',
           ),
@@ -208,7 +208,7 @@ class _SpeechPracticeWidgetState extends State<SpeechPracticeWidget>
     widget.onComplete(SpeechRecording(
       filePath: _filePath!,
       duration: _recordedDuration,
-    ));
+    ),);
   }
 
   String _formatDuration(Duration d) {
