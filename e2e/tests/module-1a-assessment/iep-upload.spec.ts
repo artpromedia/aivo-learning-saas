@@ -18,8 +18,8 @@ test.describe('Module 1a: IEP Upload', () => {
     learner = await createTestLearner(parent.token, 3);
   });
 
-  test.beforeEach(async (_fixtures, testInfo) => {
-    if (!assessmentUp) testInfo.skip(true, 'assessment-svc not available');
+  test.beforeEach(async () => {
+    test.skip(!assessmentUp, 'assessment-svc not available');
   });
 
   test.afterAll(async () => {
