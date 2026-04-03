@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "next dev -p 3100",
     "optimize:avatars": "tsx scripts/optimize-tutor-avatars.ts",
-    "prebuild": "pnpm optimize:avatars",
+    "optimize:hero": "tsx scripts/optimize-hero-images.ts",
+    "optimize:images": "pnpm optimize:avatars && pnpm optimize:hero",
+    "prebuild": "pnpm optimize:images",
     "build": "next build && node scripts/generate-rss.mjs && node scripts/generate-sitemap.mjs",
     "start": "npx serve out -p 3001",
     "lint": "next lint"

@@ -60,9 +60,7 @@ export default function FerpaPage() {
             <p className="text-aivo-navy-600 leading-relaxed">
               AIVO Learning serves K-12 students, including students with
               Individualized Education Programs (IEPs), through our Brain Clone
-              AI adaptive learning profiles and our five AI Tutors (Nova for
-              Math, Sage for ELA, Spark for Science, Chrono for History, and
-              Pixel for Coding). Because our platform maintains education
+              AI adaptive learning profiles and our seven AI Tutors. Because our platform maintains education
               records on behalf of schools and parents, FERPA compliance is
               foundational to every aspect of how we collect, store, process,
               and share student data.

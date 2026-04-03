@@ -114,7 +114,7 @@ describe("WalkthroughShowcase Integration", () => {
   it("renders all 3 feature callout cards", () => {
     render(<WalkthroughShowcase />);
     expect(screen.getByText("Brain Clone\u2122 Technology")).toBeDefined();
-    expect(screen.getByText("5 Expert AI Tutors")).toBeDefined();
+    expect(screen.getByText("7 Expert AI Tutors")).toBeDefined();
     expect(screen.getByText("Real-Time Analytics")).toBeDefined();
   });
 

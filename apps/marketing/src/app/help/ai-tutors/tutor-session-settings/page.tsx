@@ -576,7 +576,7 @@ export default function TutorSessionSettingsPage() {
                 Meeting Your AI Tutors
               </h3>
               <p className="mt-1 text-sm text-aivo-navy-500">
-                Get to know all 5 tutors and how they personalize sessions.
+                Get to know all 7 tutors and how they personalize sessions.
               </p>
             </Link>
             <Link

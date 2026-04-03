@@ -35,9 +35,9 @@ Brain Clone AI creates a digital twin of each student's learning profile. This i
 - **Engagement patterns** — What keeps each student motivated and focused
 - **Accommodation needs** — IEP goals, functioning levels, and required supports
 
-### Five Specialized AI Tutors
+### Seven Specialized AI Tutors
 
-Every student gets access to five AI tutors, each with a unique personality and teaching approach:
+Every student gets access to seven AI tutors, each with a unique personality and teaching approach:
 
 1. **Nova** — Mathematics through cosmic exploration
 2. **Sage** — English Language Arts through storytelling

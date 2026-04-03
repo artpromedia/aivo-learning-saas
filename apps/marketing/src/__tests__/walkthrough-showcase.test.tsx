@@ -66,7 +66,7 @@ describe("WalkthroughShowcase", () => {
   it("renders 3 feature cards with correct content", () => {
     render(<WalkthroughShowcase />);
     expect(screen.getByText("Brain Clone™ Technology")).toBeDefined();
-    expect(screen.getByText("5 Expert AI Tutors")).toBeDefined();
+    expect(screen.getByText("7 Expert AI Tutors")).toBeDefined();
     expect(screen.getByText("Real-Time Analytics")).toBeDefined();
     expect(screen.getByText("A unique AI model for every student")).toBeDefined();
   });

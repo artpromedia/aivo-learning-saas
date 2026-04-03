@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     template: "%s | AIVO",
   },
   description:
-    "AI-powered personalized learning that adapts to every student. Brain Clone AI technology, 5 specialized AI tutors, IEP integration, and gamification. No learner left behind.",
+    "AI-powered personalized learning that adapts to every student. Brain Clone AI technology, 7 specialized AI tutors, IEP integration, and gamification. No learner left behind.",
   keywords: [
     "AI learning",
     "personalized education",
@@ -39,10 +39,10 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og-image.png",
+        url: "/assets/og/tutors-collage-og-text.png",
         width: 1200,
         height: 630,
-        alt: "AIVO Learning — AI-Powered Personalized Education",
+        alt: "The seven AIVO Learning AI tutors — Nova (Math), Sage (ELA), Spark (Science), Chrono (History), Pixel (Coding), Harmony (SEL), and Echo (Speech) — a diverse team of photorealistic virtual educators for K-12 students",
       },
     ],
   },
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     title: "AIVO Learning: AI-Powered Personalized Education",
     description:
       "Personalized education powered by Brain Clone AI. No learner left behind.",
-    images: ["/og-image.png"],
+    images: ["/assets/og/tutors-collage-og-text.png"],
   },
   robots: {
     index: true,

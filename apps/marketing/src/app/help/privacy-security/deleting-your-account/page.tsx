@@ -285,7 +285,7 @@ export default function DeletingYourAccountPage() {
                 <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-red-500" />
                 <span>
                   <strong>Tutor transcripts</strong> &mdash; full session
-                  history with all five AI Tutors
+                  history with all seven AI Tutors
                 </span>
               </li>
               <li className="flex items-start gap-3 text-aivo-navy-600">

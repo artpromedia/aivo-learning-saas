@@ -27,7 +27,7 @@ export const features: Feature[] = [
     icon: "Users",
     title: "AI Tutors",
     description:
-      "Five specialized AI tutors, Nova, Sage, Spark, Chrono, and Pixel, each with unique personalities and teaching styles across every subject.",
+      "Seven specialized AI tutors, each with unique personalities and teaching styles across every subject.",
   },
   {
     icon: "BookOpen",

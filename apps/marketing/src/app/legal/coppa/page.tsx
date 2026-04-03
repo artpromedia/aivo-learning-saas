@@ -72,8 +72,7 @@ export default function CoppaPage() {
               AIVO Learning is an AI-powered personalized learning platform
               designed for K-12 students, and many of our users are children
               under 13. Our platform — including Brain Clone AI adaptive
-              learning profiles, our five AI Tutors (Nova for Math, Sage for
-              ELA, Spark for Science, Chrono for History, and Pixel for Coding),
+              learning profiles, our seven AI Tutors,
               Homework Helper, IEP goal tracking, and gamification features — is
               a service directed at children within the meaning of the COPPA
               Rule. We have designed every aspect of our platform, from account

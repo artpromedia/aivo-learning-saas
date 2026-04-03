@@ -48,7 +48,7 @@ export function productSchema() {
     applicationCategory: "EducationalApplication",
     operatingSystem: "Web, iOS, Android",
     description:
-      "AI-powered personalized learning platform with Brain Clone™ technology, 5 specialized AI tutors, and real-time analytics for K-12 students.",
+      "AI-powered personalized learning platform with Brain Clone™ technology, 7 specialized AI tutors, and real-time analytics for K-12 students.",
     offers: [
       {
         "@type": "Offer",
@@ -147,5 +147,46 @@ export function toScriptProps(schema: Record<string, unknown>) {
   return {
     type: "application/ld+json" as const,
     dangerouslySetInnerHTML: { __html: JSON.stringify(schema) },
+  };
+}
+
+export function tutorsCollageSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ImageObject",
+    name: "AIVO Learning AI Tutors Team",
+    description:
+      "Seven AI-powered tutors for personalized K-12 learning: Mathematics, English Language Arts, Science, History, Coding, Social-Emotional Learning, and Speech & Language Practice.",
+    contentUrl: `${SITE_URL}/assets/og/tutors-collage-og-text.webp`,
+    thumbnailUrl: `${SITE_URL}/assets/og/tutors-collage-square.webp`,
+    width: 1200,
+    height: 630,
+    encodingFormat: "image/webp",
+    creator: { "@type": "Organization", name: "AIVO Learning" },
+    about: [
+      {
+        "@type": "EducationalOccupationalProgram",
+        name: "AI-Powered K-12 Tutoring",
+      },
+    ],
+  };
+}
+
+export function educationalOrganizationSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "EducationalOrganization",
+    name: "AIVO Learning",
+    description:
+      "AI-powered personalized learning platform with seven specialized AI tutors for K-12 students, including IEP support.",
+    url: SITE_URL,
+    logo: `${SITE_URL}/logo.png`,
+    sameAs: [],
+    offers: {
+      "@type": "Offer",
+      category: "Educational Technology",
+      description:
+        "AI tutoring for Mathematics, English Language Arts, Science, History, Coding, Social-Emotional Learning, and Speech & Language Practice",
+    },
   };
 }

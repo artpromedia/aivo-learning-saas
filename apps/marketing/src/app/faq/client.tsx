@@ -51,7 +51,7 @@ const faqs: FaqEntry[] = [
   {
     question: "What subjects does AIVO cover?",
     answer:
-      "AIVO covers Math, English Language Arts, Science, History, and Coding through our five specialized AI Tutors: Nova, Sage, Spark, Chrono, and Pixel.",
+      "AIVO covers Math, English Language Arts, Science, History, and Coding through our seven specialized AI Tutors.",
     category: "Pricing",
   },
   {
@@ -85,7 +85,7 @@ const faqs: FaqEntry[] = [
   {
     question: "Can my child switch between AI tutors?",
     answer:
-      "Yes! Students can work with any of our 5 AI tutors at any time. Each tutor specializes in a different subject: Nova (Math), Sage (ELA), Spark (Science), Chrono (History), and Pixel (Coding).",
+      "Yes! Students can work with any of our 7 AI tutors at any time. Each tutor specializes in a different subject area.",
     category: "AI Tutors",
   },
   {

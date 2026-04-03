@@ -128,20 +128,44 @@ describe("Hero Slider", () => {
       screen.getByText(/Built for IEP Students/),
     ).toBeDefined();
 
-    // Go to slide 4
+    // Go to slide 4 (tablet-learning)
     await user.click(nextBtn);
     expect(
-      screen.getByText("5 Expert AI Tutors, One Personalized Journey"),
+      screen.getByText("Engaging Learning on Any Device"),
     ).toBeDefined();
 
-    // Go to slide 5
+    // Go to slide 5 (ai-tutors)
+    await user.click(nextBtn);
+    expect(
+      screen.getByText("7 Expert AI Tutors, One Personalized Journey"),
+    ).toBeDefined();
+
+    // Go to slide 6 (family-learning)
+    await user.click(nextBtn);
+    expect(
+      screen.getByText("A Learning Partner for the Whole Family"),
+    ).toBeDefined();
+
+    // Go to slide 7 (mobile-learning)
+    await user.click(nextBtn);
+    expect(
+      screen.getByText("Learning That Goes Where They Go"),
+    ).toBeDefined();
+
+    // Go to slide 8 (parent-teacher)
+    await user.click(nextBtn);
+    expect(
+      screen.getByText("Parents and Teachers, Always in the Loop"),
+    ).toBeDefined();
+
+    // Go to slide 9 (dashboard)
     await user.click(nextBtn);
     expect(
       screen.getByText("Track Progress in Real Time"),
     ).toBeDefined();
   });
 
-  it("renders DashboardMockup on slide 5", async () => {
+  it("renders DashboardMockup on slide 9", async () => {
     const user = userEvent.setup();
     render(<Hero />);
 
@@ -151,14 +175,18 @@ describe("Hero Slider", () => {
     await user.click(nextBtn);
     await user.click(nextBtn);
     await user.click(nextBtn);
+    await user.click(nextBtn);
+    await user.click(nextBtn);
+    await user.click(nextBtn);
+    await user.click(nextBtn);
 
     expect(screen.getByTestId("dashboard-mockup")).toBeDefined();
   });
 
-  it("renders 5 navigation dots", () => {
+  it("renders 9 navigation dots", () => {
     render(<Hero />);
     const dots = screen.getAllByLabelText(/Go to slide \d+/);
-    expect(dots).toHaveLength(5);
+    expect(dots).toHaveLength(9);
   });
 
   it("renders prev and next arrow buttons", () => {

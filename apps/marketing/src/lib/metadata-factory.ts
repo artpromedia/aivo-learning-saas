@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 const SITE_URL = "https://aivolearning.com";
-const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`;
+const DEFAULT_OG_IMAGE = `${SITE_URL}/assets/og/tutors-collage-og-text.png`;
 
 interface PageMetadataConfig {
   title: string;

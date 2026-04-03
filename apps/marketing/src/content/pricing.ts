@@ -120,6 +120,6 @@ export const pricingFaqs: PricingFaq[] = [
   {
     question: "What subjects does AIVO cover?",
     answer:
-      "AIVO covers Math, English Language Arts, Science, History, and Coding through our five specialized AI Tutors: Nova, Sage, Spark, Chrono, and Pixel.",
+      "AIVO covers Math, English Language Arts, Science, History, and Coding through our seven specialized AI Tutors.",
   },
 ];
