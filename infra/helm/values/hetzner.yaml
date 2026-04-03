@@ -118,10 +118,10 @@ comms-svc:
   resources:
     requests:
       cpu: 50m
-      memory: 128Mi
+      memory: 192Mi
     limits:
       cpu: 250m
-      memory: 256Mi
+      memory: 384Mi
 
 i18n-svc:
   replicaCount: 1

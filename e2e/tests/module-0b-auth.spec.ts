@@ -185,12 +185,17 @@ test.describe('Module 0b: Authentication', () => {
     const forgotLink = page.getByRole('link', { name: /forgot|reset/i });
     if (await forgotLink.isVisible({ timeout: 3_000 }).catch(() => false)) {
       await forgotLink.click();
+      await page.waitForURL('**/forgot-password**');
     } else {
       await page.goto(`${BASE_URL}/forgot-password`);
     }
 
-    // Fill email
-    await page.getByLabel(/email/i).fill(user.email);
+    // Wait for the forgot-password form to be ready before filling
+    const emailInput = page.getByLabel(/email/i);
+    await expect(emailInput).toBeVisible({ timeout: 5_000 });
+
+    // Fill email and submit
+    await emailInput.fill(user.email);
     await page.getByRole('button', { name: /send|reset|submit/i }).click();
 
     // Should see confirmation message (raw i18n key when i18n-svc unavailable)
