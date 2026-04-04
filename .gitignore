@@ -26,3 +26,12 @@ htmlcov/
 .terraform/
 *.tfstate
 *.tfstate.backup
+
+# E2E test artifacts
+e2e/reports/
+e2e/test-results/
+e2e/jwt-private.pem
+e2e/jwt-public.pem
+
+# Temporary scripts
+scripts/diag-*.mjs

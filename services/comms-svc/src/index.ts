@@ -38,9 +38,7 @@ import { setupStreakCheckCron } from "./cron/streak-check.js";
 import { setupIepRefreshCheckCron } from "./cron/iep-refresh-check.js";
 
 export async function buildApp() {
-  console.log("[comms-svc] buildApp: start");
   const config = loadConfig();
-  console.log("[comms-svc] buildApp: config loaded");
 
   const app = Fastify({
     logger: {
@@ -72,7 +70,6 @@ export async function buildApp() {
   });
 
   // Core plugins
-  console.log("[comms-svc] registering core plugins...");
   await app.register(cookie);
   await app.register(cors, {
     origin: [config.APP_URL, "http://localhost:3100"],
@@ -85,35 +82,23 @@ export async function buildApp() {
     max: 100,
     timeWindow: "1 minute",
   });
-  console.log("[comms-svc] core plugins done");
 
   // Infrastructure plugins
-  console.log("[comms-svc] registering db...");
   await app.register(dbPlugin);
-  console.log("[comms-svc] registering nats...");
   await app.register(natsPlugin);
-  console.log("[comms-svc] registering redis...");
   await app.register(redisPlugin);
-  console.log("[comms-svc] registering email...");
   await app.register(emailPlugin);
-  console.log("[comms-svc] registering firebase...");
   await app.register(firebasePlugin);
-  console.log("[comms-svc] registering web-push...");
   await app.register(webPushPlugin);
-  console.log("[comms-svc] registering socket...");
   await app.register(socketPlugin);
-  console.log("[comms-svc] infra plugins done");
 
-  console.log("[comms-svc] registering observability...");
   await app.register(observabilityPlugin, {
     serviceName: 'comms-svc',
     environment: config.NODE_ENV,
     sentryDsn: process.env.SENTRY_DSN,
   });
-  console.log("[comms-svc] observability done");
 
   // Register routes
-  console.log("[comms-svc] registering routes...");
   await app.register(healthRoutes);
   await app.register(inboxRoute);
   await app.register(markReadRoute);
@@ -124,12 +109,6 @@ export async function buildApp() {
   await app.register(websocketRoute);
   await app.register(newsletterSubscribeRoute);
   await app.register(careersApplyRoute);
-  console.log("[comms-svc] routes done");
-
-  // Set up NATS event subscribers
-  console.log("[comms-svc] setting up subscribers...");
-  await setupSubscribers(app);
-  console.log("[comms-svc] subscribers done");
 
   // Set up cron jobs
   const cronTasks = [
@@ -145,19 +124,22 @@ export async function buildApp() {
     }
   });
 
-  console.log("[comms-svc] buildApp: complete");
   return app;
 }
 
-console.log("[comms-svc] loading config...");
 const config = loadConfig();
-console.log("[comms-svc] config loaded, building app...");
 const app = await buildApp();
-console.log("[comms-svc] app built, starting listen...");
 
 try {
   await app.listen({ port: config.PORT, host: "0.0.0.0" });
   app.log.info(`comms-svc listening on port ${config.PORT}`);
+
+  // Set up NATS subscribers AFTER the server is listening so health
+  // checks pass immediately.  Subscribers are background consumers —
+  // they don't need to be ready before serving HTTP requests.
+  setupSubscribers(app).catch((err) => {
+    app.log.error(err, "Failed to set up NATS subscribers");
+  });
 } catch (err) {
   app.log.error(err);
   process.exit(1);

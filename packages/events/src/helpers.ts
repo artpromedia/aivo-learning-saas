@@ -110,12 +110,22 @@ export async function subscribeEvent<S extends z.ZodType>(
   const subject = SUBJECTS[eventName];
   const streamName = resolveStreamForSubject(subject);
   const js = nc.jetstream();
-  process.stdout.write(`[events] subscribeEvent: getting consumer for ${eventName} (stream=${streamName})\n`);
-  const consumer = await js.consumers.get(streamName, {
-    filterSubjects: [subject],
-  } as OrderedConsumerOptions);
-  process.stdout.write(`[events] subscribeEvent: consuming ${eventName}\n`);
-  const messages = await consumer.consume();
+
+  const timeout = (ms: number) =>
+    new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error(`subscribeEvent(${eventName}): timed out after ${ms}ms`)), ms),
+    );
+
+  const consumer = await Promise.race([
+    js.consumers.get(streamName, {
+      filterSubjects: [subject],
+    } as OrderedConsumerOptions),
+    timeout(15_000),
+  ]);
+  const messages = await Promise.race([
+    consumer.consume(),
+    timeout(15_000),
+  ]);
 
   // Fire-and-forget: do NOT await the loop
   (async () => {
