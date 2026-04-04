@@ -8,7 +8,8 @@ export function authorize(...allowedRoles: Role[]) {
       return reply.status(401).send({ error: "Authentication required" });
     }
 
-    if (!allowedRoles.includes(request.user.role as Role)) {
+    const normalizedRole = (request.user.role as string).toUpperCase() as Role;
+    if (!allowedRoles.includes(normalizedRole)) {
       return reply.status(403).send({ error: "Insufficient permissions" });
     }
   };
