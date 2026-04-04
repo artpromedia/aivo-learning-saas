@@ -427,7 +427,7 @@ jobs:
             -f /tmp/image-tags.yaml \
             -n aivo \
             --atomic \
-            --timeout 10m \
+            --timeout 15m \
             --wait
 
       - name: Verify rollout status
