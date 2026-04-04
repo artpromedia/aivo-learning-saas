@@ -240,6 +240,10 @@ ingress:
   hosts:
     - host: staging.aivolearning.com
       paths:
+        - path: /api
+          service: identity-svc
+        - path: /assessment
+          service: assessment-svc
         - path: /
           service: web
     - host: staging-api.aivolearning.com

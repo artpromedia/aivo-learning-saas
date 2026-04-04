@@ -247,6 +247,10 @@ ingress:
   hosts:
     - host: app.aivolearning.com
       paths:
+        - path: /api
+          service: identity-svc
+        - path: /assessment
+          service: assessment-svc
         - path: /
           service: web
     - host: api.aivolearning.com
