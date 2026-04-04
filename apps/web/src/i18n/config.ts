@@ -28,8 +28,10 @@ export function isRtl(locale: string): boolean {
   return rtlLocales.has(locale);
 }
 
-const I18N_SVC_URL = process.env.NEXT_PUBLIC_I18N_SVC_URL ?? "http://localhost:3011";
-
 export function getI18nServiceUrl(): string {
-  return I18N_SVC_URL;
+  return (
+    process.env.I18N_SVC_URL ??
+    process.env.NEXT_PUBLIC_I18N_SVC_URL ??
+    "http://localhost:3011"
+  );
 }

@@ -387,6 +387,7 @@ web:
   env:
     NODE_ENV: production
     PORT: "3000"
+    I18N_SVC_URL: "http://i18n-svc:3011"
 
 marketing:
   enabled: true
