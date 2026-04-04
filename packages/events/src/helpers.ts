@@ -110,10 +110,13 @@ export async function subscribeEvent<S extends z.ZodType>(
   const subject = SUBJECTS[eventName];
   const streamName = resolveStreamForSubject(subject);
   const js = nc.jetstream();
+  console.log(`[events] subscribeEvent: getting consumer for ${eventName} (stream=${streamName}, subject=${subject})`);
   const consumer = await js.consumers.get(streamName, {
     filterSubjects: [subject],
   } as OrderedConsumerOptions);
+  console.log(`[events] subscribeEvent: got consumer for ${eventName}, starting consume...`);
   const messages = await consumer.consume();
+  console.log(`[events] subscribeEvent: consuming ${eventName}`);
 
   // Fire-and-forget: do NOT await the loop
   (async () => {
