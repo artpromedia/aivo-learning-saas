@@ -45,6 +45,8 @@ global:
 
 identity-svc:
   replicaCount: 2
+  env:
+    APP_URL: "https://app.aivolearning.com"
   resources:
     requests:
       cpu: 200m
