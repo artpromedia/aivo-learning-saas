@@ -241,6 +241,7 @@ jobs:
 
       - name: Helm deploy (canary)
         run: |
+          helm dependency build infra/helm
           helm upgrade --install aivo-learning-saas infra/helm \
             -f infra/helm/values/hetzner-production.yaml \
             -f /tmp/image-tags.yaml \
@@ -420,6 +421,7 @@ jobs:
 
       - name: Helm upgrade (production — atomic)
         run: |
+          helm dependency build infra/helm
           helm upgrade --install aivo-learning-saas infra/helm \
             -f infra/helm/values/hetzner-production.yaml \
             -f /tmp/image-tags.yaml \
