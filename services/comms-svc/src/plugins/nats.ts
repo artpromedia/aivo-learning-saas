@@ -12,7 +12,7 @@ declare module "fastify" {
 
 export default fp(async (fastify: FastifyInstance) => {
   const config = getConfig();
-  const nc = await connect({ servers: config.NATS_URL });
+  const nc = await connect({ servers: config.NATS_URL, timeout: 10_000 });
 
   await provisionStreams(nc);
 
