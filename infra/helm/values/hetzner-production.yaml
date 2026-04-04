@@ -11,7 +11,7 @@
 
 global:
   environment: production
-  domain: aivo.ai
+  domain: aivolearning.com
   tlsEnabled: true
 
   # PostgreSQL via PgBouncer on Server 1 (vSwitch)
@@ -246,11 +246,11 @@ ingress:
     nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
   hosts:
-    - host: app.aivo.ai
+    - host: app.aivolearning.com
       paths:
         - path: /
           service: web
-    - host: api.aivo.ai
+    - host: api.aivolearning.com
       paths:
         - path: /auth
           service: identity-svc
@@ -280,18 +280,18 @@ ingress:
           service: assessment-svc
         - path: /research
           service: research-svc
-    - host: status.aivo.ai
+    - host: status.aivolearning.com
       paths:
         - path: /
           service: status-page-svc
-    - host: aivo.ai
+    - host: aivolearning.com
       paths:
         - path: /
           service: marketing
   tls:
-    - secretName: aivo-production-tls
+    - secretName: cloudflare-origin-tls
       hosts:
-        - aivo.ai
-        - app.aivo.ai
-        - api.aivo.ai
-        - status.aivo.ai
+        - aivolearning.com
+        - app.aivolearning.com
+        - api.aivolearning.com
+        - status.aivolearning.com

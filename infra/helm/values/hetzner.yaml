@@ -239,11 +239,11 @@ ingress:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
   hosts:
-    - host: staging.aivo.app
+    - host: staging.aivolearning.com
       paths:
         - path: /
           service: web
-    - host: api.staging.aivo.app
+    - host: staging-api.aivolearning.com
       paths:
         - path: /auth
           service: identity-svc
@@ -273,16 +273,16 @@ ingress:
           service: assessment-svc
         - path: /research
           service: research-svc
-    - host: status.staging.aivo.app
+    - host: staging-status.aivolearning.com
       paths:
         - path: /
           service: status-page-svc
   tls:
-    - secretName: aivo-staging-tls
+    - secretName: cloudflare-origin-tls
       hosts:
-        - staging.aivo.app
-        - api.staging.aivo.app
-        - status.staging.aivo.app
+        - staging.aivolearning.com
+        - staging-api.aivolearning.com
+        - staging-status.aivolearning.com
 
 # ─────────────────────────────────────────────
 # NATS — deploy inside K3s cluster

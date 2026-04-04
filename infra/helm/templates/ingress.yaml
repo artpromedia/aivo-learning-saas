@@ -1,0 +1,46 @@
+{{- if and .Values.ingress .Values.ingress.enabled }}
+{{- $global := .Values.global -}}
+{{- $ingress := .Values.ingress -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: aivo-ingress
+  namespace: {{ $global.namespace | default "aivo" }}
+  labels:
+    app.kubernetes.io/part-of: aivo-learning-saas
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    {{- range $key, $value := $ingress.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+spec:
+  {{- if $ingress.className }}
+  ingressClassName: {{ $ingress.className }}
+  {{- end }}
+  rules:
+    {{- range $host := $ingress.hosts }}
+    - host: {{ $host.host }}
+      http:
+        paths:
+          {{- range $path := $host.paths }}
+          {{- $svcValues := index $.Values $path.service | default dict }}
+          - path: {{ $path.path }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $path.service }}
+                port:
+                  number: {{ $svcValues.port | default 3000 }}
+          {{- end }}
+    {{- end }}
+  {{- if $ingress.tls }}
+  tls:
+    {{- range $tls := $ingress.tls }}
+    - secretName: {{ $tls.secretName }}
+      hosts:
+        {{- range $tls.hosts }}
+        - {{ . }}
+        {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }}
