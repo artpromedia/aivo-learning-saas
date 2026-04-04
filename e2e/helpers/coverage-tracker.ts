@@ -32,19 +32,23 @@ class CoverageTracker {
 
       await route.continue();
 
-      const response = await request.response();
-      const url = new URL(request.url());
+      try {
+        const response = await request.response();
+        const url = new URL(request.url());
 
-      this.calls.push({
-        method: request.method(),
-        url: request.url(),
-        path: url.pathname,
-        status: response?.status() || 0,
-        timestamp: startTime,
-        testName: this.currentTest,
-        module: this.currentModule,
-        durationMs: Date.now() - startTime,
-      });
+        this.calls.push({
+          method: request.method(),
+          url: request.url(),
+          path: url.pathname,
+          status: response?.status() || 0,
+          timestamp: startTime,
+          testName: this.currentTest,
+          module: this.currentModule,
+          durationMs: Date.now() - startTime,
+        });
+      } catch {
+        // Test ended before response completed — safe to ignore
+      }
     });
 
     // Also intercept direct service calls
