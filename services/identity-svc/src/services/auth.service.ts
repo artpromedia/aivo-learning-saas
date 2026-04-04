@@ -1,5 +1,6 @@
 import { eq } from "drizzle-orm";
 import { hash, verify } from "argon2";
+import bcrypt from "bcryptjs";
 import { nanoid } from "nanoid";
 import type { FastifyInstance } from "fastify";
 import { users, sessions, accounts, tenants } from "@aivo/db";
@@ -120,9 +121,22 @@ export class AuthService {
       throw Object.assign(new Error("Invalid email or password"), { statusCode: 401 });
     }
 
-    const valid = await verify(account.accessToken, input.password);
+    const storedHash = account.accessToken;
+    const isBcrypt = storedHash.startsWith("$2a$") || storedHash.startsWith("$2b$");
+    const valid = isBcrypt
+      ? await bcrypt.compare(input.password, storedHash)
+      : await verify(storedHash, input.password);
     if (!valid) {
       throw Object.assign(new Error("Invalid email or password"), { statusCode: 401 });
+    }
+
+    // Migrate legacy bcrypt hash to argon2
+    if (isBcrypt) {
+      const newHash = await hash(input.password);
+      await this.app.db
+        .update(accounts)
+        .set({ accessToken: newHash })
+        .where(eq(accounts.id, account.id));
     }
 
     const session = await this.createSession(user.id);

@@ -939,6 +939,9 @@ importers:
       argon2:
         specifier: ^0.41.0
         version: 0.41.1
+      bcryptjs:
+        specifier: ^2.4.3
+        version: 2.4.3
       better-auth:
         specifier: ^1.2.0
         version: 1.5.6(@opentelemetry/api@1.9.1)(drizzle-orm@0.44.2(@opentelemetry/api@1.9.1)(@types/pg@8.6.1)(gel@2.2.0)(kysely@0.28.14)(postgres@3.4.8))(next@15.1.6(@opentelemetry/api@1.9.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(vitest@3.2.4(@types/node@25.5.0)(jiti@2.6.1)(jsdom@25.0.1)(lightningcss@1.32.0)(tsx@4.21.0))
@@ -3815,6 +3818,9 @@ packages:
     resolution: {integrity: sha512-BL2sTuHOdy0YT1lYieUxTw/QMtPBC3pmlJC6xk8BBYVv6vcw3SGdKemQ+Xsx9ik2F/lYDO9tqsFQH1r9PFuHKw==}
     engines: {node: '>=6.0.0'}
     hasBin: true
+
+  bcryptjs@2.4.3:
+    resolution: {integrity: sha512-V/Hy/X9Vt7f3BbPJEi8BdVFMByHi+jNXrYkW3huaybV/kQ0KJg0Y6PkEMbn+zeT+i+SiKZ/HMqJGIIt4LZDqNQ==}
 
   better-auth@1.5.6:
     resolution: {integrity: sha512-QSpJTqaT1XVfWRQe/fm3PgeuwOIlz1nWX/Dx7nsHStJ382bLzmDbQk2u7IT0IJ6wS5SRxfqEE1Ev9TXontgyAQ==}
@@ -9183,6 +9189,8 @@ snapshots:
   base64id@2.0.0: {}
 
   baseline-browser-mapping@2.10.13: {}
+
+  bcryptjs@2.4.3: {}
 
   better-auth@1.5.6(@opentelemetry/api@1.9.1)(drizzle-orm@0.44.2(@opentelemetry/api@1.9.1)(@types/pg@8.6.1)(gel@2.2.0)(kysely@0.28.14)(postgres@3.4.8))(next@15.1.6(@opentelemetry/api@1.9.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(vitest@3.2.4(@types/node@25.5.0)(jiti@2.6.1)(jsdom@25.0.1)(lightningcss@1.32.0)(tsx@4.21.0)):
     dependencies:
