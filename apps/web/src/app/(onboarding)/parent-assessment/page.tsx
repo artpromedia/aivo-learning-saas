@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { ClipboardList, ChevronLeft, ChevronRight } from "lucide-react";
@@ -126,6 +126,12 @@ export default function ParentAssessmentPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (!activeLearner) {
+      router.replace("/add-child");
+    }
+  }, [activeLearner, router]);
+
   const step = ASSESSMENT_STEPS[currentStep];
   const isLastStep = currentStep === ASSESSMENT_STEPS.length - 1;
   const isFirstStep = currentStep === 0;
@@ -157,6 +163,10 @@ export default function ParentAssessmentPage() {
     setIsSubmitting(true);
     setError(null);
     try {
+      if (!activeLearner?.id) {
+        router.replace("/add-child");
+        return;
+      }
       await assessmentApiFetch(API_ROUTES.ONBOARDING.PARENT_ASSESSMENT, {
         method: "POST",
         body: JSON.stringify({

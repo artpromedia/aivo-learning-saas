@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export interface Learner {
   id: string;
@@ -24,7 +25,7 @@ interface LearnerState {
   updateLearner: (id: string, updates: Partial<Learner>) => void;
 }
 
-export const useLearnerStore = create<LearnerState>((set) => ({
+export const useLearnerStore = create<LearnerState>()(persist((set) => ({
   activeLearner: null,
   learners: [],
 
@@ -45,4 +46,4 @@ export const useLearnerStore = create<LearnerState>((set) => ({
           ? { ...state.activeLearner, ...updates }
           : state.activeLearner,
     })),
-}));
+}), { name: "learner-store" }));
