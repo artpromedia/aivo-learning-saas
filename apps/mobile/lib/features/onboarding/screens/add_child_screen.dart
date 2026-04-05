@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 
 import 'package:aivo_mobile/core/api/api_client.dart';
 import 'package:aivo_mobile/core/api/endpoints.dart';
+import 'package:aivo_mobile/core/auth/secure_storage.dart';
 
 /// Grade levels offered during child creation.
 const List<String> _gradeOptions = [
@@ -132,9 +133,12 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
 
     try {
       final apiClient = ref.read(apiClientProvider);
+      final storage = ref.read(secureStorageProvider);
+
+      dynamic response;
 
       if (_profileImage != null) {
-        await apiClient.upload(
+        response = await apiClient.upload(
           Endpoints.learners,
           filePath: _profileImage!.path,
           fieldName: 'profileImage',
@@ -145,13 +149,23 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
           },
         );
       } else {
-        await apiClient.post(
+        response = await apiClient.post(
           Endpoints.learners,
           data: {
             'name': _nameController.text.trim(),
             'dateOfBirth': _dateOfBirth!.toIso8601String(),
             'gradeLevel': _selectedGrade,
           },
+        );
+      }
+
+      // Store the learnerId for the parent assessment step.
+      final learnerId = response.data?['id'] as String?;
+      if (learnerId != null) {
+        await storage.saveUserInfo(
+          userId: (await storage.getUserId()) ?? '',
+          userRole: (await storage.getUserRole()) ?? '',
+          learnerId: learnerId,
         );
       }
 

@@ -8,6 +8,7 @@ from ai_svc.routes.writing import router as writing_router
 from ai_svc.routes.iep import router as iep_router
 from ai_svc.routes.quality import router as quality_router
 from ai_svc.routes.vision import router as vision_router
+from ai_svc.routes.baseline import router as baseline_router
 
 all_routers = [
     health_router,
@@ -18,4 +19,5 @@ all_routers = [
     iep_router,
     quality_router,
     vision_router,
+    baseline_router,
 ]

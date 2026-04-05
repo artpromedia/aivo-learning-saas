@@ -16,6 +16,7 @@ import { healthRoutes } from "./routes/health.js";
 
 // Routes — Parent Assessment
 import { parentAssessmentRoute } from "./routes/parent/submit.js";
+import { parentQuestionsRoute } from "./routes/parent/questions.js";
 
 // Routes — IEP
 import { iepUploadRoute } from "./routes/iep/upload.js";
@@ -88,6 +89,7 @@ export async function buildApp() {
 
   // Parent assessment
   await app.register(parentAssessmentRoute);
+  await app.register(parentQuestionsRoute);
 
   // IEP routes
   await app.register(iepUploadRoute);

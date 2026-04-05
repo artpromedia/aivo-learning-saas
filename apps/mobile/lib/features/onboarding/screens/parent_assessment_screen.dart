@@ -4,322 +4,112 @@ import 'package:go_router/go_router.dart';
 
 import 'package:aivo_mobile/core/api/api_client.dart';
 import 'package:aivo_mobile/core/api/endpoints.dart';
+import 'package:aivo_mobile/core/auth/secure_storage.dart';
 
 // ---------------------------------------------------------------------------
-// Assessment data model
+// Data models – mirrors the backend ParentAssessmentQuestion shape
 // ---------------------------------------------------------------------------
 
-enum AssessmentCategory { communication, motorSkills, cognitive, socialEmotional }
-
-extension AssessmentCategoryLabel on AssessmentCategory {
-  String get label {
-    switch (this) {
-      case AssessmentCategory.communication:
-        return 'Communication';
-      case AssessmentCategory.motorSkills:
-        return 'Motor Skills';
-      case AssessmentCategory.cognitive:
-        return 'Cognitive';
-      case AssessmentCategory.socialEmotional:
-        return 'Social-Emotional';
-    }
-  }
-
-  IconData get icon {
-    switch (this) {
-      case AssessmentCategory.communication:
-        return Icons.chat_bubble_outline;
-      case AssessmentCategory.motorSkills:
-        return Icons.accessibility_new;
-      case AssessmentCategory.cognitive:
-        return Icons.psychology_outlined;
-      case AssessmentCategory.socialEmotional:
-        return Icons.favorite_border;
-    }
-  }
-}
-
-class AssessmentOption {
-  const AssessmentOption({
-    required this.value,
-    required this.label,
-    required this.description,
-  });
-
-  final String value;
-  final String label;
-  final String description;
-}
-
-class AssessmentQuestion {
-  const AssessmentQuestion({
+class _Question {
+  _Question({
     required this.id,
-    required this.category,
-    required this.text,
-    required this.options,
-    this.branchCondition,
+    required this.questionText,
+    required this.questionType,
+    required this.required_,
+    this.options,
+    this.scaleMin,
+    this.scaleMax,
+    this.scaleLabels,
+    this.helpText,
   });
+
+  factory _Question.fromJson(Map<String, dynamic> json) {
+    return _Question(
+      id: json['id'] as String,
+      questionText: json['questionText'] as String,
+      questionType: json['questionType'] as String,
+      required_: json['required'] as bool? ?? false,
+      options: (json['options'] as List?)?.cast<String>(),
+      scaleMin: json['scaleMin'] as int?,
+      scaleMax: json['scaleMax'] as int?,
+      scaleLabels: json['scaleLabels'] != null
+          ? {
+              'min': json['scaleLabels']['min'] as String,
+              'max': json['scaleLabels']['max'] as String,
+            }
+          : null,
+      helpText: json['helpText'] as String?,
+    );
+  }
 
   final String id;
-  final AssessmentCategory category;
-  final String text;
-  final List<AssessmentOption> options;
-
-  /// If non-null, this question is only shown when the answer to the
-  /// referenced question matches [branchCondition.expectedValue].
-  final BranchCondition? branchCondition;
+  final String questionText;
+  final String questionType; // multiple_choice | multi_select | rating_scale | open_ended | yes_no
+  final bool required_;
+  final List<String>? options;
+  final int? scaleMin;
+  final int? scaleMax;
+  final Map<String, String>? scaleLabels;
+  final String? helpText;
 }
 
-class BranchCondition {
-  const BranchCondition({required this.questionId, required this.expectedValues});
-  final String questionId;
-  final Set<String> expectedValues;
+class _Category {
+  _Category({required this.key, required this.label, required this.questions});
+
+  factory _Category.fromJson(Map<String, dynamic> json) {
+    return _Category(
+      key: json['key'] as String,
+      label: json['label'] as String,
+      questions: (json['questions'] as List)
+          .map((q) => _Question.fromJson(q as Map<String, dynamic>))
+          .toList(),
+    );
+  }
+
+  final String key;
+  final String label;
+  final List<_Question> questions;
 }
 
 // ---------------------------------------------------------------------------
-// Question bank
+// Category icons
 // ---------------------------------------------------------------------------
 
-const List<AssessmentQuestion> _questionBank = [
-  // -- Communication --
-  AssessmentQuestion(
-    id: 'comm_1',
-    category: AssessmentCategory.communication,
-    text: 'How does your child typically communicate their needs?',
-    options: [
-      AssessmentOption(
-        value: 'full_sentences',
-        label: 'Full sentences',
-        description: 'Uses complete sentences with proper grammar most of the time.',
-      ),
-      AssessmentOption(
-        value: 'short_phrases',
-        label: 'Short phrases or keywords',
-        description: 'Communicates with 2-3 word phrases or single keywords.',
-      ),
-      AssessmentOption(
-        value: 'gestures_pictures',
-        label: 'Gestures or pictures',
-        description: 'Primarily uses pointing, gestures, or picture cards.',
-      ),
-      AssessmentOption(
-        value: 'sounds_cries',
-        label: 'Sounds or cries',
-        description: 'Uses vocalizations, cries, or body movements to express needs.',
-      ),
-      AssessmentOption(
-        value: 'aac_device',
-        label: 'AAC device or app',
-        description: 'Uses an augmentative and alternative communication device.',
-      ),
-    ],
-  ),
-  AssessmentQuestion(
-    id: 'comm_2',
-    category: AssessmentCategory.communication,
-    text: 'How well does your child understand spoken instructions?',
-    options: [
-      AssessmentOption(
-        value: 'multi_step',
-        label: 'Multi-step instructions',
-        description: 'Follows complex directions with 3+ steps independently.',
-      ),
-      AssessmentOption(
-        value: 'simple_instructions',
-        label: 'Simple instructions',
-        description: 'Follows 1-2 step instructions when given clearly.',
-      ),
-      AssessmentOption(
-        value: 'with_visual',
-        label: 'With visual support',
-        description: 'Needs pictures or demonstrations alongside verbal instructions.',
-      ),
-      AssessmentOption(
-        value: 'limited',
-        label: 'Limited understanding',
-        description: 'Responds mainly to familiar words or tone of voice.',
-      ),
-    ],
-  ),
-
-  // -- Motor Skills --
-  AssessmentQuestion(
-    id: 'motor_1',
-    category: AssessmentCategory.motorSkills,
-    text: 'How does your child interact with a touchscreen device?',
-    options: [
-      AssessmentOption(
-        value: 'independent',
-        label: 'Independently',
-        description: 'Taps, swipes, and navigates apps without help.',
-      ),
-      AssessmentOption(
-        value: 'some_help',
-        label: 'With some help',
-        description: 'Can tap and swipe but may need guidance for navigation.',
-      ),
-      AssessmentOption(
-        value: 'large_targets',
-        label: 'Needs large targets',
-        description: 'Can interact but needs very large buttons and simplified layouts.',
-      ),
-      AssessmentOption(
-        value: 'physical_assistance',
-        label: 'Needs physical assistance',
-        description: 'Requires hand-over-hand support or a switch device.',
-      ),
-    ],
-  ),
-  AssessmentQuestion(
-    id: 'motor_2',
-    category: AssessmentCategory.motorSkills,
-    text: 'Can your child use a stylus or pencil to draw or write?',
-    branchCondition: BranchCondition(
-      questionId: 'motor_1',
-      expectedValues: {'independent', 'some_help', 'large_targets'},
-    ),
-    options: [
-      AssessmentOption(
-        value: 'writes_well',
-        label: 'Writes letters/words',
-        description: 'Can form recognizable letters and some words.',
-      ),
-      AssessmentOption(
-        value: 'draws_shapes',
-        label: 'Draws basic shapes',
-        description: 'Can draw circles, lines, and simple shapes.',
-      ),
-      AssessmentOption(
-        value: 'scribbles',
-        label: 'Scribbles',
-        description: 'Makes marks but cannot form specific shapes consistently.',
-      ),
-      AssessmentOption(
-        value: 'cannot',
-        label: 'Not yet',
-        description: 'Does not hold or use a writing tool.',
-      ),
-    ],
-  ),
-
-  // -- Cognitive --
-  AssessmentQuestion(
-    id: 'cog_1',
-    category: AssessmentCategory.cognitive,
-    text: 'How does your child approach problem-solving activities?',
-    options: [
-      AssessmentOption(
-        value: 'independent',
-        label: 'Works independently',
-        description: 'Tries different strategies and solves age-appropriate puzzles.',
-      ),
-      AssessmentOption(
-        value: 'with_prompts',
-        label: 'With verbal prompts',
-        description: 'Needs reminders or hints but can complete tasks.',
-      ),
-      AssessmentOption(
-        value: 'modeled',
-        label: 'Needs modeling',
-        description: 'Requires someone to demonstrate the solution first.',
-      ),
-      AssessmentOption(
-        value: 'exploring',
-        label: 'Exploratory / cause-and-effect',
-        description: 'Engages through trial-and-error and sensory exploration.',
-      ),
-    ],
-  ),
-  AssessmentQuestion(
-    id: 'cog_2',
-    category: AssessmentCategory.cognitive,
-    text: 'How long can your child stay focused on a preferred activity?',
-    options: [
-      AssessmentOption(
-        value: 'over_15',
-        label: '15+ minutes',
-        description: 'Sustains attention for extended periods on preferred tasks.',
-      ),
-      AssessmentOption(
-        value: '5_to_15',
-        label: '5-15 minutes',
-        description: 'Maintains focus for moderate durations with some redirection.',
-      ),
-      AssessmentOption(
-        value: '1_to_5',
-        label: '1-5 minutes',
-        description: 'Short attention span; moves between activities quickly.',
-      ),
-      AssessmentOption(
-        value: 'under_1',
-        label: 'Under 1 minute',
-        description: 'Very brief engagement; needs constant redirection.',
-      ),
-    ],
-  ),
-
-  // -- Social-Emotional --
-  AssessmentQuestion(
-    id: 'social_1',
-    category: AssessmentCategory.socialEmotional,
-    text: 'How does your child interact with peers or siblings?',
-    options: [
-      AssessmentOption(
-        value: 'reciprocal',
-        label: 'Reciprocal play',
-        description: 'Engages in back-and-forth play, takes turns, and shares.',
-      ),
-      AssessmentOption(
-        value: 'parallel',
-        label: 'Parallel play',
-        description: 'Plays alongside others but does not actively interact.',
-      ),
-      AssessmentOption(
-        value: 'observer',
-        label: 'Watches others',
-        description: 'Prefers observing; may join briefly with encouragement.',
-      ),
-      AssessmentOption(
-        value: 'solitary',
-        label: 'Prefers solitary play',
-        description: 'Engages mostly in solo activities and may resist group settings.',
-      ),
-    ],
-  ),
-  AssessmentQuestion(
-    id: 'social_2',
-    category: AssessmentCategory.socialEmotional,
-    text: 'How does your child typically express emotions?',
-    options: [
-      AssessmentOption(
-        value: 'verbally',
-        label: 'Verbally identifies feelings',
-        description: 'Can name emotions like happy, sad, angry, scared.',
-      ),
-      AssessmentOption(
-        value: 'facial_body',
-        label: 'Facial expressions / body language',
-        description: 'Shows emotions through face and body but may not name them.',
-      ),
-      AssessmentOption(
-        value: 'behavioral',
-        label: 'Through behavior',
-        description: 'Expresses distress through meltdowns, withdrawal, or aggression.',
-      ),
-      AssessmentOption(
-        value: 'subtle',
-        label: 'Subtle cues',
-        description: 'Difficult to read; caregivers rely on context to interpret.',
-      ),
-    ],
-  ),
-];
+IconData _categoryIcon(String key) {
+  switch (key) {
+    case 'learning_style':
+      return Icons.school_outlined;
+    case 'strengths':
+      return Icons.star_outline;
+    case 'challenges':
+      return Icons.warning_amber_outlined;
+    case 'behavior':
+      return Icons.psychology_outlined;
+    case 'preferences':
+      return Icons.tune_outlined;
+    case 'social_emotional':
+      return Icons.favorite_border;
+    case 'functioning_level':
+      return Icons.accessibility_new;
+    case 'sensory_accessibility':
+      return Icons.visibility_outlined;
+    case 'communication_needs':
+      return Icons.chat_bubble_outline;
+    case 'input_method':
+      return Icons.touch_app_outlined;
+    case 'support_needs':
+      return Icons.support_outlined;
+    default:
+      return Icons.help_outline;
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Screen
 // ---------------------------------------------------------------------------
 
-/// Parent assessment screen with adaptive branching questions.
+/// Parent assessment screen — fetches questions from the API and walks the
+/// parent through 11 categories of questions to build a learner profile.
 class ParentAssessmentScreen extends ConsumerStatefulWidget {
   const ParentAssessmentScreen({super.key});
 
@@ -330,64 +120,140 @@ class ParentAssessmentScreen extends ConsumerStatefulWidget {
 
 class _ParentAssessmentScreenState
     extends ConsumerState<ParentAssessmentScreen> {
-  /// Answers keyed by question id.
-  final Map<String, String> _answers = {};
+  // All categories of questions fetched from the API.
+  List<_Category> _categories = [];
 
-  late List<AssessmentQuestion> _visibleQuestions;
-  int _currentIndex = 0;
+  // Current category index.
+  int _categoryIndex = 0;
+
+  // Current question index within the current category.
+  int _questionIndex = 0;
+
+  // Answers keyed by question id. Values are String for single-select,
+  // List<String> for multi_select, int for rating_scale, or String for open_ended.
+  final Map<String, dynamic> _answers = {};
+
+  bool _isLoading = true;
   bool _isSubmitting = false;
   String? _errorMessage;
+
+  // For open-ended questions.
+  final _openEndedController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _rebuildVisibleQuestions();
+    _fetchQuestions();
   }
 
-  void _rebuildVisibleQuestions() {
-    _visibleQuestions = _questionBank.where((q) {
-      if (q.branchCondition == null) return true;
-      final answer = _answers[q.branchCondition!.questionId];
-      return answer != null &&
-          q.branchCondition!.expectedValues.contains(answer);
-    }).toList();
+  @override
+  void dispose() {
+    _openEndedController.dispose();
+    super.dispose();
   }
 
-  AssessmentQuestion get _currentQuestion => _visibleQuestions[_currentIndex];
+  Future<void> _fetchQuestions() async {
+    try {
+      final apiClient = ref.read(apiClientProvider);
+      final response = await apiClient.get(Endpoints.parentAssessmentQuestions);
+      final data = response.data as Map<String, dynamic>;
+      final categoriesJson = data['categories'] as List;
 
-  double get _progress =>
-      _visibleQuestions.isEmpty ? 0 : (_currentIndex + 1) / _visibleQuestions.length;
-
-  void _selectOption(String value) {
-    setState(() {
-      _answers[_currentQuestion.id] = value;
-      _rebuildVisibleQuestions();
-
-      // Clamp index if the list shrank.
-      if (_currentIndex >= _visibleQuestions.length) {
-        _currentIndex = _visibleQuestions.length - 1;
-      }
-    });
-  }
-
-  void _goNext() {
-    if (_answers[_currentQuestion.id] == null) return;
-
-    if (_currentIndex < _visibleQuestions.length - 1) {
       setState(() {
-        _currentIndex++;
-        _rebuildVisibleQuestions();
+        _categories = categoriesJson
+            .map((c) => _Category.fromJson(c as Map<String, dynamic>))
+            .toList();
+        _isLoading = false;
       });
-    } else {
-      _submit();
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = 'Failed to load questions. Please try again.';
+          _isLoading = false;
+        });
+      }
     }
   }
 
+  _Question get _currentQuestion =>
+      _categories[_categoryIndex].questions[_questionIndex];
+
+  _Category get _currentCategory => _categories[_categoryIndex];
+
+  int get _totalQuestions =>
+      _categories.fold(0, (sum, c) => sum + c.questions.length);
+
+  int get _answeredSoFar {
+    int count = 0;
+    for (var i = 0; i < _categoryIndex; i++) {
+      count += _categories[i].questions.length;
+    }
+    count += _questionIndex;
+    return count;
+  }
+
+  double get _progress =>
+      _totalQuestions == 0 ? 0 : (_answeredSoFar + 1) / _totalQuestions;
+
+  bool get _isLastQuestion =>
+      _categoryIndex == _categories.length - 1 &&
+      _questionIndex == _currentCategory.questions.length - 1;
+
+  bool get _canProceed {
+    final question = _currentQuestion;
+    if (!question.required_) return true;
+    final answer = _answers[question.id];
+    if (answer == null) return false;
+    if (answer is String && answer.isEmpty) return false;
+    if (answer is List && answer.isEmpty) return false;
+    return true;
+  }
+
+  void _goNext() {
+    // Save open-ended text if applicable.
+    if (_currentQuestion.questionType == 'open_ended') {
+      _answers[_currentQuestion.id] = _openEndedController.text;
+    }
+
+    if (!_canProceed) return;
+
+    if (_isLastQuestion) {
+      _submit();
+      return;
+    }
+
+    setState(() {
+      if (_questionIndex < _currentCategory.questions.length - 1) {
+        _questionIndex++;
+      } else {
+        _categoryIndex++;
+        _questionIndex = 0;
+      }
+      _syncOpenEndedController();
+    });
+  }
+
   void _goBack() {
-    if (_currentIndex > 0) {
-      setState(() {
-        _currentIndex--;
-      });
+    // Save current open-ended text before moving.
+    if (_currentQuestion.questionType == 'open_ended') {
+      _answers[_currentQuestion.id] = _openEndedController.text;
+    }
+
+    setState(() {
+      if (_questionIndex > 0) {
+        _questionIndex--;
+      } else if (_categoryIndex > 0) {
+        _categoryIndex--;
+        _questionIndex = _categories[_categoryIndex].questions.length - 1;
+      }
+      _syncOpenEndedController();
+    });
+  }
+
+  void _syncOpenEndedController() {
+    final q = _currentQuestion;
+    if (q.questionType == 'open_ended') {
+      _openEndedController.text = (_answers[q.id] as String?) ?? '';
     }
   }
 
@@ -399,11 +265,22 @@ class _ParentAssessmentScreenState
 
     try {
       final apiClient = ref.read(apiClientProvider);
+      final storage = ref.read(secureStorageProvider);
+      final learnerId = await storage.getLearnerId();
+
+      if (learnerId == null) {
+        setState(() {
+          _errorMessage = 'Learner not found. Please go back and add your child first.';
+          _isSubmitting = false;
+        });
+        return;
+      }
+
       await apiClient.post(
-        '${Endpoints.learners}/assessment',
+        Endpoints.parentAssessmentSubmit,
         data: {
+          'learnerId': learnerId,
           'answers': _answers,
-          'questionCount': _visibleQuestions.length,
         },
       );
 
@@ -425,17 +302,58 @@ class _ParentAssessmentScreenState
     }
   }
 
+  // ---------------------------------------------------------------------------
+  // Build
+  // ---------------------------------------------------------------------------
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Parent Assessment')),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (_categories.isEmpty) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Parent Assessment')),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(_errorMessage ?? 'No questions available.',
+                    textAlign: TextAlign.center,),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _isLoading = true;
+                      _errorMessage = null;
+                    });
+                    _fetchQuestions();
+                  },
+                  child: const Text('Retry'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     final question = _currentQuestion;
-    final selectedValue = _answers[question.id];
+    final category = _currentCategory;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Parent Assessment'),
-        leading: _currentIndex > 0
+        leading: (_categoryIndex > 0 || _questionIndex > 0)
             ? IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: _goBack,
@@ -446,10 +364,10 @@ class _ParentAssessmentScreenState
       body: SafeArea(
         child: Column(
           children: [
-            // ---- Progress indicator ----
+            // ---- Progress ----
             Semantics(
               label:
-                  'Question ${_currentIndex + 1} of ${_visibleQuestions.length}',
+                  'Question ${_answeredSoFar + 1} of $_totalQuestions',
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                 child: Column(
@@ -459,12 +377,11 @@ class _ParentAssessmentScreenState
                       children: [
                         Row(
                           children: [
-                            Icon(question.category.icon,
-                                size: 16,
-                                color: colorScheme.primary,),
+                            Icon(_categoryIcon(category.key),
+                                size: 16, color: colorScheme.primary,),
                             const SizedBox(width: 4),
                             Text(
-                              question.category.label,
+                              category.label,
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: colorScheme.primary,
                                 fontWeight: FontWeight.w600,
@@ -473,7 +390,7 @@ class _ParentAssessmentScreenState
                           ],
                         ),
                         Text(
-                          '${_currentIndex + 1} / ${_visibleQuestions.length}',
+                          '${_answeredSoFar + 1} / $_totalQuestions',
                           style: theme.textTheme.bodySmall,
                         ),
                       ],
@@ -522,7 +439,7 @@ class _ParentAssessmentScreenState
                 ),
               ),
 
-            // ---- Question + options ----
+            // ---- Question content ----
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(24),
@@ -532,61 +449,215 @@ class _ParentAssessmentScreenState
                     Semantics(
                       header: true,
                       child: Text(
-                        question.text,
+                        question.questionText,
                         style: theme.textTheme.titleLarge,
                       ),
                     ),
-                    const SizedBox(height: 24),
-                    ...question.options.map(
-                      (option) => Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: Semantics(
-                          selected: selectedValue == option.value,
-                          child: _OptionCard(
-                            option: option,
-                            isSelected: selectedValue == option.value,
-                            onTap: _isSubmitting
-                                ? null
-                                : () => _selectOption(option.value),
-                          ),
+                    if (question.helpText != null) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        question.helpText!,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
                         ),
                       ),
-                    ),
+                    ],
+                    const SizedBox(height: 24),
+                    _buildQuestionInput(question, theme, colorScheme),
                   ],
                 ),
               ),
             ),
 
-            // ---- Continue button ----
+            // ---- Continue / Skip button ----
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
-              child: SizedBox(
-                height: 48,
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: (selectedValue == null || _isSubmitting)
-                      ? null
-                      : _goNext,
-                  child: _isSubmitting
-                      ? SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: colorScheme.onPrimary,
-                          ),
-                        )
-                      : Text(
-                          _currentIndex < _visibleQuestions.length - 1
-                              ? 'Continue'
-                              : 'Complete Assessment',
-                        ),
-                ),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 48,
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: (_isSubmitting || (!_canProceed && question.required_))
+                          ? null
+                          : _goNext,
+                      child: _isSubmitting
+                          ? SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: colorScheme.onPrimary,
+                              ),
+                            )
+                          : Text(_isLastQuestion ? 'Complete Assessment' : 'Continue'),
+                    ),
+                  ),
+                  if (!question.required_ && _answers[question.id] == null)
+                    TextButton(
+                      onPressed: _isSubmitting ? null : _goNext,
+                      child: const Text('Skip'),
+                    ),
+                ],
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Question type renderers
+  // ---------------------------------------------------------------------------
+
+  Widget _buildQuestionInput(
+      _Question question, ThemeData theme, ColorScheme colorScheme,) {
+    switch (question.questionType) {
+      case 'multiple_choice':
+      case 'yes_no':
+        return _buildMultipleChoice(question, theme, colorScheme);
+      case 'multi_select':
+        return _buildMultiSelect(question, theme, colorScheme);
+      case 'rating_scale':
+        return _buildRatingScale(question, theme, colorScheme);
+      case 'open_ended':
+        return _buildOpenEnded(question, theme, colorScheme);
+      default:
+        return Text('Unsupported question type: ${question.questionType}');
+    }
+  }
+
+  Widget _buildMultipleChoice(
+      _Question question, ThemeData theme, ColorScheme colorScheme,) {
+    final selected = _answers[question.id] as String?;
+    return Column(
+      children: (question.options ?? []).map((option) {
+        final isSelected = selected == option;
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Semantics(
+            selected: isSelected,
+            child: _OptionCard(
+              label: option,
+              isSelected: isSelected,
+              onTap: _isSubmitting
+                  ? null
+                  : () => setState(() => _answers[question.id] = option),
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildMultiSelect(
+      _Question question, ThemeData theme, ColorScheme colorScheme,) {
+    final selected = (_answers[question.id] as List<String>?) ?? [];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Select all that apply',
+            style: theme.textTheme.bodySmall
+                ?.copyWith(color: colorScheme.onSurfaceVariant),),
+        const SizedBox(height: 12),
+        ...(question.options ?? []).map((option) {
+          final isSelected = selected.contains(option);
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: _OptionCard(
+              label: option,
+              isSelected: isSelected,
+              isCheckbox: true,
+              onTap: _isSubmitting
+                  ? null
+                  : () {
+                      setState(() {
+                        final list =
+                            List<String>.from((_answers[question.id] as List<String>?) ?? []);
+                        if (isSelected) {
+                          list.remove(option);
+                        } else {
+                          list.add(option);
+                        }
+                        _answers[question.id] = list;
+                      });
+                    },
+            ),
+          );
+        }),
+      ],
+    );
+  }
+
+  Widget _buildRatingScale(
+      _Question question, ThemeData theme, ColorScheme colorScheme,) {
+    final value = (_answers[question.id] as int?) ??
+        question.scaleMin ??
+        1;
+    final min = question.scaleMin ?? 1;
+    final max = question.scaleMax ?? 5;
+
+    return Column(
+      children: [
+        if (question.scaleLabels != null)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  child: Text(question.scaleLabels!['min'] ?? '',
+                      style: theme.textTheme.bodySmall,),
+                ),
+                Flexible(
+                  child: Text(question.scaleLabels!['max'] ?? '',
+                      style: theme.textTheme.bodySmall,
+                      textAlign: TextAlign.right,),
+                ),
+              ],
+            ),
+          ),
+        Slider(
+          value: value.toDouble(),
+          min: min.toDouble(),
+          max: max.toDouble(),
+          divisions: max - min,
+          label: value.toString(),
+          onChanged: _isSubmitting
+              ? null
+              : (v) => setState(() => _answers[question.id] = v.round()),
+        ),
+        Text(
+          '$value / $max',
+          style: theme.textTheme.headlineSmall?.copyWith(
+            color: colorScheme.primary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildOpenEnded(
+      _Question question, ThemeData theme, ColorScheme colorScheme,) {
+    // Sync controller when first displaying.
+    if (_openEndedController.text != ((_answers[question.id] as String?) ?? '')) {
+      _openEndedController.text = (_answers[question.id] as String?) ?? '';
+    }
+
+    return TextField(
+      controller: _openEndedController,
+      maxLines: 4,
+      textCapitalization: TextCapitalization.sentences,
+      decoration: InputDecoration(
+        hintText: 'Type your answer here...',
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        filled: true,
+        fillColor: colorScheme.surfaceContainerLow,
+      ),
+      onChanged: (text) => _answers[question.id] = text,
+      enabled: !_isSubmitting,
     );
   }
 }
@@ -597,13 +668,15 @@ class _ParentAssessmentScreenState
 
 class _OptionCard extends StatelessWidget {
   const _OptionCard({
-    required this.option,
+    required this.label,
     required this.isSelected,
+    this.isCheckbox = false,
     this.onTap,
   });
 
-  final AssessmentOption option;
+  final String label;
   final bool isSelected;
+  final bool isCheckbox;
   final VoidCallback? onTap;
 
   @override
@@ -629,34 +702,24 @@ class _OptionCard extends StatelessWidget {
           child: Row(
             children: [
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      option.label,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        color: isSelected
-                            ? colorScheme.onPrimaryContainer
-                            : colorScheme.onSurface,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      option.description,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: isSelected
-                            ? colorScheme.onPrimaryContainer
-                            : colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
+                child: Text(
+                  label,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: isSelected
+                        ? colorScheme.onPrimaryContainer
+                        : colorScheme.onSurface,
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
               Icon(
-                isSelected
-                    ? Icons.radio_button_checked
-                    : Icons.radio_button_unchecked,
+                isCheckbox
+                    ? (isSelected
+                        ? Icons.check_box
+                        : Icons.check_box_outline_blank)
+                    : (isSelected
+                        ? Icons.radio_button_checked
+                        : Icons.radio_button_unchecked),
                 color: isSelected ? colorScheme.primary : colorScheme.outline,
               ),
             ],

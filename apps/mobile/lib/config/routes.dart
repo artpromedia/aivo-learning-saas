@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
+
+import 'package:aivo_mobile/features/onboarding/screens/add_child_screen.dart';
+import 'package:aivo_mobile/features/onboarding/screens/parent_assessment_screen.dart';
 
 // ---------------------------------------------------------------------------
 // Auth state - minimal definition so routes.dart is self-contained.
@@ -105,12 +107,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/onboarding/add-child',
         name: 'onboarding-add-child',
-        builder: (_, __) => const _Placeholder('Add Child'),
+        builder: (_, __) => const AddChildScreen(),
       ),
       GoRoute(
         path: '/onboarding/assessment',
         name: 'onboarding-assessment',
-        builder: (_, __) => const _Placeholder('Assessment'),
+        builder: (_, __) => const ParentAssessmentScreen(),
       ),
       GoRoute(
         path: '/onboarding/iep-upload',

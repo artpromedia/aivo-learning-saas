@@ -80,6 +80,14 @@ export const iepGoalStatusEnum = pgEnum("iep_goal_status", [
   "DEFERRED",
 ]);
 
+// Parent Assessment Type (determined by routing algorithm)
+export const parentAssessmentTypeEnum = pgEnum("parent_assessment_type", [
+  "STANDARD",
+  "STANDARD_WITH_ACCOMMODATIONS",
+  "MODIFIED",
+  "ALTERNATE",
+]);
+
 // Assessment
 export const assessmentModeEnum = pgEnum("assessment_mode", [
   "STANDARD",

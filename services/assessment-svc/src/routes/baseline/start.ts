@@ -1,17 +1,15 @@
 import type { FastifyInstance } from "fastify";
-import { eq, desc } from "drizzle-orm";
-import { baselineAssessments, parentAssessments, learners } from "@aivo/db";
+import { eq, desc, and } from "drizzle-orm";
+import { baselineAssessments, parentAssessments, learners, iepDocuments } from "@aivo/db";
 import { publishEvent } from "@aivo/events";
 import { authenticate } from "../../middleware/authenticate.js";
 import {
   createInitialState,
-  selectNextItemBalanced,
   getFunctioningLevelFormat,
   assessmentProgress,
   type FunctioningLevel,
-  type IrtState,
 } from "../../engine/irt.js";
-import { getItemsForFunctioningLevel, DOMAINS } from "../../engine/item-bank.js";
+import { DOMAINS } from "../../engine/item-bank.js";
 
 export async function baselineStartRoute(app: FastifyInstance) {
   app.post(
@@ -53,15 +51,48 @@ export async function baselineStartRoute(app: FastifyInstance) {
       // Create IRT state
       const irtState = createInitialState(initialTheta);
 
-      // Get items filtered by functioning level
-      const availableItems = getItemsForFunctioningLevel(format);
+      // Get the parent assessment responses as context for the LLM
+      const parentResponses = (parentAssessment?.responses ?? {}) as Record<string, unknown>;
 
-      // Select first question
-      const firstItem = selectNextItemBalanced(irtState, availableItems, [...DOMAINS]);
+      // Query IEP data if available (parsed IEP documents for this learner)
+      let iepProfile: Record<string, unknown> | null = null;
+      const [iepDoc] = await app.db
+        .select({ parsedData: iepDocuments.parsedData })
+        .from(iepDocuments)
+        .where(
+          and(
+            eq(iepDocuments.learnerId, learnerId),
+            eq(iepDocuments.parseStatus, "PARSED"),
+          ),
+        )
+        .orderBy(desc(iepDocuments.createdAt))
+        .limit(1);
 
-      if (!firstItem) {
-        return reply.status(500).send({ error: "No assessment items available" });
+      if (iepDoc?.parsedData) {
+        iepProfile = iepDoc.parsedData as Record<string, unknown>;
       }
+
+      // Extract auth token to forward to ai-svc
+      const authToken =
+        (request.cookies as Record<string, string>)?.access_token ??
+        request.headers.authorization?.replace("Bearer ", "") ??
+        "";
+
+      // Pick the initial target domain (balanced rotation starts with first)
+      const targetDomain = DOMAINS[0];
+
+      // Generate first question via LLM
+      const firstItem = await app.aiClient.generateBaselineQuestion({
+        parentAssessment: parentResponses,
+        functioningLevel,
+        assessmentMode,
+        theta: initialTheta,
+        targetDomain,
+        administeredItems: [],
+        questionNumber: 1,
+        iepProfile,
+        authToken,
+      });
 
       // Create baseline assessment record
       const [assessment] = await app.db
@@ -70,14 +101,22 @@ export async function baselineStartRoute(app: FastifyInstance) {
           learnerId,
           assessmentMode: assessmentMode as "STANDARD" | "MODIFIED" | "PICTURE_BASED" | "SWITCH_SCAN" | "EYE_GAZE" | "PARTNER_ASSISTED" | "OBSERVATIONAL",
           status: "IN_PROGRESS",
-          rawResponses: { irtState, functioningLevel, format },
+          rawResponses: { irtState, functioningLevel, format, parentResponses },
         })
         .returning();
 
-      // Cache IRT state in Redis for fast access during assessment
+      // Cache IRT state and generated question in Redis for fast access
       await app.redis.set(
         `assessment:baseline:${assessment.id}`,
-        JSON.stringify({ irtState, functioningLevel, format }),
+        JSON.stringify({
+          irtState,
+          functioningLevel,
+          format,
+          parentResponses,
+          iepProfile,
+          currentQuestion: firstItem,
+          administeredHistory: [] as { domain: string; skill: string }[],
+        }),
         "EX",
         3600, // 1 hour TTL
       );

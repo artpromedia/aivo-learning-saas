@@ -7,11 +7,13 @@ import {
   timestamp,
   jsonb,
   index,
+  real,
+  text,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { learners } from "./learners";
 import { users } from "./identity";
-import { assessmentModeEnum, assessmentStatusEnum } from "./enums";
+import { assessmentModeEnum, assessmentStatusEnum, parentAssessmentTypeEnum } from "./enums";
 
 // ─── Parent Assessments ─────────────────────────────────────────────────────────
 export const parentAssessments = pgTable(
@@ -26,6 +28,29 @@ export const parentAssessments = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
     responses: jsonb("responses").notNull(),
     functioningLevelSignals: jsonb("functioning_level_signals").default({}),
+
+    /** Routing algorithm output */
+    assessmentType: parentAssessmentTypeEnum("assessment_type").default("STANDARD"),
+    /** 0-100 support level score */
+    supportLevel: real("support_level"),
+
+    /** IEP / 504 flags */
+    hasExistingIep: boolean("has_existing_iep").default(false),
+    hasExisting504: boolean("has_existing_504").default(false),
+    disabilityCategories: jsonb("disability_categories").default([]),
+    currentServices: jsonb("current_services").default([]),
+    assistiveTechnology: jsonb("assistive_technology").default([]),
+
+    /** Extracted insight notes */
+    learningStyleNotes: text("learning_style_notes"),
+    strengthsNotes: text("strengths_notes"),
+    challengesNotes: text("challenges_notes"),
+    behaviorNotes: text("behavior_notes"),
+    recommendations: jsonb("recommendations").default([]),
+
+    /** Timestamps */
+    startedAt: timestamp("started_at", { withTimezone: true }),
+    completedAt: timestamp("completed_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [

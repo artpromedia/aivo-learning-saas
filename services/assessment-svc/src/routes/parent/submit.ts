@@ -4,7 +4,8 @@ import { eq } from "drizzle-orm";
 import { parentAssessments, learners } from "@aivo/db";
 import { publishEvent } from "@aivo/events";
 import { authenticate } from "../../middleware/authenticate.js";
-import { scoreFunctioningLevel } from "../../services/functioning-level.service.js";
+import { scoreFunctioningLevel, extractInsightNotes } from "../../services/functioning-level.service.js";
+import { validateResponses } from "../../lib/parent-assessment-questions.js";
 
 const bodySchema = z.object({
   learnerId: z.string().uuid(),
@@ -30,8 +31,20 @@ export async function parentAssessmentRoute(app: FastifyInstance) {
         return reply.status(404).send({ error: "Learner not found" });
       }
 
-      // Score the functioning level from responses
+      // Validate required questions
+      const validation = validateResponses(answers);
+      if (!validation.valid) {
+        return reply.status(400).send({
+          error: "Missing required questions",
+          details: validation.errors,
+        });
+      }
+
+      // Score the functioning level and routing
       const signals = scoreFunctioningLevel(answers as Record<string, unknown>);
+
+      // Extract insight notes
+      const insights = extractInsightNotes(answers as Record<string, unknown>);
 
       // Store the parent assessment
       const [assessment] = await app.db
@@ -41,6 +54,15 @@ export async function parentAssessmentRoute(app: FastifyInstance) {
           parentId,
           responses: answers,
           functioningLevelSignals: signals,
+          assessmentType: signals.assessmentType,
+          supportLevel: signals.supportLevel,
+          hasExistingIep: signals.hasExistingIep,
+          hasExisting504: signals.hasExisting504,
+          learningStyleNotes: insights.learningStyleNotes || null,
+          strengthsNotes: insights.strengthsNotes || null,
+          challengesNotes: insights.challengesNotes || null,
+          behaviorNotes: insights.behaviorNotes || null,
+          completedAt: new Date(),
         })
         .returning();
 
@@ -54,16 +76,23 @@ export async function parentAssessmentRoute(app: FastifyInstance) {
       await publishEvent(app.nats, "assessment.parent.completed", {
         learnerId,
         parentId,
+        assessmentType: signals.assessmentType,
+        supportLevel: signals.supportLevel,
         responses: answers,
         functioningLevelSignals: signals,
       });
 
-      app.log.info({ learnerId, level: signals.overallLevel }, "Parent assessment completed");
+      app.log.info(
+        { learnerId, level: signals.overallLevel, type: signals.assessmentType },
+        "Parent assessment completed",
+      );
 
       return reply.status(201).send({
         id: assessment.id,
         functioningLevel: signals.overallLevel,
         assessmentMode: signals.assessmentMode,
+        assessmentType: signals.assessmentType,
+        supportLevel: signals.supportLevel,
         signals,
       });
     },

@@ -114,6 +114,7 @@ export const FUNCTIONING_LEVEL_ROUTES = {
 // Onboarding (assessment-svc)
 export const ONBOARDING_ROUTES = {
   PARENT_ASSESSMENT: "/assessment/parent",
+  PARENT_ASSESSMENT_QUESTIONS: "/assessment/parent/questions",
   IEP_UPLOAD: "/assessment/iep/upload",
   IEP_STATUS: (uploadId: string) => `/assessment/iep/${uploadId}/status`,
   IEP_CONFIRM: (uploadId: string) => `/assessment/iep/${uploadId}/confirm`,

@@ -53,6 +53,7 @@ class _TutorChatScreenState extends ConsumerState<TutorChatScreen> {
   String _tutorSubject = '';
   bool _isStreaming = false;
   bool _emotionCheckInComplete = false;
+  // ignore: unused_field
   EmotionZone? _selectedEmotion;
   StreamSubscription<List<int>>? _streamSub;
 

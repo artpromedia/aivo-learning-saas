@@ -1,4 +1,4 @@
-import 'package:flutter_riverpod/legacy.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:aivo_mobile/core/auth/auth_service.dart';
 
@@ -43,27 +43,25 @@ class AuthError extends AuthState {
 // ---------------------------------------------------------------------------
 
 /// Global auth state provider.
-final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
-  final authService = ref.watch(authServiceProvider);
-  return AuthNotifier(authService: authService);
-});
+final authProvider = NotifierProvider<AuthNotifier, AuthState>(AuthNotifier.new);
 
 // ---------------------------------------------------------------------------
 // Notifier
 // ---------------------------------------------------------------------------
 
-/// [StateNotifier] that drives the authentication lifecycle.
+/// [Notifier] that drives the authentication lifecycle.
 ///
-/// On construction it immediately checks secure storage for an existing valid
+/// On initialization it immediately checks secure storage for an existing valid
 /// token so that returning users are silently re-authenticated.
-class AuthNotifier extends StateNotifier<AuthState> {
-  AuthNotifier({required AuthService authService})
-      : _authService = authService,
-        super(const AuthInitial()) {
-    checkAuth();
-  }
+class AuthNotifier extends Notifier<AuthState> {
+  late AuthService _authService;
 
-  final AuthService _authService;
+  @override
+  AuthState build() {
+    _authService = ref.watch(authServiceProvider);
+    checkAuth();
+    return const AuthInitial();
+  }
 
   // ---------------------------------------------------------------------------
   // Public API

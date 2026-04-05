@@ -29,6 +29,13 @@ class Endpoints {
   static String learnerDetail(String id) => '/learners/$id';
 
   // ---------------------------------------------------------------------------
+  // Assessment (Parent + Baseline)
+  // ---------------------------------------------------------------------------
+  static const String parentAssessmentQuestions =
+      '/assessment/parent/questions';
+  static const String parentAssessmentSubmit = '/assessment/parent';
+
+  // ---------------------------------------------------------------------------
   // Learning
   // ---------------------------------------------------------------------------
   static const String learningSessionStart = '/learning/sessions/start';
