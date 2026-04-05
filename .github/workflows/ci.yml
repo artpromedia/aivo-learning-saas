@@ -142,6 +142,11 @@ jobs:
           pnpm --filter @aivo/brand build
           pnpm --filter @aivo/feature-flags build
 
+      - name: Run database migrations
+        env:
+          DATABASE_URL: postgresql://aivo:aivo_test@localhost:5433/aivo_test
+        run: pnpm --filter @aivo/db db:push
+
       - name: Start identity-svc
         env:
           DATABASE_URL: postgresql://aivo:aivo_test@localhost:5433/aivo_test
