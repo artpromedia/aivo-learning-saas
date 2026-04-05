@@ -247,6 +247,7 @@ ingress:
     nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
   hosts:
+    # ── Production domains ──
     - host: app.aivolearning.com
       paths:
         - path: /api
@@ -293,6 +294,49 @@ ingress:
       paths:
         - path: /
           service: marketing
+    # ── Staging domains (preserved across production deploys) ──
+    - host: staging.aivolearning.com
+      paths:
+        - path: /api
+          service: identity-svc
+        - path: /assessment
+          service: assessment-svc
+        - path: /
+          service: web
+    - host: staging-api.aivolearning.com
+      paths:
+        - path: /auth
+          service: identity-svc
+        - path: /learning
+          service: learning-svc
+        - path: /billing
+          service: billing-svc
+        - path: /family
+          service: family-svc
+        - path: /engagement
+          service: engagement-svc
+        - path: /comms
+          service: comms-svc
+        - path: /admin
+          service: admin-svc
+        - path: /integrations
+          service: integrations-svc
+        - path: /tutor
+          service: tutor-svc
+        - path: /i18n
+          service: i18n-svc
+        - path: /ai
+          service: ai-svc
+        - path: /brain
+          service: brain-svc
+        - path: /assessment
+          service: assessment-svc
+        - path: /research
+          service: research-svc
+    - host: staging-status.aivolearning.com
+      paths:
+        - path: /
+          service: status-page-svc
   tls:
     - secretName: cloudflare-origin-tls
       hosts:
@@ -300,6 +344,9 @@ ingress:
         - app.aivolearning.com
         - api.aivolearning.com
         - status.aivolearning.com
+        - staging.aivolearning.com
+        - staging-api.aivolearning.com
+        - staging-status.aivolearning.com
 
 # ─────────────────────────────────────────────
 # NATS — deploy inside K3s cluster
