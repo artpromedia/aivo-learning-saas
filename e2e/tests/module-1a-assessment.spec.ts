@@ -59,7 +59,7 @@ test.describe('Module 1a: Assessment & Onboarding', () => {
     await page.getByRole('button', { name: /next|continue/i }).click();
 
     // Step 3: Parent assessment questionnaire
-    await page.waitForURL(/\/(onboarding|assessment)/, { timeout: 10_000 });
+    await page.waitForURL(/\/(onboarding|parent-assessment|assessment)/, { timeout: 10_000 });
 
     // Answer assessment questions - select options that indicate moderate functioning
     const radioGroups = page.locator('[role="radiogroup"], fieldset');
