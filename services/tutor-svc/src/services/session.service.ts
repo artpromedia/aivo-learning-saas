@@ -27,9 +27,9 @@ export class SessionService {
       .insert(tutorSessions)
       .values({
         learnerId,
-        tutorSku: sku,
+        tutorSku: sku as typeof tutorSessions.$inferInsert.tutorSku,
         subject,
-        sessionType,
+        sessionType: sessionType as typeof tutorSessions.$inferInsert.sessionType,
         locale,
         brainContextSnapshot: brainContext,
         messages: [],
@@ -61,7 +61,7 @@ export class SessionService {
     const persona = catalogItem?.persona ?? "nova";
 
     // Build conversation history from existing messages
-    const conversationHistory = session.messages ?? [];
+    const conversationHistory = (session.messages ?? []) as Array<{ role: string; content: string; timestamp?: string }>;
 
     // Add user message to history
     const userMessage = {
@@ -71,14 +71,14 @@ export class SessionService {
     };
 
     // Call AI tutor with brain context, conversation history, persona, and locale
-    const aiResponse = await this.app.aiClient.tutorRespond({
+    const aiResponse = (await this.app.aiClient.tutorRespond({
       learnerId: session.learnerId,
       sessionId,
       subject: session.subject,
       messages: [...(conversationHistory as Array<{ role: string; content: string }>), { role: userMessage.role, content: userMessage.content }],
       brainContext: session.brainContextSnapshot as Record<string, unknown>,
       locale: localeOverride ?? (session as { locale?: string }).locale ?? "en",
-    });
+    })) as { content: string; masterySignals?: Record<string, unknown> | null };
 
     const assistantMessage = {
       role: "assistant" as const,
@@ -122,12 +122,12 @@ export class SessionService {
       (now.getTime() - startedAt.getTime()) / 1000,
     );
 
-    const messages = session.messages ?? [];
+    const messages = (session.messages ?? []) as Array<{ role: string; content: string }>;
     const userMessages = messages.filter(
-      (m: { role: string }) => m.role === "user",
+      (m) => m.role === "user",
     );
     const assistantMessages = messages.filter(
-      (m: { role: string }) => m.role === "assistant",
+      (m) => m.role === "assistant",
     );
 
     const engagementMetrics = {

@@ -2,6 +2,12 @@ import type { FastifyInstance } from "fastify";
 import { stripeVerify } from "../../middleware/stripe-verify.js";
 import { SubscriptionService } from "../../services/subscription.service.js";
 
+declare module "fastify" {
+  interface FastifyContextConfig {
+    rawBody?: boolean;
+  }
+}
+
 export async function stripeWebhookRoute(app: FastifyInstance) {
   app.post(
     "/billing/webhooks/stripe",

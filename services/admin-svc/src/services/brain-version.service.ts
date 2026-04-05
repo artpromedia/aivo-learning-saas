@@ -161,7 +161,7 @@ export class BrainVersionService {
       throw Object.assign(new Error("Rollout already completed"), { statusCode: 400 });
     }
 
-    const nextPhase = PHASE_CONFIG[currentPhase].nextPhase;
+    const nextPhase: string = PHASE_CONFIG[currentPhase].nextPhase;
 
     await this.app.db
       .update(brainRollouts)
@@ -178,7 +178,7 @@ export class BrainVersionService {
     }
 
     const version = await this.getById(brainVersionId);
-    const targetPercentage = PHASE_CONFIG[nextPhase].percentage;
+    const targetPercentage = PHASE_CONFIG[nextPhase as keyof typeof PHASE_CONFIG].percentage;
     const additionalBrains = Math.ceil(currentRollout.brainsTotal * targetPercentage / 100) - currentRollout.brainsUpgraded;
 
     const additionalSelected = await this.app.db
@@ -201,7 +201,7 @@ export class BrainVersionService {
       .insert(brainRollouts)
       .values({
         brainVersionId,
-        phase: nextPhase,
+        phase: nextPhase as typeof brainRollouts.$inferInsert.phase,
         status: "MONITORING",
         targetPercentage,
         brainsUpgraded: upgraded,

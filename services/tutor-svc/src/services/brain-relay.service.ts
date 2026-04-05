@@ -27,8 +27,7 @@ export class BrainRelayService {
 
   async fetchContext(learnerId: string): Promise<BrainContext> {
     // Fetch brain context from brain service
-    const brainData =
-      await this.app.brainClient.getBrainContext(learnerId);
+    const brainData = (await this.app.brainClient.getBrainContext(learnerId)) as Record<string, unknown>;
 
     // Also fetch learner profile for functioning level info
     const [learner] = await this.app.db
@@ -39,9 +38,9 @@ export class BrainRelayService {
 
     return {
       learnerId,
-      masteryLevels: brainData.masteryLevels ?? {},
-      recentTopics: brainData.recentTopics ?? [],
-      learningPreferences: brainData.learningPreferences ?? {},
+      masteryLevels: (brainData.masteryLevels ?? {}) as Record<string, number>,
+      recentTopics: (brainData.recentTopics ?? []) as string[],
+      learningPreferences: (brainData.learningPreferences ?? {}) as Record<string, unknown>,
       functioningLevel: learner?.functioningLevel ?? "STANDARD",
       communicationMode: learner?.communicationMode ?? "VERBAL",
       enrolledGrade: learner?.enrolledGrade ?? null,

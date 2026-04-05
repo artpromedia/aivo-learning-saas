@@ -17,7 +17,7 @@ export interface StartSessionParams {
 
 export interface InteractionParams {
   responseType: string;
-  response: unknown;
+  response?: unknown;
   timeSpentMs: number;
 }
 

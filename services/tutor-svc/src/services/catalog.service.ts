@@ -32,7 +32,7 @@ export class CatalogService {
 
     return TUTOR_CATALOG.map((item) => ({
       ...item,
-      subscribed: subscribedSkus.has(item.sku),
+      subscribed: subscribedSkus.has(item.sku as typeof tutorSubscriptions.$inferSelect.sku),
     }));
   }
 

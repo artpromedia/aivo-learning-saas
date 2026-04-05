@@ -19,7 +19,7 @@ export async function updatePaymentRoute(app: FastifyInstance) {
 
     const returnUrl = `${config.APP_URL}/billing`;
     const portalUrl = await stripeService.createBillingPortalSession(
-      subscription.stripeCustomerId ?? request.user.tenantId,
+      subscription.stripeSubscriptionId ?? request.user.tenantId,
       returnUrl,
     );
 

@@ -65,6 +65,20 @@ export class DeltaDetector {
     return { added, updated, deleted };
   }
 
+  /**
+   * Alias for detectStudentChanges — used by delta sync callers.
+   */
+  detectChanges(
+    previous: SisStudent[],
+    current: SisStudent[],
+  ): DeltaResult<SisStudent> {
+    const previousMap = new Map<string, SisStudent>();
+    for (const s of previous) {
+      previousMap.set(s.sisId, s);
+    }
+    return this.detectStudentChanges(current, previousMap);
+  }
+
   private studentChanged(a: SisStudent, b: SisStudent): boolean {
     return (
       a.firstName !== b.firstName ||

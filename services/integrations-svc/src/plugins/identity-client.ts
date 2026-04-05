@@ -19,10 +19,20 @@ export interface CreateLearnerRequest {
   functioningLevel?: string;
 }
 
+export interface UpdateLearnerRequest {
+  name?: string;
+  enrolledGrade?: number;
+  schoolName?: string;
+  functioningLevel?: string;
+}
+
 export interface IdentityClient {
   createUser(data: CreateUserRequest): Promise<{ id: string; email: string }>;
   createLearner(data: CreateLearnerRequest): Promise<{ id: string }>;
   findUserByEmail(email: string): Promise<{ id: string; tenantId: string; role: string } | null>;
+  findUserBySisId(sisId: string, tenantId: string): Promise<{ id: string; tenantId: string; role: string } | null>;
+  findLearnerBySisId(sisId: string, tenantId: string): Promise<{ id: string } | null>;
+  updateLearner(learnerId: string, data: UpdateLearnerRequest): Promise<{ id: string }>;
   sendInvitation(userId: string, invitedBy: string): Promise<void>;
 }
 
@@ -62,6 +72,30 @@ export default fp(async (fastify: FastifyInstance) => {
       if (res.status === 404) return null;
       if (!res.ok) throw new Error(`identity-svc findUserByEmail failed: ${res.status}`);
       return res.json() as Promise<{ id: string; tenantId: string; role: string }>;
+    },
+
+    async findUserBySisId(sisId, tenantId) {
+      const res = await fetch(`${baseUrl}/internal/users/by-sis-id/${encodeURIComponent(sisId)}?tenantId=${encodeURIComponent(tenantId)}`);
+      if (res.status === 404) return null;
+      if (!res.ok) throw new Error(`identity-svc findUserBySisId failed: ${res.status}`);
+      return res.json() as Promise<{ id: string; tenantId: string; role: string }>;
+    },
+
+    async findLearnerBySisId(sisId, tenantId) {
+      const res = await fetch(`${baseUrl}/internal/learners/by-sis-id/${encodeURIComponent(sisId)}?tenantId=${encodeURIComponent(tenantId)}`);
+      if (res.status === 404) return null;
+      if (!res.ok) throw new Error(`identity-svc findLearnerBySisId failed: ${res.status}`);
+      return res.json() as Promise<{ id: string }>;
+    },
+
+    async updateLearner(learnerId, data) {
+      const res = await fetch(`${baseUrl}/internal/learners/${encodeURIComponent(learnerId)}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error(`identity-svc updateLearner failed: ${res.status}`);
+      return res.json() as Promise<{ id: string }>;
     },
 
     async sendInvitation(userId, invitedBy) {

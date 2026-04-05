@@ -29,7 +29,8 @@
   "pnpm": {
     "overrides": {
       "drizzle-orm": "0.44.2",
-      "fastify": "5.8.4"
+      "fastify": "5.8.4",
+      "postgres": "3.4.5"
     },
     "onlyBuiltDependencies": [
       "esbuild"

@@ -129,6 +129,8 @@ export const tutorSkuEnum = pgEnum("tutor_sku", [
   "ADDON_TUTOR_SCIENCE",
   "ADDON_TUTOR_HISTORY",
   "ADDON_TUTOR_CODING",
+  "ADDON_TUTOR_SEL",
+  "ADDON_TUTOR_SPEECH",
   "ADDON_TUTOR_BUNDLE",
 ]);
 
@@ -177,6 +179,8 @@ export const subscriptionStatusEnum = pgEnum("subscription_status", [
   "PAST_DUE",
   "CANCELLED",
   "GRACE_PERIOD",
+  "EXPIRED",
+  "SUSPENDED",
 ]);
 
 // Engagement

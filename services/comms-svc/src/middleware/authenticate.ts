@@ -1,5 +1,5 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
-import { jwtVerify, importSPKI } from "jose";
+import { jwtVerify, importSPKI, type KeyLike } from "jose";
 import { getConfig } from "../config.js";
 
 export interface AccessTokenPayload {
@@ -15,9 +15,9 @@ declare module "fastify" {
   }
 }
 
-let cachedKey: CryptoKey | null = null;
+let cachedKey: KeyLike | null = null;
 
-async function getPublicKey(): Promise<CryptoKey> {
+async function getPublicKey(): Promise<KeyLike> {
   if (cachedKey) return cachedKey;
   const config = getConfig();
   cachedKey = await importSPKI(config.JWT_PUBLIC_KEY, "RS256");

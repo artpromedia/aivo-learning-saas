@@ -38,8 +38,8 @@ export class SubscriptionService {
         and(
           eq(tutorSubscriptions.learnerId, learnerId),
           or(
-            eq(tutorSubscriptions.sku, sku),
-            eq(tutorSubscriptions.sku, "ADDON_TUTOR_BUNDLE"),
+            eq(tutorSubscriptions.sku, sku as typeof tutorSubscriptions.$inferInsert.sku),
+            eq(tutorSubscriptions.sku, "ADDON_TUTOR_BUNDLE" as typeof tutorSubscriptions.$inferInsert.sku),
           ),
           or(
             eq(tutorSubscriptions.status, "ACTIVE"),
@@ -73,7 +73,7 @@ export class SubscriptionService {
       .values({
         learnerId,
         tenantId,
-        sku,
+        sku: sku as typeof tutorSubscriptions.$inferInsert.sku,
         status: "ACTIVE",
         activatedAt: new Date(),
       })

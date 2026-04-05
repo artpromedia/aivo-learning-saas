@@ -5,6 +5,7 @@ import { getConfig } from "../config.js";
 declare module "fastify" {
   interface FastifyRequest {
     stripeEvent: Stripe.Event;
+    rawBody?: string;
   }
 }
 

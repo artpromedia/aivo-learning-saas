@@ -11,7 +11,8 @@ export async function ltiDeepLinkRoute(app: FastifyInstance) {
       const { items } = request.body as { items: any[] };
 
       const service = new LtiService(app);
-      const jwt = await service.handleDeepLink(ltiPayload, items);
+      const tenantId = ltiPayload.tenantId as string;
+      const jwt = await service.handleDeepLink(ltiPayload, tenantId, items);
 
       return reply.send({ jwt });
     },

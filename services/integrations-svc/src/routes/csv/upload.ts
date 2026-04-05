@@ -15,7 +15,7 @@ export async function csvUploadRoute(app: FastifyInstance) {
       const { tenantId } = (request as any).user;
 
       const service = new CsvImportService(app);
-      const jobId = await service.startImport(tenantId, fileName, csvContent);
+      const jobId = await service.startImport(tenantId, fileName, csvContent, request.user.sub);
 
       return reply.status(201).send({ jobId });
     },

@@ -1,5 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { subscriptions, tenants } from "@aivo/db";
 import { publishEvent } from "@aivo/events";
 
@@ -89,8 +89,8 @@ export class DistrictContractEndService {
 
   private async getLearnersWithParents(tenantId: string): Promise<LearnerWithParent[]> {
     // Query learners belonging to this tenant that have parent accounts
-    const result = await this.app.db.execute<LearnerWithParent>(
-      `SELECT
+    const result = await this.app.db.execute(
+      sql`SELECT
         l.id as "learnerId",
         l.name as "learnerName",
         u.id as "parentId",
@@ -98,12 +98,11 @@ export class DistrictContractEndService {
         u.name as "parentName"
       FROM learners l
       JOIN users u ON l.parent_id = u.id
-      WHERE l.tenant_id = $1
+      WHERE l.tenant_id = ${tenantId}
         AND u.email IS NOT NULL
         AND u.email != ''`,
-      [tenantId],
     );
 
-    return result.rows ?? [];
+    return result as unknown as LearnerWithParent[];
   }
 }

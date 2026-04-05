@@ -47,7 +47,7 @@ export class HomeworkSessionService {
       .values({
         homeworkAssignmentId: assignmentId,
         learnerId,
-        tutorSku,
+        tutorSku: tutorSku as typeof homeworkSessions.$inferInsert.tutorSku,
         messages: [],
         startedAt: new Date(),
       })
@@ -103,7 +103,7 @@ export class HomeworkSessionService {
     };
 
     // Call AI tutor with assignment context
-    const aiResponse = await this.app.aiClient.tutorRespond({
+    const aiResponse = (await this.app.aiClient.tutorRespond({
       learnerId: session.learnerId,
       sessionId,
       subject: assignment.subject,
@@ -118,7 +118,7 @@ export class HomeworkSessionService {
         adaptedProblems: assignment.adaptedProblems,
         homeworkMode: assignment.homeworkMode,
       },
-    });
+    })) as { content: string };
 
     const assistantMessage = {
       role: "assistant" as const,

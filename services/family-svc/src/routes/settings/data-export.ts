@@ -1,5 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import { z } from "zod";
+import { eq, and, inArray, desc } from "drizzle-orm";
+import { dataLifecycleEvents } from "@aivo/db";
 import { authenticate } from "../../middleware/authenticate.js";
 import { requireLearnerAccess } from "../../middleware/learner-access.js";
 
@@ -39,13 +41,20 @@ export async function dataExportRoute(app: FastifyInstance) {
 
       // Check the latest export lifecycle event
       const [event] = await app.db
-        .execute(
-          `SELECT event_type, metadata, created_at FROM data_lifecycle_events
-           WHERE learner_id = $1
-           AND event_type IN ('EXPORT_REQUESTED', 'EXPORT_COMPLETED', 'EXPORT_FAILED')
-           ORDER BY created_at DESC LIMIT 1`,
-          [learnerId],
-        );
+        .select({
+          event_type: dataLifecycleEvents.eventType,
+          metadata: dataLifecycleEvents.metadata,
+          created_at: dataLifecycleEvents.createdAt,
+        })
+        .from(dataLifecycleEvents)
+        .where(
+          and(
+            eq(dataLifecycleEvents.learnerId, learnerId),
+            inArray(dataLifecycleEvents.eventType, ["EXPORT_REQUESTED", "EXPORT_COMPLETED", "EXPORT_FAILED"]),
+          ),
+        )
+        .orderBy(desc(dataLifecycleEvents.createdAt))
+        .limit(1);
 
       if (!event) {
         return reply.send({ status: "none" });

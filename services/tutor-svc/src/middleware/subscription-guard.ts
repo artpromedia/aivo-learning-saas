@@ -41,7 +41,7 @@ export function subscriptionGuard(subjectOrSku: string) {
 
     const skus = activeSubs.map((s) => s.sku);
 
-    if (skus.includes(BUNDLE_SKU) || skus.includes(requiredSku)) {
+    if (skus.includes(BUNDLE_SKU as typeof skus[number]) || skus.includes(requiredSku as typeof skus[number])) {
       return;
     }
 

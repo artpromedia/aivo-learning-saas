@@ -18,7 +18,13 @@ export async function ltiAgsRoute(app: FastifyInstance) {
         };
 
       const service = new LtiService(app);
-      await service.postGrade({ tenantId, lineItemUrl, scoreGiven, scoreMaximum, userId });
+      await service.postGrade(tenantId, lineItemUrl, {
+        scoreGiven,
+        scoreMaximum,
+        userId,
+        activityProgress: "Completed",
+        gradingProgress: "FullyGraded",
+      });
 
       return reply.send({ success: true });
     },

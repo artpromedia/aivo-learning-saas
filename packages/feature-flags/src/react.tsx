@@ -1,4 +1,4 @@
-import {
+import React, {
   createContext,
   useCallback,
   useContext,
@@ -28,7 +28,7 @@ export function FeatureFlagProvider({
   children,
   endpoint,
   refreshInterval = 60_000,
-}: FeatureFlagProviderProps): JSX.Element {
+}: FeatureFlagProviderProps): React.JSX.Element {
   const [flags, setFlags] = useState<Record<string, unknown>>({});
   const [loading, setLoading] = useState(true);
 
