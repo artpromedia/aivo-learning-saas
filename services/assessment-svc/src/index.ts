@@ -42,11 +42,12 @@ export async function buildApp() {
 
   // Error handler
   app.setErrorHandler((error, request, reply) => {
-    if (error instanceof ZodError) {
-      app.log.warn({ body: request.body, zodErrors: error.errors }, "Validation error");
+    if (error instanceof ZodError || error.name === "ZodError") {
+      const zodErrors = (error as ZodError).errors;
+      app.log.warn({ body: request.body, zodErrors }, "Validation error");
       return reply.status(400).send({
         error: "Validation error",
-        details: error.errors.map((e) => ({
+        details: zodErrors.map((e) => ({
           path: e.path.join("."),
           message: e.message,
         })),
@@ -54,9 +55,7 @@ export async function buildApp() {
     }
 
     const statusCode = (error as { statusCode?: number }).statusCode ?? 500;
-    if (statusCode >= 500) {
-      app.log.error(error);
-    }
+    app.log.warn({ err: error.message, statusCode, url: request.url, method: request.method, body: request.body }, "Request error");
     return reply.status(statusCode).send({
       error: statusCode >= 500 ? "Internal server error" : (error as Error).message,
     });
