@@ -300,3 +300,25 @@ ingress:
         - app.aivolearning.com
         - api.aivolearning.com
         - status.aivolearning.com
+
+# ─────────────────────────────────────────────
+# NATS — deploy inside K3s cluster
+# ─────────────────────────────────────────────
+nats:
+  enabled: true
+  fullnameOverride: nats
+  config:
+    jetstream:
+      enabled: true
+      fileStore:
+        pvc:
+          size: 200Gi
+  container:
+    merge:
+      resources:
+        requests:
+          cpu: 100m
+          memory: 128Mi
+        limits:
+          cpu: 1000m
+          memory: 1Gi
