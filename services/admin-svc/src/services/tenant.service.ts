@@ -166,7 +166,7 @@ export class TenantService {
       action: "tenant.updated",
       resourceType: "tenant",
       resourceId: tenantId,
-      details: input,
+      details: input as Record<string, unknown>,
       ipAddress,
     });
 

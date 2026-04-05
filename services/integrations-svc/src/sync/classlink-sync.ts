@@ -26,8 +26,9 @@ export class ClassLinkSync {
       let teachersAdded = 0;
       const errors: Array<{ item: string; error: string }> = [];
 
-      for (const teacher of teachers) {
+      for (const t of teachers) {
         try {
+          const teacher = t as SisTeacher;
           const mapped = this.mapper.mapTeacher(teacher);
           const existing = await this.app.identityClient.findUserByEmail(mapped.email);
           if (!existing) {
@@ -41,7 +42,7 @@ export class ClassLinkSync {
             teachersAdded++;
           }
         } catch (err) {
-          errors.push({ item: `teacher:${teacher.sisId}`, error: (err as Error).message });
+          errors.push({ item: `teacher:${t.sisId}`, error: (err as Error).message });
         }
       }
 

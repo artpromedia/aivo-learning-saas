@@ -48,15 +48,15 @@ export async function deleteAllDataRoute(app: FastifyInstance) {
         return reply.status(500).send({ error: "Data deletion failed" });
       }
 
-      const result = await deleteRes.json();
+      const result = (await deleteRes.json()) as { deletion_summary: unknown };
 
       // Send confirmation email
       await publishEvent(app.nats, "comms.email.send", {
         templateSlug: "data_deletion_confirmation",
         recipientEmail: request.user.email,
-        recipientName: request.user.name ?? "Parent",
+        recipientName: request.user.email,
         templateData: {
-          userName: request.user.name ?? "Parent",
+          userName: request.user.email,
           learnerId,
         },
         tags: ["gdpr", "data-deletion"],

@@ -10,8 +10,8 @@ const mockUseLocale = vi.fn(() => "en");
 const mockUseTranslations = vi.fn(() => null as any);
 
 vi.mock("@/lib/i18n", () => ({
-  useLocale: (...args: any[]) => mockUseLocale(...args),
-  useTranslations: (...args: any[]) => mockUseTranslations(...args),
+  useLocale: (...args: unknown[]) => mockUseLocale(...(args as [])),
+  useTranslations: (...args: unknown[]) => mockUseTranslations(...(args as [])),
 }));
 
 /* ------------------------------------------------------------------ */

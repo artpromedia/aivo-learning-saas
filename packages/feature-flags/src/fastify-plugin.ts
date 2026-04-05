@@ -1,3 +1,5 @@
+import type { Redis } from "ioredis";
+import type { NatsConnection } from "nats";
 import type { FastifyInstance } from "fastify";
 import fp from "fastify-plugin";
 import { FeatureFlagClient, type FeatureFlagClientOptions } from "./client.js";
@@ -5,6 +7,8 @@ import { FeatureFlagClient, type FeatureFlagClientOptions } from "./client.js";
 declare module "fastify" {
   interface FastifyInstance {
     featureFlags: FeatureFlagClient;
+    redis: Redis;
+    nats: NatsConnection;
   }
 }
 

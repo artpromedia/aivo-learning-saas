@@ -13,10 +13,12 @@ export async function webhookDeliveriesRoute(app: FastifyInstance) {
       const { tenantId } = (request as any).user;
 
       const service = new WebhookService(app);
-      const deliveries = await service.getDeliveries(id, tenantId, {
-        page: page ? Number(page) : undefined,
-        limit: limit ? Number(limit) : undefined,
-      });
+      const deliveries = await service.getDeliveries(
+        id,
+        tenantId,
+        page ? Number(page) : undefined,
+        limit ? Number(limit) : undefined,
+      );
 
       return reply.send(deliveries);
     },

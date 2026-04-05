@@ -15,9 +15,9 @@ declare module "fastify" {
   }
 }
 
-let cachedPublicKey: jose.KeyLike | null = null;
+let cachedPublicKey: jose.CryptoKey | null = null;
 
-async function getPublicKey(): Promise<jose.KeyLike> {
+async function getPublicKey(): Promise<jose.CryptoKey> {
   if (cachedPublicKey) return cachedPublicKey;
   const config = getConfig();
   cachedPublicKey = await jose.importSPKI(config.JWT_PUBLIC_KEY, "RS256");

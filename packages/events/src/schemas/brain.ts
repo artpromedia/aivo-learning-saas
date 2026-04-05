@@ -58,6 +58,7 @@ export const BrainRecommendationCreatedSchema = z.object({
   learnerId: z.string().uuid(),
   recommendationId: z.string().uuid(),
   type: z.string(),
+  teacherId: z.string().uuid().optional(),
 });
 export type BrainRecommendationCreated = z.infer<typeof BrainRecommendationCreatedSchema>;
 
@@ -132,6 +133,22 @@ export const BrainSnapshotRestoredSchema = z.object({
 });
 export type BrainSnapshotRestored = z.infer<typeof BrainSnapshotRestoredSchema>;
 
+// ─── brain.export.completed ───────────────────────────────────────────────────
+export const BrainExportCompletedSchema = z.object({
+  learnerId: z.string().uuid(),
+  downloadUrl: z.string().url(),
+  expiresAt: z.string().datetime().optional(),
+});
+export type BrainExportCompleted = z.infer<typeof BrainExportCompletedSchema>;
+
+// ─── brain.data.lifecycle ──────────────────────────────────────────────────────
+export const BrainDataLifecycleSchema = z.object({
+  learnerId: z.string().uuid(),
+  eventType: z.string(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
+});
+export type BrainDataLifecycle = z.infer<typeof BrainDataLifecycleSchema>;
+
 export const BRAIN_SUBJECTS = {
   "brain.cloned": "aivo.brain.cloned",
   "brain.updated": "aivo.brain.updated",
@@ -145,6 +162,8 @@ export const BRAIN_SUBJECTS = {
   "brain.upgraded": "aivo.brain.upgraded",
   "brain.upgrade.batch.completed": "aivo.brain.upgrade.batch.completed",
   "brain.snapshot.restored": "aivo.brain.snapshot.restored",
+  "brain.export.completed": "aivo.brain.export.completed",
+  "brain.data.lifecycle": "aivo.brain.data.lifecycle",
 } as const;
 
 export const BRAIN_SCHEMAS = {
@@ -160,4 +179,6 @@ export const BRAIN_SCHEMAS = {
   "brain.upgraded": BrainUpgradedSchema,
   "brain.upgrade.batch.completed": BrainUpgradeBatchCompletedSchema,
   "brain.snapshot.restored": BrainSnapshotRestoredSchema,
+  "brain.export.completed": BrainExportCompletedSchema,
+  "brain.data.lifecycle": BrainDataLifecycleSchema,
 } as const;

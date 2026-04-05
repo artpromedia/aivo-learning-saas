@@ -14,6 +14,7 @@ export interface BrainContext {
   attentionSpanMinutes: number;
   preferredModality: string;
   cognitiveLoad: string;
+  activeTutors: Array<{ subject: string }>;
   mainBrainVersion: string;
   lastUpdated: string;
 }
@@ -26,6 +27,7 @@ export interface BrainSnapshot {
 }
 
 export interface BrainClient {
+  readonly baseUrl: string;
   getContext(learnerId: string): Promise<BrainContext>;
   applyRecommendation(learnerId: string, recommendationId: string, payload: unknown): Promise<{ snapshotId: string }>;
   declineRecommendation(learnerId: string, recommendationId: string): Promise<void>;
@@ -55,6 +57,7 @@ export default fp(async (fastify: FastifyInstance) => {
   }
 
   const brainClient: BrainClient = {
+    baseUrl,
     async getContext(learnerId) {
       return jsonFetch<BrainContext>(`${baseUrl}/api/brain/${learnerId}/context`);
     },

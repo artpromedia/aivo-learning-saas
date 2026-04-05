@@ -1,3 +1,4 @@
+import "@fastify/cookie";
 import type { FastifyRequest, FastifyReply } from "fastify";
 import * as jose from "jose";
 import { getConfig } from "../config.js";
@@ -15,9 +16,9 @@ declare module "fastify" {
   }
 }
 
-let _publicKey: jose.KeyLike | null = null;
+let _publicKey: jose.CryptoKey | null = null;
 
-async function getPublicKey(): Promise<jose.KeyLike> {
+async function getPublicKey(): Promise<jose.CryptoKey> {
   if (_publicKey) return _publicKey;
   const config = getConfig();
   _publicKey = await jose.importSPKI(config.JWT_PUBLIC_KEY, "RS256");

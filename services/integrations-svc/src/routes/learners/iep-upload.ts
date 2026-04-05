@@ -6,7 +6,7 @@ import { EnrollmentEnrichmentService } from "../../services/enrollment-enrichmen
 export async function iepUploadRoute(app: FastifyInstance) {
   app.post(
     "/integrations/learners/:learnerId/iep-upload",
-    { preHandler: [authenticate, authorize("TEACHER", "ADMIN")] },
+    { preHandler: [authenticate, authorize("TEACHER", "DISTRICT_ADMIN")] },
     async (request, reply) => {
       const { learnerId } = request.params as { learnerId: string };
       const { fileName, fileData } = request.body as { fileName: string; fileData: string };
@@ -19,7 +19,7 @@ export async function iepUploadRoute(app: FastifyInstance) {
       const uploadId = await service.uploadIepForLearner(
         learnerId,
         request.user.tenantId,
-        request.user.id,
+        request.user.sub,
         fileName,
         fileData,
       );

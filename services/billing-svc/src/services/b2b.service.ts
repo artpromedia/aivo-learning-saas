@@ -172,8 +172,8 @@ export class B2BService {
       .where(
         and(
           eq(users.tenantId, contract.tenantId),
-          eq(users.role, "learner"),
-          eq(users.status, "active"),
+          eq(users.role, "LEARNER"),
+          eq(users.status, "ACTIVE"),
         ),
       );
 

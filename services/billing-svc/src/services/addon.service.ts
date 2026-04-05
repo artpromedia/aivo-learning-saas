@@ -38,7 +38,7 @@ export class AddonService {
     if (sku === "ADDON_TUTOR_BUNDLE") {
       // Bundle: create a single Stripe subscription item for the bundle price
       const stripeItem = await this.stripeService.createSubscriptionItem(
-        sub.stripeSubscriptionId,
+        sub.stripeSubscriptionId!,
         addon.stripePriceId,
       );
 
@@ -47,7 +47,7 @@ export class AddonService {
         await this.app.db.insert(tutorSubscriptions).values({
           learnerId,
           tenantId,
-          sku: subjectSku,
+          sku: subjectSku as typeof tutorSubscriptions.$inferInsert.sku,
           status: "ACTIVE",
           stripeSubscriptionItemId: stripeItem.id,
           activatedAt: now,
@@ -66,14 +66,14 @@ export class AddonService {
     } else {
       // Individual addon
       const stripeItem = await this.stripeService.createSubscriptionItem(
-        sub.stripeSubscriptionId,
+        sub.stripeSubscriptionId!,
         addon.stripePriceId,
       );
 
       await this.app.db.insert(tutorSubscriptions).values({
         learnerId,
         tenantId,
-        sku,
+        sku: sku as typeof tutorSubscriptions.$inferInsert.sku,
         status: "ACTIVE",
         stripeSubscriptionItemId: stripeItem.id,
         activatedAt: now,

@@ -3,6 +3,7 @@ import {
   uuid,
   varchar,
   integer,
+  numeric,
   timestamp,
   index,
 } from "drizzle-orm/pg-core";
@@ -50,6 +51,30 @@ export const subscriptionItems = pgTable(
   },
   (t) => [
     index("subscription_items_subscription_id_idx").on(t.subscriptionId),
+  ],
+);
+
+// ─── B2B Contracts ─────────────────────────────────────────────────────────────
+export const b2bContracts = pgTable(
+  "b2b_contracts",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .notNull()
+      .references(() => tenants.id, { onDelete: "cascade" }),
+    districtName: varchar("district_name", { length: 255 }).notNull(),
+    seatCount: integer("seat_count").notNull(),
+    contractTermMonths: integer("contract_term_months").notNull(),
+    pricePerSeat: numeric("price_per_seat").notNull().$type<number>(),
+    totalValue: numeric("total_value").notNull().$type<number>(),
+    status: varchar("status", { length: 64 }).notNull().default("ACTIVE"),
+    startDate: timestamp("start_date", { withTimezone: true }).notNull().defaultNow(),
+    endDate: timestamp("end_date", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    index("b2b_contracts_tenant_id_idx").on(t.tenantId),
   ],
 );
 

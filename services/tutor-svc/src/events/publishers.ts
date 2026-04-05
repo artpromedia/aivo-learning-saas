@@ -1,4 +1,3 @@
-"""NATS event publishers for tutor-svc."""
 import type { NatsConnection } from "nats";
 import { publishEvent } from "@aivo/events";
 

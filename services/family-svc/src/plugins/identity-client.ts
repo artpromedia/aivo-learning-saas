@@ -3,6 +3,7 @@ import fp from "fastify-plugin";
 import { getConfig } from "../config.js";
 
 export interface IdentityClient {
+  readonly baseUrl: string;
   sendInvitation(data: {
     invitedBy: string;
     email: string;
@@ -24,6 +25,7 @@ export default fp(async (fastify: FastifyInstance) => {
   const baseUrl = config.IDENTITY_SVC_URL;
 
   const identityClient: IdentityClient = {
+    baseUrl,
     async sendInvitation(data) {
       const res = await fetch(`${baseUrl}/api/invitations`, {
         method: "POST",

@@ -22,11 +22,11 @@ export class HomeworkUploadService {
     subject?: string,
   ) {
     // Step 1: OCR extraction
-    const extraction = await this.app.aiClient.homeworkOCR({
+    const extraction = (await this.app.aiClient.homeworkOCR({
       learnerId,
       imageUrl: fileUrl,
       mimeType: fileType,
-    });
+    })) as { detectedSubject?: string; text?: string; problems?: unknown[] };
 
     // Detect subject if not provided
     const detectedSubject = subject ?? extraction.detectedSubject ?? "math";
@@ -54,12 +54,12 @@ export class HomeworkUploadService {
     const homeworkMode = getHomeworkMode(functioningLevel);
 
     // Step 5: Adapt problems using AI with brain context
-    const adapted = await this.app.aiClient.homeworkAdapt({
+    const adapted = (await this.app.aiClient.homeworkAdapt({
       learnerId,
-      homeworkId: `hw-${Date.now()}`,
+      subject: detectedSubject,
       problems: (extraction.problems as unknown[]) ?? [],
       brainContext,
-    });
+    })) as { problems?: unknown[] };
 
     // Step 6: Create assignment record
     const [assignment] = await this.app.db

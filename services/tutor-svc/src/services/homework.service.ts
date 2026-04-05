@@ -211,7 +211,7 @@ export class HomeworkService {
       .values({
         homeworkAssignmentId: assignmentId,
         learnerId,
-        tutorSku,
+        tutorSku: tutorSku as typeof homeworkSessions.$inferInsert.tutorSku,
         messages: initialMessages,
         startedAt: new Date(),
       })

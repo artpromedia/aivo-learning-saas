@@ -1,5 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import { subscribeEvent, type Subscription } from "@aivo/events";
+import { subscribeEvent, TUTOR_SCHEMAS, type Subscription } from "@aivo/events";
 import { ProvisioningService } from "../services/provisioning.service.js";
 import { DeprovisioningService } from "../services/deprovisioning.service.js";
 
@@ -14,7 +14,7 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
     const sub = await subscribeEvent(
       nc,
       "tutor.addon.activated",
-      (await import("@aivo/events")).getSchema("tutor.addon.activated"),
+      TUTOR_SCHEMAS["tutor.addon.activated"],
       async (data) => {
         app.log.info({ data }, "Received tutor.addon.activated");
         try {
@@ -34,7 +34,7 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
     const sub = await subscribeEvent(
       nc,
       "tutor.addon.deactivated",
-      (await import("@aivo/events")).getSchema("tutor.addon.deactivated"),
+      TUTOR_SCHEMAS["tutor.addon.deactivated"],
       async (data) => {
         app.log.info({ data }, "Received tutor.addon.deactivated");
         try {

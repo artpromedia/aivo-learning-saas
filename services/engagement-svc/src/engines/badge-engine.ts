@@ -32,7 +32,7 @@ export class BadgeEngine {
   ): Promise<boolean> {
     switch (criteria.type) {
       case "first_lesson":
-        return this.checkEventCount(learnerId, "lesson.completed") >= 1;
+        return (await this.checkEventCount(learnerId, "lesson.completed")) >= 1;
 
       case "brain_cloned":
         return triggerEvent === "brain.cloned" ||

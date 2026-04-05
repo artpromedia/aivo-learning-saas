@@ -15,8 +15,8 @@
   },
   "dependencies": {
     "@aivo/db": "workspace:*",
-    "@aivo/observability": "workspace:*",
     "@aivo/events": "workspace:*",
+    "@aivo/observability": "workspace:*",
     "@fastify/cookie": "^11.0.2",
     "@fastify/cors": "^11.0.0",
     "@fastify/rate-limit": "^10.2.1",
@@ -29,12 +29,13 @@
     "nats": "^2.28.0",
     "node-cache": "5.1.2",
     "node-cron": "^3.0.3",
-    "postgres": "3.4.5",
+    "postgres": "^3.4.5",
     "stripe": "17.5.0",
     "zod": "3.24.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
+    "@types/node-cron": "^3.0.11",
     "@vitest/coverage-v8": "^3.0.4",
     "tsup": "^8.3.5",
     "tsx": "^4.19.2",

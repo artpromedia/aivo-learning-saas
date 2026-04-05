@@ -39,7 +39,7 @@ describe("CSRF Protection", () => {
     const headerToken = "abc123";
     expect(cookieToken === headerToken).toBe(true);
 
-    const mismatch = "xyz789";
+    const mismatch: string = "xyz789";
     expect(cookieToken === mismatch).toBe(false);
   });
 });

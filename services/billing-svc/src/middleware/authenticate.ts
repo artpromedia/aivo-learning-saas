@@ -1,5 +1,6 @@
+import "@fastify/cookie";
 import type { FastifyRequest, FastifyReply } from "fastify";
-import { jwtVerify, importSPKI } from "jose";
+import * as jose from "jose";
 import { getConfig } from "../config.js";
 
 export interface AccessTokenPayload {
@@ -15,12 +16,12 @@ declare module "fastify" {
   }
 }
 
-let cachedKey: CryptoKey | null = null;
+let cachedKey: jose.KeyLike | null = null;
 
-async function getPublicKey(): Promise<CryptoKey> {
+async function getPublicKey(): Promise<jose.KeyLike> {
   if (cachedKey) return cachedKey;
   const config = getConfig();
-  cachedKey = await importSPKI(config.JWT_PUBLIC_KEY, "RS256");
+  cachedKey = await jose.importSPKI(config.JWT_PUBLIC_KEY, "RS256");
   return cachedKey;
 }
 
@@ -35,7 +36,7 @@ export async function authenticate(request: FastifyRequest, reply: FastifyReply)
 
   try {
     const publicKey = await getPublicKey();
-    const { payload } = await jwtVerify(token, publicKey);
+    const { payload } = await jose.jwtVerify(token, publicKey);
     request.user = {
       sub: payload.sub as string,
       tenantId: payload.tenantId as string,
