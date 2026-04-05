@@ -152,6 +152,7 @@ export async function buildApp() {
     await api.register(internalEmailRoute);
     await api.register(baselineRoutes);
     await api.register(brainProxyRoutes);
+    await api.register(billingProxyRoutes);
   }, { prefix: "/api" });
 
   return app;
