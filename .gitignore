@@ -35,3 +35,7 @@ e2e/jwt-public.pem
 
 # Temporary scripts
 scripts/diag-*.mjs
+
+# Temporary helm artifacts
+infra/helm/aivo-ingress.yaml
+infra/helm/values/image-overrides.yaml
