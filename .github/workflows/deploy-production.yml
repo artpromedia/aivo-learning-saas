@@ -246,7 +246,8 @@ jobs:
             -f infra/helm/values/hetzner-production.yaml \
             -f /tmp/image-tags.yaml \
             -n aivo \
-            --timeout 10m \
+            --atomic \
+            --timeout 15m \
             --wait
 
       - name: Health-check canary services (identity-svc + web)
