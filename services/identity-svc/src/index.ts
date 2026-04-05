@@ -58,6 +58,9 @@ import { brainProxyRoutes } from "./routes/brain-proxy.js";
 import { healthRoutes } from "./routes/health.js";
 import { billingProxyRoutes } from "./routes/billing-proxy.js";
 
+// Routes — Notifications Proxy (API Gateway → comms-svc)
+import { notificationsProxyRoutes } from "./routes/notifications-proxy.js";
+
 // Routes — Test support (non-production only)
 import { testSupportRoutes } from "./routes/test-support.js";
 
@@ -154,6 +157,7 @@ export async function buildApp() {
     await api.register(baselineRoutes);
     await api.register(brainProxyRoutes);
     await api.register(billingProxyRoutes);
+    await api.register(notificationsProxyRoutes);
   }, { prefix: "/api" });
 
   return app;
