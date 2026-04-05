@@ -123,6 +123,11 @@ const SEED_TRANSLATIONS: Record<string, Record<string, string>> = {
     "verificationSentDescription": "Click the link in the email to verify your account. If you don't see it, check your spam folder.",
   },
   onboarding: {
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "loading": "Loading...",
     "addChild": "Add Child",
     "assessment": "Assessment",
     "iepUpload": "IEP Upload",
