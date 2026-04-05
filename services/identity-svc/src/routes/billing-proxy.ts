@@ -27,7 +27,7 @@ async function proxyToBilling(
 
 export const billingProxyRoutes: FastifyPluginAsync = async (app) => {
   // Proxy all /api/billing/* requests to billing-svc
-  app.all<{ Params: { rest: string } }>("/api/billing/*", async (request, reply) => {
+  app.all<{ Params: { rest: string } }>("/billing/*", async (request, reply) => {
     const path = `/billing/${request.params.rest}`;
     const accessToken =
       request.cookies?.access_token ??

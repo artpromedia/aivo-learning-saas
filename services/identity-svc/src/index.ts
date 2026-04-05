@@ -54,6 +54,9 @@ import { baselineRoutes } from "./routes/onboarding/baseline.js";
 // Routes — Brain Proxy (API Gateway → brain-svc)
 import { brainProxyRoutes } from "./routes/brain-proxy.js";
 
+// Routes — Notifications Proxy (API Gateway → comms-svc)
+import { notificationsProxyRoutes } from "./routes/notifications-proxy.js";
+
 // Routes — Health
 import { healthRoutes } from "./routes/health.js";
 import { billingProxyRoutes } from "./routes/billing-proxy.js";
@@ -154,6 +157,7 @@ export async function buildApp() {
     await api.register(baselineRoutes);
     await api.register(brainProxyRoutes);
     await api.register(billingProxyRoutes);
+    await api.register(notificationsProxyRoutes);
   }, { prefix: "/api" });
 
   return app;
