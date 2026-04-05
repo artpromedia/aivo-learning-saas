@@ -56,6 +56,7 @@ import { brainProxyRoutes } from "./routes/brain-proxy.js";
 
 // Routes — Health
 import { healthRoutes } from "./routes/health.js";
+import { billingProxyRoutes } from "./routes/billing-proxy.js";
 
 // Routes — Test support (non-production only)
 import { testSupportRoutes } from "./routes/test-support.js";
