@@ -52,11 +52,23 @@ export async function apiFetch<T>(path: string, options?: RequestInit): Promise<
 }
 
 export async function assessmentApiFetch<T>(path: string, options?: RequestInit): Promise<T> {
-  const res = await fetch(`${ASSESSMENT_API_BASE}${path}`, {
-    credentials: "include",
-    headers: { "Content-Type": "application/json", ...options?.headers },
-    ...options,
-  });
+  const headers: Record<string, string> = { "Content-Type": "application/json", ...options?.headers as Record<string, string> };
+  const fetchOpts: RequestInit = { ...options, credentials: "include", headers };
+  const res = await fetch(`${ASSESSMENT_API_BASE}${path}`, fetchOpts);
+  if (res.status === 401) {
+    if (!refreshPromise) {
+      refreshPromise = tryRefreshToken().finally(() => { refreshPromise = null; });
+    }
+    const refreshed = await refreshPromise;
+    if (refreshed) {
+      const retry = await fetch(`${ASSESSMENT_API_BASE}${path}`, fetchOpts);
+      if (!retry.ok) {
+        const body = await retry.json().catch(() => ({}));
+        throw new Error(body.error ?? `API error: ${retry.status}`);
+      }
+      return retry.json();
+    }
+  }
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
     throw new Error(body.error ?? `API error: ${res.status}`);

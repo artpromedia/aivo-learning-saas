@@ -41,8 +41,9 @@ export async function buildApp() {
   });
 
   // Error handler
-  app.setErrorHandler((error, _request, reply) => {
+  app.setErrorHandler((error, request, reply) => {
     if (error instanceof ZodError) {
+      app.log.warn({ body: request.body, zodErrors: error.errors }, "Validation error");
       return reply.status(400).send({
         error: "Validation error",
         details: error.errors.map((e) => ({
