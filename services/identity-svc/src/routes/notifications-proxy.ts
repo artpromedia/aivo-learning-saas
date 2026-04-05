@@ -35,10 +35,9 @@ export const notificationsProxyRoutes: FastifyPluginAsync = async (app) => {
   app.get("/notifications", async (request, reply) => {
     const token = getToken(request);
     if (!token) {
-      return reply.status(401).send({ error: "Unauthorized" });
+      return reply.status(401).send({ error: "Not authenticated" });
     }
 
-    // Decode user ID from JWT
     let userId: string;
     try {
       const payload = await app.auth.verifyAccessToken(token);
@@ -60,23 +59,34 @@ export const notificationsProxyRoutes: FastifyPluginAsync = async (app) => {
     return reply.status(status).send(data);
   });
 
-  // PATCH /notifications/:id/read → comms-svc PATCH /comms/notifications/:id/read
-  app.patch<{ Params: { id: string } }>("/notifications/:id/read", async (request, reply) => {
-    const token = getToken(request);
-    const { id } = request.params;
-    const { status, data } = await proxyToComms(
-      `/comms/notifications/${id}/read`,
-      token,
-      "PATCH"
-    );
-    return reply.status(status).send(data);
-  });
+  // POST /notifications/:id/read → comms-svc PATCH /comms/notifications/:id/read
+  app.post<{ Params: { id: string } }>(
+    "/notifications/:id/read",
+    async (request, reply) => {
+      const token = getToken(request);
+      if (!token) {
+        return reply.status(401).send({ error: "Not authenticated" });
+      }
 
-  // PATCH /notifications/read-all → comms-svc PATCH /comms/notifications/read-all
-  app.patch("/notifications/read-all", async (request, reply) => {
+      const { id } = request.params;
+      const { status, data } = await proxyToComms(
+        `/comms/notifications/${id}/read`,
+        token,
+        "PATCH"
+      );
+      return reply.status(status).send(data);
+    }
+  );
+
+  // POST /notifications/read-all → comms-svc PATCH /comms/notifications/read-all
+  app.post("/notifications/read-all", async (request, reply) => {
     const token = getToken(request);
+    if (!token) {
+      return reply.status(401).send({ error: "Not authenticated" });
+    }
+
     const { status, data } = await proxyToComms(
-      `/comms/notifications/read-all`,
+      "/comms/notifications/read-all",
       token,
       "PATCH"
     );
