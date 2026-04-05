@@ -51,7 +51,9 @@ test.describe('Module 1a: Assessment & Onboarding', () => {
 
     const gradeSelect = page.getByLabel(/grade/i);
     if (await gradeSelect.isVisible({ timeout: 3_000 }).catch(() => false)) {
-      await gradeSelect.selectOption({ label: /3rd|3/i });
+      const options = await gradeSelect.locator('option').allTextContents();
+      const match = options.find((o) => /3rd|3/i.test(o));
+      await gradeSelect.selectOption({ label: match ?? options[1] ?? '' });
     }
 
     await page.getByRole('button', { name: /next|continue/i }).click();
