@@ -47,6 +47,7 @@ identity-svc:
   replicaCount: 2
   env:
     APP_URL: "https://app.aivolearning.com"
+    CORS_ORIGINS: "https://app.aivolearning.com,https://staging.aivolearning.com"
   resources:
     requests:
       cpu: 200m

@@ -45,6 +45,9 @@ global:
 
 identity-svc:
   replicaCount: 1
+  env:
+    APP_URL: "https://staging.aivolearning.com"
+    CORS_ORIGINS: "https://staging.aivolearning.com,https://app.aivolearning.com"
   resources:
     requests:
       cpu: 50m

@@ -94,8 +94,11 @@ export async function buildApp() {
 
   // Core plugins
   await app.register(cookie);
+  const corsOrigins = config.CORS_ORIGINS
+    ? config.CORS_ORIGINS.split(",").map(s => s.trim())
+    : [config.APP_URL];
   await app.register(cors, {
-    origin: config.APP_URL,
+    origin: corsOrigins,
     credentials: true,
   });
   await app.register(rateLimit, {
