@@ -1,4 +1,5 @@
 import Fastify from "fastify";
+import cookie from "@fastify/cookie";
 import multipart from "@fastify/multipart";
 import { ZodError } from "zod";
 import { loadConfig } from "./config.js";
@@ -78,6 +79,9 @@ export async function buildApp() {
     environment: config.NODE_ENV,
     sentryDsn: process.env.SENTRY_DSN,
   });
+
+  // Cookie parsing (required for auth)
+  await app.register(cookie);
 
   // Health
   await app.register(healthRoutes);
