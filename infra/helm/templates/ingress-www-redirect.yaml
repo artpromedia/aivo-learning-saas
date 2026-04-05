@@ -1,0 +1,35 @@
+{{- if and .Values.ingress .Values.ingress.enabled }}
+{{- $global := .Values.global -}}
+{{- $ingress := .Values.ingress -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: aivo-www-redirect
+  namespace: {{ $global.namespace | default "aivo" }}
+  labels:
+    app.kubernetes.io/part-of: aivo-learning-saas
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/server-snippet: |
+      return 301 https://aivolearning.com$request_uri;
+spec:
+  {{- if $ingress.className }}
+  ingressClassName: {{ $ingress.className }}
+  {{- end }}
+  rules:
+    - host: www.aivolearning.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: marketing
+                port:
+                  number: 3000
+  tls:
+    - secretName: cloudflare-origin-tls
+      hosts:
+        - www.aivolearning.com
+{{- end }}

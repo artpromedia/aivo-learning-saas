@@ -297,6 +297,7 @@ ingress:
     - secretName: cloudflare-origin-tls
       hosts:
         - aivolearning.com
+        - www.aivolearning.com
         - app.aivolearning.com
         - api.aivolearning.com
         - status.aivolearning.com
