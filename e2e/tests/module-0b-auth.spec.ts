@@ -104,12 +104,15 @@ test.describe('Module 0b: Authentication', () => {
     await page.getByRole('button', { name: /sign in|log in/i }).click();
     await page.waitForURL(/\/(parent|learner|teacher|admin|add-child)/, { timeout: 15_000 });
 
+    // Wait for auth state to settle before looking for logout
+    await page.waitForLoadState('networkidle');
+
     // Click logout
     const logoutButton = page.getByRole('button', { name: /log\s?out|sign\s?out/i });
     const logoutLink = page.getByRole('link', { name: /log\s?out|sign\s?out/i });
 
     if (await logoutButton.isVisible({ timeout: 3_000 }).catch(() => false)) {
-      await logoutButton.click();
+      await logoutButton.click({ force: true });
     } else if (await logoutLink.isVisible({ timeout: 3_000 }).catch(() => false)) {
       await logoutLink.click();
     } else {

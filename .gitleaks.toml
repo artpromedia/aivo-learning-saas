@@ -43,7 +43,7 @@ regexes = [
 # Global allowlist — CI placeholder secrets
 # ─────────────────────────────────────────────
 [allowlist]
-description = "Global allowlist for CI placeholder values and test fixtures"
+description = "Global allowlist for CI placeholder values, dev configs, test fixtures, and build artifacts"
 paths = [
   '''\.gitleaks\.toml$''',
   '''\.github/workflows/.*\.yml$''',
@@ -51,6 +51,12 @@ paths = [
   '''\.env\.test$''',
   '''tests?/.*fixtures?/''',
   '''__tests__/''',
+  '''Podfile\.lock$''',
+  '''HETZNER_DEPLOYMENT_GUIDE\.md$''',
+  '''e2e/docker-compose\.test\.yml$''',
+  '''docker-compose\.dev\.yml$''',
+  '''\.next/''',
+  '''tests?/test_.*\.py$''',
 ]
 regexTarget = "match"
 regexes = [
@@ -61,4 +67,9 @@ regexes = [
   '''ci-test-auth-secret-not-real''',
   '''aivo_test_pw''',
   '''aivo_dev_pw''',
+  '''CHANGE_ME_STRONG_PASSWORD''',
+  '''GENERATE_RANDOM_KEY''',
+  '''e2e-test-secret-key-at-least-32-characters-long''',
+  '''aivo_dev''',
+  '''test-secret-key-for-hs256''',
 ]

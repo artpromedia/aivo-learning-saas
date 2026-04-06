@@ -81,10 +81,11 @@ test.describe('Module 0b: Sign In', () => {
     const _urlBeforeRefresh = page.url();
 
     await page.reload();
+    await page.waitForLoadState('networkidle');
 
     await expect(page).not.toHaveURL(/\/login/);
 
-    await page.goto(`${BASE_URL}/parent`);
+    await page.goto(`${BASE_URL}/parent`, { waitUntil: 'domcontentloaded' });
     await expect(page).not.toHaveURL(/\/login/);
 
     const sessionRes = await page.request.get(`${API_BASE}/auth/session`, {
