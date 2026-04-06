@@ -15,14 +15,18 @@ async function proxyToBilling(
     headers["Authorization"] = `Bearer ${accessToken}`;
   }
 
-  const res = await fetch(`${BILLING_SVC_URL}${path}`, {
-    method,
-    headers,
-    body: method === "GET" ? undefined : body,
-  });
+  try {
+    const res = await fetch(`${BILLING_SVC_URL}${path}`, {
+      method,
+      headers,
+      body: method === "GET" ? undefined : body,
+    });
 
-  const data = await res.json().catch(() => null);
-  return { status: res.status, data };
+    const data = await res.json().catch(() => null);
+    return { status: res.status, data };
+  } catch {
+    return { status: 502, data: { error: "Billing service unavailable" } };
+  }
 }
 
 export const billingProxyRoutes: FastifyPluginAsync = async (app) => {
