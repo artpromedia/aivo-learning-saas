@@ -16,7 +16,14 @@ export async function refreshRoute(app: FastifyInstance) {
 
     const authService = new AuthService(app);
     const config = getConfig();
-    const result = await authService.refreshSession(refreshToken);
+
+    let result;
+    try {
+      result = await authService.refreshSession(refreshToken);
+    } catch (err) {
+      const statusCode = (err as { statusCode?: number }).statusCode ?? 401;
+      return reply.status(statusCode).send({ error: statusCode === 401 ? "Invalid or expired refresh token" : (err as Error).message });
+    }
 
     reply
       .setCookie("access_token", result.accessToken, {
