@@ -48,6 +48,10 @@ identity-svc:
   env:
     APP_URL: "https://app.aivolearning.com"
     CORS_ORIGINS: "https://app.aivolearning.com,https://staging.aivolearning.com"
+    BILLING_SVC_URL: "http://billing-svc:3008"
+    BRAIN_SVC_URL: "http://brain-svc:3002"
+    COMMS_SVC_URL: "http://comms-svc:3007"
+    ASSESSMENT_SVC_URL: "http://assessment-svc:3012"
   resources:
     requests:
       cpu: 200m
