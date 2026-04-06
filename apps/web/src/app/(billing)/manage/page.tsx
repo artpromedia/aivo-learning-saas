@@ -59,10 +59,14 @@ export default function ManageSubscriptionPage() {
   useEffect(() => {
     async function fetchSubscription() {
       try {
-        const result = await apiFetch<SubscriptionData>(
+        const result = await apiFetch<SubscriptionData | { subscription: null }>(
           API_ROUTES.BILLING.CURRENT,
         );
-        setData(result);
+        if ("subscription" in result && result.subscription === null) {
+          setData(null);
+        } else {
+          setData(result as SubscriptionData);
+        }
       } catch (err) {
         const message = err instanceof Error ? err.message : "Failed to load subscription data";
         if (message.includes("401") || message.includes("Authentication")) {
@@ -128,6 +132,32 @@ export default function ManageSubscriptionPage() {
         >
           Retry
         </Button>
+      </div>
+    );
+  }
+
+  if (!loading && !data) {
+    return (
+      <div className="max-w-3xl mx-auto py-8 px-4">
+        <Link
+          href="/parent"
+          className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-4"
+        >
+          <ArrowLeft size={16} />
+          Back to dashboard
+        </Link>
+        <div className="text-center py-16">
+          <CreditCard size={48} className="mx-auto mb-4 text-gray-300 dark:text-gray-600" />
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+            No active subscription
+          </h2>
+          <p className="text-gray-500 dark:text-gray-400 mb-6">
+            Choose a plan to unlock the full AIVO learning experience.
+          </p>
+          <Link href="/checkout">
+            <Button>Choose a Plan</Button>
+          </Link>
+        </div>
       </div>
     );
   }

@@ -308,6 +308,11 @@ const SEED_TRANSLATIONS: Record<string, Record<string, string>> = {
     "journeyReadyDescription": "We've customized the curriculum, selected AI tutors, and prepared an adaptive learning path based on everything you've shared.",
     "goToDashboard": "Go to Dashboard",
     "failedToComplete": "Failed to complete onboarding",
+    "pinMustBe4to6Digits": "PIN must be between 4 and 6 digits",
+    "pinsMustMatch": "PINs do not match",
+    "createLearnerPin": "Create a PIN for your learner",
+    "createLearnerPinDescription": "This PIN helps secure your child's account and lets them log in independently.",
+    "confirmLearnerPin": "Confirm PIN",
   },
   dashboard: {
     "dashboard": "Dashboard",

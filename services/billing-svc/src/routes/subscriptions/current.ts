@@ -10,7 +10,7 @@ export async function currentSubscriptionRoute(app: FastifyInstance) {
     const subscription = await subscriptionService.getSubscription(request.user.tenantId) as SubscriptionWithItems | null;
 
     if (!subscription) {
-      return reply.status(404).send({ error: "Subscription not found" });
+      return reply.status(200).send({ subscription: null });
     }
 
     const plan = getPlanById(subscription.planId);
