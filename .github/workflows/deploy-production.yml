@@ -136,19 +136,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: "10.6.5"
-
-      - name: Install dependencies
-        run: pnpm install --filter @aivo/db...
-
       - name: Configure kubectl
         run: |
           mkdir -p ~/.kube
@@ -157,13 +144,53 @@ jobs:
 
       - name: Run database migrations
         run: |
-          # Extract DATABASE_URL from Kubernetes secret
-          DATABASE_URL=$(kubectl get secret db-secrets -n aivo -o jsonpath='{.data.database-url}' | base64 -d)
-          export DATABASE_URL
+          # Clean up any leftover migration pod from a previous run
+          kubectl delete pod db-migrate -n aivo --ignore-not-found --wait=false 2>/dev/null || true
+          sleep 5
 
-          echo "Running Drizzle migrations against production database..."
-          pnpm --filter @aivo/db db:migrate
+          # Create a temporary pod inside the cluster with DATABASE_URL from secrets
+          kubectl run db-migrate -n aivo \
+            --image=node:22-slim \
+            --restart=Never \
+            --overrides='{
+              "spec": {
+                "containers": [{
+                  "name": "db-migrate",
+                  "image": "node:22-slim",
+                  "command": ["sleep", "600"],
+                  "env": [{
+                    "name": "DATABASE_URL",
+                    "valueFrom": {
+                      "secretKeyRef": {
+                        "name": "db-secrets",
+                        "key": "database-url"
+                      }
+                    }
+                  }]
+                }]
+              }
+            }'
+
+          echo "Waiting for migration pod to be ready..."
+          kubectl wait --for=condition=Ready pod/db-migrate -n aivo --timeout=120s
+
+          # Copy migration files into the pod
+          kubectl cp packages/db/drizzle db-migrate:/app/drizzle -n aivo
+          kubectl cp packages/db/drizzle.config.ts db-migrate:/app/drizzle.config.ts -n aivo
+
+          # Install drizzle-kit and run migrations
+          kubectl exec db-migrate -n aivo -- sh -c '
+            cd /app
+            npm init -y >/dev/null 2>&1
+            npm install drizzle-kit drizzle-orm postgres >/dev/null 2>&1
+            npx drizzle-kit migrate
+          '
+
           echo "Database migrations completed successfully"
+
+      - name: Cleanup migration pod
+        if: always()
+        run: kubectl delete pod db-migrate -n aivo --ignore-not-found
 
   # ═════════════════════════════════════════════
   # Stage 4: Canary Deployment
