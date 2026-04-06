@@ -222,6 +222,7 @@ const SEED_TRANSLATIONS: Record<string, Record<string, string>> = {
     "lowSensitivity": "Low sensitivity",
     "highSensitivity": "High sensitivity",
     "failedToSubmitAssessment": "Failed to submit assessment",
+    "loadingAssessment": "Loading assessment...",
     "uploadIepDocument": "Upload IEP Document",
     "uploadIepSubtitle": "Upload your child's IEP to help us better understand their needs. This is optional.",
     "dragDropIep": "Drag and drop your IEP here",

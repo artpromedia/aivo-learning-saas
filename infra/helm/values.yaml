@@ -57,6 +57,10 @@ identity-svc:
   env:
     NODE_ENV: production
     PORT: "3001"
+    BILLING_SVC_URL: "http://billing-svc:3008"
+    BRAIN_SVC_URL: "http://brain-svc:3002"
+    COMMS_SVC_URL: "http://comms-svc:3007"
+    ASSESSMENT_SVC_URL: "http://assessment-svc:3012"
 
 billing-svc:
   enabled: true

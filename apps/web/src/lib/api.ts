@@ -1,5 +1,4 @@
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
-const ASSESSMENT_API_BASE = process.env.NEXT_PUBLIC_ASSESSMENT_API_URL ?? "http://localhost:3012";
 
 let refreshPromise: Promise<boolean> | null = null;
 
@@ -52,26 +51,6 @@ export async function apiFetch<T>(path: string, options?: RequestInit): Promise<
 }
 
 export async function assessmentApiFetch<T>(path: string, options?: RequestInit): Promise<T> {
-  const headers: Record<string, string> = { "Content-Type": "application/json", ...options?.headers as Record<string, string> };
-  const fetchOpts: RequestInit = { ...options, credentials: "include", headers };
-  const res = await fetch(`${ASSESSMENT_API_BASE}${path}`, fetchOpts);
-  if (res.status === 401) {
-    if (!refreshPromise) {
-      refreshPromise = tryRefreshToken().finally(() => { refreshPromise = null; });
-    }
-    const refreshed = await refreshPromise;
-    if (refreshed) {
-      const retry = await fetch(`${ASSESSMENT_API_BASE}${path}`, fetchOpts);
-      if (!retry.ok) {
-        const body = await retry.json().catch(() => ({}));
-        throw new Error(body.error ?? `API error: ${retry.status}`);
-      }
-      return retry.json();
-    }
-  }
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    throw new Error(body.error ?? `API error: ${res.status}`);
-  }
-  return res.json();
+  // Route through API gateway (identity-svc) for consistent auth handling
+  return apiFetch<T>(`/api${path}`, options);
 }

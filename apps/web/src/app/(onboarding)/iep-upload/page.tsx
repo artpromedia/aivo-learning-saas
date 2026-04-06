@@ -51,7 +51,7 @@ export default function IepUploadPage() {
       formData.append("file", f);
 
       const uploadRes = await fetch(
-        `${process.env.NEXT_PUBLIC_ASSESSMENT_API_URL ?? "http://localhost:3012"}${API_ROUTES.ONBOARDING.IEP_UPLOAD}`,
+        `/api${API_ROUTES.ONBOARDING.IEP_UPLOAD}`,
         {
           method: "POST",
           credentials: "include",
