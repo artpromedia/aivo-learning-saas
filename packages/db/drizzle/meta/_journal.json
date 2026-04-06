@@ -15,6 +15,13 @@
       "when": 1774662000000,
       "tag": "0001_parent_assessment_overhaul",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1775625600000,
+      "tag": "0002_fix_parent_assessment_legacy_columns",
+      "breakpoints": true
     }
   ]
 }

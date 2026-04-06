@@ -47,39 +47,60 @@ export async function parentAssessmentRoute(app: FastifyInstance) {
       const insights = extractInsightNotes(answers as Record<string, unknown>);
 
       // Store the parent assessment
-      const [assessment] = await app.db
-        .insert(parentAssessments)
-        .values({
-          learnerId,
-          parentId,
-          responses: answers,
-          functioningLevelSignals: signals,
-          assessmentType: signals.assessmentType,
-          supportLevel: signals.supportLevel,
-          hasExistingIep: signals.hasExistingIep,
-          hasExisting504: signals.hasExisting504,
-          learningStyleNotes: insights.learningStyleNotes || null,
-          strengthsNotes: insights.strengthsNotes || null,
-          challengesNotes: insights.challengesNotes || null,
-          behaviorNotes: insights.behaviorNotes || null,
-          completedAt: new Date(),
-        })
-        .returning();
+      let assessment;
+      try {
+        [assessment] = await app.db
+          .insert(parentAssessments)
+          .values({
+            learnerId,
+            parentId,
+            responses: answers,
+            functioningLevelSignals: signals,
+            assessmentType: signals.assessmentType,
+            supportLevel: signals.supportLevel,
+            hasExistingIep: signals.hasExistingIep,
+            hasExisting504: signals.hasExisting504,
+            learningStyleNotes: insights.learningStyleNotes || null,
+            strengthsNotes: insights.strengthsNotes || null,
+            challengesNotes: insights.challengesNotes || null,
+            behaviorNotes: insights.behaviorNotes || null,
+            completedAt: new Date(),
+          })
+          .returning();
+      } catch (err) {
+        app.log.error(
+          { err, learnerId, parentId },
+          "Failed to insert parent assessment",
+        );
+        return reply.status(500).send({ error: "Failed to save assessment" });
+      }
 
       // Update learner's functioning level
-      await app.db
-        .update(learners)
-        .set({ functioningLevel: signals.overallLevel })
-        .where(eq(learners.id, learnerId));
+      try {
+        await app.db
+          .update(learners)
+          .set({ functioningLevel: signals.overallLevel })
+          .where(eq(learners.id, learnerId));
+      } catch (err) {
+        app.log.error(
+          { err, learnerId, level: signals.overallLevel },
+          "Failed to update learner functioning level",
+        );
+      }
 
-      // Emit NATS event
-      await publishEvent(app.nats, "assessment.parent.completed", {
+      // Emit NATS event (non-blocking — don't fail the request if NATS is unavailable)
+      publishEvent(app.nats, "assessment.parent.completed", {
         learnerId,
         parentId,
         assessmentType: signals.assessmentType,
         supportLevel: signals.supportLevel,
         responses: answers,
         functioningLevelSignals: signals,
+      }).catch((err) => {
+        app.log.error(
+          { err, learnerId },
+          "Failed to publish assessment.parent.completed event",
+        );
       });
 
       app.log.info(
