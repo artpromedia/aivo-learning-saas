@@ -1,5 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import { subscribeEvent, LEARNING_SCHEMAS, ENGAGEMENT_SCHEMAS, BRAIN_SCHEMAS, type Subscription } from "@aivo/events";
+import { subscribeEvent, LEARNING_SCHEMAS, ENGAGEMENT_SCHEMAS, BRAIN_SCHEMAS, IDENTITY_SCHEMAS, type Subscription } from "@aivo/events";
 import { XpEngine } from "../engines/xp-engine.js";
 import { StreakEngine } from "../engines/streak-engine.js";
 import { BadgeEngine } from "../engines/badge-engine.js";
@@ -122,6 +122,27 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
     });
     subs.push(sub);
   } catch { app.log.warn("Could not subscribe to engagement.challenge.completed"); }
+
+  // identity.learner.created → initialize XP + streak for new learner
+  try {
+    const sub = await subscribeEvent(
+      nc,
+      "identity.learner.created",
+      IDENTITY_SCHEMAS["identity.learner.created"],
+      async (data) => {
+        app.log.info({ data }, "Received identity.learner.created — initializing engagement data");
+        try {
+          await xpEngine.initializeLearner(data.learnerId);
+          await streakEngine.initializeLearner(data.learnerId);
+          await leaderboardEngine.addLearner(data.learnerId);
+          app.log.info({ learnerId: data.learnerId }, "Engagement data initialized for new learner");
+        } catch (err) {
+          app.log.error({ err, data }, "Failed to initialize engagement for new learner");
+        }
+      },
+    );
+    subs.push(sub);
+  } catch { app.log.warn("Could not subscribe to identity.learner.created"); }
 
   // Clean up on close
   app.addHook("onClose", async () => {

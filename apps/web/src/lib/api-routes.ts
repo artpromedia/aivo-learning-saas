@@ -26,6 +26,8 @@ export const LEARNER_ROUTES = {
   UPDATE: (id: string) => `/api/learners/${id}`,
   PROGRESS: (id: string) => `/api/learners/${id}/progress`,
   SESSIONS: (id: string) => `/api/learners/${id}/sessions`,
+  SET_PIN: (id: string) => `/api/learners/${id}/pin`,
+  VERIFY_PIN: (id: string) => `/api/learners/${id}/pin/verify`,
 } as const;
 
 // Lessons

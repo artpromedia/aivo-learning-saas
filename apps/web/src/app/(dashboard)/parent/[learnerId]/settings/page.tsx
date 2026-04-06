@@ -26,6 +26,7 @@ import { Modal } from "@/components/ui/Modal";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
 import { apiFetch } from "@/lib/api";
+import { PinSection } from "./pin-section";
 
 interface LearnerSettings {
   privacyLevel: "standard" | "strict";
@@ -87,6 +88,7 @@ export default function LearnerSettingsPage() {
 
   // Learner name for confirmation
   const [learnerName, setLearnerName] = useState("");
+  const [hasPinSet, setHasPinSet] = useState(false);
 
   const stopPolling = useCallback(() => {
     if (pollRef.current) {
@@ -191,7 +193,7 @@ export default function LearnerSettingsPage() {
           apiFetch<LearnerSettings>(`/api/learners/${learnerId}/settings`),
           apiFetch<{ exports: ExportHistoryEntry[] }>(`/api/family/learners/${learnerId}/export/history`),
           apiFetch<SubscriptionStatus>(`/api/billing/subscription/status`),
-          apiFetch<{ name: string }>(`/api/learners/${learnerId}`),
+          apiFetch<{ name: string; pinSetAt?: string }>(`/api/learners/${learnerId}`),
         ]);
 
         if (settingsResult.status === "fulfilled") {
@@ -210,6 +212,7 @@ export default function LearnerSettingsPage() {
 
         if (learnerResult.status === "fulfilled") {
           setLearnerName(learnerResult.value.name ?? "");
+          setHasPinSet(!!learnerResult.value.pinSetAt);
         }
       } catch (err) {
         setError(
@@ -478,6 +481,9 @@ export default function LearnerSettingsPage() {
           <Button onClick={handleSave} loading={saving} leftIcon={<Save size={16} />}>
             Save Settings
           </Button>
+
+          {/* Learner PIN */}
+          <PinSection learnerId={learnerId} hasPinSet={hasPinSet} />
 
           {/* Data Export */}
           <Card>

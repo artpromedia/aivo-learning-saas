@@ -152,6 +152,18 @@ export class ApiClient {
     return this.get<{ token: string }>(`/test/last-reset-token?email=${encodeURIComponent(email)}`);
   }
 
+  // Learner PIN endpoints
+  async setLearnerPin(learnerId: string, pin: string) {
+    return this.post(`/api/learners/${learnerId}/pin`, { pin });
+  }
+
+  async verifyLearnerPin(learnerId: string, pin: string) {
+    return this.post<{ success: boolean; token: string; learnerId: string }>(
+      `/api/learners/${learnerId}/pin/verify`,
+      { pin },
+    );
+  }
+
   // Family / Learner endpoints
   async getLearners() {
     return this.get('/family/learners');

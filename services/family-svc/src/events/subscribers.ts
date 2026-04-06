@@ -1,6 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import { eq } from "drizzle-orm";
-import { subscribeEvent, BRAIN_SCHEMAS, type Subscription } from "@aivo/events";
+import { subscribeEvent, BRAIN_SCHEMAS, IDENTITY_SCHEMAS, type Subscription } from "@aivo/events";
 import { publishEvent } from "@aivo/events";
 import { brainStates, learners, users } from "@aivo/db";
 import { RecommendationService } from "../services/recommendation.service.js";
@@ -128,6 +128,43 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
     });
     subs.push(sub);
   } catch { app.log.warn("Could not subscribe to brain.regression.detected"); }
+
+  // identity.learner.created → send welcome notification + trigger brain initialization
+  try {
+    const sub = await subscribeEvent(
+      nc,
+      "identity.learner.created",
+      IDENTITY_SCHEMAS["identity.learner.created"],
+      async (data) => {
+        app.log.info({ data }, "Received identity.learner.created");
+        try {
+          // Send welcome notification to parent
+          await publishEvent(nc, "comms.notification.created", {
+            userId: data.parentId,
+            type: "learner_added",
+            title: "Child added successfully!",
+            body: "Your child's learning profile is being set up. You'll be notified when it's ready.",
+          });
+
+          // Trigger brain initialization by calling brain-svc HTTP endpoint
+          const brainSvcUrl = process.env.BRAIN_SVC_URL || "http://localhost:3002";
+          await fetch(`${brainSvcUrl}/brain/initialize`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              learnerId: data.learnerId,
+              tenantId: data.tenantId,
+            }),
+          }).catch((err) => {
+            app.log.warn({ err }, "Failed to trigger brain initialization");
+          });
+        } catch (err) {
+          app.log.error({ err, data }, "Failed to process identity.learner.created");
+        }
+      },
+    );
+    subs.push(sub);
+  } catch { app.log.warn("Could not subscribe to identity.learner.created"); }
 
   // Clean up on close
   app.addHook("onClose", async () => {

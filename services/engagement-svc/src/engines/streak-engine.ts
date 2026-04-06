@@ -21,6 +21,20 @@ export class StreakEngine {
     return `${STREAK_KEY_PREFIX}${learnerId}`;
   }
 
+  async initializeLearner(learnerId: string): Promise<void> {
+    const key = this.key(learnerId);
+    const exists = await this.app.redis.exists(key);
+    if (!exists) {
+      await this.app.redis.hmset(key, {
+        currentStreak: "0",
+        longestStreak: "0",
+        lastActivityDate: "",
+        freezeUsedThisWeek: "false",
+        freezeLastUsedDate: "",
+      });
+    }
+  }
+
   async getStreak(learnerId: string): Promise<StreakState> {
     const raw = await this.app.redis.hgetall(this.key(learnerId));
 

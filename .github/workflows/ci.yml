@@ -154,6 +154,7 @@ jobs:
           NATS_URL: nats://localhost:4223
           AUTH_SECRET: e2e-test-secret-key-at-least-32-characters-long
           APP_URL: http://localhost:3000
+          FAMILY_SVC_URL: http://localhost:3005
           PORT: "3101"
           NODE_ENV: test
         run: |
@@ -193,6 +194,7 @@ jobs:
           start_svc "@aivo/learning-svc"     3003
           start_svc "tutor-svc"              3006
           start_svc "i18n-svc"               3011
+          start_svc "assessment-svc"          3012
 
           # Wait for all services to become healthy
           wait_svc() {
@@ -216,6 +218,26 @@ jobs:
           wait_svc learning-svc     3003
           wait_svc tutor-svc        3006
           wait_svc i18n-svc         3011
+          wait_svc assessment-svc   3012
+
+      - name: Start web app
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:3101
+          NEXT_PUBLIC_I18N_SVC_URL: http://localhost:3011
+          NODE_ENV: test
+        run: |
+          cd apps/web && pnpm dev &
+          echo "Waiting for web app..."
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:3000 > /dev/null 2>&1; then
+              echo "web app is ready"
+              break
+            fi
+            if [ "$i" -eq 30 ]; then
+              echo "  [warn] web app did not become ready after 60s, continuing..."
+            fi
+            sleep 2
+          done
 
       - name: Run E2E tests
         env:
@@ -226,6 +248,7 @@ jobs:
           API_BASE_URL: http://localhost:3101
           NEXT_PUBLIC_API_URL: http://localhost:3101
           NEXT_PUBLIC_I18N_SVC_URL: http://localhost:3011
+          ASSESSMENT_API_URL: http://localhost:3012
         run: cd e2e && npx playwright test --reporter=json --output=coverage-reports/
 
       - name: Upload E2E coverage reports

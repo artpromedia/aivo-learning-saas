@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { User, Calendar, GraduationCap } from "lucide-react";
+import { User, Calendar, GraduationCap, Lock } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardBody } from "@/components/ui/Card";
 import { apiFetch } from "@/lib/api";
@@ -47,6 +47,11 @@ export default function AddChildPage() {
     name: z.string().min(1, t("childNameRequired")).max(50),
     dateOfBirth: z.string().min(1, t("dateOfBirth")),
     enrolledGrade: z.string().min(1, t("selectGradeRequired")),
+    pin: z.string().regex(/^\d{4,6}$/, t("pinMustBe4to6Digits")),
+    confirmPin: z.string(),
+  }).refine((data) => data.pin === data.confirmPin, {
+    message: t("pinsMustMatch"),
+    path: ["confirmPin"],
   });
 
   type AddChildForm = z.infer<typeof addChildSchema>;
@@ -77,6 +82,7 @@ export default function AddChildPage() {
           name: data.name,
           dateOfBirth: new Date(data.dateOfBirth).toISOString(),
           enrolledGrade: gradeToNumber(data.enrolledGrade),
+          pin: data.pin,
         }),
       });
       const learner = res.learner;
@@ -208,6 +214,70 @@ export default function AddChildPage() {
               {errors.enrolledGrade && (
                 <p className="mt-1 text-sm text-red-600 dark:text-red-400">
                   {errors.enrolledGrade.message}
+                </p>
+              )}
+            </div>
+
+            {/* PIN Creation */}
+            <div>
+              <label
+                htmlFor="pin"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
+              >
+                {t("createLearnerPin")}
+              </label>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                {t("createLearnerPinDescription")}
+              </p>
+              <div className="relative">
+                <Lock
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  size={18}
+                />
+                <input
+                  id="pin"
+                  type="password"
+                  inputMode="numeric"
+                  maxLength={6}
+                  pattern="[0-9]*"
+                  {...register("pin")}
+                  className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-shadow tracking-[0.5em] text-center text-lg"
+                  placeholder="••••"
+                />
+              </div>
+              {errors.pin && (
+                <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                  {errors.pin.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label
+                htmlFor="confirmPin"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
+              >
+                {t("confirmLearnerPin")}
+              </label>
+              <div className="relative">
+                <Lock
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  size={18}
+                />
+                <input
+                  id="confirmPin"
+                  type="password"
+                  inputMode="numeric"
+                  maxLength={6}
+                  pattern="[0-9]*"
+                  {...register("confirmPin")}
+                  className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-shadow tracking-[0.5em] text-center text-lg"
+                  placeholder="••••"
+                />
+              </div>
+              {errors.confirmPin && (
+                <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                  {errors.confirmPin.message}
                 </p>
               )}
             </div>

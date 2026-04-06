@@ -31,6 +31,9 @@ export const learners = pgTable(
     functioningLevel: functioningLevelEnum("functioning_level").notNull().default("STANDARD"),
     communicationMode: communicationModeEnum("communication_mode").notNull().default("VERBAL"),
     status: userStatusEnum("status").notNull().default("ACTIVE"),
+    /** Hashed 4–6 digit PIN for learner dashboard access */
+    pinHash: varchar("pin_hash", { length: 255 }),
+    pinSetAt: timestamp("pin_set_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },

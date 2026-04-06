@@ -65,6 +65,8 @@ const KNOWN_ROUTES: string[] = [
   'POST /comms/recommendations/:id/respond',
   'POST /comms/insights',
   'POST /comms/caregiver-invite',
+  'POST /api/learners/:id/pin',
+  'POST /api/learners/:id/pin/verify',
 ];
 
 export function generateCoverageMatrix(): CoverageMatrix {

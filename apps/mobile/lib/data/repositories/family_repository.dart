@@ -28,6 +28,8 @@ class Learner {
   final int timeSpentTodayMinutes;
   final double masteryProgress;
   final DateTime? lastActiveAt;
+  final bool hasPin;
+  final DateTime? pinSetAt;
 
   const Learner({
     required this.id,
@@ -40,6 +42,8 @@ class Learner {
     required this.timeSpentTodayMinutes,
     required this.masteryProgress,
     this.lastActiveAt,
+    this.hasPin = false,
+    this.pinSetAt,
   });
 
   factory Learner.fromJson(Map<String, dynamic> json) {
@@ -56,6 +60,10 @@ class Learner {
       lastActiveAt: json['lastActiveAt'] != null
           ? DateTime.parse(json['lastActiveAt'] as String)
           : null,
+      hasPin: json['hasPin'] as bool? ?? json['pinSetAt'] != null,
+      pinSetAt: json['pinSetAt'] != null
+          ? DateTime.parse(json['pinSetAt'] as String)
+          : null,
     );
   }
 
@@ -70,6 +78,8 @@ class Learner {
         'timeSpentTodayMinutes': timeSpentTodayMinutes,
         'masteryProgress': masteryProgress,
         'lastActiveAt': lastActiveAt?.toIso8601String(),
+        'hasPin': hasPin,
+        'pinSetAt': pinSetAt?.toIso8601String(),
       };
 }
 
@@ -674,6 +684,32 @@ class FamilyRepository {
     return list
         .map((e) => TeacherInsight.fromJson(e as Map<String, dynamic>))
         .toList();
+  }
+
+  // ---------------------------------------------------------------------------
+  // Learners
+  // ---------------------------------------------------------------------------
+
+  // ---------------------------------------------------------------------------
+  // Learner PIN
+  // ---------------------------------------------------------------------------
+
+  /// Set or update a learner's PIN.
+  Future<void> setLearnerPin(String learnerId, String pin) async {
+    await _apiClient.post(
+      Endpoints.learnerSetPin(learnerId),
+      data: {'pin': pin},
+    );
+  }
+
+  /// Verify a learner's PIN and return a session token.
+  Future<Map<String, dynamic>> verifyLearnerPin(
+      String learnerId, String pin) async {
+    final response = await _apiClient.post(
+      Endpoints.learnerVerifyPin(learnerId),
+      data: {'pin': pin},
+    );
+    return response.data as Map<String, dynamic>;
   }
 
   // ---------------------------------------------------------------------------

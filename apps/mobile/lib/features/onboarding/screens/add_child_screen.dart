@@ -40,6 +40,10 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _nameFocus = FocusNode();
+  final _pinController = TextEditingController();
+  final _confirmPinController = TextEditingController();
+  bool _obscurePin = true;
+  bool _obscureConfirmPin = true;
 
   DateTime? _dateOfBirth;
   String? _selectedGrade;
@@ -53,6 +57,8 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
   void dispose() {
     _nameController.dispose();
     _nameFocus.dispose();
+    _pinController.dispose();
+    _confirmPinController.dispose();
     super.dispose();
   }
 
@@ -126,6 +132,21 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
       return;
     }
 
+    final pin = _pinController.text.trim();
+    final confirmPin = _confirmPinController.text.trim();
+    if (pin.isEmpty || !RegExp(r'^\d{4,6}$').hasMatch(pin)) {
+      setState(() {
+        _errorMessage = 'Please enter a 4-6 digit PIN';
+      });
+      return;
+    }
+    if (pin != confirmPin) {
+      setState(() {
+        _errorMessage = 'PINs do not match';
+      });
+      return;
+    }
+
     setState(() {
       _isSubmitting = true;
       _errorMessage = null;
@@ -146,6 +167,7 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
             'name': _nameController.text.trim(),
             'dateOfBirth': _dateOfBirth!.toIso8601String(),
             'gradeLevel': _selectedGrade,
+            'pin': _pinController.text.trim(),
           },
         );
       } else {
@@ -155,6 +177,7 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
             'name': _nameController.text.trim(),
             'dateOfBirth': _dateOfBirth!.toIso8601String(),
             'gradeLevel': _selectedGrade,
+            'pin': _pinController.text.trim(),
           },
         );
       }
@@ -387,6 +410,92 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
                         validator: (value) {
                           if (value == null) {
                             return 'Please select a grade level';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // ---- PIN field ----
+                    Semantics(
+                      label: 'Create a PIN for your child',
+                      textField: true,
+                      child: TextFormField(
+                        controller: _pinController,
+                        keyboardType: TextInputType.number,
+                        textInputAction: TextInputAction.next,
+                        enabled: !_isSubmitting,
+                        obscureText: _obscurePin,
+                        maxLength: 6,
+                        style: const TextStyle(
+                          letterSpacing: 8,
+                          fontSize: 20,
+                        ),
+                        textAlign: TextAlign.center,
+                        decoration: InputDecoration(
+                          labelText: 'Create PIN',
+                          hintText: 'Enter 4-6 digits',
+                          helperText:
+                              'Your child will use this PIN to access their dashboard',
+                          prefixIcon: const Icon(Icons.pin_outlined),
+                          counterText: '',
+                          suffixIcon: IconButton(
+                            icon: Icon(_obscurePin
+                                ? Icons.visibility_off
+                                : Icons.visibility),
+                            onPressed: () {
+                              setState(() => _obscurePin = !_obscurePin);
+                            },
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'PIN is required';
+                          }
+                          if (!RegExp(r'^\d{4,6}$').hasMatch(value)) {
+                            return 'PIN must be 4-6 digits';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // ---- Confirm PIN field ----
+                    Semantics(
+                      label: 'Confirm PIN',
+                      textField: true,
+                      child: TextFormField(
+                        controller: _confirmPinController,
+                        keyboardType: TextInputType.number,
+                        textInputAction: TextInputAction.done,
+                        enabled: !_isSubmitting,
+                        obscureText: _obscureConfirmPin,
+                        maxLength: 6,
+                        style: const TextStyle(
+                          letterSpacing: 8,
+                          fontSize: 20,
+                        ),
+                        textAlign: TextAlign.center,
+                        decoration: InputDecoration(
+                          labelText: 'Confirm PIN',
+                          hintText: 'Re-enter PIN',
+                          prefixIcon: const Icon(Icons.pin_outlined),
+                          counterText: '',
+                          suffixIcon: IconButton(
+                            icon: Icon(_obscureConfirmPin
+                                ? Icons.visibility_off
+                                : Icons.visibility),
+                            onPressed: () {
+                              setState(() =>
+                                  _obscureConfirmPin = !_obscureConfirmPin);
+                            },
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value != _pinController.text) {
+                            return 'PINs do not match';
                           }
                           return null;
                         },

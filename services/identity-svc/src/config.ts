@@ -18,6 +18,7 @@ const configSchema = z.object({
   APPLE_CLIENT_SECRET: z.string().default(""),
   OONRUMAIL_API_KEY: z.string().default(""),
   OONRUMAIL_BASE_URL: z.string().url().default("https://api.oonrumail.com/v1"),
+  FAMILY_SVC_URL: z.string().url().default("http://localhost:3005"),
   APP_URL: z.string().url().default("http://localhost:3000"),
   CORS_ORIGINS: z.string().optional(),
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),

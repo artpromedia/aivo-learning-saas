@@ -4,6 +4,11 @@ import 'package:go_router/go_router.dart';
 
 import 'package:aivo_mobile/features/onboarding/screens/add_child_screen.dart';
 import 'package:aivo_mobile/features/onboarding/screens/parent_assessment_screen.dart';
+import 'package:aivo_mobile/features/learner/home/learner_home_screen.dart';
+import 'package:aivo_mobile/features/learner/pin/pin_gate_screen.dart';
+import 'package:aivo_mobile/features/parent/dashboard/parent_dashboard_screen.dart';
+import 'package:aivo_mobile/features/parent/dashboard/child_detail_screen.dart';
+import 'package:aivo_mobile/features/parent/settings/family_settings_screen.dart';
 
 // ---------------------------------------------------------------------------
 // Auth state - minimal definition so routes.dart is self-contained.
@@ -132,9 +137,16 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       // ---- Learner ----
       GoRoute(
+        path: '/learner/pin/:learnerId',
+        name: 'learner-pin-gate',
+        builder: (_, state) => PinGateScreen(
+          learnerId: state.pathParameters['learnerId']!,
+        ),
+      ),
+      GoRoute(
         path: '/learner/home',
         name: 'learner-home',
-        builder: (_, __) => const _Placeholder('Learner Home'),
+        builder: (_, __) => const LearnerHomeScreen(),
       ),
       GoRoute(
         path: '/learner/session/:id',
@@ -224,12 +236,14 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/parent/dashboard',
         name: 'parent-dashboard',
-        builder: (_, __) => const _Placeholder('Parent Dashboard'),
+        builder: (_, __) => const ParentDashboardScreen(),
       ),
       GoRoute(
         path: '/parent/child/:id',
         name: 'parent-child',
-        builder: (_, state) => _Placeholder('Child ${state.pathParameters['id']}'),
+        builder: (_, state) => ChildDetailScreen(
+          learnerId: state.pathParameters['id']!,
+        ),
       ),
       GoRoute(
         path: '/parent/recommendations',
@@ -249,7 +263,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/parent/settings',
         name: 'parent-settings',
-        builder: (_, __) => const _Placeholder('Parent Settings'),
+        builder: (_, __) => const FamilySettingsScreen(),
       ),
 
       // ---- Teacher ----

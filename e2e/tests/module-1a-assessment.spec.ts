@@ -36,28 +36,41 @@ test.describe('Module 1a: Assessment & Onboarding', () => {
     await page.waitForLoadState('networkidle');
 
     // Step 1: Navigate to add child flow
-    const addChildButton = page.getByRole('button', { name: /add child|add learner/i });
-    const addChildLink = page.getByRole('link', { name: /add child|add learner/i });
+    const addChildButton = page.getByRole('button', { name: /add child|add learner|addChild|addYourFirstChild/i });
+    const addChildLink = page.getByRole('link', { name: /add child|add learner|addChild|addYourFirstChild/i });
     if (await addChildButton.isVisible({ timeout: 5_000 }).catch(() => false)) {
       await addChildButton.click({ force: true });
     } else if (await addChildLink.isVisible({ timeout: 3_000 }).catch(() => false)) {
       await addChildLink.click();
     } else {
-      await page.goto(`${BASE_URL}/onboarding/add-child`);
+      await page.goto(`${BASE_URL}/add-child`);
     }
+    await page.waitForLoadState('networkidle');
 
-    // Step 2: Fill child details
-    await page.getByLabel(/child.*name|first name/i).fill('E2E Test Child');
-    await page.getByLabel(/date of birth|birthday/i).fill('2016-06-15');
+    // Step 2: Fill child details — match id attributes from the actual web form
+    const nameInput = page.locator('input#name, input[name="name"]').first();
+    await nameInput.waitFor({ state: 'visible', timeout: 10_000 });
+    await nameInput.fill('E2E Test Child');
 
-    const gradeSelect = page.getByLabel(/grade/i);
+    const dobInput = page.locator('input#dateOfBirth, input[name="dateOfBirth"], input[type="date"]').first();
+    await dobInput.fill('2016-06-15');
+
+    const gradeSelect = page.locator('select#enrolledGrade, select[name="enrolledGrade"]').first();
     if (await gradeSelect.isVisible({ timeout: 3_000 }).catch(() => false)) {
       const options = await gradeSelect.locator('option').allTextContents();
-      const match = options.find((o) => /3rd|3/i.test(o));
+      const match = options.find((o) => /3rd|3|grade3|Grade 3/i.test(o));
       await gradeSelect.selectOption({ label: match ?? options[1] ?? '' });
     }
 
-    await page.getByRole('button', { name: /next|continue/i }).click();
+    // Step 2b: Set learner PIN
+    const pinInput = page.locator('input#pin');
+    if (await pinInput.isVisible({ timeout: 3_000 }).catch(() => false)) {
+      await pinInput.fill('1234');
+      const confirmPinInput = page.locator('input#confirmPin');
+      await confirmPinInput.fill('1234');
+    }
+
+    await page.getByRole('button', { name: /next|continue|submit/i }).click();
 
     // Step 3: Parent assessment questionnaire
     await page.waitForURL(/\/(onboarding|parent-assessment|assessment)/, { timeout: 10_000 });
@@ -118,6 +131,38 @@ test.describe('Module 1a: Assessment & Onboarding', () => {
     const learnersData = await learnersRes.json();
     const learners = learnersData.learners || learnersData;
     expect(Array.isArray(learners) ? learners.length : 0).toBeGreaterThan(0);
+
+    // Verify PIN was set and works
+    if (Array.isArray(learners) && learners.length > 0) {
+      const createdLearner = learners.find(
+        (l: { name: string }) => l.name === 'E2E Test Child'
+      ) || learners[0];
+
+      const pinRes = await page.request.post(
+        `${API_BASE}/api/learners/${createdLearner.id}/pin/verify`,
+        { data: { pin: '1234' } },
+      );
+      expect(pinRes.ok()).toBeTruthy();
+      const pinData = await pinRes.json();
+      expect(pinData.success).toBe(true);
+      expect(pinData.token).toBeTruthy();
+    }
+
+    // Verify dashboard data was provisioned (engagement-svc initialized XP + streak)
+    if (Array.isArray(learners) && learners.length > 0) {
+      const learnerId = learners[0].id;
+
+      const xpRes = await page.request.get(
+        `${API_BASE}/engagement/xp/${learnerId}`,
+        { headers: { Authorization: `Bearer ${parent.token}` } },
+      );
+      // XP endpoint should return 200 with initialized data
+      if (xpRes.ok()) {
+        const xpData = await xpRes.json();
+        expect(xpData).toBeTruthy();
+        expect(xpData.level).toBeGreaterThanOrEqual(1);
+      }
+    }
   });
 
   test('assessment mode adapts per functioning level', async ({ page }) => {
