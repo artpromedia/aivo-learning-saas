@@ -723,31 +723,29 @@ jobs:
       - name: Run database migrations
         run: |
           # Clean up any leftover migration pod from a previous run
-          kubectl delete pod db-migrate -n aivo --ignore-not-found --wait=false 2>/dev/null || true
+          kubectl delete pod db-migrate -n aivo --ignore-not-found 2>/dev/null || true
           sleep 5
 
           # Create a temporary pod inside the cluster with DATABASE_URL from secrets
-          kubectl run db-migrate -n aivo \
-            --image=node:22-slim \
-            --restart=Never \
-            --overrides='{
-              "spec": {
-                "containers": [{
-                  "name": "db-migrate",
-                  "image": "node:22-slim",
-                  "command": ["sleep", "600"],
-                  "env": [{
-                    "name": "DATABASE_URL",
-                    "valueFrom": {
-                      "secretKeyRef": {
-                        "name": "db-secrets",
-                        "key": "database-url"
-                      }
-                    }
-                  }]
-                }]
-              }
-            }'
+          cat <<'EOF' | kubectl apply -f -
+          apiVersion: v1
+          kind: Pod
+          metadata:
+            name: db-migrate
+            namespace: aivo
+          spec:
+            restartPolicy: Never
+            containers:
+              - name: db-migrate
+                image: node:22-slim
+                command: ["sleep", "600"]
+                env:
+                  - name: DATABASE_URL
+                    valueFrom:
+                      secretKeyRef:
+                        name: db-secrets
+                        key: database-url
+          EOF
 
           echo "Waiting for migration pod to be ready..."
           kubectl wait --for=condition=Ready pod/db-migrate -n aivo --timeout=120s
@@ -761,8 +759,8 @@ jobs:
           kubectl exec db-migrate -n aivo -- sh -c '
             cd /app
             npm init -y >/dev/null 2>&1
-            npm install drizzle-kit drizzle-orm postgres >/dev/null 2>&1
-            npx drizzle-kit migrate
+            npm install drizzle-kit@0.30.5 drizzle-orm@0.44.2 postgres@3.4.5 >/dev/null 2>&1
+            npx drizzle-kit migrate 2>&1
           '
 
           echo "Database migrations completed successfully"
