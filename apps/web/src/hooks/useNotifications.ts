@@ -19,7 +19,10 @@ export function useNotifications() {
   // Fetch initial notifications
   const listQuery = useQuery({
     queryKey: ["notifications"],
-    queryFn: () => apiFetch<Notification[]>(API_ROUTES.NOTIFICATION.LIST),
+    queryFn: async () => {
+      const res = await apiFetch<{ items: Notification[] } | Notification[]>(API_ROUTES.NOTIFICATION.LIST);
+      return Array.isArray(res) ? res : res.items;
+    },
     enabled: isAuthenticated,
   });
 
