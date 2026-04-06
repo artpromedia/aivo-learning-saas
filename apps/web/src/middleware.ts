@@ -88,7 +88,10 @@ export function middleware(request: NextRequest) {
       pathname.startsWith("/learner") ||
       pathname.startsWith("/teacher") ||
       pathname.startsWith("/admin") ||
-      pathname.startsWith("/notifications");
+      pathname.startsWith("/notifications") ||
+      pathname.startsWith("/manage") ||
+      pathname.startsWith("/checkout") ||
+      pathname.startsWith("/success");
     if (isDashboard) {
       const url = request.nextUrl.clone();
       url.pathname = "/login";
@@ -105,7 +108,10 @@ export function middleware(request: NextRequest) {
     pathname.startsWith("/learner") ||
     pathname.startsWith("/teacher") ||
     pathname.startsWith("/admin") ||
-    pathname.startsWith("/notifications");
+    pathname.startsWith("/notifications") ||
+    pathname.startsWith("/manage") ||
+    pathname.startsWith("/checkout") ||
+    pathname.startsWith("/success");
 
   if (!isDashboardRoute) {
     return response;
