@@ -44,6 +44,19 @@ regexes = [
 # ─────────────────────────────────────────────
 [allowlist]
 description = "Global allowlist for CI placeholder values, dev configs, test fixtures, and build artifacts"
+commits = [
+  "4493c3a",
+  "63b452a",
+  "14fcfd8",
+  "a8fa12b",
+  "1113c5f",
+  "754e6b5",
+  "7786b4b",
+  "128485c",
+  "cf63213",
+  "df2aefd",
+  "9f0849b",
+]
 paths = [
   '''\.gitleaks\.toml$''',
   '''\.github/workflows/.*\.yml$''',
