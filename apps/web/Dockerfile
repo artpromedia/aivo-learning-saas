@@ -32,6 +32,7 @@ ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 ENV NEXT_PUBLIC_ASSESSMENT_API_URL=${NEXT_PUBLIC_ASSESSMENT_API_URL}
 
 # Build dependencies then app
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 RUN pnpm --filter @aivo/brand build && \
     pnpm --filter @aivo/db build && \
     pnpm --filter @aivo/events build && \
