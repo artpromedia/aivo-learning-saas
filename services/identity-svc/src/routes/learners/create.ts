@@ -16,6 +16,7 @@ const createLearnerBodySchema = z.object({
   communicationMode: z
     .enum(["VERBAL", "LIMITED_VERBAL", "NON_VERBAL_AAC", "NON_VERBAL_PARTNER", "PRE_INTENTIONAL"])
     .optional(),
+  pin: z.string().regex(/^\d{4,6}$/).optional(),
 });
 
 export async function createLearnerRoute(app: FastifyInstance) {
@@ -27,6 +28,10 @@ export async function createLearnerRoute(app: FastifyInstance) {
       const learnerService = new LearnerService(app);
 
       const learner = await learnerService.create(request.user.sub, request.tenantId, body);
+
+      if (body.pin) {
+        await learnerService.setPin(learner.id, request.tenantId, body.pin);
+      }
 
       return reply.status(201).send({ learner });
     },

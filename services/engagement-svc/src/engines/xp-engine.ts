@@ -120,6 +120,20 @@ export class XpEngine {
     return this.awardXp(learnerId, eventName, eventName, xp, coins);
   }
 
+  async initializeLearner(learnerId: string): Promise<void> {
+    const [existing] = await this.app.db
+      .select()
+      .from(learnerXp)
+      .where(eq(learnerXp.learnerId, learnerId))
+      .limit(1);
+
+    if (!existing) {
+      await this.app.db
+        .insert(learnerXp)
+        .values({ learnerId, totalXp: 0, level: 1, virtualCurrency: 0 });
+    }
+  }
+
   async getXpSummary(learnerId: string) {
     const [xpRecord] = await this.app.db
       .select()

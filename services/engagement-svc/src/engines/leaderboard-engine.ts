@@ -16,6 +16,10 @@ export interface LeaderboardEntry {
 export class LeaderboardEngine {
   constructor(private readonly app: FastifyInstance) {}
 
+  async addLearner(learnerId: string): Promise<void> {
+    await this.app.redis.zadd(GLOBAL_WEEKLY_KEY, 0, learnerId);
+  }
+
   async addXpToLeaderboards(
     learnerId: string,
     xpAmount: number,

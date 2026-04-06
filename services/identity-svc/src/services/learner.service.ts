@@ -2,6 +2,7 @@ import { eq, and } from "drizzle-orm";
 import type { FastifyInstance } from "fastify";
 import { learners } from "@aivo/db";
 import { publishEvent } from "@aivo/events";
+import bcrypt from "bcryptjs";
 
 export interface CreateLearnerInput {
   name: string;
@@ -71,5 +72,46 @@ export class LearnerService {
     }
 
     return learner;
+  }
+
+  async setPin(learnerId: string, tenantId: string, pin: string) {
+    if (!/^\d{4,6}$/.test(pin)) {
+      throw Object.assign(new Error("PIN must be 4-6 digits"), { statusCode: 400 });
+    }
+    const pinHash = await bcrypt.hash(pin, 10);
+    const [updated] = await this.app.db
+      .update(learners)
+      .set({ pinHash, pinSetAt: new Date(), updatedAt: new Date() })
+      .where(and(eq(learners.id, learnerId), eq(learners.tenantId, tenantId)))
+      .returning();
+    if (!updated) {
+      throw Object.assign(new Error("Learner not found"), { statusCode: 404 });
+    }
+    return { success: true, pinSetAt: updated.pinSetAt };
+  }
+
+  async verifyPin(learnerId: string, pin: string): Promise<boolean> {
+    const [learner] = await this.app.db
+      .select({ pinHash: learners.pinHash })
+      .from(learners)
+      .where(eq(learners.id, learnerId))
+      .limit(1);
+    if (!learner?.pinHash) {
+      throw Object.assign(new Error("No PIN set for this learner"), { statusCode: 400 });
+    }
+    const valid = await bcrypt.compare(pin, learner.pinHash);
+    if (!valid) {
+      throw Object.assign(new Error("Invalid PIN"), { statusCode: 401 });
+    }
+    return true;
+  }
+
+  async hasPin(learnerId: string): Promise<boolean> {
+    const [learner] = await this.app.db
+      .select({ pinHash: learners.pinHash })
+      .from(learners)
+      .where(eq(learners.id, learnerId))
+      .limit(1);
+    return !!learner?.pinHash;
   }
 }
