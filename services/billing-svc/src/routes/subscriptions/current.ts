@@ -1,13 +1,13 @@
 import type { FastifyInstance } from "fastify";
 import { authenticate } from "../../middleware/authenticate.js";
-import { SubscriptionService } from "../../services/subscription.service.js";
+import { SubscriptionService, type SubscriptionWithItems } from "../../services/subscription.service.js";
 import { getPlanById } from "../../data/plans.js";
 
 export async function currentSubscriptionRoute(app: FastifyInstance) {
   // GET /billing/current — returns formatted subscription data for JWT's tenant
   app.get("/billing/current", { preHandler: [authenticate] }, async (request, reply) => {
     const subscriptionService = new SubscriptionService(app);
-    const subscription = await subscriptionService.getSubscription(request.user.tenantId);
+    const subscription = await subscriptionService.getSubscription(request.user.tenantId) as SubscriptionWithItems | null;
 
     if (!subscription) {
       return reply.status(404).send({ error: "Subscription not found" });
@@ -38,7 +38,7 @@ export async function currentSubscriptionRoute(app: FastifyInstance) {
   // GET /billing/subscriptions/current — alias for /billing/current (used by cancel page)
   app.get("/billing/subscriptions/current", { preHandler: [authenticate] }, async (request, reply) => {
     const subscriptionService = new SubscriptionService(app);
-    const subscription = await subscriptionService.getSubscription(request.user.tenantId);
+    const subscription = await subscriptionService.getSubscription(request.user.tenantId) as SubscriptionWithItems | null;
 
     if (!subscription) {
       return reply.status(404).send({ error: "Subscription not found" });
@@ -57,7 +57,7 @@ export async function currentSubscriptionRoute(app: FastifyInstance) {
   // GET /billing/subscription/status — lightweight status for settings page
   app.get("/billing/subscription/status", { preHandler: [authenticate] }, async (request, reply) => {
     const subscriptionService = new SubscriptionService(app);
-    const subscription = await subscriptionService.getSubscription(request.user.tenantId);
+    const subscription = await subscriptionService.getSubscription(request.user.tenantId) as SubscriptionWithItems | null;
 
     if (!subscription) {
       return reply.status(404).send({ error: "No subscription found" });

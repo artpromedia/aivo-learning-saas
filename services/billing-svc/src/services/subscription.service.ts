@@ -7,6 +7,32 @@ import { getPlanById } from "../data/plans.js";
 import { getConfig } from "../config.js";
 import { StripeService } from "./stripe.service.js";
 
+export interface SubscriptionRow {
+  id: string;
+  tenantId: string;
+  planId: string;
+  stripeSubscriptionId: string | null;
+  status: "ACTIVE" | "PAST_DUE" | "CANCELLED" | "GRACE_PERIOD" | "EXPIRED" | "SUSPENDED";
+  currentPeriodStart: Date | null;
+  currentPeriodEnd: Date | null;
+  cancelledAt: Date | null;
+  gracePeriodEndsAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface SubscriptionItemRow {
+  id: string;
+  subscriptionId: string;
+  sku: string;
+  stripeSubscriptionItemId: string | null;
+  quantity: number;
+  status: string;
+  createdAt: Date;
+}
+
+export type SubscriptionWithItems = SubscriptionRow & { items: SubscriptionItemRow[] };
+
 export class SubscriptionService {
   private stripeService: StripeService;
 
@@ -150,7 +176,7 @@ export class SubscriptionService {
     this.app.log.info(`Subscription ${subscriptionId} reactivated`);
   }
 
-  async getSubscription(tenantId: string) {
+  async getSubscription(tenantId: string): Promise<SubscriptionWithItems | null> {
     const [sub] = await this.app.db
       .select()
       .from(subscriptions)
@@ -163,6 +189,6 @@ export class SubscriptionService {
       .from(subscriptionItems)
       .where(eq(subscriptionItems.subscriptionId, sub.id));
 
-    return { ...sub, items };
+    return { ...sub, items } as SubscriptionWithItems;
   }
 }
