@@ -120,17 +120,64 @@ jobs:
           echo "Timestamp:   $(date -u +"%Y-%m-%d %H:%M UTC")"
 
   # ═════════════════════════════════════════════
-  # Stage 3: Canary Deployment
+  # Stage 3: Database Migration
+  # ═════════════════════════════════════════════
+  migrate:
+    name: Database Migration
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [validate, approval]
+    if: |
+      always() &&
+      needs.validate.result == 'success' &&
+      (needs.approval.result == 'success' || needs.approval.result == 'skipped')
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: "10.6.5"
+
+      - name: Install dependencies
+        run: pnpm install --filter @aivo/db...
+
+      - name: Configure kubectl
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > ~/.kube/config
+          chmod 600 ~/.kube/config
+
+      - name: Run database migrations
+        run: |
+          # Extract DATABASE_URL from Kubernetes secret
+          DATABASE_URL=$(kubectl get secret db-secrets -n aivo -o jsonpath='{.data.database-url}' | base64 -d)
+          export DATABASE_URL
+
+          echo "Running Drizzle migrations against production database..."
+          pnpm --filter @aivo/db db:migrate
+          echo "Database migrations completed successfully"
+
+  # ═════════════════════════════════════════════
+  # Stage 4: Canary Deployment
   # ═════════════════════════════════════════════
   canary:
     name: Canary Deployment
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    needs: [validate, approval]
+    needs: [validate, approval, migrate]
     if: |
       always() &&
       needs.validate.result == 'success' &&
       (needs.approval.result == 'success' || needs.approval.result == 'skipped') &&
+      needs.migrate.result == 'success' &&
       !(inputs.skip_canary == true)
 
     steps:
@@ -311,17 +358,18 @@ jobs:
           echo "Canary health check passed"
 
   # ═════════════════════════════════════════════
-  # Stage 4: Full Production Rollout
+  # Stage 5: Full Production Rollout
   # ═════════════════════════════════════════════
   deploy:
     name: Full Production Rollout
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    needs: [validate, approval, canary]
+    needs: [validate, approval, canary, migrate]
     if: |
       always() &&
       needs.validate.result == 'success' &&
       (needs.approval.result == 'success' || needs.approval.result == 'skipped') &&
+      needs.migrate.result == 'success' &&
       (needs.canary.result == 'success' || needs.canary.result == 'skipped')
     environment: production
 
@@ -458,13 +506,14 @@ jobs:
           echo "All deployments rolled out successfully"
 
   # ═════════════════════════════════════════════
-  # Stage 5: Production Smoke Tests
+  # Stage 6: Production Smoke Tests
   # ═════════════════════════════════════════════
   smoke-tests:
     name: Production Smoke Tests
     runs-on: ubuntu-latest
     timeout-minutes: 15
     needs: [validate, deploy]
+    if: always() && needs.deploy.result == 'success'
 
     steps:
       - name: Configure kubectl

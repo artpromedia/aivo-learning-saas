@@ -720,6 +720,29 @@ jobs:
             exit 1
           fi
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: "10.6.5"
+
+      - name: Install db dependencies
+        run: pnpm install --filter @aivo/db...
+
+      - name: Run database migrations
+        run: |
+          # Extract DATABASE_URL from Kubernetes secret
+          DATABASE_URL=$(kubectl get secret db-secrets -n aivo -o jsonpath='{.data.database-url}' | base64 -d)
+          export DATABASE_URL
+
+          echo "Running Drizzle migrations against staging database..."
+          pnpm --filter @aivo/db db:migrate
+          echo "Database migrations completed successfully"
+
       - name: Helm upgrade (staging)
         id: helm-upgrade
         run: |
