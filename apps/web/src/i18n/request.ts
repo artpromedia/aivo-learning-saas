@@ -73,5 +73,21 @@ export default getRequestConfig(async () => {
     locale,
     messages,
     timeZone: "UTC",
+    onError(error) {
+      // Suppress MISSING_MESSAGE warnings — the i18n service may not have been
+      // seeded yet or the key may be new. Log instead of throwing.
+      if (error.code === "MISSING_MESSAGE") {
+        // silent in production, log in dev
+        if (process.env.NODE_ENV !== "production") {
+          console.warn(`[i18n] ${error.message}`);
+        }
+        return;
+      }
+      console.error("[i18n]", error);
+    },
+    getMessageFallback({ namespace, key }) {
+      // Return the key itself as a readable fallback rather than crashing
+      return key;
+    },
   };
 });
