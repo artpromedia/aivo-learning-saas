@@ -64,6 +64,9 @@ import { billingProxyRoutes } from "./routes/billing-proxy.js";
 // Routes — Assessment Proxy (API Gateway → assessment-svc)
 import { assessmentProxyRoutes } from "./routes/assessment-proxy.js";
 
+// Routes — Family Proxy (API Gateway → family-svc)
+import { familyProxyRoutes } from "./routes/family-proxy.js";
+
 // Routes — Test support (non-production only)
 import { testSupportRoutes } from "./routes/test-support.js";
 
@@ -163,6 +166,9 @@ export async function buildApp() {
     await api.register(notificationsProxyRoutes);
     await api.register(assessmentProxyRoutes);
   }, { prefix: "/api" });
+
+  // Register at root level for direct /family/* access (used by e2e + family-svc clients)
+  await app.register(familyProxyRoutes);
 
   return app;
 }
