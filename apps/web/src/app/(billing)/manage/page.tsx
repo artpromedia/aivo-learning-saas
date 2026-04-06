@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   CreditCard,
   ArrowLeft,
@@ -49,6 +50,7 @@ interface SubscriptionData {
 }
 
 export default function ManageSubscriptionPage() {
+  const router = useRouter();
   const [data, setData] = useState<SubscriptionData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -62,18 +64,19 @@ export default function ManageSubscriptionPage() {
         );
         setData(result);
       } catch (err) {
-        setError(
-          err instanceof Error
-            ? err.message
-            : "Failed to load subscription data",
-        );
+        const message = err instanceof Error ? err.message : "Failed to load subscription data";
+        if (message.includes("401") || message.includes("Authentication")) {
+          router.replace("/login");
+          return;
+        }
+        setError(message);
       } finally {
         setLoading(false);
       }
     }
 
     fetchSubscription();
-  }, []);
+  }, [router]);
 
   const handleManageBilling = async () => {
     setOpeningPortal(true);
