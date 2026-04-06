@@ -33,12 +33,13 @@ test.describe('Module 1a: Assessment & Onboarding', () => {
     await page.getByLabel(/password/i).first().fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
     await page.waitForURL(/\/(parent|teacher|admin|learner|onboarding)/, { timeout: 15_000 });
+    await page.waitForLoadState('networkidle');
 
     // Step 1: Navigate to add child flow
     const addChildButton = page.getByRole('button', { name: /add child|add learner/i });
     const addChildLink = page.getByRole('link', { name: /add child|add learner/i });
     if (await addChildButton.isVisible({ timeout: 5_000 }).catch(() => false)) {
-      await addChildButton.click();
+      await addChildButton.click({ force: true });
     } else if (await addChildLink.isVisible({ timeout: 3_000 }).catch(() => false)) {
       await addChildLink.click();
     } else {

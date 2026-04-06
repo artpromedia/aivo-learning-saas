@@ -51,6 +51,7 @@ test.describe('Module 2b: Tutors', () => {
     await page.getByLabel(/password/i).first().fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
     await page.waitForURL(/\/(parent|teacher|admin|learner|onboarding)/, { timeout: 15_000 });
+    await page.waitForLoadState('networkidle');
 
     // Navigate to learner's tutor page
     await page.goto(`${BASE_URL}/parent/${learner.id}/tutors`);
@@ -142,6 +143,7 @@ test.describe('Module 2b: Tutors', () => {
     await page.getByLabel(/password/i).first().fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
     await page.waitForURL(/\/(parent|teacher|admin|learner|onboarding)/, { timeout: 15_000 });
+    await page.waitForLoadState('networkidle');
 
     await page.goto(`${BASE_URL}/parent/${learner.id}/tutors`);
     await page.waitForTimeout(2_000);

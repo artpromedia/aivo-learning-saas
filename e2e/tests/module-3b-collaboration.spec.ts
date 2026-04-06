@@ -43,6 +43,7 @@ test.describe('Module 3b: Collaboration', () => {
     await page.getByLabel(/password/i).first().fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
     await page.waitForURL(/\/(parent|teacher|admin|learner|onboarding)/, { timeout: 15_000 });
+    await page.waitForLoadState('networkidle');
 
     // Navigate to notifications/recommendations
     await page.goto(`${BASE_URL}/notifications`);
@@ -152,6 +153,7 @@ test.describe('Module 3b: Collaboration', () => {
     await page.getByLabel(/password/i).first().fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
     await page.waitForURL(/\/(parent|teacher|admin|learner|onboarding)/, { timeout: 15_000 });
+    await page.waitForLoadState('networkidle');
 
     await page.goto(`${BASE_URL}/notifications`);
 

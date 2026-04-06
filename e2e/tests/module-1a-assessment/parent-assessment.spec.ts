@@ -32,10 +32,11 @@ test.describe('Module 1a: Parent Assessment', () => {
     await page.getByLabel(/password/i).first().fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
     await page.waitForURL(/\/(parent|teacher|admin|learner|onboarding)/, { timeout: 15_000 });
+    await page.waitForLoadState('networkidle');
 
     const addChildButton = page.getByRole('button', { name: /add child|add learner|get started/i });
     if (await addChildButton.isVisible({ timeout: 5_000 }).catch(() => false)) {
-      await addChildButton.click();
+      await addChildButton.click({ force: true });
     } else {
       await page.goto(`${BASE_URL}/onboarding/add-child`);
     }

@@ -68,8 +68,9 @@ test.describe('Module 0b: Session Management', () => {
     await page.getByLabel(/password/i).first().fill(user.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
     await page.waitForURL(/\/(parent|learner|teacher|admin|add-child)/, { timeout: 15_000 });
+    await page.waitForLoadState('networkidle');
 
-    await page.goto(`${BASE_URL}/parent`);
+    await page.goto(`${BASE_URL}/parent`, { waitUntil: 'domcontentloaded' });
     await expect(page).not.toHaveURL(/\/login/);
   });
 

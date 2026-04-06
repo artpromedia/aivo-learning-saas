@@ -122,6 +122,7 @@ test.describe('Module 4a: Gamification', () => {
     await page.getByLabel(/password/i).first().fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
     await page.waitForURL(/\/(parent|teacher|admin|learner|onboarding)/, { timeout: 15_000 });
+    await page.waitForLoadState('networkidle');
 
     await page.goto(`${BASE_URL}/parent/${learner.id}`);
 
@@ -217,6 +218,7 @@ test.describe('Module 4a: Gamification', () => {
     await page.getByLabel(/password/i).first().fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
     await page.waitForURL(/\/(parent|teacher|admin|learner|onboarding)/, { timeout: 15_000 });
+    await page.waitForLoadState('networkidle');
 
     await page.goto(`${BASE_URL}/parent/${learner.id}`);
     await page.waitForTimeout(2_000);
@@ -305,6 +307,7 @@ test.describe('Module 4a: Gamification', () => {
     await page.getByLabel(/password/i).first().fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
     await page.waitForURL(/\/(parent|teacher|admin|learner|onboarding)/, { timeout: 15_000 });
+    await page.waitForLoadState('networkidle');
 
     await page.goto(`${BASE_URL}/parent/${learner.id}`);
     await page.waitForTimeout(2_000);

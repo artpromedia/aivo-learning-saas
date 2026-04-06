@@ -68,6 +68,7 @@ test.describe('Module 1b: Brain Profile', () => {
     await page.getByLabel(/password/i).first().fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
     await page.waitForURL(/\/(parent|teacher|admin|learner|onboarding)/, { timeout: 15_000 });
+    await page.waitForLoadState('networkidle');
 
     // Navigate to brain profile page
     await page.goto(`${BASE_URL}/parent/${learner.id}/brain`);
@@ -115,6 +116,7 @@ test.describe('Module 1b: Brain Profile', () => {
     await page.getByLabel(/password/i).first().fill(parent.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
     await page.waitForURL(/\/(parent|teacher|admin|learner|onboarding)/, { timeout: 15_000 });
+    await page.waitForLoadState('networkidle');
 
     await page.goto(`${BASE_URL}/parent/${learner.id}/brain`);
 
