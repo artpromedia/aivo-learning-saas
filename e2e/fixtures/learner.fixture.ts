@@ -31,7 +31,7 @@ const GRADE_BY_LEVEL: Record<FunctioningLevel, string> = {
 export async function createTestLearner(
   parentToken: string,
   functioningLevel: FunctioningLevel,
-  overrides: Partial<{ name: string; gradeLevel: string }> = {},
+  overrides: Partial<{ name: string; gradeLevel: string; pin: string }> = {},
 ): Promise<TestLearner> {
   const ctx = await request.newContext({
     baseURL: API_BASE,
@@ -45,13 +45,18 @@ export async function createTestLearner(
   const learnerName = overrides.name || `Test Learner L${functioningLevel} ${Date.now().toString(36)}`;
   const gradeLevel = overrides.gradeLevel || GRADE_BY_LEVEL[functioningLevel];
 
+  const requestBody: Record<string, unknown> = {
+    name: learnerName,
+    dateOfBirth: '2016-06-15T00:00:00.000Z',
+    enrolledGrade: parseInt(gradeLevel, 10),
+    functioningLevel: FUNCTIONING_LEVEL_ENUM[functioningLevel],
+  };
+  if (overrides.pin) {
+    requestBody.pin = overrides.pin;
+  }
+
   const response = await ctx.post('/api/learners', {
-    data: {
-      name: learnerName,
-      dateOfBirth: '2016-06-15T00:00:00.000Z',
-      enrolledGrade: parseInt(gradeLevel, 10),
-      functioningLevel: FUNCTIONING_LEVEL_ENUM[functioningLevel],
-    },
+    data: requestBody,
   });
 
   if (!response.ok()) {

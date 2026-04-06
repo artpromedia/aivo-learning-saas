@@ -220,6 +220,25 @@ jobs:
           wait_svc i18n-svc         3011
           wait_svc assessment-svc   3012
 
+      - name: Start web app
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:3101
+          NEXT_PUBLIC_I18N_SVC_URL: http://localhost:3011
+          NODE_ENV: test
+        run: |
+          cd apps/web && pnpm dev &
+          echo "Waiting for web app..."
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:3000 > /dev/null 2>&1; then
+              echo "web app is ready"
+              break
+            fi
+            if [ "$i" -eq 30 ]; then
+              echo "  [warn] web app did not become ready after 60s, continuing..."
+            fi
+            sleep 2
+          done
+
       - name: Run E2E tests
         env:
           DATABASE_URL: postgresql://aivo:aivo_test@localhost:5433/aivo_test
