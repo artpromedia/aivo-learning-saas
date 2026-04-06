@@ -10,6 +10,7 @@ abstract final class _Keys {
   static const String learnerId = 'learner_id';
   static const String functioningLevel = 'functioning_level';
   static const String biometricEnabled = 'biometric_enabled';
+  static const String learnerPinToken = 'learner_pin_token';
 }
 
 /// Riverpod provider for [SecureStorageService].
@@ -99,6 +100,19 @@ class SecureStorageService {
 
   Future<void> setBiometricEnabled(bool enabled) =>
       _storage.write(key: _Keys.biometricEnabled, value: enabled.toString());
+
+  // ---------------------------------------------------------------------------
+  // Learner PIN token
+  // ---------------------------------------------------------------------------
+
+  Future<void> saveLearnerPinToken(String token) =>
+      _storage.write(key: _Keys.learnerPinToken, value: token);
+
+  Future<String?> getLearnerPinToken() =>
+      _storage.read(key: _Keys.learnerPinToken);
+
+  Future<void> clearLearnerPinToken() =>
+      _storage.delete(key: _Keys.learnerPinToken);
 
   // ---------------------------------------------------------------------------
   // Bulk operations

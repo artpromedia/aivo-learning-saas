@@ -29,6 +29,12 @@ class Endpoints {
   static String learnerDetail(String id) => '/learners/$id';
 
   // ---------------------------------------------------------------------------
+  // Learner PIN
+  // ---------------------------------------------------------------------------
+  static String learnerSetPin(String id) => '/learners/$id/pin';
+  static String learnerVerifyPin(String id) => '/learners/$id/pin/verify';
+
+  // ---------------------------------------------------------------------------
   // Assessment (Parent + Baseline)
   // ---------------------------------------------------------------------------
   static const String parentAssessmentQuestions =

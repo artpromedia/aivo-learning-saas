@@ -355,6 +355,11 @@ class _SettingsBody extends ConsumerWidget {
         ),
         const Divider(height: 32),
 
+        // ---- Learner PIN ----
+        const _SettingsSectionHeader(title: 'Learner PIN'),
+        _PinManagementTile(learnerId: currentLearnerId),
+        const Divider(height: 32),
+
         // ---- Account ----
         const _SettingsSectionHeader(title: 'Account'),
         ListTile(
@@ -503,6 +508,143 @@ class _SettingsSectionHeader extends StatelessWidget {
                 color: Theme.of(context).colorScheme.primary,
               ),
         ),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Info tile (non-interactive)
+// ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// PIN management tile
+// ---------------------------------------------------------------------------
+
+class _PinManagementTile extends ConsumerStatefulWidget {
+  const _PinManagementTile({required this.learnerId});
+  final String learnerId;
+
+  @override
+  ConsumerState<_PinManagementTile> createState() =>
+      _PinManagementTileState();
+}
+
+class _PinManagementTileState extends ConsumerState<_PinManagementTile> {
+  final _pinController = TextEditingController();
+  final _confirmPinController = TextEditingController();
+  bool _isUpdating = false;
+  String? _successMessage;
+  String? _errorMessage;
+
+  @override
+  void dispose() {
+    _pinController.dispose();
+    _confirmPinController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleSetPin() async {
+    final pin = _pinController.text.trim();
+    final confirm = _confirmPinController.text.trim();
+
+    if (!RegExp(r'^\d{4,6}$').hasMatch(pin)) {
+      setState(() => _errorMessage = 'PIN must be 4-6 digits');
+      return;
+    }
+    if (pin != confirm) {
+      setState(() => _errorMessage = 'PINs do not match');
+      return;
+    }
+
+    setState(() {
+      _isUpdating = true;
+      _errorMessage = null;
+      _successMessage = null;
+    });
+
+    try {
+      final repo = ref.read(familyRepositoryProvider);
+      await repo.setLearnerPin(widget.learnerId, pin);
+      setState(() {
+        _successMessage = 'PIN updated successfully';
+        _pinController.clear();
+        _confirmPinController.clear();
+      });
+    } catch (e) {
+      setState(() => _errorMessage = 'Failed to set PIN');
+    } finally {
+      setState(() => _isUpdating = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            'Set or change the PIN your child uses to access their learning dashboard.',
+            style: theme.textTheme.bodySmall,
+          ),
+          const SizedBox(height: 12),
+          TextFormField(
+            controller: _pinController,
+            keyboardType: TextInputType.number,
+            obscureText: true,
+            maxLength: 6,
+            textAlign: TextAlign.center,
+            style: const TextStyle(letterSpacing: 8, fontSize: 18),
+            decoration: const InputDecoration(
+              labelText: 'New PIN',
+              hintText: '••••',
+              counterText: '',
+              prefixIcon: Icon(Icons.pin_outlined),
+            ),
+          ),
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: _confirmPinController,
+            keyboardType: TextInputType.number,
+            obscureText: true,
+            maxLength: 6,
+            textAlign: TextAlign.center,
+            style: const TextStyle(letterSpacing: 8, fontSize: 18),
+            decoration: const InputDecoration(
+              labelText: 'Confirm PIN',
+              hintText: '••••',
+              counterText: '',
+              prefixIcon: Icon(Icons.pin_outlined),
+            ),
+          ),
+          const SizedBox(height: 12),
+          if (_errorMessage != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text(_errorMessage!,
+                  style: TextStyle(color: theme.colorScheme.error, fontSize: 13)),
+            ),
+          if (_successMessage != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text(_successMessage!,
+                  style: TextStyle(color: AivoColors.secondary, fontSize: 13)),
+            ),
+          ElevatedButton.icon(
+            onPressed: _isUpdating ? null : _handleSetPin,
+            icon: _isUpdating
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2))
+                : const Icon(Icons.lock_reset),
+            label: const Text('Set PIN'),
+          ),
+          const SizedBox(height: 16),
+        ],
       ),
     );
   }
