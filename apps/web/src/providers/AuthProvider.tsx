@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { useAuthStore } from "@/stores/auth.store";
 import { apiFetch } from "@/lib/api";
 import { AUTH_ROUTES } from "@/lib/api-routes";
@@ -16,8 +17,12 @@ interface SessionResponse {
   token?: string;
 }
 
+const PUBLIC_PATHS = ["/login", "/register", "/forgot-password", "/reset-password", "/verify-email", "/accept-invite"];
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { setUser, setToken, setLoading, logout } = useAuthStore();
+  const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     let cancelled = false;
@@ -32,6 +37,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } catch {
         if (!cancelled) {
           logout();
+          // Clear stale role cookie so middleware redirects properly
+          document.cookie = "user_role=; path=/; max-age=0";
+          // Redirect to login if on a protected page
+          const isPublic = PUBLIC_PATHS.some((p) => pathname.startsWith(p)) || pathname === "/";
+          if (!isPublic) {
+            router.replace("/login");
+            return;
+          }
         }
       } finally {
         if (!cancelled) {
@@ -45,7 +58,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [setUser, setToken, setLoading, logout]);
+  }, [setUser, setToken, setLoading, logout, router, pathname]);
 
   return <>{children}</>;
 }
