@@ -17,6 +17,7 @@ import { exportRoutes } from "./routes/export.js";
 import { importRoutes } from "./routes/import.js";
 import { translateRoutes } from "./routes/translate.js";
 import { seedRoutes } from "./routes/seed.js";
+import { seedTranslations } from "./seed.js";
 
 export async function buildApp() {
   const config = loadConfig();
@@ -77,6 +78,14 @@ export async function buildApp() {
   await app.register(importRoutes);
   await app.register(translateRoutes);
   await app.register(seedRoutes);
+
+  // Auto-seed default translations on startup so the app works immediately
+  try {
+    await seedTranslations(app.db as Parameters<typeof seedTranslations>[0]);
+    app.log.info("Default translations seeded successfully");
+  } catch (err) {
+    app.log.warn({ err }, "Failed to auto-seed translations (may already exist)");
+  }
 
   return app;
 }
