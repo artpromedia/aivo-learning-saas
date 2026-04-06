@@ -246,6 +246,8 @@ ingress:
       paths:
         - path: /api
           service: identity-svc
+        - path: /comms
+          service: comms-svc
         - path: /assessment
           service: assessment-svc
         - path: /
@@ -289,6 +291,8 @@ ingress:
       paths:
         - path: /api
           service: identity-svc
+        - path: /comms
+          service: comms-svc
         - path: /assessment
           service: assessment-svc
         - path: /

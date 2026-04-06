@@ -10,6 +10,7 @@ export function getSocket(): Socket {
       autoConnect: false,
       withCredentials: true,
       transports: ["websocket", "polling"],
+      path: "/comms/ws",
     });
   }
   return socket;
