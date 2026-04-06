@@ -36,28 +36,33 @@ test.describe('Module 1a: Assessment & Onboarding', () => {
     await page.waitForLoadState('networkidle');
 
     // Step 1: Navigate to add child flow
-    const addChildButton = page.getByRole('button', { name: /add child|add learner/i });
-    const addChildLink = page.getByRole('link', { name: /add child|add learner/i });
+    const addChildButton = page.getByRole('button', { name: /add child|add learner|addChild|addYourFirstChild/i });
+    const addChildLink = page.getByRole('link', { name: /add child|add learner|addChild|addYourFirstChild/i });
     if (await addChildButton.isVisible({ timeout: 5_000 }).catch(() => false)) {
       await addChildButton.click({ force: true });
     } else if (await addChildLink.isVisible({ timeout: 3_000 }).catch(() => false)) {
       await addChildLink.click();
     } else {
-      await page.goto(`${BASE_URL}/onboarding/add-child`);
+      await page.goto(`${BASE_URL}/add-child`);
     }
+    await page.waitForLoadState('networkidle');
 
-    // Step 2: Fill child details
-    await page.getByLabel(/child.*name|first name/i).fill('E2E Test Child');
-    await page.getByLabel(/date of birth|birthday/i).fill('2016-06-15');
+    // Step 2: Fill child details — match id attributes from the actual web form
+    const nameInput = page.locator('input#name, input[name="name"]').first();
+    await nameInput.waitFor({ state: 'visible', timeout: 10_000 });
+    await nameInput.fill('E2E Test Child');
 
-    const gradeSelect = page.getByLabel(/grade/i);
+    const dobInput = page.locator('input#dateOfBirth, input[name="dateOfBirth"], input[type="date"]').first();
+    await dobInput.fill('2016-06-15');
+
+    const gradeSelect = page.locator('select#enrolledGrade, select[name="enrolledGrade"]').first();
     if (await gradeSelect.isVisible({ timeout: 3_000 }).catch(() => false)) {
       const options = await gradeSelect.locator('option').allTextContents();
-      const match = options.find((o) => /3rd|3/i.test(o));
+      const match = options.find((o) => /3rd|3|grade3|Grade 3/i.test(o));
       await gradeSelect.selectOption({ label: match ?? options[1] ?? '' });
     }
 
-    await page.getByRole('button', { name: /next|continue/i }).click();
+    await page.getByRole('button', { name: /next|continue|submit/i }).click();
 
     // Step 3: Parent assessment questionnaire
     await page.waitForURL(/\/(onboarding|parent-assessment|assessment)/, { timeout: 10_000 });

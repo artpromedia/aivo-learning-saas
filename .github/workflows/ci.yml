@@ -194,6 +194,7 @@ jobs:
           start_svc "@aivo/learning-svc"     3003
           start_svc "tutor-svc"              3006
           start_svc "i18n-svc"               3011
+          start_svc "assessment-svc"          3012
 
           # Wait for all services to become healthy
           wait_svc() {
@@ -217,6 +218,7 @@ jobs:
           wait_svc learning-svc     3003
           wait_svc tutor-svc        3006
           wait_svc i18n-svc         3011
+          wait_svc assessment-svc   3012
 
       - name: Run E2E tests
         env:
@@ -227,6 +229,7 @@ jobs:
           API_BASE_URL: http://localhost:3101
           NEXT_PUBLIC_API_URL: http://localhost:3101
           NEXT_PUBLIC_I18N_SVC_URL: http://localhost:3011
+          ASSESSMENT_API_URL: http://localhost:3012
         run: cd e2e && npx playwright test --reporter=json --output=coverage-reports/
 
       - name: Upload E2E coverage reports
