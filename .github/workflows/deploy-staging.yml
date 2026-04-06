@@ -752,7 +752,8 @@ jobs:
           echo "Waiting for migration pod to be ready..."
           kubectl wait --for=condition=Ready pod/db-migrate -n aivo --timeout=120s
 
-          # Copy migration files into the pod
+          # Create target directory and copy migration files into the pod
+          kubectl exec db-migrate -n aivo -- mkdir -p /app
           kubectl cp packages/db/drizzle db-migrate:/app/drizzle -n aivo
           kubectl cp packages/db/drizzle.config.ts db-migrate:/app/drizzle.config.ts -n aivo
 
