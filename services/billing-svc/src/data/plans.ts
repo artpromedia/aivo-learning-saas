@@ -6,6 +6,7 @@ export interface PlanDefinition {
   maxLearners: number; // -1 = unlimited
   features: string[];
   stripePriceId: string;
+  trialDays: number; // 0 = no trial
   contactSales?: boolean;
   includedTutors?: string[];
 }
@@ -26,6 +27,7 @@ export const PLANS: PlanDefinition[] = [
       "AI Tutors available as add-ons ($9.99/mo each)",
     ],
     stripePriceId: process.env.STRIPE_PRICE_STARTER ?? "price_starter",
+    trialDays: 30,
   },
   {
     id: "FAMILY",
@@ -43,6 +45,7 @@ export const PLANS: PlanDefinition[] = [
       "Priority email support",
     ],
     stripePriceId: process.env.STRIPE_PRICE_FAMILY ?? "price_family",
+    trialDays: 30,
     includedTutors: ["ADDON_TUTOR_MATH", "ADDON_TUTOR_ELA"],
   },
   {
@@ -62,6 +65,7 @@ export const PLANS: PlanDefinition[] = [
       "Priority email support",
     ],
     stripePriceId: process.env.STRIPE_PRICE_PREMIUM ?? "price_premium",
+    trialDays: 30,
     includedTutors: [
       "ADDON_TUTOR_MATH",
       "ADDON_TUTOR_ELA",
@@ -91,6 +95,7 @@ export const PLANS: PlanDefinition[] = [
       "SOC 2 Type II compliance",
     ],
     stripePriceId: "",
+    trialDays: 0,
     includedTutors: [],
   },
 ];

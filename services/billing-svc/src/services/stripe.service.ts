@@ -14,10 +14,11 @@ export class StripeService {
     priceId: string,
     successUrl: string,
     cancelUrl: string,
+    trialDays: number = 0,
   ): Promise<string> {
     if (!this.stripe) {
-      const fakeUrl = `http://localhost:3000/checkout/success?session_id=fake_sess_${tenantId}_${planId}`;
-      console.log(`[stripe-dev] createCheckoutSession tenantId=${tenantId} planId=${planId} → ${fakeUrl}`);
+      const fakeUrl = `http://localhost:3000/checkout/success?session_id=fake_sess_${tenantId}_${planId}&trial_days=${trialDays}`;
+      console.log(`[stripe-dev] createCheckoutSession tenantId=${tenantId} planId=${planId} trialDays=${trialDays} → ${fakeUrl}`);
       return fakeUrl;
     }
 
@@ -29,7 +30,9 @@ export class StripeService {
       metadata: { tenantId, planId },
       subscription_data: {
         metadata: { tenantId, planId },
+        ...(trialDays > 0 && { trial_period_days: trialDays }),
       },
+      ...(trialDays > 0 && { payment_method_collection: "always" as const }),
     });
 
     return session.url!;

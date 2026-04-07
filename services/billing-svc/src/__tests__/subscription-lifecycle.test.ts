@@ -15,18 +15,21 @@ describe("Plan Definitions", () => {
     const starter = getPlanById("STARTER");
     expect(starter).toBeDefined();
     expect(starter!.price).toBe(1999);
+    expect(starter!.trialDays).toBe(30);
   });
 
   it("should price FAMILY at $29.99", () => {
     const family = getPlanById("FAMILY");
     expect(family!.price).toBe(2999);
     expect(family!.maxLearners).toBe(4);
+    expect(family!.trialDays).toBe(30);
   });
 
   it("should price PREMIUM at $39.99", () => {
     const premium = getPlanById("PREMIUM");
     expect(premium!.price).toBe(3999);
     expect(premium!.maxLearners).toBe(4);
+    expect(premium!.trialDays).toBe(30);
   });
 
   it("should have ENTERPRISE as contact sales", () => {
@@ -35,6 +38,7 @@ describe("Plan Definitions", () => {
     expect(enterprise!.contactSales).toBe(true);
     expect(enterprise!.price).toBe(0);
     expect(enterprise!.maxLearners).toBe(-1);
+    expect(enterprise!.trialDays).toBe(0);
   });
 
   it("should return undefined for unknown plan", () => {

@@ -12,11 +12,12 @@ export interface SubscriptionRow {
   tenantId: string;
   planId: string;
   stripeSubscriptionId: string | null;
-  status: "ACTIVE" | "PAST_DUE" | "CANCELLED" | "GRACE_PERIOD" | "EXPIRED" | "SUSPENDED";
+  status: "ACTIVE" | "TRIALING" | "PAST_DUE" | "CANCELLED" | "GRACE_PERIOD" | "EXPIRED" | "SUSPENDED";
   currentPeriodStart: Date | null;
   currentPeriodEnd: Date | null;
   cancelledAt: Date | null;
   gracePeriodEndsAt: Date | null;
+  trialEndsAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -45,6 +46,9 @@ export class SubscriptionService {
     if (!plan) {
       throw new Error(`Unknown plan: ${planId}`);
     }
+    if (plan.contactSales) {
+      throw new Error(`Plan ${planId} requires contacting sales`);
+    }
 
     const config = getConfig();
     const successUrl = `${config.APP_URL}/billing/success?session_id={CHECKOUT_SESSION_ID}`;
@@ -56,6 +60,7 @@ export class SubscriptionService {
       plan.stripePriceId,
       successUrl,
       cancelUrl,
+      plan.trialDays,
     );
 
     return checkoutUrl;
@@ -80,6 +85,12 @@ export class SubscriptionService {
     const stripeSubscriptionId = session.subscription as string;
     const now = new Date();
 
+    // Determine if this is a trial subscription
+    const isTrial = plan.trialDays > 0;
+    const trialEndsAt = isTrial
+      ? new Date(now.getTime() + plan.trialDays * 24 * 60 * 60 * 1000)
+      : null;
+
     // Create the subscription record
     const [sub] = await this.app.db
       .insert(subscriptions)
@@ -87,9 +98,12 @@ export class SubscriptionService {
         tenantId,
         planId,
         stripeSubscriptionId,
-        status: "ACTIVE",
+        status: isTrial ? "TRIALING" : "ACTIVE",
+        trialEndsAt,
         currentPeriodStart: now,
-        currentPeriodEnd: new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000), // +30 days
+        currentPeriodEnd: isTrial
+          ? trialEndsAt
+          : new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000),
         createdAt: now,
         updatedAt: now,
       })
@@ -101,7 +115,7 @@ export class SubscriptionService {
       sku: planId,
       stripeSubscriptionItemId: stripeSubscriptionId,
       quantity: 1,
-      status: "ACTIVE",
+      status: isTrial ? "TRIALING" : "ACTIVE",
       createdAt: now,
     });
 
@@ -111,15 +125,47 @@ export class SubscriptionService {
       .set({ planId, updatedAt: now })
       .where(eq(tenants.id, tenantId));
 
-    // Publish event
+    // Publish event with trial info
     await publishEvent(this.app.nats, "billing.subscription.created", {
       tenantId,
       planId,
       subscriptionId: sub.id,
       stripeSubscriptionId,
+      isTrial,
+      trialEndsAt: trialEndsAt?.toISOString() ?? null,
     });
 
-    this.app.log.info(`Subscription created for tenant=${tenantId} plan=${planId} sub=${sub.id}`);
+    this.app.log.info(`Subscription created for tenant=${tenantId} plan=${planId} sub=${sub.id} trial=${isTrial}`);
+  }
+
+  async handleSubscriptionUpdated(stripeEvent: Stripe.CustomerSubscriptionUpdatedEvent): Promise<void> {
+    const stripeSub = stripeEvent.data.object;
+    const status = stripeSub.status;
+
+    if (status === "active") {
+      // Trial ended or subscription renewed — mark as ACTIVE
+      await this.app.db
+        .update(subscriptions)
+        .set({
+          status: "ACTIVE",
+          currentPeriodStart: new Date(stripeSub.current_period_start * 1000),
+          currentPeriodEnd: new Date(stripeSub.current_period_end * 1000),
+          updatedAt: new Date(),
+        })
+        .where(eq(subscriptions.stripeSubscriptionId, stripeSub.id));
+
+      this.app.log.info(`Subscription ${stripeSub.id} transitioned to ACTIVE`);
+    } else if (status === "past_due") {
+      await this.app.db
+        .update(subscriptions)
+        .set({
+          status: "PAST_DUE",
+          updatedAt: new Date(),
+        })
+        .where(eq(subscriptions.stripeSubscriptionId, stripeSub.id));
+
+      this.app.log.info(`Subscription ${stripeSub.id} transitioned to PAST_DUE`);
+    }
   }
 
   async cancelSubscription(subscriptionId: string) {
