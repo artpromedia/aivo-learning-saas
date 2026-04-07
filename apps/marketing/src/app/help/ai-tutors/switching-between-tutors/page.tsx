@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Switching Between Tutors | Help | AIVO",
   description:
-    "Learn how to switch between AIVO Learning's 5 AI Tutors, understand how progress carries over, and discover recommended multi-tutor workflows.",
+    "Learn how to switch between AIVO Learning's 7 AI Tutors, understand how progress carries over, and discover recommended multi-tutor workflows.",
   openGraph: {
     title: "Switching Between Tutors | AIVO Help",
     description:
@@ -103,7 +103,8 @@ export default function SwitchingBetweenTutorsPage() {
               While in an active session with any tutor, your student can switch
               to a different tutor without leaving the session screen. The
               current session is paused (not ended), and a new session begins
-              with the selected tutor. Here is how it works:
+              with the selected tutor. Here is how it works (available on all
+              plans):
             </p>
             <ol className="mt-4 space-y-3">
               <li className="flex items-start gap-3 text-aivo-navy-600">
@@ -140,8 +141,8 @@ export default function SwitchingBetweenTutorsPage() {
             <div className="mt-6 rounded-xl bg-aivo-navy-50 p-6">
               <p className="text-sm text-aivo-navy-600">
                 <strong>Note:</strong> A mid-session switch counts as ending
-                one session and starting another. On the Free plan, this uses
-                two of your daily session allowance. See the{" "}
+                one session and starting another. On the Starter plan, this
+                uses two of your daily session allowance. See the{" "}
                 <a href="#session-limits" className="font-semibold text-aivo-purple-600 hover:text-aivo-purple-700">
                   Session Limits
                 </a>{" "}
@@ -163,7 +164,7 @@ export default function SwitchingBetweenTutorsPage() {
                 </span>
                 <span>
                   From the student dashboard, locate the{" "}
-                  <strong>Start a Session</strong> section. All five tutors are
+                  <strong>Start a Session</strong> section. All seven tutors are
                   displayed as cards with their avatar, name, and subject.
                 </span>
               </li>
@@ -187,7 +188,7 @@ export default function SwitchingBetweenTutorsPage() {
               The Tutor Selector Interface
             </h2>
             <p className="text-aivo-navy-600 leading-relaxed">
-              The Tutor Selector is a slide-out panel that displays all five
+              The Tutor Selector is a slide-out panel that displays all seven
               tutors. You can access it in two places:
             </p>
             <ul className="mt-4 space-y-2.5">
@@ -195,7 +196,7 @@ export default function SwitchingBetweenTutorsPage() {
                 <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-aivo-purple-500" />
                 <span>
                   <strong>Student dashboard:</strong> The &ldquo;Start a
-                  Session&rdquo; section shows all five tutor cards in a
+                  Session&rdquo; section shows all seven tutor cards in a
                   horizontal row.
                 </span>
               </li>
@@ -252,7 +253,7 @@ export default function SwitchingBetweenTutorsPage() {
               Does Progress Carry Over?
             </h2>
             <p className="text-aivo-navy-600 leading-relaxed">
-              <strong>Yes — completely.</strong> All five AI Tutors share the
+              <strong>Yes — completely.</strong> All seven AI Tutors share the
               same Brain Clone profile. When your student works with one tutor,
               the Brain Clone is updated with everything that happened in the
               session. When they switch to a different tutor, that tutor reads
@@ -372,24 +373,24 @@ export default function SwitchingBetweenTutorsPage() {
               <li className="flex items-start gap-3 text-aivo-navy-600">
                 <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-aivo-purple-500" />
                 <span>
-                  <strong>Free plan:</strong> 2 sessions per day, total, across
-                  all tutors. For example, a student could do 1 session with
-                  Nova and 1 with Sage, or 2 sessions with the same tutor.
+                  <strong>Starter plan:</strong> 2 sessions per day, total,
+                  across all tutors. For example, a student could do 1 session
+                  with Nova and 1 with Sage, or 2 sessions with the same tutor.
                   Mid-session switches count as ending + starting a session.
                 </span>
               </li>
               <li className="flex items-start gap-3 text-aivo-navy-600">
                 <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-aivo-purple-500" />
                 <span>
-                  <strong>Pro plan:</strong> Unlimited sessions per day with all
-                  five tutors. Switch as often as you want.
+                  <strong>Family plan:</strong> Unlimited sessions per day with
+                  all seven tutors. Switch as often as you want.
                 </span>
               </li>
               <li className="flex items-start gap-3 text-aivo-navy-600">
                 <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-aivo-purple-500" />
                 <span>
                   <strong>Premium plan:</strong> Unlimited sessions per day with
-                  all five tutors, plus priority processing for faster
+                  all seven tutors, plus priority processing for faster
                   responses.
                 </span>
               </li>
@@ -402,9 +403,9 @@ export default function SwitchingBetweenTutorsPage() {
             <div className="mt-6 rounded-xl bg-aivo-navy-50 p-6">
               <p className="text-sm text-aivo-navy-600">
                 <strong>Tip:</strong> If your student frequently uses 3 or
-                more tutors per day, the Pro plan ($39.99/month or $24.99/month
-                billed annually) provides the best experience with unlimited
-                sessions and no daily cap. See{" "}
+                more tutors per day, the Family plan ($29.99/month or
+                $23.99/month billed annually) provides the best experience
+                with unlimited sessions and no daily cap. See{" "}
                 <Link
                   href="/help/account-billing/managing-your-subscription"
                   className="font-semibold text-aivo-purple-600 hover:text-aivo-purple-700"
@@ -451,7 +452,7 @@ export default function SwitchingBetweenTutorsPage() {
                 Meeting Your AI Tutors
               </h3>
               <p className="mt-1 text-sm text-aivo-navy-500">
-                Get to know all 5 tutors and how they personalize sessions.
+                Get to know all 7 tutors and how they personalize sessions.
               </p>
             </Link>
             <Link

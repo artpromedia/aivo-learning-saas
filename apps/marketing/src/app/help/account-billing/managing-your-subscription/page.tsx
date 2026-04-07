@@ -145,10 +145,10 @@ export default function ManagingYourSubscriptionPage() {
                 </span>
                 <span>
                   Click the <strong>Subscription</strong> tab in the left
-                  sidebar. Your current plan name (Free, Pro, or Premium) will
-                  be displayed at the top of the page in a highlighted card,
-                  along with your billing frequency (monthly or annual) and the
-                  date your plan was activated.
+                  sidebar. Your current plan name (Starter, Family, Premium, or
+                  Enterprise) will be displayed at the top of the page in a
+                  highlighted card, along with your billing frequency (monthly
+                  or annual) and the date your plan was activated.
                 </span>
               </li>
             </ol>
@@ -162,24 +162,24 @@ export default function ManagingYourSubscriptionPage() {
             </h2>
             <p className="text-aivo-navy-600 leading-relaxed">
               Your billing cycle begins on the date you first subscribe to a
-              paid plan (Pro or Premium) and recurs automatically on the same
-              date each month or year, depending on your billing frequency. For
-              example, if you subscribe to the Pro plan on March 15, your next
-              charge will occur on April 15, and so on.
+              paid plan and recurs automatically on the same date each month or
+              year, depending on your billing frequency. For example, if you
+              subscribe to the Family plan on March 15, your next charge will
+              occur on April 15, and so on.
             </p>
             <p className="text-aivo-navy-600 leading-relaxed">
-              If you started with a 14-day free trial of the Pro plan, your
-              first billing date is the day after the trial ends. During the
-              trial, no charges are made. You will receive an email reminder
-              three days before your trial expires, giving you time to cancel if
-              you prefer not to continue.
+              If you started with a 14-day free trial of the Family or
+              Premium plan, your first billing date is the day after the trial
+              ends. During the trial, no charges are made. You will receive an
+              email reminder three days before your trial expires, giving you
+              time to cancel if you prefer not to continue.
             </p>
             <p className="text-aivo-navy-600 leading-relaxed">
               Annual billing subscribers are charged once per year at the
-              discounted annual rate. The annual Pro plan is billed at $24.99
-              per month ($299.88 per year), compared to $39.99 per month on
-              the monthly plan. You can switch between monthly and annual
-              billing at any time from the Subscription tab.
+              discounted annual rate (approximately 20% off). For example, the
+              Family plan is $23.99/month billed annually compared to
+              $29.99/month on the monthly plan. You can switch between monthly
+              and annual billing at any time from the Subscription tab.
             </p>
 
             {/* Plan Comparison */}
@@ -190,16 +190,16 @@ export default function ManagingYourSubscriptionPage() {
               What Each Plan Includes
             </h2>
             <p className="text-aivo-navy-600 leading-relaxed">
-              AIVO Learning offers three plans designed for different needs.
+              AIVO Learning offers four plans designed for different needs.
               Here is what each plan includes:
             </p>
 
             <div className="mt-6 rounded-xl border border-aivo-navy-100 bg-white p-6 shadow-sm">
               <h3 className="text-lg font-bold text-aivo-navy-800">
-                Free Plan
+                Starter Plan
               </h3>
               <p className="mt-1 text-sm font-medium text-aivo-purple-600">
-                $0 / month
+                $19.99 / month &middot; or $15.99 / month billed annually
               </p>
               <ul className="mt-3 space-y-2">
                 <li className="flex items-start gap-3 text-sm text-aivo-navy-600">
@@ -208,25 +208,33 @@ export default function ManagingYourSubscriptionPage() {
                 </li>
                 <li className="flex items-start gap-3 text-sm text-aivo-navy-600">
                   <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-aivo-purple-500" />
+                  <span>Brain Clone AI assessment</span>
+                </li>
+                <li className="flex items-start gap-3 text-sm text-aivo-navy-600">
+                  <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-aivo-purple-500" />
                   <span>2 AI Tutor sessions per day</span>
                 </li>
                 <li className="flex items-start gap-3 text-sm text-aivo-navy-600">
                   <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-aivo-purple-500" />
-                  <span>Basic parent dashboard</span>
+                  <span>Basic progress dashboard</span>
                 </li>
                 <li className="flex items-start gap-3 text-sm text-aivo-navy-600">
                   <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-aivo-purple-500" />
                   <span>Community support</span>
+                </li>
+                <li className="flex items-start gap-3 text-sm text-aivo-navy-600">
+                  <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-aivo-purple-500" />
+                  <span>AI Tutors available as add-ons ($9.99/mo each)</span>
                 </li>
               </ul>
             </div>
 
             <div className="mt-6 rounded-xl border border-aivo-purple-200 bg-white p-6 shadow-sm ring-2 ring-aivo-purple-100">
               <h3 className="text-lg font-bold text-aivo-navy-800">
-                Pro Plan
+                Family Plan
               </h3>
               <p className="mt-1 text-sm font-medium text-aivo-purple-600">
-                $39.99 / month &middot; or $24.99 / month billed annually
+                $29.99 / month &middot; or $23.99 / month billed annually
               </p>
               <ul className="mt-3 space-y-2">
                 <li className="flex items-start gap-3 text-sm text-aivo-navy-600">
@@ -235,19 +243,23 @@ export default function ManagingYourSubscriptionPage() {
                 </li>
                 <li className="flex items-start gap-3 text-sm text-aivo-navy-600">
                   <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-aivo-purple-500" />
-                  <span>Unlimited AI Tutor sessions</span>
+                  <span>Math &amp; ELA Tutors included</span>
                 </li>
                 <li className="flex items-start gap-3 text-sm text-aivo-navy-600">
                   <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-aivo-purple-500" />
-                  <span>IEP document upload &amp; goal tracking</span>
+                  <span>Full Brain Clone AI customization</span>
                 </li>
                 <li className="flex items-start gap-3 text-sm text-aivo-navy-600">
                   <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-aivo-purple-500" />
-                  <span>Unlimited Homework Helper</span>
+                  <span>IEP document upload &amp; tracking</span>
                 </li>
                 <li className="flex items-start gap-3 text-sm text-aivo-navy-600">
                   <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-aivo-purple-500" />
-                  <span>Offline mobile access</span>
+                  <span>Homework Helper (unlimited)</span>
+                </li>
+                <li className="flex items-start gap-3 text-sm text-aivo-navy-600">
+                  <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-aivo-purple-500" />
+                  <span>Detailed progress analytics</span>
                 </li>
                 <li className="flex items-start gap-3 text-sm text-aivo-navy-600">
                   <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-aivo-purple-500" />
@@ -265,12 +277,55 @@ export default function ManagingYourSubscriptionPage() {
                 Premium Plan
               </h3>
               <p className="mt-1 text-sm font-medium text-aivo-purple-600">
-                $41.99 / month &middot; for schools &amp; districts
+                $39.99 / month &middot; or $31.99 / month billed annually
+              </p>
+              <ul className="mt-3 space-y-2">
+                <li className="flex items-start gap-3 text-sm text-aivo-navy-600">
+                  <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-aivo-purple-500" />
+                  <span>Up to 4 student profiles</span>
+                </li>
+                <li className="flex items-start gap-3 text-sm text-aivo-navy-600">
+                  <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-aivo-purple-500" />
+                  <span>All 7 AI Tutors included</span>
+                </li>
+                <li className="flex items-start gap-3 text-sm text-aivo-navy-600">
+                  <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-aivo-purple-500" />
+                  <span>Full Brain Clone AI customization</span>
+                </li>
+                <li className="flex items-start gap-3 text-sm text-aivo-navy-600">
+                  <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-aivo-purple-500" />
+                  <span>IEP document upload &amp; tracking</span>
+                </li>
+                <li className="flex items-start gap-3 text-sm text-aivo-navy-600">
+                  <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-aivo-purple-500" />
+                  <span>Homework Helper (unlimited)</span>
+                </li>
+                <li className="flex items-start gap-3 text-sm text-aivo-navy-600">
+                  <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-aivo-purple-500" />
+                  <span>Offline mobile access</span>
+                </li>
+                <li className="flex items-start gap-3 text-sm text-aivo-navy-600">
+                  <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-aivo-purple-500" />
+                  <span>Priority email support</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="mt-6 rounded-xl border border-aivo-navy-100 bg-white p-6 shadow-sm">
+              <h3 className="text-lg font-bold text-aivo-navy-800">
+                Enterprise Plan
+              </h3>
+              <p className="mt-1 text-sm font-medium text-aivo-purple-600">
+                Contact Sales &middot; for schools &amp; districts
               </p>
               <ul className="mt-3 space-y-2">
                 <li className="flex items-start gap-3 text-sm text-aivo-navy-600">
                   <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-aivo-purple-500" />
                   <span>Unlimited student profiles</span>
+                </li>
+                <li className="flex items-start gap-3 text-sm text-aivo-navy-600">
+                  <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-aivo-purple-500" />
+                  <span>Everything in Premium</span>
                 </li>
                 <li className="flex items-start gap-3 text-sm text-aivo-navy-600">
                   <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-aivo-purple-500" />
@@ -389,8 +444,8 @@ export default function ManagingYourSubscriptionPage() {
               Upgrading Your Plan
             </h2>
             <p className="text-aivo-navy-600 leading-relaxed">
-              You can upgrade from Free to Pro, or from Pro to Premium, at any
-              time. When you upgrade:
+              You can upgrade from Starter to Family, Family to Premium, or
+              any plan to Enterprise at any time. When you upgrade:
             </p>
             <ol className="mt-4 space-y-3">
               <li className="flex items-start gap-3 text-aivo-navy-600">
@@ -418,7 +473,7 @@ export default function ManagingYourSubscriptionPage() {
                 </span>
                 <span>
                   Select your desired plan and billing frequency (monthly or
-                  annual). If you are upgrading from Free to Pro, you will be
+                  annual). If this is your first paid upgrade, you will be
                   prompted to enter a payment method.
                 </span>
               </li>
@@ -443,9 +498,9 @@ export default function ManagingYourSubscriptionPage() {
               What Happens When You Downgrade
             </h2>
             <p className="text-aivo-navy-600 leading-relaxed">
-              If you downgrade from Pro to Free, or from Premium to Pro, your
-              current plan remains active until the end of your current billing
-              period. On the day your downgrade takes effect:
+              If you downgrade from Premium to Family, or from Family to
+              Starter, your current plan remains active until the end of your
+              current billing period. On the day your downgrade takes effect:
             </p>
             <ul className="mt-4 space-y-2.5">
               <li className="flex items-start gap-3 text-aivo-navy-600">
@@ -462,18 +517,19 @@ export default function ManagingYourSubscriptionPage() {
                 <span>
                   <strong>Premium features become locked.</strong> Features
                   that are not included in your new plan are locked but not
-                  removed. For example, if you downgrade from Pro to Free, your
-                  IEP data is preserved but the IEP integration dashboard becomes
-                  read-only, and AI Tutor sessions are limited to 2 per day.
+                  removed. For example, if you downgrade from Family to Starter,
+                  your IEP data is preserved but the IEP integration dashboard
+                  becomes read-only, and AI Tutor sessions are limited to 2 per
+                  day.
                 </span>
               </li>
               <li className="flex items-start gap-3 text-aivo-navy-600">
                 <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-aivo-purple-500" />
                 <span>
                   <strong>Extra student profiles are paused.</strong> If you
-                  downgrade from Pro (up to 4 students) to Free (1 student),
-                  you will be asked to select which student profile remains
-                  active. The other profiles are paused — their data is
+                  downgrade from Family (up to 4 students) to Starter (1
+                  student), you will be asked to select which student profile
+                  remains active. The other profiles are paused — their data is
                   preserved in full, and they will be automatically reactivated
                   if you upgrade again.
                 </span>

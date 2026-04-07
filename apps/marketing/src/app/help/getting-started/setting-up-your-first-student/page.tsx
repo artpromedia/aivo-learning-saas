@@ -121,10 +121,10 @@ export default function SettingUpFirstStudentPage() {
             </p>
             <p className="text-aivo-navy-600 leading-relaxed">
               The number of student profiles you can create depends on your
-              plan. Free accounts support one student profile. Pro accounts
-              ($39.99/month or $24.99/month billed annually) support up to four
-              student profiles. Premium accounts (for schools and districts)
-              support unlimited student profiles.
+              plan. Starter accounts ($19.99/month) support one student profile.
+              Family accounts ($29.99/month) and Premium accounts ($39.99/month)
+              support up to four student profiles. Enterprise accounts (for
+              schools and districts) support unlimited student profiles.
             </p>
 
             {/* Step 1 */}

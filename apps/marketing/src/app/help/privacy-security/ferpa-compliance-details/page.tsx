@@ -190,9 +190,9 @@ export default function FerpaComplianceDetailsPage() {
             <div className="mt-6 rounded-xl bg-aivo-navy-50 p-6">
               <p className="text-sm text-aivo-navy-600">
                 <strong>Direct-to-parent accounts:</strong> When parents sign
-                up directly (Free or Pro plans), AIVO operates under parental
-                consent. Parents are the data controllers and retain full
-                authority over their child&rsquo;s data.
+                up directly (Starter, Family, or Premium plans), AIVO operates
+                under parental consent. Parents are the data controllers and
+                retain full authority over their child&rsquo;s data.
               </p>
             </div>
 

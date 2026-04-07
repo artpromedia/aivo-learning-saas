@@ -23,11 +23,13 @@ interface Plan {
   id: string;
   name: string;
   description: string;
-  price: number;
+  price: number; // cents
   interval: "month" | "year";
   features: string[];
   recommended: boolean;
   maxLearners: number;
+  contactSales?: boolean;
+  includedTutors?: string[];
 }
 
 function CheckoutContent() {
@@ -65,6 +67,8 @@ function CheckoutContent() {
 
   const handleSubscribe = async () => {
     if (!selectedPlan) return;
+    const plan = plans.find((p) => p.id === selectedPlan);
+    if (plan?.contactSales) return;
     setSubscribing(true);
     setError(null);
     try {
@@ -82,12 +86,14 @@ function CheckoutContent() {
     }
   };
 
+  const selectedPlanData = plans.find((p) => p.id === selectedPlan);
+
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto py-12 px-4">
+      <div className="max-w-5xl mx-auto py-12 px-4">
         <Skeleton height={40} width={300} className="mb-8 mx-auto" />
-        <div className="grid gap-6 md:grid-cols-3">
-          {[1, 2, 3].map((i) => (
+        <div className="grid gap-6 md:grid-cols-4">
+          {[1, 2, 3, 4].map((i) => (
             <Skeleton key={i} height={400} className="w-full rounded-xl" />
           ))}
         </div>
@@ -96,7 +102,7 @@ function CheckoutContent() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto py-12 px-4">
+    <div className="max-w-5xl mx-auto py-12 px-4">
       <Link
         href="/parent"
         className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-6"
@@ -123,60 +129,114 @@ function CheckoutContent() {
         </div>
       )}
 
-      <div className="grid gap-6 md:grid-cols-3 mb-8">
-        {plans.map((plan) => (
-          <Card
-            key={plan.id}
-            className={`cursor-pointer transition-all relative ${
-              selectedPlan === plan.id
-                ? "ring-2 ring-[#7C3AED] shadow-lg"
-                : "hover:shadow-md"
-            } ${plan.recommended ? "border-[#7C3AED]" : ""}`}
-            onClick={() => setSelectedPlan(plan.id)}
-          >
-            {plan.recommended && (
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                <Badge className="bg-[#7C3AED] text-white px-3 py-1 flex items-center gap-1">
-                  <Sparkles size={12} />
-                  {t("recommended")}
-                </Badge>
-              </div>
-            )}
-            <CardBody className="text-center pt-8">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
-                {plan.name}
-              </h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                {plan.description}
-              </p>
-              <div className="mb-4">
-                <span className="text-4xl font-bold text-gray-900 dark:text-white">
-                  ${plan.price}
-                </span>
-                <span className="text-gray-500 dark:text-gray-400">
-                  {t("perInterval", { interval: plan.interval })}
-                </span>
-              </div>
-              <p className="text-xs text-gray-500 mb-6">
-                {t("upToLearners", { count: plan.maxLearners })}
-              </p>
-              <ul className="space-y-2 text-left">
-                {plan.features.map((feature, i) => (
-                  <li
-                    key={i}
-                    className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-400"
+      <div className="grid gap-6 md:grid-cols-4 mb-8">
+        {plans.map((plan) => {
+          const displayPrice = (plan.price / 100).toFixed(2);
+          const learnersLabel =
+            plan.maxLearners === -1
+              ? t("unlimitedLearners", { defaultMessage: "Unlimited learners" })
+              : t("upToLearners", { count: plan.maxLearners });
+
+          if (plan.contactSales) {
+            return (
+              <Card
+                key={plan.id}
+                className="transition-all relative hover:shadow-md border-gray-200"
+              >
+                <CardBody className="text-center pt-8">
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
+                    {plan.name}
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                    {plan.description}
+                  </p>
+                  <div className="mb-4">
+                    <span className="text-4xl font-bold text-gray-900 dark:text-white">
+                      Contact Us
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-500 mb-6">
+                    {learnersLabel}
+                  </p>
+                  <ul className="space-y-2 text-left mb-6">
+                    {plan.features.map((feature, i) => (
+                      <li
+                        key={i}
+                        className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-400"
+                      >
+                        <Check
+                          className="text-[#7C3AED] shrink-0 mt-0.5"
+                          size={16}
+                        />
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                  <Link
+                    href="/demo"
+                    className="block w-full rounded-lg bg-gray-100 dark:bg-gray-800 px-4 py-2.5 text-center text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                   >
-                    <Check
-                      className="text-[#7C3AED] shrink-0 mt-0.5"
-                      size={16}
-                    />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-            </CardBody>
-          </Card>
-        ))}
+                    Contact Sales
+                  </Link>
+                </CardBody>
+              </Card>
+            );
+          }
+
+          return (
+            <Card
+              key={plan.id}
+              className={`cursor-pointer transition-all relative ${
+                selectedPlan === plan.id
+                  ? "ring-2 ring-[#7C3AED] shadow-lg"
+                  : "hover:shadow-md"
+              } ${plan.recommended ? "border-[#7C3AED]" : ""}`}
+              onClick={() => setSelectedPlan(plan.id)}
+            >
+              {plan.recommended && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                  <Badge className="bg-[#7C3AED] text-white px-3 py-1 flex items-center gap-1">
+                    <Sparkles size={12} />
+                    {t("recommended")}
+                  </Badge>
+                </div>
+              )}
+              <CardBody className="text-center pt-8">
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
+                  {plan.name}
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                  {plan.description}
+                </p>
+                <div className="mb-4">
+                  <span className="text-4xl font-bold text-gray-900 dark:text-white">
+                    ${displayPrice}
+                  </span>
+                  <span className="text-gray-500 dark:text-gray-400">
+                    {t("perInterval", { interval: plan.interval })}
+                  </span>
+                </div>
+                <p className="text-xs text-gray-500 mb-6">
+                  {learnersLabel}
+                </p>
+                <ul className="space-y-2 text-left">
+                  {plan.features.map((feature, i) => (
+                    <li
+                      key={i}
+                      className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-400"
+                    >
+                      <Check
+                        className="text-[#7C3AED] shrink-0 mt-0.5"
+                        size={16}
+                      />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+              </CardBody>
+            </Card>
+          );
+        })}
       </div>
 
       <div className="text-center">
@@ -184,7 +244,7 @@ function CheckoutContent() {
           size="lg"
           onClick={handleSubscribe}
           loading={subscribing}
-          disabled={!selectedPlan}
+          disabled={!selectedPlan || selectedPlanData?.contactSales}
           className="min-w-[240px]"
         >
           {t("continueToPayment")}

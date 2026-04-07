@@ -6,6 +6,7 @@ export interface PricingPlan {
   features: string[];
   cta: string;
   popular?: boolean;
+  contactSales?: boolean;
 }
 
 export interface PricingFaq {
@@ -15,27 +16,45 @@ export interface PricingFaq {
 
 export const pricingPlans: PricingPlan[] = [
   {
-    name: "Free",
-    monthlyPrice: 0,
-    yearlyPrice: 0,
-    description: "Get started with core features for one student.",
+    name: "Starter",
+    monthlyPrice: 19.99,
+    yearlyPrice: 15.99,
+    description: "Get started with core features for one student. Add AI Tutors as needed.",
     features: [
       "1 student profile",
       "Brain Clone AI assessment",
       "2 AI Tutor sessions/day",
       "Basic progress dashboard",
       "Community support",
+      "AI Tutors available as add-ons ($9.99/mo each)",
     ],
-    cta: "Get Started Free",
+    cta: "Get Started",
   },
   {
-    name: "Pro",
-    monthlyPrice: 39.99,
-    yearlyPrice: 24.99,
-    description: "Full access for families with advanced features.",
+    name: "Family",
+    monthlyPrice: 29.99,
+    yearlyPrice: 23.99,
+    description: "For families who want Math & ELA tutoring included.",
     features: [
       "Up to 4 student profiles",
-      "Unlimited AI Tutor sessions",
+      "Math & ELA Tutors included",
+      "Full Brain Clone AI customization",
+      "IEP document upload & tracking",
+      "Homework Helper (unlimited)",
+      "Detailed progress analytics",
+      "Priority email support",
+    ],
+    cta: "Start Free Trial",
+    popular: true,
+  },
+  {
+    name: "Premium",
+    monthlyPrice: 39.99,
+    yearlyPrice: 31.99,
+    description: "Full access with all 7 AI Tutors for the complete learning experience.",
+    features: [
+      "Up to 4 student profiles",
+      "All 7 AI Tutors included",
       "Full Brain Clone AI customization",
       "IEP document upload & tracking",
       "Homework Helper (unlimited)",
@@ -44,16 +63,15 @@ export const pricingPlans: PricingPlan[] = [
       "Priority email support",
     ],
     cta: "Start Free Trial",
-    popular: true,
   },
   {
-    name: "Premium",
-    monthlyPrice: 41.99,
-    yearlyPrice: 41.99,
-    description: "For educators and schools with enterprise needs.",
+    name: "Enterprise",
+    monthlyPrice: 0,
+    yearlyPrice: 0,
+    description: "For schools and districts with custom needs.",
     features: [
       "Unlimited student profiles",
-      "Everything in Pro",
+      "Everything in Premium",
       "Classroom management tools",
       "SIS integration (Clever/ClassLink)",
       "District-wide analytics",
@@ -63,29 +81,31 @@ export const pricingPlans: PricingPlan[] = [
       "SOC 2 Type II compliance",
     ],
     cta: "Contact Sales",
+    contactSales: true,
   },
 ];
 
 export const pricingFeatureMatrix = [
-  { feature: "Student profiles", free: "1", pro: "Up to 4", premium: "Unlimited" },
-  { feature: "Brain Clone AI", free: "Basic", pro: "Full", premium: "Full + Custom" },
-  { feature: "AI Tutor sessions", free: "2/day", pro: "Unlimited", premium: "Unlimited" },
-  { feature: "IEP integration", free: "—", pro: "✓", premium: "✓" },
-  { feature: "Homework Helper", free: "3/day", pro: "Unlimited", premium: "Unlimited" },
-  { feature: "Progress analytics", free: "Basic", pro: "Advanced", premium: "Enterprise" },
-  { feature: "Offline access", free: "—", pro: "✓", premium: "✓" },
-  { feature: "SIS integration", free: "—", pro: "—", premium: "✓" },
-  { feature: "District analytics", free: "—", pro: "—", premium: "✓" },
-  { feature: "Custom reporting", free: "—", pro: "—", premium: "✓" },
-  { feature: "Dedicated support", free: "Community", pro: "Email", premium: "24/7 Phone & Chat" },
-  { feature: "Gamification", free: "Basic", pro: "Full", premium: "Full + Custom" },
+  { feature: "Student profiles", starter: "1", family: "Up to 4", premium: "Up to 4", enterprise: "Unlimited" },
+  { feature: "Brain Clone AI", starter: "Basic", family: "Full", premium: "Full", enterprise: "Full + Custom" },
+  { feature: "AI Tutor sessions", starter: "2/day", family: "Unlimited", premium: "Unlimited", enterprise: "Unlimited" },
+  { feature: "AI Tutors included", starter: "—", family: "Math & ELA", premium: "All 7", enterprise: "All 7" },
+  { feature: "IEP integration", starter: "—", family: "✓", premium: "✓", enterprise: "✓" },
+  { feature: "Homework Helper", starter: "3/day", family: "Unlimited", premium: "Unlimited", enterprise: "Unlimited" },
+  { feature: "Progress analytics", starter: "Basic", family: "Advanced", premium: "Advanced", enterprise: "Enterprise" },
+  { feature: "Offline access", starter: "—", family: "—", premium: "✓", enterprise: "✓" },
+  { feature: "SIS integration", starter: "—", family: "—", premium: "—", enterprise: "✓" },
+  { feature: "District analytics", starter: "—", family: "—", premium: "—", enterprise: "✓" },
+  { feature: "Custom reporting", starter: "—", family: "—", premium: "—", enterprise: "✓" },
+  { feature: "Dedicated support", starter: "Community", family: "Email", premium: "Email", enterprise: "24/7 Phone & Chat" },
+  { feature: "Gamification", starter: "Basic", family: "Full", premium: "Full", enterprise: "Full + Custom" },
 ];
 
 export const pricingFaqs: PricingFaq[] = [
   {
-    question: "Is there really a free plan?",
+    question: "What's included in the Starter plan?",
     answer:
-      "Yes! Our Free plan gives you access to core features for one student, including Brain Clone AI assessment and 2 AI Tutor sessions per day. No credit card required.",
+      "The Starter plan ($19.99/mo) includes core features for one student, including Brain Clone AI assessment and 2 AI Tutor sessions per day. You can add individual AI Tutors as add-ons for $9.99/mo each.",
   },
   {
     question: "Can I switch plans at any time?",
@@ -100,26 +120,26 @@ export const pricingFaqs: PricingFaq[] = [
   {
     question: "Do you offer school or district pricing?",
     answer:
-      "Yes! Our Premium plan is designed for schools and districts. Contact our sales team for volume pricing, custom contracts, and implementation support.",
+      "Yes! Our Enterprise plan is designed for schools and districts. Contact our sales team for volume pricing, custom contracts, and implementation support.",
   },
   {
     question: "What if my child has an IEP?",
     answer:
-      "AIVO is built for students with IEPs. Upload your child's IEP document and our AI automatically aligns content, accommodations, and progress tracking to their specific goals.",
+      "AIVO is built for students with IEPs. Upload your child's IEP document and our AI automatically aligns content, accommodations, and progress tracking to their specific goals. IEP integration is available on Family, Premium, and Enterprise plans.",
   },
   {
     question: "How does the free trial work?",
     answer:
-      "The Pro plan comes with a 14-day free trial. You get full access to all Pro features. Cancel anytime during the trial and you won't be charged.",
+      "The Family and Premium plans come with a 14-day free trial. You get full access to all plan features. Cancel anytime during the trial and you won't be charged.",
   },
   {
     question: "Can I use AIVO offline?",
     answer:
-      "Pro and Premium plans include offline access through our mobile app. Lessons and tutor sessions sync automatically when you reconnect.",
+      "The Premium and Enterprise plans include offline access through our mobile app. Lessons and tutor sessions sync automatically when you reconnect.",
   },
   {
     question: "What subjects does AIVO cover?",
     answer:
-      "AIVO covers Math, English Language Arts, Science, History, and Coding through our seven specialized AI Tutors.",
+      "AIVO covers Math, English Language Arts, Science, History, Coding, Social-Emotional Learning (SEL), and Speech through our seven specialized AI Tutors.",
   },
 ];
