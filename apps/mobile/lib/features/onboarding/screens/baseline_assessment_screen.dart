@@ -7,6 +7,8 @@ import 'package:go_router/go_router.dart';
 import 'package:aivo_mobile/core/accessibility/functioning_level_provider.dart';
 import 'package:aivo_mobile/core/api/api_client.dart';
 import 'package:aivo_mobile/core/api/endpoints.dart';
+import 'package:aivo_mobile/data/models/break_config.dart';
+import 'package:aivo_mobile/features/onboarding/screens/assessment_break_screen.dart';
 import 'package:aivo_mobile/features/onboarding/widgets/picture_question.dart';
 import 'package:aivo_mobile/features/onboarding/widgets/partner_assisted.dart';
 import 'package:aivo_mobile/features/onboarding/widgets/observational_checklist.dart';
@@ -242,6 +244,23 @@ List<ChecklistItem> _preSymbolicItems() => const [
     ];
 
 // ---------------------------------------------------------------------------
+// Correct answers for adaptive break tracking
+// ---------------------------------------------------------------------------
+
+const Map<String, String> _correctAnswers = {
+  'std_1': '8',
+  'std_2': 'hat',
+  'std_3': '7',
+  'std_4': 'spring',
+  'sup_1': '3',
+  'sup_2': 'blue',
+  'sup_3': 'big',
+  'lv_1': 'dog',
+  'lv_2': 'red',
+  'lv_3': 'ball',
+};
+
+// ---------------------------------------------------------------------------
 // Screen
 // ---------------------------------------------------------------------------
 
@@ -261,6 +280,14 @@ class _BaselineAssessmentScreenState
   int _currentIndex = 0;
   bool _isSubmitting = false;
   String? _errorMessage;
+
+  // Break state
+  bool _showBreak = false;
+  String _breakType = 'breathing';
+  int _breakTypeIndex = 0;
+  int _consecutiveWrong = 0;
+  int _questionsAnsweredSinceBreak = 0;
+  final BreakConfig _breakConfig = BreakConfig.defaults();
 
   /// Timer tracking for the assessment.
   final Stopwatch _stopwatch = Stopwatch();
@@ -331,12 +358,49 @@ class _BaselineAssessmentScreenState
     setState(() {
       _answers[questionId] = value;
     });
+
+    // Track consecutive wrong answers for adaptive breaks.
+    final correct = _correctAnswers[questionId];
+    if (correct != null) {
+      if (value == correct) {
+        _consecutiveWrong = 0;
+      } else {
+        _consecutiveWrong++;
+      }
+    }
   }
 
   void _goNext(FunctioningLevel level) {
     final totalCount = level == FunctioningLevel.nonVerbal
         ? _nonVerbalPrompts().length
         : _questionsForLevel(level).length;
+
+    // Skip breaks for preSymbolic (parent checklist) — breaks don't apply.
+    if (level != FunctioningLevel.preSymbolic) {
+      _questionsAnsweredSinceBreak++;
+
+      // Check for adaptive break (3+ consecutive wrong answers).
+      if (_breakConfig.adaptiveBreaks && _consecutiveWrong >= 3) {
+        setState(() {
+          _showBreak = true;
+          _breakType = 'breathing'; // calming break for frustration
+          _consecutiveWrong = 0;
+          _questionsAnsweredSinceBreak = 0;
+        });
+        return;
+      }
+
+      // Check for frequency-based break.
+      if (_questionsAnsweredSinceBreak > 0 &&
+          _questionsAnsweredSinceBreak % _breakConfig.frequencyQuestions == 0) {
+        setState(() {
+          _showBreak = true;
+          _breakType = _getNextBreakType();
+          _questionsAnsweredSinceBreak = 0;
+        });
+        return;
+      }
+    }
 
     if (_currentIndex < totalCount - 1) {
       setState(() {
@@ -345,6 +409,33 @@ class _BaselineAssessmentScreenState
     } else {
       _submit(level);
     }
+  }
+
+  String _getNextBreakType() {
+    final types = _breakConfig.preferredTypes;
+    if (types.isEmpty) return 'breathing';
+    final type = types[_breakTypeIndex % types.length];
+    _breakTypeIndex++;
+    return type;
+  }
+
+  void _onBreakComplete() {
+    setState(() {
+      _showBreak = false;
+      _consecutiveWrong = 0;
+
+      // Advance to the next question after the break.
+      final level = ref.read(functioningLevelProvider);
+      final totalCount = level == FunctioningLevel.nonVerbal
+          ? _nonVerbalPrompts().length
+          : _questionsForLevel(level).length;
+
+      if (_currentIndex < totalCount - 1) {
+        _currentIndex++;
+      } else {
+        _submit(level);
+      }
+    });
   }
 
   void _skip(FunctioningLevel level) {
@@ -505,6 +596,18 @@ class _BaselineAssessmentScreenState
     ThemeData theme,
     ColorScheme colorScheme,
   ) {
+    // Show break screen if triggered.
+    if (_showBreak) {
+      // NonVerbal: show parent-facing prompt instead of interactive break.
+      if (level == FunctioningLevel.nonVerbal) {
+        return NonVerbalBreakPrompt(onContinue: _onBreakComplete);
+      }
+      return AssessmentBreakScreen(
+        breakType: _breakType,
+        onComplete: _onBreakComplete,
+      );
+    }
+
     switch (level) {
       case FunctioningLevel.standard:
         return _buildStandardView(theme, colorScheme);

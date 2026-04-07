@@ -40,6 +40,12 @@ class Endpoints {
   static const String parentAssessmentQuestions =
       '/assessment/parent/questions';
   static const String parentAssessmentSubmit = '/assessment/parent';
+  static String baselineStart(String learnerId) =>
+      '/assessment/baseline/$learnerId/start';
+  static String baselineAnswer(String learnerId) =>
+      '/assessment/baseline/$learnerId/answer';
+  static String baselineComplete(String learnerId) =>
+      '/assessment/baseline/$learnerId/complete';
 
   // ---------------------------------------------------------------------------
   // Learning
