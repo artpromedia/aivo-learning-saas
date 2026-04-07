@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useCallback, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   CreditCard,
@@ -47,24 +47,24 @@ function CheckoutContent() {
   );
   const [subscribing, setSubscribing] = useState(false);
 
-  useEffect(() => {
-    async function fetchPlans() {
-      try {
-        const data = await apiFetch<{ plans: Plan[] }>(API_ROUTES.BILLING.PLANS);
-        setPlans(data.plans);
-        if (!selectedPlan && data.plans.length > 0) {
-          const recommended = data.plans.find((p) => p.recommended);
-          setSelectedPlan(recommended?.id ?? data.plans[0].id);
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : t("failedToLoadPlans"));
-      } finally {
-        setLoading(false);
+  const fetchPlans = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await apiFetch<{ plans: Plan[] }>(API_ROUTES.BILLING.PLANS);
+      setPlans(data.plans);
+      if (!selectedPlan && data.plans.length > 0) {
+        const recommended = data.plans.find((p) => p.recommended);
+        setSelectedPlan(recommended?.id ?? data.plans[0].id);
       }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t("failedToLoadPlans"));
+    } finally {
+      setLoading(false);
     }
+  }, [selectedPlan, t]);
 
-    fetchPlans();
-  }, []);
+  useEffect(() => { fetchPlans(); }, []);
 
   const handleSubscribe = async () => {
     if (!selectedPlan) return;
@@ -125,8 +125,21 @@ function CheckoutContent() {
       </div>
 
       {error && (
-        <div className="mb-6 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm text-center">
-          {error}
+        <div className="mb-6 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-center">
+          <p className="text-red-700 dark:text-red-400 text-sm mb-3">
+            {error}
+          </p>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setError(null);
+              setLoading(true);
+              fetchPlans();
+            }}
+          >
+            Retry
+          </Button>
         </div>
       )}
 
@@ -135,7 +148,7 @@ function CheckoutContent() {
           const displayPrice = (plan.price / 100).toFixed(2);
           const learnersLabel =
             plan.maxLearners === -1
-              ? t("unlimitedLearners", { defaultMessage: "Unlimited learners" })
+              ? t("unlimitedLearners")
               : t("upToLearners", { count: plan.maxLearners });
 
           if (plan.contactSales) {
@@ -153,7 +166,7 @@ function CheckoutContent() {
                   </p>
                   <div className="mb-4">
                     <span className="text-4xl font-bold text-gray-900 dark:text-white">
-                      Contact Us
+                      {t("contactUs")}
                     </span>
                   </div>
                   <p className="text-xs text-gray-500 mb-6">
@@ -177,7 +190,7 @@ function CheckoutContent() {
                     href="/demo"
                     className="block w-full rounded-lg bg-gray-100 dark:bg-gray-800 px-4 py-2.5 text-center text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                   >
-                    Contact Sales
+                    {t("contactSales")}
                   </Link>
                 </CardBody>
               </Card>
@@ -211,7 +224,7 @@ function CheckoutContent() {
                 </p>
                 {plan.trialDays > 0 && (
                   <Badge className="bg-green-100 text-green-700 mb-3">
-                    {plan.trialDays}-day free trial
+                    {t("trialBadge", { days: plan.trialDays })}
                   </Badge>
                 )}
                 <div className="mb-4">
@@ -219,11 +232,11 @@ function CheckoutContent() {
                     ${displayPrice}
                   </span>
                   <span className="text-gray-500 dark:text-gray-400">
-                    /{plan.interval}
+                    {t("perInterval", { interval: plan.interval })}
                   </span>
                   {plan.trialDays > 0 && (
                     <p className="text-xs text-gray-500 mt-1">
-                      after {plan.trialDays}-day free trial
+                      {t("afterTrial", { days: plan.trialDays })}
                     </p>
                   )}
                 </div>
@@ -259,14 +272,14 @@ function CheckoutContent() {
           className="min-w-[240px]"
         >
           {selectedPlanData?.trialDays
-            ? `Start ${selectedPlanData.trialDays}-Day Free Trial`
+            ? t("startTrial", { days: selectedPlanData.trialDays })
             : selectedPlanData?.contactSales
-              ? "Contact Sales"
+              ? t("contactSales")
               : t("continueToPayment")}
         </Button>
         {selectedPlanData?.trialDays ? (
           <p className="text-xs text-gray-500 mt-2">
-            You won&apos;t be charged for {selectedPlanData.trialDays} days. Cancel anytime.
+            {t("trialReassurance", { days: selectedPlanData.trialDays })}
           </p>
         ) : null}
         <div className="flex items-center justify-center gap-2 mt-4 text-xs text-gray-400">
