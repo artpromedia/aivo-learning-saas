@@ -15,6 +15,8 @@ import 'package:aivo_mobile/core/api/endpoints.dart';
 import 'package:aivo_mobile/core/auth/auth_provider.dart';
 import 'package:aivo_mobile/core/connectivity/connectivity_provider.dart';
 import 'package:aivo_mobile/core/connectivity/sync_manager.dart';
+import 'package:aivo_mobile/core/i18n/locale_provider.dart';
+import 'package:aivo_mobile/core/i18n/translation_ext.dart';
 import 'package:aivo_mobile/config/theme.dart';
 import 'package:aivo_mobile/data/models/learning_session.dart';
 import 'package:aivo_mobile/features/learner/home/learning_path_card.dart';
@@ -202,22 +204,24 @@ class _LearnerHomeScreenState extends ConsumerState<LearnerHomeScreen> {
     final level = ref.read(functioningLevelProvider);
     final narrator = ref.read(audioNarratorProvider);
     final authState = ref.read(authProvider);
+    final t = ref.t;
     String name = '';
     if (authState is AuthAuthenticated) {
       name = authState.user.name;
     }
+    final greeting = _greetingTranslated(t);
     await narrator.autoNarrateIfNeeded(
       level,
-      'Home Screen',
-      ['Good ${_greetingWord()}, $name!', 'Your learning path is ready.'],
+      t('dashboard.home'),
+      ['$greeting, $name!', t('dashboard.readyToLearn')],
     );
   }
 
-  String _greetingWord() {
+  String _greetingTranslated(String Function(String, [Map<String, String>?]) t) {
     final hour = DateTime.now().hour;
-    if (hour < 12) return 'morning';
-    if (hour < 17) return 'afternoon';
-    return 'evening';
+    if (hour < 12) return t('dashboard.goodMorning');
+    if (hour < 17) return t('dashboard.goodAfternoon');
+    return t('dashboard.goodEvening');
   }
 
   void _onTabTapped(int index) {
@@ -242,13 +246,14 @@ class _LearnerHomeScreenState extends ConsumerState<LearnerHomeScreen> {
     final level = ref.watch(functioningLevelProvider);
     final isOnline = ref.watch(isOnlineProvider);
     final isNonVerbal = ref.watch(isNonVerbalOrBelowProvider);
+    final t = ref.t;
 
     // PRE_SYMBOLIC: parent-only mode, show minimal fallback UI
     if (level == FunctioningLevel.preSymbolic) {
       return Scaffold(
         body: Center(
           child: Semantics(
-            label: 'Parent only mode active',
+            label: t('dashboard.parentOnlyMode'),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -259,12 +264,12 @@ class _LearnerHomeScreenState extends ConsumerState<LearnerHomeScreen> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Parent-Only Mode',
+                  t('dashboard.parentOnlyMode'),
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'This learner profile is managed by a parent or caregiver.',
+                  t('dashboard.parentOnlyModeDesc'),
                   style: Theme.of(context).textTheme.bodyMedium,
                   textAlign: TextAlign.center,
                 ),
@@ -305,31 +310,31 @@ class _LearnerHomeScreenState extends ConsumerState<LearnerHomeScreen> {
         items: [
           BottomNavigationBarItem(
             icon: Semantics(
-              label: 'Home tab',
+              label: t('dashboard.homeTab'),
               child: const Icon(Icons.home_rounded),
             ),
-            label: 'Home',
+            label: t('dashboard.home'),
           ),
           BottomNavigationBarItem(
             icon: Semantics(
-              label: 'Quests tab',
+              label: t('dashboard.questsTab'),
               child: const Icon(Icons.explore_rounded),
             ),
-            label: 'Quests',
+            label: t('dashboard.questsLabel'),
           ),
           BottomNavigationBarItem(
             icon: Semantics(
-              label: 'Tutors tab',
+              label: t('dashboard.tutorsTab'),
               child: const Icon(Icons.school_rounded),
             ),
-            label: 'Tutors',
+            label: t('dashboard.tutors'),
           ),
           BottomNavigationBarItem(
             icon: Semantics(
-              label: 'Profile tab',
+              label: t('dashboard.profileTab'),
               child: const Icon(Icons.person_rounded),
             ),
-            label: 'Profile',
+            label: t('dashboard.profile'),
           ),
         ],
       ),
@@ -341,11 +346,12 @@ class _LearnerHomeScreenState extends ConsumerState<LearnerHomeScreen> {
 // Offline Banner
 // ---------------------------------------------------------------------------
 
-class _OfflineBanner extends StatelessWidget {
+class _OfflineBanner extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final t = ref.t;
     return Semantics(
-      label: 'You are offline. Some features may be unavailable.',
+      label: t('errors.offlineSyncMessage'),
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -356,7 +362,7 @@ class _OfflineBanner extends StatelessWidget {
             const SizedBox(width: 8),
             Expanded(
               child: Text(
-                'You are offline. Changes will sync when reconnected.',
+                t('errors.offlineSyncMessage'),
                 style: Theme.of(context)
                     .textTheme
                     .bodySmall
@@ -468,6 +474,7 @@ class _HomeBody extends ConsumerWidget {
   }
 
   Widget _buildError(BuildContext context, WidgetRef ref, Object error) {
+    final t = ref.t;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -481,7 +488,7 @@ class _HomeBody extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'Something went wrong',
+              t('errors.somethingWentWrong'),
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 8),
@@ -495,11 +502,11 @@ class _HomeBody extends ConsumerWidget {
             const SizedBox(height: 24),
             Semantics(
               button: true,
-              label: 'Retry loading home screen',
+              label: t('errors.retryLoading'),
               child: ElevatedButton.icon(
                 onPressed: () => ref.invalidate(_learnerHomeDataProvider),
                 icon: const Icon(Icons.refresh),
-                label: const Text('Retry'),
+                label: Text(t('common.retry')),
               ),
             ),
           ],
@@ -514,12 +521,15 @@ class _HomeBody extends ConsumerWidget {
     LearnerHomeData data,
     String userName,
   ) {
+    final t = ref.t;
+    final locale = ref.watch(localeProvider).languageCode;
     final isLowVerbal = level == FunctioningLevel.lowVerbal;
     final now = DateTime.now();
-    final dateStr = DateFormat('EEEE, MMMM d').format(now);
+    final dateStr = DateFormat('EEEE, MMMM d', locale).format(now);
     final hour = now.hour;
-    final greeting =
-        hour < 12 ? 'Good morning' : (hour < 17 ? 'Good afternoon' : 'Good evening');
+    final greeting = hour < 12
+        ? t('dashboard.goodMorning')
+        : (hour < 17 ? t('dashboard.goodAfternoon') : t('dashboard.goodEvening'));
 
     return CustomScrollView(
       slivers: [
@@ -569,7 +579,7 @@ class _HomeBody extends ConsumerWidget {
               child: Semantics(
                 header: true,
                 child: Text(
-                  'Daily Challenges',
+                  t('dashboard.dailyChallenges'),
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
               ),
@@ -611,7 +621,7 @@ class _HomeBody extends ConsumerWidget {
                   Semantics(
                     header: true,
                     child: Text(
-                      'Spaced Review (${data.spacedReview.length} due)',
+                      t('dashboard.spacedReview', {'count': '${data.spacedReview.length}'}),
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                   ),
@@ -631,7 +641,7 @@ class _HomeBody extends ConsumerWidget {
                   final item = data.spacedReview[index];
                   return LargeTouchWrapper(
                     semanticLabel:
-                        'Review ${item.topic} in ${item.subject}',
+                        '${t('dashboard.review')} ${item.topic} ${item.subject}',
                     onTap: () => context.push(
                       '/learner/session/${item.lessonId}',
                     ),
@@ -683,7 +693,7 @@ class _HomeBody extends ConsumerWidget {
                 Semantics(
                   header: true,
                   child: Text(
-                    "Today's Learning Path",
+                    t('dashboard.todaysLearningPath'),
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ),
@@ -706,7 +716,7 @@ class _HomeBody extends ConsumerWidget {
               padding: const EdgeInsets.all(32),
               child: Center(
                 child: Semantics(
-                  label: 'No lessons scheduled for today',
+                  label: t('dashboard.noLessonsScheduled'),
                   child: Column(
                     children: [
                       const Icon(
@@ -716,7 +726,7 @@ class _HomeBody extends ConsumerWidget {
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        "You're all caught up!",
+                        t('dashboard.allCaughtUp'),
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                     ],
