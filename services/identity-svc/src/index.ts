@@ -52,6 +52,7 @@ import { internalEmailRoute } from "./routes/internal/email.js";
 
 // Routes — Onboarding
 import { baselineRoutes } from "./routes/onboarding/baseline.js";
+import { onboardingCompleteRoute } from "./routes/onboarding/complete.js";
 
 // Routes — Brain Proxy (API Gateway → brain-svc)
 import { brainProxyRoutes } from "./routes/brain-proxy.js";
@@ -165,6 +166,7 @@ export async function buildApp() {
     await api.register(listInvitationsRoute);
     await api.register(internalEmailRoute);
     await api.register(baselineRoutes);
+    await api.register(onboardingCompleteRoute);
     await api.register(brainProxyRoutes);
     await api.register(billingProxyRoutes);
     await api.register(notificationsProxyRoutes);
