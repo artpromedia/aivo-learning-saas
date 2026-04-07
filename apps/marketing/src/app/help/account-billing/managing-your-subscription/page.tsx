@@ -168,11 +168,11 @@ export default function ManagingYourSubscriptionPage() {
               occur on April 15, and so on.
             </p>
             <p className="text-aivo-navy-600 leading-relaxed">
-              If you started with a 14-day free trial of the Family or
-              Premium plan, your first billing date is the day after the trial
-              ends. During the trial, no charges are made. You will receive an
-              email reminder three days before your trial expires, giving you
-              time to cancel if you prefer not to continue.
+              If you started with a 30-day free trial, your first billing
+              date is the day after the trial ends. During the trial, no
+              charges are made. You will receive an email reminder three days
+              before your trial expires, giving you time to cancel if you
+              prefer not to continue.
             </p>
             <p className="text-aivo-navy-600 leading-relaxed">
               Annual billing subscribers are charged once per year at the
@@ -267,7 +267,7 @@ export default function ManagingYourSubscriptionPage() {
                 </li>
                 <li className="flex items-start gap-3 text-sm text-aivo-navy-600">
                   <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-aivo-purple-500" />
-                  <span>14-day free trial</span>
+                  <span>30-day free trial</span>
                 </li>
               </ul>
             </div>

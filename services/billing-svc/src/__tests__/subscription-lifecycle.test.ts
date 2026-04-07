@@ -41,6 +41,16 @@ describe("Plan Definitions", () => {
     expect(enterprise!.trialDays).toBe(0);
   });
 
+  it("should offer 30-day trial on all paid plans", () => {
+    for (const plan of PLANS) {
+      if (plan.contactSales) {
+        expect(plan.trialDays).toBe(0);
+      } else if (plan.price > 0) {
+        expect(plan.trialDays).toBe(30);
+      }
+    }
+  });
+
   it("should return undefined for unknown plan", () => {
     expect(getPlanById("NONEXISTENT")).toBeUndefined();
   });

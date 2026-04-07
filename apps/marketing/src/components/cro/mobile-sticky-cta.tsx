@@ -32,7 +32,7 @@ export function MobileStickyCta() {
         onClick={() => events.signupClick("sticky-mobile")}
         className="block w-full text-center rounded-lg bg-aivo-purple-600 px-4 py-3 text-sm font-semibold text-white hover:bg-aivo-purple-700 transition-colors"
       >
-        Start Free Trial
+        Start 30-Day Free Trial
       </Link>
     </div>
   );

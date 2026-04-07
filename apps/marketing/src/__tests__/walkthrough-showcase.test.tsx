@@ -74,7 +74,7 @@ describe("WalkthroughShowcase", () => {
   it("renders CTA buttons with correct links", () => {
     render(<WalkthroughShowcase />);
     const links = screen.getAllByRole("link");
-    const startTrial = links.find((l) => l.textContent?.includes("Start Free Trial"));
+    const startTrial = links.find((l) => l.textContent?.includes("Start 30-Day Free Trial"));
     const bookDemo = links.find((l) => l.textContent?.includes("Book a Demo"));
     expect(startTrial?.getAttribute("href")).toBe("/get-started");
     expect(bookDemo?.getAttribute("href")).toBe("/demo");

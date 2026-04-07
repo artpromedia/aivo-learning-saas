@@ -118,11 +118,11 @@ describe("WalkthroughShowcase Integration", () => {
     expect(screen.getByText("Real-Time Analytics")).toBeDefined();
   });
 
-  it("Start Free Trial links to /get-started", () => {
+  it("Start 30-Day Free Trial links to /get-started", () => {
     render(<WalkthroughShowcase />);
     const links = screen.getAllByRole("link");
     const startTrial = links.find(
-      (l) => l.textContent?.includes("Start Free Trial"),
+      (l) => l.textContent?.includes("Start 30-Day Free Trial"),
     );
     expect(startTrial?.getAttribute("href")).toBe("/get-started");
   });

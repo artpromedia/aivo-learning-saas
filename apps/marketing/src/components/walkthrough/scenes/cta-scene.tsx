@@ -55,7 +55,7 @@ export function CtaScene({ sceneElapsedMs, className }: CtaSceneProps) {
             className="inline-flex items-center justify-center rounded-lg bg-white px-6 py-2.5 text-sm font-semibold text-purple-700 hover:bg-purple-50 transition-colors shadow-lg"
             data-testid="walkthrough-cta-primary"
           >
-            Start Free Trial
+            Start 30-Day Free Trial
           </Link>
           <Link
             href="/demo"

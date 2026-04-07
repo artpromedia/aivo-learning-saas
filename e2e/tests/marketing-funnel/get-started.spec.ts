@@ -56,8 +56,8 @@ test.describe("Get Started Page", () => {
     await page.getByLabel("Grade Level").selectOption("3");
     await page.getByRole("button", { name: "Continue" }).click();
 
-    // Step 3 should show "Start 14-Day Free Trial"
-    await expect(page.getByText("Start 14-Day Free Trial")).toBeVisible();
+    // Step 3 should show "Start 30-Day Free Trial"
+    await expect(page.getByText("Start 30-Day Free Trial")).toBeVisible();
   });
 
   test("Back button preserves form data", async ({ page }) => {

@@ -28,7 +28,7 @@ export const pricingPlans: PricingPlan[] = [
       "Community support",
       "AI Tutors available as add-ons ($9.99/mo each)",
     ],
-    cta: "Get Started",
+    cta: "Start 30-Day Free Trial",
   },
   {
     name: "Family",
@@ -44,7 +44,7 @@ export const pricingPlans: PricingPlan[] = [
       "Detailed progress analytics",
       "Priority email support",
     ],
-    cta: "Start Free Trial",
+    cta: "Start 30-Day Free Trial",
     popular: true,
   },
   {
@@ -62,7 +62,7 @@ export const pricingPlans: PricingPlan[] = [
       "Offline mobile access",
       "Priority email support",
     ],
-    cta: "Start Free Trial",
+    cta: "Start 30-Day Free Trial",
   },
   {
     name: "Enterprise",
@@ -130,7 +130,7 @@ export const pricingFaqs: PricingFaq[] = [
   {
     question: "How does the free trial work?",
     answer:
-      "The Family and Premium plans come with a 14-day free trial. You get full access to all plan features. Cancel anytime during the trial and you won't be charged.",
+      "All paid plans — Starter, Family, and Premium — include a 30-day free trial. You get full access to every feature in your chosen plan. Cancel anytime during the trial and you won't be charged.",
   },
   {
     question: "Can I use AIVO offline?",

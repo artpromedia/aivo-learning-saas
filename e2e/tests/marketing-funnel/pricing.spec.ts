@@ -47,9 +47,13 @@ test.describe("Pricing Page", () => {
     await expect(page.getByText("Student profiles")).toBeVisible();
   });
 
+  test("FAQ mentions 30-day free trial", async ({ page }) => {
+    await expect(page.getByText("30-day free trial")).toBeVisible();
+  });
+
   test("CTA buttons navigate correctly", async ({ page }) => {
-    // Get Started link for Starter
-    const getStartedLink = page.getByRole("link", { name: "Get Started" });
+    // Start 30-Day Free Trial link for Starter
+    const getStartedLink = page.getByRole("link", { name: "Start 30-Day Free Trial" }).first();
     await expect(getStartedLink).toBeVisible();
     await expect(getStartedLink).toHaveAttribute("href", "/get-started");
 

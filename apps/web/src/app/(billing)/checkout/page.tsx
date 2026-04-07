@@ -28,6 +28,7 @@ interface Plan {
   features: string[];
   recommended: boolean;
   maxLearners: number;
+  trialDays: number;
   contactSales?: boolean;
   includedTutors?: string[];
 }
@@ -208,13 +209,23 @@ function CheckoutContent() {
                 <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
                   {plan.description}
                 </p>
+                {plan.trialDays > 0 && (
+                  <Badge className="bg-green-100 text-green-700 mb-3">
+                    {plan.trialDays}-day free trial
+                  </Badge>
+                )}
                 <div className="mb-4">
                   <span className="text-4xl font-bold text-gray-900 dark:text-white">
                     ${displayPrice}
                   </span>
                   <span className="text-gray-500 dark:text-gray-400">
-                    {t("perInterval", { interval: plan.interval })}
+                    /{plan.interval}
                   </span>
+                  {plan.trialDays > 0 && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      after {plan.trialDays}-day free trial
+                    </p>
+                  )}
                 </div>
                 <p className="text-xs text-gray-500 mb-6">
                   {learnersLabel}
@@ -247,8 +258,17 @@ function CheckoutContent() {
           disabled={!selectedPlan || selectedPlanData?.contactSales}
           className="min-w-[240px]"
         >
-          {t("continueToPayment")}
+          {selectedPlanData?.trialDays
+            ? `Start ${selectedPlanData.trialDays}-Day Free Trial`
+            : selectedPlanData?.contactSales
+              ? "Contact Sales"
+              : t("continueToPayment")}
         </Button>
+        {selectedPlanData?.trialDays ? (
+          <p className="text-xs text-gray-500 mt-2">
+            You won&apos;t be charged for {selectedPlanData.trialDays} days. Cancel anytime.
+          </p>
+        ) : null}
         <div className="flex items-center justify-center gap-2 mt-4 text-xs text-gray-400">
           <Shield size={14} />
           <span>{t("securePayment")}</span>

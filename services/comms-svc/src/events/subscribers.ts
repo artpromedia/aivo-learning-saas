@@ -611,6 +611,59 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
     subs.push(sub);
   } catch { app.log.warn("Could not subscribe to billing.subscription.grace.warning_7day"); }
 
+  // ─── billing.trial.reminder_3day → 3-day trial warning email ────────────
+  try {
+    const sub = await subscribeEvent(nc, "billing.trial.reminder_3day", BILLING_SCHEMAS["billing.trial.reminder_3day"], async (data) => {
+      try {
+        const tenantUsers = await app.db.select().from(users).where(eq(users.tenantId, data.tenantId)).limit(1);
+        const owner = tenantUsers[0];
+        if (!owner) return;
+
+        const endsAt = data.trialEndsAt
+          ? new Date(data.trialEndsAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
+          : "3 days";
+
+        await emailService.sendTemplate("trial_reminder_3day", owner.email, owner.id, {
+          userName: owner.name,
+          planName: data.planId,
+          trialEndsAt: endsAt,
+          daysRemaining: data.daysRemaining,
+          billingUrl: `${config.APP_URL}/billing/manage`,
+        });
+      } catch (err) {
+        app.log.error({ err, data }, "Failed to process billing.trial.reminder_3day");
+      }
+    });
+    subs.push(sub);
+  } catch { app.log.warn("Could not subscribe to billing.trial.reminder_3day"); }
+
+  // ─── billing.trial.reminder_1day → 1-day trial warning email ────────────
+  try {
+    const sub = await subscribeEvent(nc, "billing.trial.reminder_1day", BILLING_SCHEMAS["billing.trial.reminder_1day"], async (data) => {
+      try {
+        const tenantUsers = await app.db.select().from(users).where(eq(users.tenantId, data.tenantId)).limit(1);
+        const owner = tenantUsers[0];
+        if (!owner) return;
+
+        const endsAt = data.trialEndsAt
+          ? new Date(data.trialEndsAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
+          : "tomorrow";
+
+        await emailService.sendTemplate("trial_reminder_1day", owner.email, owner.id, {
+          userName: owner.name,
+          planName: data.planId,
+          trialEndsAt: endsAt,
+          daysRemaining: data.daysRemaining,
+          billingUrl: `${config.APP_URL}/billing/manage`,
+          cancelUrl: `${config.APP_URL}/billing/cancel`,
+        });
+      } catch (err) {
+        app.log.error({ err, data }, "Failed to process billing.trial.reminder_1day");
+      }
+    });
+    subs.push(sub);
+  } catch { app.log.warn("Could not subscribe to billing.trial.reminder_1day"); }
+
   // ─── brain.export.completed → export ready email ──────────────────────────
   try {
     const sub = await subscribeEvent(nc, "brain.export.completed", BRAIN_SCHEMAS["brain.export.completed"], async (data) => {
