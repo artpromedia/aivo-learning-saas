@@ -54,7 +54,7 @@ export default fp(async (fastify: FastifyInstance) => {
 
   const aiClient: AiClient = {
     async parseIep(fileUrl: string, fileType: string): Promise<IepParseResult> {
-      const res = await fetch(`${baseUrl}/api/ai/iep/parse`, {
+      const res = await fetch(`${baseUrl}/ai/iep/parse`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ fileUrl, fileType }),
@@ -66,7 +66,7 @@ export default fp(async (fastify: FastifyInstance) => {
     },
 
     async generateBaselineQuestion(params): Promise<BaselineQuestion> {
-      const res = await fetch(`${baseUrl}/api/ai/baseline/generate-question`, {
+      const res = await fetch(`${baseUrl}/ai/baseline/generate-question`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
