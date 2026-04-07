@@ -127,7 +127,17 @@ export default function OnboardingCompletePage() {
         >
           <Button
             size="lg"
-            onClick={() => router.push("/parent")}
+            onClick={() => {
+              const roleCookie = document.cookie
+                .split("; ")
+                .find((c) => c.startsWith("user_role="))
+                ?.split("=")[1];
+              const path =
+                roleCookie === "LEARNER" || roleCookie === "learner"
+                  ? "/learner"
+                  : "/parent";
+              router.push(path);
+            }}
             loading={isCompleting}
             rightIcon={<Rocket size={20} />}
             className="min-w-[200px]"
