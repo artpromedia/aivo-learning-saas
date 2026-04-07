@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Users, Brain, Target, FileText, Bot } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
@@ -22,6 +23,7 @@ interface DistrictOverview {
 }
 
 export default function DistrictOverviewPage() {
+  const t = useTranslations("dashboard");
   const { user } = useAuthStore();
   const [data, setData] = useState<DistrictOverview | null>(null);
   const [loading, setLoading] = useState(true);
@@ -33,7 +35,7 @@ export default function DistrictOverviewPage() {
         const res = await apiFetch<DistrictOverview>("/api/admin/analytics/overview");
         setData(res);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load overview");
+        setError(err instanceof Error ? err.message : t("failedToLoadOverview"));
       } finally {
         setLoading(false);
       }
@@ -43,10 +45,10 @@ export default function DistrictOverviewPage() {
 
   const statCards = data
     ? [
-        { label: "Total Learners", value: data.totalLearners, icon: <Users size={24} /> },
-        { label: "Active Brains", value: data.activeBrains, icon: <Brain size={24} /> },
-        { label: "Avg Mastery", value: `${data.avgMasteryPercent}%`, icon: <Target size={24} /> },
-        { label: "IEP Coverage", value: `${data.iepCoveragePercent}%`, icon: <FileText size={24} /> },
+        { label: t("totalLearners"), value: data.totalLearners, icon: <Users size={24} /> },
+        { label: t("activeBrains"), value: data.activeBrains, icon: <Brain size={24} /> },
+        { label: t("avgMastery"), value: `${data.avgMasteryPercent}%`, icon: <Target size={24} /> },
+        { label: t("iepCoverage"), value: `${data.iepCoveragePercent}%`, icon: <FileText size={24} /> },
       ]
     : [];
 
@@ -63,9 +65,9 @@ export default function DistrictOverviewPage() {
   return (
     <div>
       <PurpleGradientHeader className="rounded-xl mb-8">
-        <h1 className="text-2xl font-bold">District Dashboard</h1>
+        <h1 className="text-2xl font-bold">{t("districtDashboard")}</h1>
         <p className="mt-1 text-white/80">
-          Welcome back, {user?.name?.split(" ")[0] ?? "Admin"}. Here is your district at a glance.
+          {t("adminWelcomeBack", { name: user?.name?.split(" ")[0] ?? "Admin" })}
         </p>
       </PurpleGradientHeader>
 
@@ -111,13 +113,13 @@ export default function DistrictOverviewPage() {
             <Card>
               <CardBody>
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                  Functioning Level Distribution
+                  {t("functioningLevelDist")}
                 </h2>
                 <div className="space-y-4">
                   {[
-                    { label: "Level 1", count: data.functioningLevelDistribution.level1, color: "#7C3AED" },
-                    { label: "Level 2", count: data.functioningLevelDistribution.level2, color: "#8B5CF6" },
-                    { label: "Level 3", count: data.functioningLevelDistribution.level3, color: "#A78BFA" },
+                    { label: t("level1"), count: data.functioningLevelDistribution.level1, color: "#7C3AED" },
+                    { label: t("level2"), count: data.functioningLevelDistribution.level2, color: "#8B5CF6" },
+                    { label: t("level3"), count: data.functioningLevelDistribution.level3, color: "#A78BFA" },
                   ].map((level) => (
                     <div key={level.label}>
                       <div className="flex items-center justify-between text-sm mb-1">
@@ -146,12 +148,12 @@ export default function DistrictOverviewPage() {
                 <div className="w-16 h-16 rounded-full bg-[#7C3AED]/10 flex items-center justify-center mb-4">
                   <Bot className="text-[#7C3AED]" size={32} />
                 </div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Active Tutors</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{t("activeTutors")}</p>
                 <p className="text-4xl font-bold text-gray-900 dark:text-white mt-1">
                   {data.activeTutors}
                 </p>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                  AI tutors currently assigned across the district
+                  {t("activeTutorsDesc")}
                 </p>
               </CardBody>
             </Card>

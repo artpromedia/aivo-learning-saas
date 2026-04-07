@@ -12,7 +12,7 @@ import {
   Loader2,
   RefreshCw,
 } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -44,6 +44,7 @@ const typeConfig: Record<
 
 export default function NotificationsPage() {
   const t = useTranslations("dashboard");
+  const locale = useLocale();
   const {
     notifications,
     unreadCount,
@@ -156,7 +157,7 @@ export default function NotificationsPage() {
                       {notification.message}
                     </p>
                     <p className="text-xs text-gray-400 mt-1">
-                      {new Date(notification.createdAt).toLocaleString()}
+                      {new Date(notification.createdAt).toLocaleString(locale)}
                     </p>
                   </div>
                   {!notification.read && (

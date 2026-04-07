@@ -7,6 +7,8 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import 'package:aivo_mobile/config/theme.dart';
+import 'package:aivo_mobile/core/i18n/locale_provider.dart';
+import 'package:aivo_mobile/core/i18n/translation_ext.dart';
 import 'package:aivo_mobile/data/repositories/family_repository.dart';
 
 // ---------------------------------------------------------------------------
@@ -30,23 +32,24 @@ class ChildDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final asyncDash = ref.watch(_childDashboardProvider(learnerId));
+    final t = ref.t;
 
     return Scaffold(
       appBar: AppBar(
         title: asyncDash.whenOrNull(
               data: (d) => Text(d.learner.name),
             ) ??
-            const Text('Child Dashboard'),
+            Text(t('dashboard.childDashboard')),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.go('/parent/dashboard'),
-          tooltip: 'Back to dashboard',
+          tooltip: t('dashboard.backToAllChildren'),
         ),
       ),
       body: asyncDash.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => _ErrorRetry(
-          message: 'Failed to load child dashboard',
+          message: t('dashboard.failedToLoadChildDash'),
           onRetry: () =>
               ref.invalidate(_childDashboardProvider(learnerId)),
         ),
@@ -62,21 +65,21 @@ class ChildDetailScreen extends ConsumerWidget {
               const SizedBox(height: 24),
 
               // Subject progress chart
-              const _SectionHeader(title: 'Subject Progress'),
+              _SectionHeader(title: t('dashboard.subjectProgress')),
               const SizedBox(height: 8),
               _SubjectProgressChart(
                   subjectProgress: dash.subjectProgress,),
               const SizedBox(height: 24),
 
               // Quick actions
-              const _SectionHeader(title: 'Quick Actions'),
+              _SectionHeader(title: t('dashboard.quickActions')),
               const SizedBox(height: 8),
               _QuickActions(learnerId: learnerId),
               const SizedBox(height: 24),
 
               // Learning path preview
               if (dash.nextLessons.isNotEmpty) ...[
-                const _SectionHeader(title: 'Up Next'),
+                _SectionHeader(title: t('dashboard.upNext')),
                 const SizedBox(height: 8),
                 ...dash.nextLessons.take(3).map(
                       (lesson) => _LessonPreviewTile(lesson: lesson),
@@ -86,7 +89,7 @@ class ChildDetailScreen extends ConsumerWidget {
 
               // Weekly trend chart
               if (dash.weeklyTrend.isNotEmpty) ...[
-                const _SectionHeader(title: 'Weekly Trend'),
+                _SectionHeader(title: t('dashboard.weeklyTrend')),
                 const SizedBox(height: 8),
                 _WeeklyTrendChart(data: dash.weeklyTrend),
                 const SizedBox(height: 24),
@@ -94,7 +97,7 @@ class ChildDetailScreen extends ConsumerWidget {
 
               // Recent activity timeline
               if (dash.recentActivity.isNotEmpty) ...[
-                const _SectionHeader(title: 'Recent Activity'),
+                _SectionHeader(title: t('dashboard.recentActivity')),
                 const SizedBox(height: 8),
                 ...dash.recentActivity.map(
                   (item) => _ActivityTile(item: item),
@@ -114,12 +117,13 @@ class ChildDetailScreen extends ConsumerWidget {
 // Summary cards
 // ---------------------------------------------------------------------------
 
-class _SummaryCardsRow extends StatelessWidget {
+class _SummaryCardsRow extends ConsumerWidget {
   const _SummaryCardsRow({required this.dash});
   final ChildDashboard dash;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final t = ref.t;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Wrap(
@@ -128,25 +132,25 @@ class _SummaryCardsRow extends StatelessWidget {
         children: [
           _MiniStatCard(
             icon: Icons.star,
-            label: 'XP Today',
+            label: t('dashboard.xpToday'),
             value: '${dash.xpEarnedToday}',
             color: AivoColors.xpGold,
           ),
           _MiniStatCard(
             icon: Icons.local_fire_department,
-            label: 'Streak',
-            value: '${dash.streak} days',
+            label: t('dashboard.streak'),
+            value: '${dash.streak} ${t('common.days')}',
             color: AivoColors.streakFlame,
           ),
           _MiniStatCard(
             icon: Icons.trending_up,
-            label: 'Mastery',
+            label: t('dashboard.mastery'),
             value: '${(dash.masteryProgress * 100).toInt()}%',
             color: AivoColors.secondary,
           ),
           _MiniStatCard(
             icon: Icons.timer,
-            label: 'Time Spent',
+            label: t('dashboard.timeSpent'),
             value: '${dash.timeSpentMinutes} min',
             color: AivoColors.primary,
           ),
@@ -208,12 +212,14 @@ class _MiniStatCard extends StatelessWidget {
 // Subject progress bar chart
 // ---------------------------------------------------------------------------
 
-class _SubjectProgressChart extends StatelessWidget {
+class _SubjectProgressChart extends ConsumerWidget {
   const _SubjectProgressChart({required this.subjectProgress});
   final Map<String, double> subjectProgress;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final t = ref.t;
+
     if (subjectProgress.isEmpty) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -222,7 +228,7 @@ class _SubjectProgressChart extends StatelessWidget {
             padding: const EdgeInsets.all(24),
             child: Center(
               child: Text(
-                'No subject data yet',
+                t('dashboard.noSubjectData'),
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
             ),
@@ -252,7 +258,7 @@ class _SubjectProgressChart extends StatelessWidget {
           child: SizedBox(
             height: 200,
             child: Semantics(
-              label: 'Subject progress bar chart',
+              label: t('dashboard.subjectProgress'),
               child: BarChart(
                 BarChartData(
                   alignment: BarChartAlignment.spaceAround,
@@ -355,12 +361,13 @@ class _SubjectProgressChart extends StatelessWidget {
 // Quick actions
 // ---------------------------------------------------------------------------
 
-class _QuickActions extends StatelessWidget {
+class _QuickActions extends ConsumerWidget {
   const _QuickActions({required this.learnerId});
   final String learnerId;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final t = ref.t;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
@@ -368,7 +375,7 @@ class _QuickActions extends StatelessWidget {
           Expanded(
             child: _ActionChip(
               icon: Icons.psychology,
-              label: 'Brain',
+              label: t('dashboard.brainProfile'),
               onTap: () => context.go('/parent/brain/$learnerId'),
             ),
           ),
@@ -376,7 +383,7 @@ class _QuickActions extends StatelessWidget {
           Expanded(
             child: _ActionChip(
               icon: Icons.recommend,
-              label: 'Recs',
+              label: t('dashboard.recommendations'),
               onTap: () => context.go('/parent/recommendations'),
             ),
           ),
@@ -384,7 +391,7 @@ class _QuickActions extends StatelessWidget {
           Expanded(
             child: _ActionChip(
               icon: Icons.flag,
-              label: 'IEP Goals',
+              label: t('dashboard.iepGoals'),
               onTap: () => context.go('/parent/iep/$learnerId'),
             ),
           ),
@@ -621,14 +628,15 @@ class _WeeklyTrendChart extends StatelessWidget {
 // Activity timeline tile
 // ---------------------------------------------------------------------------
 
-class _ActivityTile extends StatelessWidget {
+class _ActivityTile extends ConsumerWidget {
   const _ActivityTile({required this.item});
   final ActivityItem item;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final formatter = DateFormat('h:mm a');
+    final locale = ref.watch(localeProvider).languageCode;
+    final formatter = DateFormat('h:mm a', locale);
 
     IconData icon;
     switch (item.type) {
@@ -691,14 +699,15 @@ class _SectionHeader extends StatelessWidget {
 // Error retry
 // ---------------------------------------------------------------------------
 
-class _ErrorRetry extends StatelessWidget {
+class _ErrorRetry extends ConsumerWidget {
   const _ErrorRetry({required this.message, required this.onRetry});
   final String message;
   final VoidCallback onRetry;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final t = ref.t;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -713,7 +722,7 @@ class _ErrorRetry extends StatelessWidget {
             ElevatedButton.icon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh),
-              label: const Text('Retry'),
+              label: Text(t('common.retry')),
             ),
           ],
         ),

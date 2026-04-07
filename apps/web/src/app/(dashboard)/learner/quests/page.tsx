@@ -182,7 +182,7 @@ export default function QuestsPage() {
                             <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
                               <span>
                                 {world.completedChapters}/{world.totalChapters}{" "}
-                                chapters
+                                {t("chapters")}
                               </span>
                               <span className="flex items-center gap-1 text-[#7C3AED]">
                                 <Star size={12} />

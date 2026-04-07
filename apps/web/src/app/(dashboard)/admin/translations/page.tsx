@@ -47,10 +47,10 @@ export default function TranslationDashboardPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <Globe className="h-6 w-6 text-purple-600" />
-            Translation Management
+            {t("translationManagement")}
           </h1>
           <p className="mt-1 text-gray-500 dark:text-gray-400">
-            Manage translations across all supported locales
+            {t("translationManagementDesc")}
           </p>
         </div>
         <Link
@@ -58,7 +58,7 @@ export default function TranslationDashboardPage() {
           className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors text-sm font-medium"
         >
           <Upload className="h-4 w-4" />
-          Import / Export
+          {t("importExport")}
         </Link>
       </div>
 
@@ -70,7 +70,7 @@ export default function TranslationDashboardPage() {
               <Languages className="h-5 w-5 text-purple-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Locales</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{t("localesCount")}</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
                 {coverage.length}
               </p>
@@ -83,7 +83,7 @@ export default function TranslationDashboardPage() {
               <Globe className="h-5 w-5 text-teal-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Namespaces</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{t("namespacesCount")}</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
                 {namespaceKeys.length}
               </p>
@@ -96,7 +96,7 @@ export default function TranslationDashboardPage() {
               <Download className="h-5 w-5 text-blue-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Total Keys</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{t("totalKeys")}</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
                 {coverage[0]?.totalKeys ?? 0}
               </p>
@@ -109,18 +109,18 @@ export default function TranslationDashboardPage() {
       <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div className="p-5 border-b border-gray-200 dark:border-gray-700">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-            Coverage Matrix
+            {t("coverageMatrix")}
           </h2>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            Translation coverage by locale and namespace
+            {t("coverageMatrixDesc")}
           </p>
         </div>
 
         {loading ? (
-          <div className="p-10 text-center text-gray-400">Loading coverage data...</div>
+          <div className="p-10 text-center text-gray-400">{t("loadingCoverage")}</div>
         ) : coverage.length === 0 ? (
           <div className="p-10 text-center text-gray-400">
-            No translation data available. Import translations to get started.
+            {t("noTranslationData")}
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -128,10 +128,10 @@ export default function TranslationDashboardPage() {
               <thead>
                 <tr className="bg-gray-50 dark:bg-gray-800">
                   <th className="px-4 py-3 text-left font-medium text-gray-600 dark:text-gray-400 sticky left-0 bg-gray-50 dark:bg-gray-800">
-                    Locale
+                    {t("locale")}
                   </th>
                   <th className="px-4 py-3 text-center font-medium text-gray-600 dark:text-gray-400">
-                    Overall
+                    {t("overall")}
                   </th>
                   {namespaceKeys.map((ns) => (
                     <th key={ns} className="px-4 py-3 text-center font-medium text-gray-600 dark:text-gray-400">
@@ -173,7 +173,7 @@ export default function TranslationDashboardPage() {
       {/* Namespace links */}
       <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-          Edit by Namespace
+          {t("editByNamespace")}
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {namespaceKeys.map((ns) => (

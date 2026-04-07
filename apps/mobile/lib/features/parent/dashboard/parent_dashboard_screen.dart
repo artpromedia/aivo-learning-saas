@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:aivo_mobile/config/theme.dart';
 import 'package:aivo_mobile/core/auth/auth_provider.dart';
+import 'package:aivo_mobile/core/i18n/translation_ext.dart';
 import 'package:aivo_mobile/data/repositories/family_repository.dart';
 
 // ---------------------------------------------------------------------------
@@ -46,6 +47,7 @@ class ParentDashboardScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final navIndex = ref.watch(_selectedNavIndexProvider);
+    final t = ref.t;
 
     return Scaffold(
       body: IndexedStack(
@@ -60,26 +62,26 @@ class ParentDashboardScreen extends ConsumerWidget {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: navIndex,
         onTap: (i) => ref.read(_selectedNavIndexProvider.notifier).state = i,
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard_outlined),
-            activeIcon: Icon(Icons.dashboard),
-            label: 'Dashboard',
+            icon: const Icon(Icons.dashboard_outlined),
+            activeIcon: const Icon(Icons.dashboard),
+            label: t('dashboard.dashboard'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.recommend_outlined),
-            activeIcon: Icon(Icons.recommend),
-            label: 'Recommendations',
+            icon: const Icon(Icons.recommend_outlined),
+            activeIcon: const Icon(Icons.recommend),
+            label: t('dashboard.recommendations'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.psychology_outlined),
-            activeIcon: Icon(Icons.psychology),
-            label: 'Brain',
+            icon: const Icon(Icons.psychology_outlined),
+            activeIcon: const Icon(Icons.psychology),
+            label: t('brain.brainProfile'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings_outlined),
-            activeIcon: Icon(Icons.settings),
-            label: 'Settings',
+            icon: const Icon(Icons.settings_outlined),
+            activeIcon: const Icon(Icons.settings),
+            label: t('settings.settings'),
           ),
         ],
       ),
@@ -87,8 +89,8 @@ class ParentDashboardScreen extends ConsumerWidget {
           ? FloatingActionButton.extended(
               onPressed: () => context.go('/onboarding/add-child'),
               icon: const Icon(Icons.person_add),
-              label: const Text('Add Child'),
-              tooltip: 'Add a new child',
+              label: Text(t('dashboard.addChild')),
+              tooltip: t('dashboard.addChild'),
             )
           : null,
     );
@@ -107,10 +109,11 @@ class _DashboardTab extends ConsumerWidget {
     final asyncSummary = ref.watch(_dashboardFutureProvider);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final t = ref.t;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Family Dashboard'),
+        title: Text(t('dashboard.dashboard')),
         actions: [
           _NotificationBell(),
         ],
@@ -118,7 +121,7 @@ class _DashboardTab extends ConsumerWidget {
       body: asyncSummary.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => _ErrorBody(
-          message: 'Failed to load dashboard',
+          message: t('dashboard.failedToLoadLearners'),
           onRetry: () => ref.invalidate(_learnersProvider),
         ),
         data: (summary) => RefreshIndicator(
@@ -136,7 +139,7 @@ class _DashboardTab extends ConsumerWidget {
                     Expanded(
                       child: _SummaryStatCard(
                         icon: Icons.timer_outlined,
-                        label: 'Learning Today',
+                        label: t('dashboard.learningToday'),
                         value: '${summary.totalLearningTimeMinutes} min',
                         color: colorScheme.primary,
                       ),
@@ -145,7 +148,7 @@ class _DashboardTab extends ConsumerWidget {
                     Expanded(
                       child: _SummaryStatCard(
                         icon: Icons.check_circle_outline,
-                        label: 'Lessons Done',
+                        label: t('dashboard.lessonsDone'),
                         value: '${summary.totalLessonsCompleted}',
                         color: AivoColors.secondary,
                       ),
@@ -161,7 +164,7 @@ class _DashboardTab extends ConsumerWidget {
                 child: Semantics(
                   header: true,
                   child: Text(
-                    'Your Children',
+                    t('dashboard.yourChildren'),
                     style: theme.textTheme.titleLarge,
                   ),
                 ),
@@ -180,12 +183,12 @@ class _DashboardTab extends ConsumerWidget {
                             color: colorScheme.outlineVariant,),
                         const SizedBox(height: 16),
                         Text(
-                          'No children added yet',
+                          t('dashboard.noChildrenYet'),
                           style: theme.textTheme.bodyLarge,
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Tap the "Add Child" button to get started',
+                          t('dashboard.addChildPrompt'),
                           style: theme.textTheme.bodyMedium,
                         ),
                       ],
@@ -213,6 +216,7 @@ class _NotificationBell extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authProvider);
     final userId = authState is AuthAuthenticated ? authState.user.id : '';
+    final t = ref.t;
 
     final asyncCount = ref.watch(
       FutureProvider.autoDispose<int>((ref) async {
@@ -227,8 +231,8 @@ class _NotificationBell extends ConsumerWidget {
 
     return Semantics(
       label: count > 0
-          ? '$count unread notifications'
-          : 'Notifications',
+          ? t('dashboard.unreadNotifications', {'count': '$count'})
+          : t('dashboard.notifications'),
       button: true,
       child: IconButton(
         icon: Badge(
@@ -241,10 +245,10 @@ class _NotificationBell extends ConsumerWidget {
         ),
         onPressed: () {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Notifications coming soon')),
+            SnackBar(content: Text(t('dashboard.notificationsComingSoon'))),
           );
         },
-        tooltip: 'Notifications',
+        tooltip: t('dashboard.notifications'),
       ),
     );
   }
@@ -254,20 +258,21 @@ class _NotificationBell extends ConsumerWidget {
 // Child card
 // ---------------------------------------------------------------------------
 
-class _ChildCard extends StatelessWidget {
+class _ChildCard extends ConsumerWidget {
   const _ChildCard({required this.learner});
 
   final Learner learner;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final t = ref.t;
 
     return Semantics(
       button: true,
-      label: '${learner.name}, streak ${learner.streak} days, '
-          '${learner.lessonsCompletedToday} lessons today',
+      label: '${learner.name}, ${t('dashboard.streak')} ${learner.streak} ${t('common.days')}, '
+          '${learner.lessonsCompletedToday} ${t('dashboard.lessonsDone')}',
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         child: InkWell(
@@ -319,8 +324,8 @@ class _ChildCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${learner.lessonsCompletedToday} lessons '
-                        '${learner.timeSpentTodayMinutes} min today',
+                        '${learner.lessonsCompletedToday} ${t('dashboard.lessonsDone')} '
+                        '${learner.timeSpentTodayMinutes} min',
                         style: theme.textTheme.bodySmall,
                       ),
                       const SizedBox(height: 6),
@@ -329,7 +334,7 @@ class _ChildCard extends StatelessWidget {
                         child: LinearProgressIndicator(
                           value: learner.masteryProgress.clamp(0.0, 1.0),
                           minHeight: 6,
-                          semanticsLabel: 'Mastery progress '
+                          semanticsLabel: '${t('dashboard.mastery')} '
                               '${(learner.masteryProgress * 100).toInt()}%',
                         ),
                       ),
@@ -364,13 +369,14 @@ class _ChildCard extends StatelessWidget {
 // Functioning level badge
 // ---------------------------------------------------------------------------
 
-class _FunctioningLevelBadge extends StatelessWidget {
+class _FunctioningLevelBadge extends ConsumerWidget {
   const _FunctioningLevelBadge({required this.level});
   final String level;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final t = ref.t;
 
     Color badgeColor;
     String label;
@@ -397,7 +403,7 @@ class _FunctioningLevelBadge extends StatelessWidget {
     }
 
     return Semantics(
-      label: 'Functioning level $level',
+      label: t('dashboard.functioningLevel', {'level': level}),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
         decoration: BoxDecoration(
@@ -489,10 +495,11 @@ class _BrainNavTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final asyncLearners = ref.watch(_learnersProvider);
     final learners = asyncLearners.value ?? [];
+    final t = ref.t;
 
     if (learners.isEmpty) {
-      return const Scaffold(
-        body: Center(child: Text('Add a child to view their brain profile')),
+      return Scaffold(
+        body: Center(child: Text(t('dashboard.addChildForBrain'))),
       );
     }
 
@@ -527,15 +534,16 @@ class _SettingsNavTab extends StatelessWidget {
 // Error body
 // ---------------------------------------------------------------------------
 
-class _ErrorBody extends StatelessWidget {
+class _ErrorBody extends ConsumerWidget {
   const _ErrorBody({required this.message, required this.onRetry});
 
   final String message;
   final VoidCallback onRetry;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final t = ref.t;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -550,7 +558,7 @@ class _ErrorBody extends StatelessWidget {
             ElevatedButton.icon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh),
-              label: const Text('Retry'),
+              label: Text(t('common.retry')),
             ),
           ],
         ),
