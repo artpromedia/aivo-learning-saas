@@ -1,6 +1,13 @@
 import { defineConfig } from "vitest/config";
+import path from "path";
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      "@aivo/db": path.resolve(__dirname, "../../packages/db/src/index.ts"),
+      "@aivo/events": path.resolve(__dirname, "../../packages/events/src/index.ts"),
+    },
+  },
   test: {
     include: ["src/__tests__/**/*.test.ts"],
     coverage: {
