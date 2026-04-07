@@ -1,9 +1,9 @@
 "use client";
 
 import React from "react";
-import { BreakWrapper, type BreakType } from "./breaks/BreakWrapper";
+import { BreakWrapper, type AnyBreakType } from "./breaks/BreakWrapper";
 
-export type EngagementBreakType = BreakType;
+export type EngagementBreakType = AnyBreakType;
 
 type FunctioningLevel = "STANDARD" | "SUPPORTED" | "LOW_VERBAL" | "NON_VERBAL" | "PRE_SYMBOLIC";
 

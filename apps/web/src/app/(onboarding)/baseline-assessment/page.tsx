@@ -93,7 +93,7 @@ export default function BaselineAssessmentPage() {
         );
         setQuestion(data.question);
         setProgress(data.progress);
-        if (data.breakConfig) {
+        if (data.breakConfig && data.breakConfig.frequencyQuestions > 0) {
           setBreakConfig(data.breakConfig);
         }
       } catch (err) {
@@ -129,7 +129,7 @@ export default function BaselineAssessmentPage() {
       setQuestionsAnswered(newCount);
 
       // Update breakConfig if returned by the server
-      if (result.breakConfig) {
+      if (result.breakConfig && result.breakConfig.frequencyQuestions > 0) {
         setBreakConfig(result.breakConfig);
       }
 

@@ -9,11 +9,33 @@ import { MusicBreak } from "./MusicBreak";
 import { PuzzleBreak } from "./PuzzleBreak";
 import { GameBreak } from "./GameBreak";
 
+/** Break types that have dedicated frontend components. */
 export type BreakType = "music" | "puzzle" | "game";
+
+/** All break types the backend may suggest, including those without dedicated components. */
+export type AnyBreakType = BreakType | "breathing" | "stretch" | "fidget";
+
 type FunctioningLevel = "STANDARD" | "SUPPORTED" | "LOW_VERBAL" | "NON_VERBAL" | "PRE_SYMBOLIC";
 
+/** Map unsupported break types to the closest supported component. */
+function resolveBreakType(type: AnyBreakType): BreakType {
+  switch (type) {
+    case "music":
+    case "puzzle":
+    case "game":
+      return type;
+    case "breathing":
+    case "stretch":
+      return "music"; // calming music is closest to breathing/stretch
+    case "fidget":
+      return "game"; // interactive game is closest to fidget
+    default:
+      return "music";
+  }
+}
+
 interface BreakWrapperProps {
-  breakType: BreakType;
+  breakType: AnyBreakType;
   learnerId: string;
   durationSeconds?: number;
   soundEnabled?: boolean;
@@ -21,16 +43,22 @@ interface BreakWrapperProps {
   onComplete: () => void;
 }
 
-const BREAK_LABELS: Record<BreakType, { title: string; emoji: string }> = {
+const BREAK_LABELS: Record<string, { title: string; emoji: string }> = {
   music: { title: "Music Break", emoji: "🎵" },
   puzzle: { title: "Puzzle Break", emoji: "🧩" },
   game: { title: "Star Catcher", emoji: "⭐" },
+  breathing: { title: "Calm Breathing", emoji: "🫧" },
+  stretch: { title: "Quick Stretch", emoji: "🤸" },
+  fidget: { title: "Fidget Break", emoji: "🌀" },
 };
 
-const BREAK_DURATIONS: Record<BreakType, number> = {
+const BREAK_DURATIONS: Record<string, number> = {
   music: 45,
   puzzle: 60,
   game: 35,
+  breathing: 60,
+  stretch: 90,
+  fidget: 30,
 };
 
 /**
@@ -50,7 +78,7 @@ export function BreakWrapper({
   onComplete,
 }: BreakWrapperProps) {
   const prefersReducedMotion = useReducedMotion();
-  const duration = durationSeconds ?? BREAK_DURATIONS[breakType];
+  const duration = durationSeconds ?? BREAK_DURATIONS[breakType] ?? 45;
   const [phase, setPhase] = useState<"intro" | "activity" | "outro">("intro");
   const [secondsLeft, setSecondsLeft] = useState(duration);
   const [xpAwarded, setXpAwarded] = useState<number | null>(null);
@@ -106,7 +134,8 @@ export function BreakWrapper({
   }, [finishBreak]);
 
   const timerDisplay = `${Math.floor(secondsLeft / 60)}:${String(secondsLeft % 60).padStart(2, "0")}`;
-  const label = BREAK_LABELS[breakType];
+  const resolvedType = resolveBreakType(breakType);
+  const label = BREAK_LABELS[resolvedType];
 
   return (
     <Card>
@@ -183,21 +212,21 @@ export function BreakWrapper({
 
               {/* Activity */}
               <div className="mb-5">
-                {breakType === "music" && (
+                {resolvedType === "music" && (
                   <MusicBreak
                     soundEnabled={soundEnabled}
                     durationSeconds={duration}
                     onComplete={handleActivityComplete}
                   />
                 )}
-                {breakType === "puzzle" && (
+                {resolvedType === "puzzle" && (
                   <PuzzleBreak
                     durationSeconds={duration}
                     functioningLevel={functioningLevel}
                     onComplete={handleActivityComplete}
                   />
                 )}
-                {breakType === "game" && (
+                {resolvedType === "game" && (
                   <GameBreak
                     durationSeconds={duration}
                     functioningLevel={functioningLevel}
