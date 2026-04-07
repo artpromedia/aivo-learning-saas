@@ -220,8 +220,8 @@ describe("Enum Values", () => {
     expect(schema.assessmentModeEnum.enumValues).toHaveLength(7);
   });
 
-  it("tutorSkuEnum should have all 6 SKUs", () => {
-    expect(schema.tutorSkuEnum.enumValues).toHaveLength(6);
+  it("tutorSkuEnum should have all 8 SKUs", () => {
+    expect(schema.tutorSkuEnum.enumValues).toHaveLength(8);
   });
 
   it("snapshotTriggerEnum should have all 10 triggers", () => {
