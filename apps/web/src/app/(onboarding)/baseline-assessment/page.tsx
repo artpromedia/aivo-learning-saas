@@ -27,6 +27,7 @@ interface BaselineQuestion {
 interface BreakConfig {
   frequencyQuestions: number;
   preferredTypes: EngagementBreakType[];
+  adaptiveBreaks?: boolean;
 }
 
 interface AnswerResult {
@@ -35,6 +36,10 @@ interface AnswerResult {
   nextQuestion?: BaselineQuestion;
   progress: number;
   isComplete: boolean;
+  breakConfig?: BreakConfig;
+  shouldBreak?: boolean;
+  suggestedBreakType?: EngagementBreakType;
+  consecutiveWrong?: number;
 }
 
 export default function BaselineAssessmentPage() {
@@ -123,6 +128,11 @@ export default function BaselineAssessmentPage() {
       const newCount = questionsAnswered + 1;
       setQuestionsAnswered(newCount);
 
+      // Update breakConfig if returned by the server
+      if (result.breakConfig) {
+        setBreakConfig(result.breakConfig);
+      }
+
       // Brief delay to show feedback, then advance (or trigger break)
       setTimeout(() => {
         setFeedback(null);
@@ -130,14 +140,11 @@ export default function BaselineAssessmentPage() {
 
         if (result.isComplete) {
           handleComplete();
-        } else if (
-          newCount > 0 &&
-          newCount % breakConfig.frequencyQuestions === 0 &&
-          result.nextQuestion
-        ) {
-          // Time for a break — stash the next question and show break screen
+        } else if (result.shouldBreak && result.nextQuestion) {
+          // Server says it's time for a break — stash next question
           pendingNextQuestion.current = result.nextQuestion;
-          setBreakType(pickBreakType());
+          // Use server-suggested type for adaptive breaks, otherwise rotate
+          setBreakType(result.suggestedBreakType ?? pickBreakType());
           setShowBreak(true);
         } else if (result.nextQuestion) {
           setQuestion(result.nextQuestion);

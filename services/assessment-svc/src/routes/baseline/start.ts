@@ -10,6 +10,7 @@ import {
   type FunctioningLevel,
 } from "../../engine/irt.js";
 import { DOMAINS } from "../../engine/item-bank.js";
+import { extractBreakConfig } from "../../lib/break-config.js";
 
 export async function baselineStartRoute(app: FastifyInstance) {
   app.post(
@@ -130,7 +131,7 @@ export async function baselineStartRoute(app: FastifyInstance) {
       app.log.info({ learnerId, assessmentId: assessment.id, mode: assessmentMode }, "Baseline assessment started");
 
       // Extract break preferences from parent assessment responses
-      const breakConfig = buildBreakConfig(parentResponses);
+      const breakConfig = extractBreakConfig(parentResponses);
 
       return reply.status(201).send({
         assessmentId: assessment.id,
@@ -150,42 +151,3 @@ export async function baselineStartRoute(app: FastifyInstance) {
   );
 }
 
-type EngagementBreakType = "music" | "puzzle" | "game";
-
-function mapBreakFrequency(parentResponses: Record<string, unknown>): number {
-  const answer = parentResponses["sn-2"] as string | undefined;
-  if (!answer) return 8;
-  if (answer.startsWith("20+")) return 15;
-  if (answer.startsWith("10-20")) return 10;
-  if (answer.startsWith("5-10")) return 8;
-  if (answer.startsWith("3-5")) return 4;
-  if (answer.startsWith("1-2")) return 2;
-  if (answer.includes("frequent")) return 1;
-  return 8;
-}
-
-function mapBreakTypes(parentResponses: Record<string, unknown>): EngagementBreakType[] {
-  const answer = parentResponses["sn-3"];
-  const selections: string[] = Array.isArray(answer) ? answer : typeof answer === "string" ? [answer] : [];
-
-  if (selections.length === 0) return ["music", "puzzle", "game"];
-
-  const types: EngagementBreakType[] = [];
-  for (const sel of selections) {
-    if (sel.includes("calming music") || sel.includes("Sensory")) types.push("music");
-    if (sel.includes("simple games") || sel.includes("activity break") || sel.includes("Preferred activity")) types.push("game");
-    if (sel.includes("Puzzle") || sel.includes("brain teaser")) types.push("puzzle");
-  }
-
-  return types.length > 0 ? [...new Set(types)] : ["music", "puzzle", "game"];
-}
-
-function buildBreakConfig(parentResponses: Record<string, unknown>): {
-  frequencyQuestions: number;
-  preferredTypes: EngagementBreakType[];
-} {
-  return {
-    frequencyQuestions: mapBreakFrequency(parentResponses),
-    preferredTypes: mapBreakTypes(parentResponses),
-  };
-}
