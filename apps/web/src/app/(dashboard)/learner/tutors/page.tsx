@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { Bot, Loader2, RefreshCw, MessageSquare, Clock } from "lucide-react";
+import { Bot, RefreshCw, MessageSquare, Clock } from "lucide-react";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -13,37 +13,73 @@ import { apiFetch } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
 import { useLearnerStore } from "@/stores/learner.store";
 
-interface Tutor {
+interface SubscriptionTutor {
+  id: string;
+  sku: string;
+  status: string;
+  activatedAt: string;
+  tutor: {
+    name: string;
+    subject: string;
+    persona: string;
+    description: string;
+  };
+}
+
+interface DisplayTutor {
   id: string;
   name: string;
-  slug: string;
-  avatarUrl: string;
-  specialty: string;
+  persona: string;
+  subject: string;
   description: string;
-  sessionsCompleted: number;
-  lastSessionAt: string | null;
+  activatedAt: string;
 }
 
 export default function LearnerTutorsPage() {
   const activeLearner = useLearnerStore((s) => s.activeLearner);
-  const [tutors, setTutors] = useState<Tutor[]>([]);
+  const [tutors, setTutors] = useState<DisplayTutor[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function fetchTutors() {
-      try {
-        const data = await apiFetch<Tutor[]>(API_ROUTES.TUTOR.LIST());
-        setTutors(data);
-      } catch (err) {
+  const fetchTutors = useCallback(async (showLoading: boolean) => {
+    if (!activeLearner?.id) return;
+    try {
+      if (showLoading) setLoading(true);
+      const data = await apiFetch<{ subscriptions: SubscriptionTutor[] }>(
+        API_ROUTES.TUTOR.LIST(activeLearner.id)
+      );
+      const mapped: DisplayTutor[] = data.subscriptions.map((s) => ({
+        id: s.id,
+        name: s.tutor.name,
+        persona: s.tutor.persona,
+        subject: s.tutor.subject,
+        description: s.tutor.description,
+        activatedAt: s.activatedAt,
+      }));
+      setTutors(mapped);
+      setError(null);
+    } catch (err) {
+      if (showLoading) {
         setError(err instanceof Error ? err.message : "Failed to load tutors");
-      } finally {
-        setLoading(false);
+      }
+    } finally {
+      if (showLoading) setLoading(false);
+    }
+  }, [activeLearner?.id]);
+
+  useEffect(() => {
+    fetchTutors(true);
+  }, [fetchTutors]);
+
+  useEffect(() => {
+    function handleVisibility() {
+      if (document.visibilityState === "visible" && activeLearner?.id) {
+        fetchTutors(false);
       }
     }
-
-    fetchTutors();
-  }, []);
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () => document.removeEventListener("visibilitychange", handleVisibility);
+  }, [activeLearner?.id, fetchTutors]);
 
   if (loading) {
     return (
@@ -102,11 +138,11 @@ export default function LearnerTutorsPage() {
       ) : (
         <div className="space-y-4">
           {tutors.map((tutor) => (
-            <Link key={tutor.id} href={`/learner/tutors/${tutor.slug}`}>
+            <Link key={tutor.id} href={`/learner/tutors/${tutor.persona}`}>
               <Card className="hover:shadow-lg transition-shadow cursor-pointer group">
                 <CardBody className="flex items-center gap-4">
                   <TutorAvatar
-                    persona={tutor.slug as TutorPersona}
+                    persona={tutor.persona as TutorPersona}
                     size="sm"
                   />
                   <div className="flex-1 min-w-0">
@@ -116,20 +152,16 @@ export default function LearnerTutorsPage() {
                     <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
                       {tutor.description}
                     </p>
-                    <div className="flex items-center gap-3 mt-1 text-xs text-gray-400">
-                      <span className="flex items-center gap-1">
-                        <MessageSquare size={12} />
-                        {tutor.sessionsCompleted} sessions
-                      </span>
-                      {tutor.lastSessionAt && (
+                    {tutor.activatedAt && (
+                      <div className="flex items-center gap-3 mt-1 text-xs text-gray-400">
                         <span className="flex items-center gap-1">
                           <Clock size={12} />
-                          Last: {new Date(tutor.lastSessionAt).toLocaleDateString()}
+                          Since: {new Date(tutor.activatedAt).toLocaleDateString()}
                         </span>
-                      )}
-                    </div>
+                      </div>
+                    )}
                   </div>
-                  <Badge>{tutor.specialty}</Badge>
+                  <Badge>{tutor.subject}</Badge>
                 </CardBody>
               </Card>
             </Link>

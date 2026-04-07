@@ -24,23 +24,33 @@ import { API_ROUTES } from "@/lib/api-routes";
 interface ActiveTutor {
   id: string;
   name: string;
-  slug: string;
-  avatarUrl: string;
-  specialty: string;
-  sessionsCompleted: number;
-  lastSessionAt: string;
+  persona: string;
+  subject: string;
+  description: string;
+  activatedAt: string;
 }
 
 interface StoreTutor {
-  id: string;
+  sku: string;
   name: string;
-  slug: string;
-  avatarUrl: string;
-  specialty: string;
+  subject: string;
+  persona: string;
+  price: number;
   description: string;
-  rating: number;
-  subscriberCount: number;
-  tags: string[];
+  subscribed: boolean;
+}
+
+interface SubscriptionRow {
+  id: string;
+  sku: string;
+  status: string;
+  activatedAt: string;
+  tutor: {
+    name: string;
+    subject: string;
+    persona: string;
+    description: string;
+  };
 }
 
 export default function TutorsPage() {
@@ -51,17 +61,28 @@ export default function TutorsPage() {
   const [storeTutors, setStoreTutors] = useState<StoreTutor[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [subscribingId, setSubscribingId] = useState<string | null>(null);
+  const [subscribingSku, setSubscribingSku] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchTutors() {
       try {
-        const [active, store] = await Promise.all([
-          apiFetch<ActiveTutor[]>(API_ROUTES.TUTOR.LIST(learnerId)),
-          apiFetch<StoreTutor[]>(API_ROUTES.TUTOR.STORE(learnerId)),
+        const [activeResponse, storeResponse] = await Promise.all([
+          apiFetch<{ subscriptions: SubscriptionRow[] }>(API_ROUTES.TUTOR.LIST(learnerId)),
+          apiFetch<{ catalog: StoreTutor[] }>(API_ROUTES.TUTOR.STORE(learnerId)),
         ]);
-        setActiveTutors(active);
-        setStoreTutors(store);
+
+        const mapped: ActiveTutor[] = activeResponse.subscriptions
+          .filter((s) => s.tutor)
+          .map((s) => ({
+            id: s.id,
+            name: s.tutor.name,
+            persona: s.tutor.persona,
+            subject: s.tutor.subject,
+            description: s.tutor.description,
+            activatedAt: s.activatedAt,
+          }));
+        setActiveTutors(mapped);
+        setStoreTutors(storeResponse.catalog.filter((t) => !t.subscribed));
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load tutors");
       } finally {
@@ -72,32 +93,29 @@ export default function TutorsPage() {
     fetchTutors();
   }, [learnerId]);
 
-  const handleSubscribe = async (tutorId: string) => {
-    setSubscribingId(tutorId);
+  const handleSubscribe = async (tutor: StoreTutor) => {
+    setSubscribingSku(tutor.sku);
     try {
-      await apiFetch(`/api/learners/${learnerId}/tutors/${tutorId}/subscribe`, {
+      await apiFetch("/api/tutors/subscribe", {
         method: "POST",
+        body: JSON.stringify({ learnerId, sku: tutor.sku }),
       });
-      const subscribed = storeTutors.find((t) => t.id === tutorId);
-      if (subscribed) {
-        setActiveTutors((prev) => [
-          ...prev,
-          {
-            id: subscribed.id,
-            name: subscribed.name,
-            slug: subscribed.slug,
-            avatarUrl: subscribed.avatarUrl,
-            specialty: subscribed.specialty,
-            sessionsCompleted: 0,
-            lastSessionAt: new Date().toISOString(),
-          },
-        ]);
-        setStoreTutors((prev) => prev.filter((t) => t.id !== tutorId));
-      }
+      setActiveTutors((prev) => [
+        ...prev,
+        {
+          id: tutor.sku,
+          name: tutor.name,
+          persona: tutor.persona,
+          subject: tutor.subject,
+          description: tutor.description,
+          activatedAt: new Date().toISOString(),
+        },
+      ]);
+      setStoreTutors((prev) => prev.filter((t) => t.sku !== tutor.sku));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to subscribe");
     } finally {
-      setSubscribingId(null);
+      setSubscribingSku(null);
     }
   };
 
@@ -167,7 +185,7 @@ export default function TutorsPage() {
             <Card key={tutor.id} className="hover:shadow-md transition-shadow">
               <CardBody className="flex items-center gap-4">
                 <TutorAvatar
-                  persona={tutor.slug as TutorPersona}
+                  persona={tutor.persona as TutorPersona}
                   size="sm"
                 />
                 <div className="flex-1 min-w-0">
@@ -175,16 +193,10 @@ export default function TutorsPage() {
                     {tutor.name}
                   </h3>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {tutor.specialty}
+                    {tutor.subject}
                   </p>
-                  <div className="flex items-center gap-3 mt-1 text-xs text-gray-400">
-                    <span className="flex items-center gap-1">
-                      <MessageSquare size={12} />
-                      {tutor.sessionsCompleted} sessions
-                    </span>
-                  </div>
                 </div>
-                <Link href={`/learner/tutors/${tutor.slug}`}>
+                <Link href={`/learner/tutors/${tutor.persona}`}>
                   <Button size="sm" variant="outline">
                     Chat
                   </Button>
@@ -211,11 +223,11 @@ export default function TutorsPage() {
       {storeTutors.length > 0 ? (
         <div className="grid gap-4 sm:grid-cols-2">
           {storeTutors.map((tutor) => (
-            <Card key={tutor.id}>
+            <Card key={tutor.sku}>
               <CardBody>
                 <div className="flex items-start gap-4">
                   <TutorAvatar
-                    persona={tutor.slug as TutorPersona}
+                    persona={tutor.persona as TutorPersona}
                     size="sm"
                   />
                   <div className="flex-1 min-w-0">
@@ -226,18 +238,7 @@ export default function TutorsPage() {
                       {tutor.description}
                     </p>
                     <div className="flex items-center gap-3 text-xs text-gray-400 mb-3">
-                      <span className="flex items-center gap-1">
-                        <Star size={12} className="text-yellow-500" />
-                        {tutor.rating.toFixed(1)}
-                      </span>
-                      <span>{tutor.subscriberCount} subscribers</span>
-                    </div>
-                    <div className="flex flex-wrap gap-1 mb-3">
-                      {tutor.tags.map((tag) => (
-                        <Badge key={tag} variant="secondary">
-                          {tag}
-                        </Badge>
-                      ))}
+                      <span>${tutor.price.toFixed(2)}/mo</span>
                     </div>
                   </div>
                 </div>
@@ -245,8 +246,8 @@ export default function TutorsPage() {
                   size="sm"
                   className="w-full"
                   leftIcon={<Plus size={16} />}
-                  loading={subscribingId === tutor.id}
-                  onClick={() => handleSubscribe(tutor.id)}
+                  loading={subscribingSku === tutor.sku}
+                  onClick={() => handleSubscribe(tutor)}
                 >
                   Subscribe
                 </Button>
