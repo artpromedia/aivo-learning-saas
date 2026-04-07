@@ -4,7 +4,27 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:aivo_mobile/config/theme.dart';
+import 'package:aivo_mobile/core/i18n/translation_ext.dart';
 import 'package:aivo_mobile/data/repositories/family_repository.dart';
+
+// ---------------------------------------------------------------------------
+// Skill key mapping (internal key → seed key suffix)
+// ---------------------------------------------------------------------------
+
+const _skillKeys = [
+  'readingComprehension',
+  'mathComputation',
+  'writtenExpression',
+  'verbalCommunication',
+  'socialInteraction',
+  'selfRegulation',
+  'attention',
+  'organization',
+  'problemSolving',
+  'fineMotor',
+  'grossMotor',
+  'followingDirections',
+];
 
 // ---------------------------------------------------------------------------
 // Screen
@@ -41,21 +61,6 @@ class _InsightSubmissionScreenState
 
   static const _severityLevels = ['low', 'medium', 'high'];
 
-  static const _availableSkills = [
-    'Reading Comprehension',
-    'Math Computation',
-    'Written Expression',
-    'Verbal Communication',
-    'Social Interaction',
-    'Self-Regulation',
-    'Attention',
-    'Organization',
-    'Problem Solving',
-    'Fine Motor',
-    'Gross Motor',
-    'Following Directions',
-  ];
-
   @override
   void dispose() {
     _descriptionController.dispose();
@@ -89,10 +94,11 @@ class _InsightSubmissionScreenState
   }
 
   Future<void> _submit() async {
+    final t = ref.t;
     if (!_formKey.currentState!.validate()) return;
     if (widget.learnerId == null || widget.learnerId!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No learner selected')),
+        SnackBar(content: Text(t('teacher.noLearnerSelected'))),
       );
       return;
     }
@@ -126,7 +132,7 @@ class _InsightSubmissionScreenState
       if (mounted) {
         setState(() => _isSubmitting = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to submit insight: $e')),
+          SnackBar(content: Text('${t('teacher.failedToSubmitInsight')}: $e')),
         );
       }
     }
@@ -147,10 +153,11 @@ class _InsightSubmissionScreenState
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final t = ref.t;
 
     if (_submitted) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Insight Submitted')),
+        appBar: AppBar(title: Text(t('teacher.insightSubmitted'))),
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(32),
@@ -161,14 +168,13 @@ class _InsightSubmissionScreenState
                     size: 80, color: AivoColors.secondary,),
                 const SizedBox(height: 24),
                 Text(
-                  'Insight Submitted Successfully',
+                  t('teacher.insightSubmittedSuccess'),
                   style: theme.textTheme.headlineSmall,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'Your observation has been recorded and will be '
-                  'incorporated into the learner\'s brain profile.',
+                  t('teacher.insightRecordedDesc'),
                   style: theme.textTheme.bodyMedium,
                   textAlign: TextAlign.center,
                 ),
@@ -179,7 +185,7 @@ class _InsightSubmissionScreenState
                     OutlinedButton.icon(
                       onPressed: _resetForm,
                       icon: const Icon(Icons.add),
-                      label: const Text('Submit Another'),
+                      label: Text(t('teacher.submitAnother')),
                     ),
                     const SizedBox(width: 12),
                     ElevatedButton.icon(
@@ -192,7 +198,7 @@ class _InsightSubmissionScreenState
                         }
                       },
                       icon: const Icon(Icons.arrow_back),
-                      label: const Text('Back'),
+                      label: Text(t('common.back')),
                     ),
                   ],
                 ),
@@ -204,7 +210,7 @@ class _InsightSubmissionScreenState
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Submit Insight')),
+      appBar: AppBar(title: Text(t('teacher.submitInsight'))),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -215,7 +221,7 @@ class _InsightSubmissionScreenState
               // Insight type selection
               Semantics(
                 header: true,
-                child: Text('Insight Type',
+                child: Text(t('teacher.insightType'),
                     style: theme.textTheme.titleMedium,),
               ),
               const SizedBox(height: 8),
@@ -224,8 +230,7 @@ class _InsightSubmissionScreenState
                 runSpacing: 4,
                 children: _insightTypes.map((type) {
                   final isSelected = _insightType == type;
-                  final displayName =
-                      type[0].toUpperCase() + type.substring(1);
+                  final displayName = t('teacher.type${type[0].toUpperCase()}${type.substring(1)}');
 
                   IconData icon;
                   switch (type) {
@@ -259,28 +264,27 @@ class _InsightSubmissionScreenState
               // Description
               Semantics(
                 header: true,
-                child: Text('Description',
+                child: Text(t('teacher.description'),
                     style: theme.textTheme.titleMedium,),
               ),
               const SizedBox(height: 8),
               Semantics(
-                label: 'Insight description',
+                label: t('teacher.description'),
                 textField: true,
                 child: TextFormField(
                   controller: _descriptionController,
                   maxLines: 5,
                   maxLength: 1000,
-                  decoration: const InputDecoration(
-                    hintText:
-                        'Describe your observation in detail...',
+                  decoration: InputDecoration(
+                    hintText: t('teacher.descriptionHint'),
                     alignLabelWithHint: true,
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'Description is required';
+                      return t('teacher.descriptionRequired');
                     }
                     if (value.trim().length < 10) {
-                      return 'Please provide more detail (at least 10 characters)';
+                      return t('teacher.descriptionMinLength');
                     }
                     return null;
                   },
@@ -291,7 +295,7 @@ class _InsightSubmissionScreenState
               // Severity
               Semantics(
                 header: true,
-                child: Text('Severity',
+                child: Text(t('teacher.severity'),
                     style: theme.textTheme.titleMedium,),
               ),
               const SizedBox(height: 8),
@@ -308,6 +312,8 @@ class _InsightSubmissionScreenState
                       color = AivoColors.secondary;
                   }
 
+                  final severityLabel = t('teacher.severity${level[0].toUpperCase()}${level.substring(1)}');
+
                   return Expanded(
                     child: Padding(
                       padding: EdgeInsets.only(
@@ -316,7 +322,7 @@ class _InsightSubmissionScreenState
                       child: Semantics(
                         selected: isSelected,
                         button: true,
-                        label: '$level severity',
+                        label: '$severityLabel ${t('teacher.severity').toLowerCase()}',
                         child: OutlinedButton(
                           onPressed: () =>
                               setState(() => _severity = level),
@@ -333,9 +339,7 @@ class _InsightSubmissionScreenState
                               width: isSelected ? 2 : 1,
                             ),
                           ),
-                          child: Text(
-                              level[0].toUpperCase() +
-                                  level.substring(1),),
+                          child: Text(severityLabel),
                         ),
                       ),
                     ),
@@ -347,24 +351,25 @@ class _InsightSubmissionScreenState
               // Related skills
               Semantics(
                 header: true,
-                child: Text('Related Skills',
+                child: Text(t('teacher.relatedSkills'),
                     style: theme.textTheme.titleMedium,),
               ),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 6,
                 runSpacing: 4,
-                children: _availableSkills.map((skill) {
-                  final isSelected = _selectedSkills.contains(skill);
+                children: _skillKeys.map((skillKey) {
+                  final isSelected = _selectedSkills.contains(skillKey);
+                  final label = t('teacher.skill_$skillKey');
                   return FilterChip(
-                    label: Text(skill),
+                    label: Text(label),
                     selected: isSelected,
                     onSelected: (selected) {
                       setState(() {
                         if (selected) {
-                          _selectedSkills.add(skill);
+                          _selectedSkills.add(skillKey);
                         } else {
-                          _selectedSkills.remove(skill);
+                          _selectedSkills.remove(skillKey);
                         }
                       });
                     },
@@ -377,7 +382,7 @@ class _InsightSubmissionScreenState
               // Photo attachment
               Semantics(
                 header: true,
-                child: Text('Photo (Optional)',
+                child: Text(t('teacher.photoOptional'),
                     style: theme.textTheme.titleMedium,),
               ),
               const SizedBox(height: 8),
@@ -385,7 +390,7 @@ class _InsightSubmissionScreenState
                 Card(
                   child: ListTile(
                     leading: const Icon(Icons.photo, color: AivoColors.secondary),
-                    title: const Text('Photo attached'),
+                    title: Text(t('teacher.photoAttached')),
                     subtitle: Text(
                       _photoPath!.split('/').last,
                       overflow: TextOverflow.ellipsis,
@@ -394,7 +399,7 @@ class _InsightSubmissionScreenState
                       icon: const Icon(Icons.close),
                       onPressed: () =>
                           setState(() => _photoPath = null),
-                      tooltip: 'Remove photo',
+                      tooltip: t('common.close'),
                     ),
                   ),
                 ),
@@ -405,7 +410,7 @@ class _InsightSubmissionScreenState
                       child: OutlinedButton.icon(
                         onPressed: _pickPhoto,
                         icon: const Icon(Icons.camera_alt),
-                        label: const Text('Camera'),
+                        label: Text(t('teacher.camera')),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -413,7 +418,7 @@ class _InsightSubmissionScreenState
                       child: OutlinedButton.icon(
                         onPressed: _pickFromGallery,
                         icon: const Icon(Icons.photo_library),
-                        label: const Text('Gallery'),
+                        label: Text(t('teacher.gallery')),
                       ),
                     ),
                   ],
@@ -434,7 +439,7 @@ class _InsightSubmissionScreenState
                             color: colorScheme.onPrimary,
                           ),
                         )
-                      : const Text('Submit Insight'),
+                      : Text(t('teacher.submitInsight')),
                 ),
               ),
               const SizedBox(height: 32),

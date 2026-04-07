@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import 'package:aivo_mobile/config/theme.dart';
+import 'package:aivo_mobile/core/i18n/locale_provider.dart';
+import 'package:aivo_mobile/core/i18n/translation_ext.dart';
 import 'package:aivo_mobile/data/models/brain_context.dart';
 import 'package:aivo_mobile/data/repositories/family_repository.dart';
 
@@ -37,21 +39,22 @@ class LearnerBrainViewScreen extends ConsumerWidget {
     final asyncBrain = ref.watch(_brainProvider(learnerId));
     final asyncInsights = ref.watch(_insightsProvider(learnerId));
     final theme = Theme.of(context);
+    final t = ref.t;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Learner Brain Profile'),
+        title: Text(t('brain.learnerBrainProfile')),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.go('/teacher/insight?learnerId=$learnerId'),
         icon: const Icon(Icons.edit_note),
-        label: const Text('Submit Insight'),
-        tooltip: 'Submit a teacher observation',
+        label: Text(t('teacher.submitInsight')),
+        tooltip: t('teacher.submitObservation'),
       ),
       body: asyncBrain.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => _ErrorRetry(
-          message: 'Failed to load brain profile',
+          message: t('brain.failedToLoad'),
           onRetry: () =>
               ref.invalidate(_brainProvider(learnerId)),
         ),
@@ -69,9 +72,9 @@ class LearnerBrainViewScreen extends ConsumerWidget {
                 // Functioning level
                 _ReadOnlySection(
                   icon: Icons.psychology,
-                  title: 'Functioning Level',
+                  title: t('brain.functioningLevel'),
                   child: Text(
-                    _functioningLevelDisplay(brain.functioningLevel),
+                    _functioningLevelDisplay(brain.functioningLevel, t),
                     style: theme.textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
@@ -82,7 +85,7 @@ class LearnerBrainViewScreen extends ConsumerWidget {
                 if (brain.diagnoses.isNotEmpty)
                   _ReadOnlySection(
                     icon: Icons.medical_information,
-                    title: 'Diagnoses',
+                    title: t('brain.diagnoses'),
                     child: Wrap(
                       spacing: 8,
                       runSpacing: 4,
@@ -95,9 +98,9 @@ class LearnerBrainViewScreen extends ConsumerWidget {
                 // Accommodations
                 _ReadOnlySection(
                   icon: Icons.accessibility_new,
-                  title: 'Accommodations',
+                  title: t('brain.accommodations'),
                   child: brain.accommodations.isEmpty
-                      ? Text('None active',
+                      ? Text(t('brain.noneActive'),
                           style: theme.textTheme.bodyMedium,)
                       : Wrap(
                           spacing: 8,
@@ -121,7 +124,7 @@ class LearnerBrainViewScreen extends ConsumerWidget {
                 // Mastery
                 _ReadOnlySection(
                   icon: Icons.bar_chart,
-                  title: 'Mastery Overview',
+                  title: t('brain.masteryOverview'),
                   child: _MasteryList(
                       masteryLevels: brain.masteryLevels,),
                 ),
@@ -130,7 +133,7 @@ class LearnerBrainViewScreen extends ConsumerWidget {
                 if (brain.iepGoals.isNotEmpty)
                   _ReadOnlySection(
                     icon: Icons.flag,
-                    title: 'IEP Goals',
+                    title: t('brain.iepGoals'),
                     child: Column(
                       children: brain.iepGoals
                           .map((g) => _GoalProgress(goal: g))
@@ -141,12 +144,12 @@ class LearnerBrainViewScreen extends ConsumerWidget {
                 // Strengths & challenges
                 _ReadOnlySection(
                   icon: Icons.thumbs_up_down,
-                  title: 'Strengths & Challenges',
+                  title: t('brain.strengthsAndChallenges'),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (brain.strengths.isNotEmpty) ...[
-                        Text('Strengths',
+                        Text(t('brain.strengths'),
                             style: theme.textTheme.labelLarge,),
                         const SizedBox(height: 4),
                         Wrap(
@@ -170,7 +173,7 @@ class LearnerBrainViewScreen extends ConsumerWidget {
                         const SizedBox(height: 12),
                       ],
                       if (brain.challenges.isNotEmpty) ...[
-                        Text('Challenges',
+                        Text(t('brain.challenges'),
                             style: theme.textTheme.labelLarge,),
                         const SizedBox(height: 4),
                         Wrap(
@@ -199,9 +202,9 @@ class LearnerBrainViewScreen extends ConsumerWidget {
                 // Recent team insights
                 _ReadOnlySection(
                   icon: Icons.lightbulb,
-                  title: 'Recent Team Insights',
+                  title: t('teacher.recentInsights'),
                   child: insights.isEmpty
-                      ? Text('No insights yet',
+                      ? Text(t('teacher.noInsightsYet'),
                           style: theme.textTheme.bodyMedium,)
                       : Column(
                           children: insights.take(5).map((insight) {
@@ -217,20 +220,21 @@ class LearnerBrainViewScreen extends ConsumerWidget {
     );
   }
 
-  String _functioningLevelDisplay(String level) {
+  String _functioningLevelDisplay(
+      String level, String Function(String, [Map<String, String>?]) t) {
     switch (level.toLowerCase()) {
       case 'level_1':
       case 'significant_support':
-        return 'Level 1 - Significant Support';
+        return t('brain.level1Significant');
       case 'level_2':
       case 'moderate_support':
-        return 'Level 2 - Moderate Support';
+        return t('brain.level2Moderate');
       case 'level_3':
       case 'standard':
-        return 'Level 3 - Standard';
+        return t('brain.level3Standard');
       case 'level_4':
       case 'advanced':
-        return 'Level 4 - Advanced';
+        return t('brain.level4Advanced');
       default:
         return level;
     }
@@ -319,16 +323,17 @@ class _ReadOnlySection extends StatelessWidget {
 // Mastery list
 // ---------------------------------------------------------------------------
 
-class _MasteryList extends StatelessWidget {
+class _MasteryList extends ConsumerWidget {
   const _MasteryList({required this.masteryLevels});
   final Map<String, MasteryLevel> masteryLevels;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final t = ref.t;
 
     if (masteryLevels.isEmpty) {
-      return Text('No mastery data',
+      return Text(t('brain.noMasteryData'),
           style: theme.textTheme.bodyMedium,);
     }
 
@@ -360,7 +365,7 @@ class _MasteryList extends StatelessWidget {
               Expanded(
                 flex: 3,
                 child: Semantics(
-                  label: '${entry.key} mastery ${pct.toInt()}%',
+                  label: '${entry.key} ${t('brain.masteryOverview')} ${pct.toInt()}%',
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(4),
                     child: LinearProgressIndicator(
@@ -463,14 +468,16 @@ class _GoalProgress extends StatelessWidget {
 // Insight tile
 // ---------------------------------------------------------------------------
 
-class _InsightTile extends StatelessWidget {
+class _InsightTile extends ConsumerWidget {
   const _InsightTile({required this.insight});
   final TeacherInsight insight;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final formatter = DateFormat.yMMMd();
+    final locale = ref.watch(localeProvider).languageCode;
+    final formatter = DateFormat.yMMMd(locale);
+    final t = ref.t;
 
     Color severityColor;
     switch (insight.severity.toLowerCase()) {
@@ -525,7 +532,7 @@ class _InsightTile extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,),
             const SizedBox(height: 4),
             Text(
-              'By ${insight.authorName}',
+              t('teacher.byAuthor', {'name': insight.authorName}),
               style: theme.textTheme.bodySmall?.copyWith(
                 fontStyle: FontStyle.italic,
               ),
@@ -541,14 +548,15 @@ class _InsightTile extends StatelessWidget {
 // Error retry
 // ---------------------------------------------------------------------------
 
-class _ErrorRetry extends StatelessWidget {
+class _ErrorRetry extends ConsumerWidget {
   const _ErrorRetry({required this.message, required this.onRetry});
   final String message;
   final VoidCallback onRetry;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final t = ref.t;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -563,7 +571,7 @@ class _ErrorRetry extends StatelessWidget {
             ElevatedButton.icon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh),
-              label: const Text('Retry'),
+              label: Text(t('common.retry')),
             ),
           ],
         ),

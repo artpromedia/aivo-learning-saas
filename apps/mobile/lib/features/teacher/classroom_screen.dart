@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:aivo_mobile/config/theme.dart';
+import 'package:aivo_mobile/core/i18n/translation_ext.dart';
 import 'package:aivo_mobile/data/repositories/family_repository.dart';
 
 // ---------------------------------------------------------------------------
@@ -30,15 +31,16 @@ class ClassroomScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final asyncClassroom = ref.watch(_classroomProvider);
+    final t = ref.t;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Classroom'),
+        title: Text(t('dashboard.myClassrooms')),
       ),
       body: asyncClassroom.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => _ErrorRetry(
-          message: 'Failed to load classroom',
+          message: t('dashboard.failedToLoadClassrooms'),
           onRetry: () => ref.invalidate(_classroomProvider),
         ),
         data: (summary) {
@@ -73,12 +75,13 @@ class ClassroomScreen extends ConsumerWidget {
 // Class summary bar
 // ---------------------------------------------------------------------------
 
-class _ClassSummaryBar extends StatelessWidget {
+class _ClassSummaryBar extends ConsumerWidget {
   const _ClassSummaryBar({required this.summary});
   final ClassroomSummary summary;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final t = ref.t;
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Row(
@@ -86,7 +89,7 @@ class _ClassSummaryBar extends StatelessWidget {
           Expanded(
             child: _StatPill(
               icon: Icons.bar_chart,
-              label: 'Avg',
+              label: t('dashboard.avgMastery'),
               value: '${(summary.classAverage * 100).toInt()}%',
               color: AivoColors.primary,
             ),
@@ -95,7 +98,7 @@ class _ClassSummaryBar extends StatelessWidget {
           Expanded(
             child: _StatPill(
               icon: Icons.warning_amber,
-              label: 'At Risk',
+              label: t('dashboard.atRisk'),
               value: '${summary.studentsAtRisk}',
               color: AivoColors.error,
             ),
@@ -104,7 +107,7 @@ class _ClassSummaryBar extends StatelessWidget {
           Expanded(
             child: _StatPill(
               icon: Icons.emoji_events,
-              label: 'Top',
+              label: t('teacher.topPerformers'),
               value: '${summary.topPerformers}',
               color: AivoColors.xpGold,
             ),
@@ -170,6 +173,7 @@ class _SearchSortBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final sortMode = ref.watch(_sortModeProvider);
+    final t = ref.t;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -177,14 +181,14 @@ class _SearchSortBar extends ConsumerWidget {
         children: [
           // Search field
           Semantics(
-            label: 'Search students',
+            label: t('teacher.searchStudents'),
             textField: true,
             child: TextField(
               onChanged: (v) =>
                   ref.read(_searchQueryProvider.notifier).state = v,
-              decoration: const InputDecoration(
-                hintText: 'Search students...',
-                prefixIcon: Icon(Icons.search),
+              decoration: InputDecoration(
+                hintText: t('teacher.searchStudentsHint'),
+                prefixIcon: const Icon(Icons.search),
                 isDense: true,
               ),
             ),
@@ -194,10 +198,10 @@ class _SearchSortBar extends ConsumerWidget {
           // Sort chips
           Row(
             children: [
-              Text('Sort by:', style: theme.textTheme.bodySmall),
+              Text(t('teacher.sortBy'), style: theme.textTheme.bodySmall),
               const SizedBox(width: 8),
               _SortChip(
-                label: 'Name',
+                label: t('teacher.sortName'),
                 selected: sortMode == _SortMode.name,
                 onTap: () => ref
                     .read(_sortModeProvider.notifier)
@@ -205,7 +209,7 @@ class _SearchSortBar extends ConsumerWidget {
               ),
               const SizedBox(width: 4),
               _SortChip(
-                label: 'Progress',
+                label: t('teacher.sortProgress'),
                 selected: sortMode == _SortMode.progress,
                 onTap: () => ref
                     .read(_sortModeProvider.notifier)
@@ -213,7 +217,7 @@ class _SearchSortBar extends ConsumerWidget {
               ),
               const SizedBox(width: 4),
               _SortChip(
-                label: 'Last Active',
+                label: t('teacher.sortLastActive'),
                 selected: sortMode == _SortMode.lastActive,
                 onTap: () => ref
                     .read(_sortModeProvider.notifier)
@@ -268,6 +272,7 @@ class _StudentList extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final query = ref.watch(_searchQueryProvider).toLowerCase();
     final sortMode = ref.watch(_sortModeProvider);
+    final t = ref.t;
 
     var filtered = students.where((s) {
       if (query.isEmpty) return true;
@@ -301,8 +306,8 @@ class _StudentList extends ConsumerWidget {
               const SizedBox(height: 16),
               Text(
                 query.isNotEmpty
-                    ? 'No students match "$query"'
-                    : 'No students in classroom',
+                    ? t('teacher.noStudentsMatch')
+                    : t('teacher.noStudents'),
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
             ],
@@ -326,20 +331,21 @@ class _StudentList extends ConsumerWidget {
 // Student card
 // ---------------------------------------------------------------------------
 
-class _StudentCard extends StatelessWidget {
+class _StudentCard extends ConsumerWidget {
   const _StudentCard({required this.student});
   final ClassroomStudent student;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final pct = (student.todayProgress * 100).clamp(0.0, 100.0);
+    final t = ref.t;
 
     return Semantics(
       button: true,
-      label: '${student.name}, progress ${pct.toInt()} percent'
-          '${student.atRisk ? ", at risk" : ""}',
+      label: '${student.name}, ${t('teacher.sortProgress')} ${pct.toInt()}%'
+          '${student.atRisk ? ", ${t('dashboard.atRisk')}" : ""}',
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         child: InkWell(
@@ -387,7 +393,7 @@ class _StudentCard extends StatelessWidget {
                           if (student.atRisk) ...[
                             const SizedBox(width: 6),
                             Semantics(
-                              label: 'At risk indicator',
+                              label: t('dashboard.atRisk'),
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 6, vertical: 2,),
@@ -398,7 +404,7 @@ class _StudentCard extends StatelessWidget {
                                       BorderRadius.circular(8),
                                 ),
                                 child: Text(
-                                  'At Risk',
+                                  t('dashboard.atRisk'),
                                   style: theme.textTheme.bodySmall
                                       ?.copyWith(
                                     color: AivoColors.error,
@@ -421,7 +427,7 @@ class _StudentCard extends StatelessWidget {
                           value: student.todayProgress.clamp(0.0, 1.0),
                           minHeight: 5,
                           semanticsLabel:
-                              'Today progress ${pct.toInt()}%',
+                              '${t('dashboard.todaysProgress')} ${pct.toInt()}%',
                         ),
                       ),
                     ],
@@ -506,14 +512,15 @@ class _FunctioningLevelBadge extends StatelessWidget {
 // Error retry
 // ---------------------------------------------------------------------------
 
-class _ErrorRetry extends StatelessWidget {
+class _ErrorRetry extends ConsumerWidget {
   const _ErrorRetry({required this.message, required this.onRetry});
   final String message;
   final VoidCallback onRetry;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final t = ref.t;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -528,7 +535,7 @@ class _ErrorRetry extends StatelessWidget {
             ElevatedButton.icon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh),
-              label: const Text('Retry'),
+              label: Text(t('common.retry')),
             ),
           ],
         ),
