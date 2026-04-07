@@ -59,6 +59,26 @@ describe("WebhookService", () => {
     expect(app.log.info).toHaveBeenCalled();
   });
 
+  it("should create TRIALING subscription for plans with trialDays", async () => {
+    const app = createMockApp();
+    const service = new WebhookService(app);
+
+    await service.handleEvent({
+      type: "checkout.session.completed",
+      id: "evt_trial_123",
+      data: {
+        object: {
+          metadata: { tenantId: UUID, planId: "STARTER" },
+          subscription: "sub_stripe_trial_123",
+        },
+      },
+    } as any);
+
+    // Verify db.insert was called (subscription creation)
+    expect(app.db.insert).toHaveBeenCalled();
+    expect(app.log.info).toHaveBeenCalled();
+  });
+
   it("should dispatch invoice.paid events", async () => {
     const app = createMockApp();
     const service = new WebhookService(app);
@@ -76,6 +96,28 @@ describe("WebhookService", () => {
     } as any);
 
     expect(app.db.update).toHaveBeenCalled();
+  });
+
+  it("should handle customer.subscription.updated for trial-to-active transition", async () => {
+    const app = createMockApp();
+    const service = new WebhookService(app);
+
+    await service.handleEvent({
+      type: "customer.subscription.updated",
+      id: "evt_sub_update_123",
+      data: {
+        object: {
+          id: "sub_123",
+          status: "active",
+          current_period_start: Math.floor(Date.now() / 1000),
+          current_period_end: Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60,
+        },
+      },
+    } as any);
+
+    // Should update the subscription status to ACTIVE
+    expect(app.db.update).toHaveBeenCalled();
+    expect(app.log.info).toHaveBeenCalled();
   });
 
   it("should log unknown event types", async () => {

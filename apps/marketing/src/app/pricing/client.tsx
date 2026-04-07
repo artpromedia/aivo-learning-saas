@@ -62,14 +62,16 @@ export function PricingPageClient() {
             description:
               "AI-powered personalized learning platform with Brain Clone AI technology.",
             brand: { "@type": "Brand", name: "AIVO" },
-            offers: pricingPlans.map((plan) => ({
-              "@type": "Offer",
-              name: plan.name,
-              price: annual ? plan.yearlyPrice : plan.monthlyPrice,
-              priceCurrency: "USD",
-              priceValidUntil: "2027-12-31",
-              availability: "https://schema.org/InStock",
-            })),
+            offers: pricingPlans
+              .filter((plan) => !plan.contactSales)
+              .map((plan) => ({
+                "@type": "Offer",
+                name: plan.name,
+                price: annual ? plan.yearlyPrice : plan.monthlyPrice,
+                priceCurrency: "USD",
+                priceValidUntil: "2027-12-31",
+                availability: "https://schema.org/InStock",
+              })),
           }),
         }}
       />
@@ -91,7 +93,7 @@ export function PricingPageClient() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="mt-4 text-lg text-aivo-navy-500 max-w-2xl mx-auto"
           >
-            Start free and scale as your family or school grows. No hidden fees,
+            Choose the plan that fits your family or school. No hidden fees,
             no surprises.
           </motion.p>
 
@@ -137,7 +139,7 @@ export function PricingPageClient() {
             </span>
             {annual && (
               <span className="ml-1 rounded-full bg-aivo-teal-50 px-2.5 py-0.5 text-xs font-semibold text-aivo-teal-700">
-                Save up to 38%
+                Save up to 20%
               </span>
             )}
           </motion.div>
@@ -146,7 +148,7 @@ export function PricingPageClient() {
 
       {/* Plan cards */}
       <section className="mx-auto max-w-7xl px-6 -mt-4 pb-20">
-        <div className="grid gap-8 md:grid-cols-3">
+        <div className="grid gap-8 md:grid-cols-4">
           {pricingPlans.map((plan, i) => {
             const price = annual ? plan.yearlyPrice : plan.monthlyPrice;
             const period = annual ? "/yr" : "/mo";
@@ -187,10 +189,12 @@ export function PricingPageClient() {
                       transition={{ duration: 0.2 }}
                       className="text-4xl font-bold tracking-tight text-aivo-navy-800"
                     >
-                      {price === 0 ? "Free" : `$${price}`}
+                      {plan.contactSales
+                        ? "Contact Us"
+                        : `$${price}`}
                     </motion.span>
                   </AnimatePresence>
-                  {price > 0 && (
+                  {!plan.contactSales && price > 0 && (
                     <span className="ml-1 text-sm text-aivo-navy-400">
                       {period}
                     </span>
@@ -209,7 +213,7 @@ export function PricingPageClient() {
                 </ul>
 
                 <Link
-                  href={plan.name === "Premium" ? "/demo" : "/get-started"}
+                  href={plan.contactSales ? "/demo" : "/get-started"}
                   className={cn(
                     "mt-8 block w-full rounded-lg px-4 py-3 text-center text-sm font-semibold transition-colors",
                     plan.popular
@@ -234,20 +238,23 @@ export function PricingPageClient() {
           />
 
           <div className="overflow-x-auto rounded-xl bg-white shadow-sm">
-            <table className="w-full min-w-[600px] text-sm">
+            <table className="w-full min-w-[700px] text-sm">
               <thead>
                 <tr className="border-b border-aivo-navy-100">
                   <th className="py-4 px-6 text-left font-semibold text-aivo-navy-800">
                     Feature
                   </th>
                   <th className="py-4 px-6 text-center font-semibold text-aivo-navy-800">
-                    Free
+                    Starter
                   </th>
                   <th className="py-4 px-6 text-center font-semibold text-aivo-purple-600">
-                    Pro
+                    Family
                   </th>
                   <th className="py-4 px-6 text-center font-semibold text-aivo-navy-800">
                     Premium
+                  </th>
+                  <th className="py-4 px-6 text-center font-semibold text-aivo-navy-800">
+                    Enterprise
                   </th>
                 </tr>
               </thead>
@@ -263,7 +270,7 @@ export function PricingPageClient() {
                     <td className="py-3.5 px-6 font-medium text-aivo-navy-700">
                       {row.feature}
                     </td>
-                    {(["free", "pro", "premium"] as const).map((tier) => {
+                    {(["starter", "family", "premium", "enterprise"] as const).map((tier) => {
                       const value = row[tier];
                       return (
                         <td

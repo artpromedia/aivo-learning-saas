@@ -145,13 +145,13 @@ export default function TermsOfServicePage() {
               4. Subscription and Billing
             </h2>
             <p className="text-aivo-navy-600 leading-relaxed mb-4">
-              AIVO offers multiple subscription plans, including a Free plan, a
-              Pro plan, and a Premium plan. The Pro plan is available at $39.99
-              per month when billed monthly, or $24.99 per month when billed
-              annually. Premium plan pricing is available for districts and
-              institutional accounts upon request. The features available under
-              each plan are described on our pricing page and may be updated
-              from time to time.
+              AIVO offers multiple subscription plans, including a Starter
+              plan, a Family plan, a Premium plan, and an Enterprise plan. Plan
+              pricing starts at $19.99 per month for Starter when billed
+              monthly, with discounts available for annual billing. Enterprise
+              plan pricing is available for schools and districts upon request.
+              The features available under each plan are described on our
+              pricing page and may be updated from time to time.
             </p>
             <p className="text-aivo-navy-600 leading-relaxed mb-4">
               Paid subscriptions are billed on a recurring basis (monthly or

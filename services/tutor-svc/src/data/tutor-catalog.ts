@@ -13,7 +13,7 @@ export const TUTOR_CATALOG: CatalogItem[] = [
     name: "Nova — Math Tutor",
     subject: "math",
     persona: "nova",
-    price: 4.99,
+    price: 9.99,
     description:
       "Cosmos-themed math tutor with step-by-step visual explanations",
   },
@@ -22,7 +22,7 @@ export const TUTOR_CATALOG: CatalogItem[] = [
     name: "Sage — Reading & Writing Tutor",
     subject: "ela",
     persona: "sage",
-    price: 4.99,
+    price: 9.99,
     description:
       "Narrative-driven ELA tutor with Socratic questioning",
   },
@@ -31,7 +31,7 @@ export const TUTOR_CATALOG: CatalogItem[] = [
     name: "Spark — Science Tutor",
     subject: "science",
     persona: "spark",
-    price: 4.99,
+    price: 9.99,
     description:
       "Experiment-first science tutor with hypothesis-driven learning",
   },
@@ -40,7 +40,7 @@ export const TUTOR_CATALOG: CatalogItem[] = [
     name: "Chrono — History Tutor",
     subject: "history",
     persona: "chrono",
-    price: 4.99,
+    price: 9.99,
     description:
       "Time-travel narrative history tutor with primary source analysis",
   },
@@ -49,7 +49,7 @@ export const TUTOR_CATALOG: CatalogItem[] = [
     name: "Pixel — Coding Tutor",
     subject: "coding",
     persona: "pixel",
-    price: 4.99,
+    price: 9.99,
     description:
       "Pair-programming coding tutor with block-to-text progression",
   },
@@ -58,7 +58,7 @@ export const TUTOR_CATALOG: CatalogItem[] = [
     name: "Harmony — SEL Coach",
     subject: "sel",
     persona: "harmony",
-    price: 4.99,
+    price: 9.99,
     description:
       "Garden-themed social-emotional learning coach with CASEL-aligned competency building",
   },
@@ -67,7 +67,7 @@ export const TUTOR_CATALOG: CatalogItem[] = [
     name: "Echo — Speech Practice Companion",
     subject: "speech",
     persona: "echo",
-    price: 4.99,
+    price: 9.99,
     description:
       "Musical, gamified speech and language practice companion with sound safari adventures",
   },
@@ -76,8 +76,8 @@ export const TUTOR_CATALOG: CatalogItem[] = [
     name: "All Tutors Bundle",
     subject: "all",
     persona: "bundle",
-    price: 19.99,
-    description: "Full access to all 7 AI tutors at 40%+ savings",
+    price: 49.99,
+    description: "Full access to all 7 AI tutors — save over 28% vs. individual pricing",
   },
 ];
 

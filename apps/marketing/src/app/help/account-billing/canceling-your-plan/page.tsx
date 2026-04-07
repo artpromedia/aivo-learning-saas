@@ -332,13 +332,13 @@ export default function CancelingYourPlanPage() {
               Canceling During a Free Trial
             </h2>
             <p className="text-aivo-navy-600 leading-relaxed">
-              If you are currently on the 14-day free trial of the Pro plan,
+              If you are currently on the 30-day free trial of any paid plan,
               you can cancel at any time before the trial ends to avoid being
               charged. Follow the same steps above to cancel.
             </p>
             <p className="text-aivo-navy-600 leading-relaxed">
               When you cancel during a trial, your account immediately reverts
-              to the Free plan (since no billing period is active). You will
+              to the Starter plan (since no billing period is active). You will
               not be charged. Any data created during the trial is preserved
               under the standard data retention policy.
             </p>

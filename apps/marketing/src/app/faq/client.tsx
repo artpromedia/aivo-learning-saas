@@ -19,9 +19,9 @@ interface FaqEntry {
 const faqs: FaqEntry[] = [
   // ---- Pricing ----
   {
-    question: "Is there really a free plan?",
+    question: "What's included in the Starter plan?",
     answer:
-      "Yes! Our Free plan gives you access to core features for one student, including Brain Clone AI assessment and 2 AI Tutor sessions per day. No credit card required.",
+      "The Starter plan ($19.99/mo) includes core features for one student, including Brain Clone AI assessment and 2 AI Tutor sessions per day. You can add individual AI Tutors as add-ons for $9.99/mo each.",
     category: "Pricing",
   },
   {
@@ -33,25 +33,25 @@ const faqs: FaqEntry[] = [
   {
     question: "Do you offer school or district pricing?",
     answer:
-      "Yes! Our Premium plan is designed for schools and districts. Contact our sales team for volume pricing, custom contracts, and implementation support.",
+      "Yes! Our Enterprise plan is designed for schools and districts. Contact our sales team for volume pricing, custom contracts, and implementation support.",
     category: "Pricing",
   },
   {
     question: "How does the free trial work?",
     answer:
-      "The Pro plan comes with a 14-day free trial. You get full access to all Pro features. Cancel anytime during the trial and you won't be charged.",
+      "All paid plans — Starter, Family, and Premium — include a 30-day free trial. You get full access to every feature in your chosen plan. Cancel anytime during the trial and you won't be charged.",
     category: "Pricing",
   },
   {
     question: "Can I use AIVO offline?",
     answer:
-      "Pro and Premium plans include offline access through our mobile app. Lessons and tutor sessions sync automatically when you reconnect.",
+      "Premium and Enterprise plans include offline access through our mobile app. Lessons and tutor sessions sync automatically when you reconnect.",
     category: "Pricing",
   },
   {
     question: "What subjects does AIVO cover?",
     answer:
-      "AIVO covers Math, English Language Arts, Science, History, and Coding through our seven specialized AI Tutors.",
+      "AIVO covers Math, English Language Arts, Science, History, Coding, Social-Emotional Learning (SEL), and Speech through our seven specialized AI Tutors.",
     category: "Pricing",
   },
   {
@@ -77,7 +77,7 @@ const faqs: FaqEntry[] = [
   {
     question: "What devices does AIVO support?",
     answer:
-      "AIVO works on any modern web browser (Chrome, Safari, Firefox, Edge) and our native mobile apps for iOS and Android. Offline access is available on Pro and Premium plans.",
+      "AIVO works on any modern web browser (Chrome, Safari, Firefox, Edge) and our native mobile apps for iOS and Android. Offline access is available on Premium and Enterprise plans.",
     category: "Getting Started",
   },
 

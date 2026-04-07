@@ -184,6 +184,8 @@ export class WebhookService {
     let status = sub.status;
     if (stripeSubscription.status === "active") {
       status = "ACTIVE";
+    } else if (stripeSubscription.status === "trialing") {
+      status = "TRIALING";
     } else if (stripeSubscription.status === "past_due") {
       status = "PAST_DUE";
     } else if (stripeSubscription.status === "canceled") {

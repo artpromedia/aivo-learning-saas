@@ -40,6 +40,10 @@ export async function stripeWebhookRoute(app: FastifyInstance) {
           app.log.info({ subscriptionId: (event.data.object as any).id }, "Subscription deleted in Stripe");
           break;
 
+        case "customer.subscription.updated":
+          await subscriptionService.handleSubscriptionUpdated(event as any);
+          break;
+
         default:
           app.log.debug({ type: event.type }, "Unhandled Stripe event type");
       }

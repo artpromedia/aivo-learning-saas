@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Offline Mode Setup | Help | AIVO",
   description:
-    "Learn how to enable AIVO's offline mode on Pro and Premium plans so your child can continue learning without an internet connection.",
+    "Learn how to enable AIVO's offline mode on Premium and Enterprise plans so your child can continue learning without an internet connection.",
   openGraph: {
     title: "Offline Mode Setup | AIVO Help",
     description:
@@ -108,15 +108,15 @@ export default function OfflineModeSetupPage() {
               Offline Mode Availability
             </h2>
             <p className="text-aivo-navy-600 leading-relaxed">
-              Offline mode is available on <strong>Pro</strong> and{" "}
-              <strong>Premium</strong> plans only. It is supported on the AIVO
+              Offline mode is available on <strong>Premium</strong> and{" "}
+              <strong>Enterprise</strong> plans only. It is supported on the AIVO
               mobile app for iOS and Android. Offline mode is not available on
               the web version.
             </p>
             <div className="mt-6 space-y-4">
               <div className="rounded-xl border border-aivo-navy-100 bg-white p-6 shadow-sm">
                 <h3 className="text-base font-bold text-aivo-navy-800">
-                  Pro Plan
+                  Premium Plan
                 </h3>
                 <p className="mt-2 text-sm text-aivo-navy-600">
                   Offline mode included. Download up to 50 activities per
@@ -125,7 +125,7 @@ export default function OfflineModeSetupPage() {
               </div>
               <div className="rounded-xl border border-aivo-navy-100 bg-white p-6 shadow-sm">
                 <h3 className="text-base font-bold text-aivo-navy-800">
-                  Premium Plan
+                  Enterprise Plan
                 </h3>
                 <p className="mt-2 text-sm text-aivo-navy-600">
                   Offline mode included. Download up to 50 activities per
@@ -136,8 +136,8 @@ export default function OfflineModeSetupPage() {
             </div>
             <div className="mt-6 rounded-xl bg-aivo-navy-50 p-6">
               <p className="text-sm text-aivo-navy-600">
-                <strong>Free plan users:</strong> Offline mode is not available
-                on the Free plan. You can{" "}
+                <strong>Starter and Family plan users:</strong> Offline mode is
+                not available on the Starter or Family plans. You can{" "}
                 <Link
                   href="/help/account-billing/managing-your-subscription"
                   className="text-aivo-purple-600 underline"
