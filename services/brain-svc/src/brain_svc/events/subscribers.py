@@ -152,6 +152,9 @@ async def _on_assessment_baseline_completed(msg: Msg) -> None:
             brain_state_id=result["brain_state_id"],
             main_brain_version=result["main_brain_version"],
             functioning_level=result["functioning_level"],
+            domain_scores=data.get("domains"),
+            iep_goals=data.get("iepGoals"),
+            accommodations=data.get("iepAccommodations"),
         )
         await msg.ack()
     except Exception:

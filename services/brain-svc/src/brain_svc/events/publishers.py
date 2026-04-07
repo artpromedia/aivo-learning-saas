@@ -15,13 +15,26 @@ async def publish_brain_cloned(
     brain_state_id: str,
     main_brain_version: str,
     functioning_level: str,
+    domain_scores: dict[str, float] | None = None,
+    iep_goals: list[dict[str, Any]] | None = None,
+    accommodations: list[str] | None = None,
 ) -> None:
-    await publish_event("aivo.brain.cloned", {
+    payload: dict[str, Any] = {
         "learnerId": learner_id,
         "brainStateId": brain_state_id,
         "mainBrainVersion": main_brain_version,
         "functioningLevel": functioning_level,
-    })
+    }
+    if domain_scores is not None:
+        payload["domainScores"] = domain_scores
+    if iep_goals is not None:
+        payload["iepGoals"] = [
+            {"id": g.get("id", ""), "domain": g.get("domain", ""), "targetMetric": g.get("target_metric", ""), "text": g.get("text", "")}
+            for g in iep_goals
+        ]
+    if accommodations is not None:
+        payload["accommodations"] = accommodations
+    await publish_event("aivo.brain.cloned", payload)
 
 
 async def publish_brain_updated(
