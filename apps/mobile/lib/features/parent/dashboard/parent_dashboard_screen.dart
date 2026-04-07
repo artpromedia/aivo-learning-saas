@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:aivo_mobile/config/theme.dart';
 import 'package:aivo_mobile/core/auth/auth_provider.dart';
+import 'package:aivo_mobile/data/models/recommendation.dart';
 import 'package:aivo_mobile/data/repositories/family_repository.dart';
 
 // ---------------------------------------------------------------------------
@@ -32,6 +33,20 @@ final _dashboardFutureProvider =
     unreadNotifications: 0,
     learners: learners,
   );
+});
+
+final _pendingRecommendationsProvider =
+    FutureProvider.autoDispose<List<Recommendation>>((ref) async {
+  final repo = ref.watch(familyRepositoryProvider);
+  final rawLearners = await repo.getLearners();
+  final pending = <Recommendation>[];
+  for (final learnerMap in rawLearners) {
+    final learnerId = learnerMap['id'] as String;
+    final recs = await repo.getRecommendations(learnerId);
+    pending.addAll(recs.where((r) => r.status == 'pending'));
+  }
+  pending.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+  return pending;
 });
 
 final _selectedNavIndexProvider = StateProvider<int>((_) => 0);
@@ -153,7 +168,12 @@ class _DashboardTab extends ConsumerWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
+
+              // Recommendation preview
+              const _RecommendationPreview(),
+
+              const SizedBox(height: 16),
 
               // Children header
               Padding(
@@ -519,6 +539,96 @@ class _SettingsNavTab extends StatelessWidget {
     });
     return const Scaffold(
       body: Center(child: CircularProgressIndicator()),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Recommendation preview card
+// ---------------------------------------------------------------------------
+
+class _RecommendationPreview extends ConsumerWidget {
+  const _RecommendationPreview();
+
+  static const _typeIcons = <String, IconData>{
+    'CURRICULUM_ADJUSTMENT': Icons.tune,
+    'TUTOR_SUGGESTION': Icons.school,
+    'IEP_GOAL_UPDATE': Icons.flag,
+    'ASSESSMENT_REBASELINE': Icons.psychology,
+    'REGRESSION_ALERT': Icons.trending_down,
+    'accommodation': Icons.accessibility_new,
+    'curriculum': Icons.school,
+    'goal': Icons.flag,
+    'tutor': Icons.smart_toy,
+  };
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final asyncRecs = ref.watch(_pendingRecommendationsProvider);
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return asyncRecs.when(
+      loading: () => const SizedBox.shrink(),
+      error: (_, __) => const SizedBox.shrink(),
+      data: (recs) {
+        if (recs.isEmpty) return const SizedBox.shrink();
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Semantics(
+            button: true,
+            label: '${recs.length} new recommendations',
+            child: Card(
+              margin: EdgeInsets.zero,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(16),
+                onTap: () => context.go('/parent/recommendations'),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      // Type icon previews (first 3)
+                      ...recs.take(3).map((r) => Padding(
+                            padding: const EdgeInsets.only(right: 6),
+                            child: CircleAvatar(
+                              radius: 16,
+                              backgroundColor:
+                                  colorScheme.primaryContainer,
+                              child: Icon(
+                                _typeIcons[r.type] ?? Icons.lightbulb,
+                                size: 16,
+                                color: colorScheme.onPrimaryContainer,
+                              ),
+                            ),
+                          )),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${recs.length} new recommendation${recs.length == 1 ? '' : 's'}',
+                              style: theme.textTheme.titleSmall,
+                            ),
+                            Text(
+                              'Tap to review',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: colorScheme.outline,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(Icons.chevron_right, color: colorScheme.outline),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

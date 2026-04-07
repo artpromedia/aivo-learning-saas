@@ -3,11 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:aivo_mobile/features/onboarding/screens/add_child_screen.dart';
+import 'package:aivo_mobile/features/onboarding/screens/assessment_complete_screen.dart';
+import 'package:aivo_mobile/features/onboarding/screens/baseline_assessment_screen.dart';
+import 'package:aivo_mobile/features/onboarding/screens/brain_reveal_screen.dart';
 import 'package:aivo_mobile/features/onboarding/screens/parent_assessment_screen.dart';
 import 'package:aivo_mobile/features/learner/home/learner_home_screen.dart';
 import 'package:aivo_mobile/features/learner/pin/pin_gate_screen.dart';
 import 'package:aivo_mobile/features/parent/dashboard/parent_dashboard_screen.dart';
 import 'package:aivo_mobile/features/parent/dashboard/child_detail_screen.dart';
+import 'package:aivo_mobile/features/parent/recommendations/recommendation_list_screen.dart';
 import 'package:aivo_mobile/features/parent/settings/family_settings_screen.dart';
 
 // ---------------------------------------------------------------------------
@@ -127,12 +131,17 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/onboarding/baseline',
         name: 'onboarding-baseline',
-        builder: (_, __) => const _Placeholder('Baseline'),
+        builder: (_, __) => const BaselineAssessmentScreen(),
+      ),
+      GoRoute(
+        path: '/onboarding/assessment-complete',
+        name: 'onboarding-assessment-complete',
+        builder: (_, __) => const AssessmentCompleteScreen(),
       ),
       GoRoute(
         path: '/onboarding/brain-reveal',
         name: 'onboarding-brain-reveal',
-        builder: (_, __) => const _Placeholder('Brain Reveal'),
+        builder: (_, __) => const BrainRevealScreen(),
       ),
 
       // ---- Learner ----
@@ -248,7 +257,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/parent/recommendations',
         name: 'parent-recommendations',
-        builder: (_, __) => const _Placeholder('Recommendations'),
+        builder: (_, __) => const RecommendationListScreen(),
       ),
       GoRoute(
         path: '/parent/brain/:learnerId',
