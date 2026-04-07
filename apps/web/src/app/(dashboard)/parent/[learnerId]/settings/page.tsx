@@ -26,6 +26,8 @@ import { Modal } from "@/components/ui/Modal";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
 import { apiFetch } from "@/lib/api";
+import { API_ROUTES } from "@/lib/api-routes";
+import { LanguageSelect } from "@/components/ui/LanguageSelect";
 import { PinSection } from "./pin-section";
 
 interface LearnerSettings {
@@ -85,6 +87,10 @@ export default function LearnerSettingsPage() {
   // Subscription / reactivation state
   const [subscriptionStatus, setSubscriptionStatus] = useState<SubscriptionStatus | null>(null);
   const [reactivating, setReactivating] = useState(false);
+
+  // Language preference
+  const [parentLanguage, setParentLanguage] = useState("");
+  const [savingLanguage, setSavingLanguage] = useState(false);
 
   // Learner name for confirmation
   const [learnerName, setLearnerName] = useState("");
@@ -185,6 +191,31 @@ export default function LearnerSettingsPage() {
       setReactivating(false);
     }
   };
+
+  const handleLanguageChange = async (locale: string) => {
+    setSavingLanguage(true);
+    setError(null);
+    try {
+      document.cookie = `NEXT_LOCALE=${locale};path=/;max-age=31536000`;
+      await apiFetch(API_ROUTES.USER.UPDATE_PREFERENCES, {
+        method: "PATCH",
+        body: JSON.stringify({ preferredLanguage: locale }),
+      });
+      window.location.reload();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update language");
+      setSavingLanguage(false);
+    }
+  };
+
+  useEffect(() => {
+    // Read current locale from cookie
+    const localeCookie = document.cookie
+      .split("; ")
+      .find((c) => c.startsWith("NEXT_LOCALE="))
+      ?.split("=")[1];
+    if (localeCookie) setParentLanguage(localeCookie);
+  }, []);
 
   useEffect(() => {
     async function fetchSettings() {
@@ -484,6 +515,27 @@ export default function LearnerSettingsPage() {
 
           {/* Learner PIN */}
           <PinSection learnerId={learnerId} hasPinSet={hasPinSet} />
+
+          {/* Language Preferences */}
+          <Card>
+            <CardHeader>
+              <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                <Settings size={18} className="text-[#7C3AED]" />
+                Language Preferences
+              </h3>
+            </CardHeader>
+            <CardBody className="space-y-4">
+              <LanguageSelect
+                value={parentLanguage}
+                onChange={handleLanguageChange}
+                label="Your Language"
+                disabled={savingLanguage}
+              />
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                Changing the language will reload the page to apply the new locale across the entire app.
+              </p>
+            </CardBody>
+          </Card>
 
           {/* Data Export */}
           <Card>

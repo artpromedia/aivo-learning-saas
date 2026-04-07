@@ -9,6 +9,9 @@ import 'package:intl/intl.dart';
 import 'package:aivo_mobile/core/api/api_client.dart';
 import 'package:aivo_mobile/core/api/endpoints.dart';
 import 'package:aivo_mobile/core/auth/secure_storage.dart';
+import 'package:aivo_mobile/core/i18n/language_picker_field.dart';
+import 'package:aivo_mobile/core/i18n/locale_provider.dart';
+import 'package:aivo_mobile/core/i18n/t.dart';
 
 /// Grade levels offered during child creation.
 const List<String> _gradeOptions = [
@@ -27,6 +30,24 @@ const List<String> _gradeOptions = [
   'Grade 11',
   'Grade 12',
 ];
+
+/// Grade value → i18n key mapping.
+const Map<String, String> _gradeI18nKeys = {
+  'Pre-K': 'onboarding.gradePreK',
+  'Kindergarten': 'onboarding.gradeKindergarten',
+  'Grade 1': 'onboarding.grade1',
+  'Grade 2': 'onboarding.grade2',
+  'Grade 3': 'onboarding.grade3',
+  'Grade 4': 'onboarding.grade4',
+  'Grade 5': 'onboarding.grade5',
+  'Grade 6': 'onboarding.grade6',
+  'Grade 7': 'onboarding.grade7',
+  'Grade 8': 'onboarding.grade8',
+  'Grade 9': 'onboarding.grade9',
+  'Grade 10': 'onboarding.grade10',
+  'Grade 11': 'onboarding.grade11',
+  'Grade 12': 'onboarding.grade12',
+};
 
 /// Screen for adding a child (learner) during onboarding.
 class AddChildScreen extends ConsumerStatefulWidget {
@@ -48,6 +69,7 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
   DateTime? _dateOfBirth;
   String? _selectedGrade;
   File? _profileImage;
+  String? _childLanguage;
   bool _isSubmitting = false;
   String? _errorMessage;
 
@@ -69,7 +91,7 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
       initialDate: _dateOfBirth ?? DateTime(now.year - 8, now.month, now.day),
       firstDate: DateTime(now.year - 22),
       lastDate: now,
-      helpText: "Select your child's date of birth",
+      helpText: t('onboarding.selectDateOfBirth'),
     );
     if (picked != null && mounted) {
       setState(() {
@@ -87,12 +109,12 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
           children: [
             ListTile(
               leading: const Icon(Icons.camera_alt_outlined),
-              title: const Text('Take a photo'),
+              title: Text(t('onboarding.takePhoto')),
               onTap: () => Navigator.pop(ctx, ImageSource.camera),
             ),
             ListTile(
               leading: const Icon(Icons.photo_library_outlined),
-              title: const Text('Choose from gallery'),
+              title: Text(t('onboarding.chooseFromGallery')),
               onTap: () => Navigator.pop(ctx, ImageSource.gallery),
             ),
           ],
@@ -121,13 +143,13 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
 
     if (_dateOfBirth == null) {
       setState(() {
-        _errorMessage = 'Please select a date of birth';
+        _errorMessage = t('onboarding.dateOfBirthRequired');
       });
       return;
     }
     if (_selectedGrade == null) {
       setState(() {
-        _errorMessage = 'Please select a grade level';
+        _errorMessage = t('onboarding.gradeLevelRequired');
       });
       return;
     }
@@ -136,13 +158,13 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
     final confirmPin = _confirmPinController.text.trim();
     if (pin.isEmpty || !RegExp(r'^\d{4,6}$').hasMatch(pin)) {
       setState(() {
-        _errorMessage = 'Please enter a 4-6 digit PIN';
+        _errorMessage = t('onboarding.pinMustBe4to6Digits');
       });
       return;
     }
     if (pin != confirmPin) {
       setState(() {
-        _errorMessage = 'PINs do not match';
+        _errorMessage = t('onboarding.pinsDoNotMatch');
       });
       return;
     }
@@ -168,6 +190,7 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
             'dateOfBirth': _dateOfBirth!.toIso8601String(),
             'gradeLevel': _selectedGrade,
             'pin': _pinController.text.trim(),
+            'preferredLanguage': _childLanguage ?? ref.read(localeProvider).languageCode,
           },
         );
       } else {
@@ -178,6 +201,7 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
             'dateOfBirth': _dateOfBirth!.toIso8601String(),
             'gradeLevel': _selectedGrade,
             'pin': _pinController.text.trim(),
+            'preferredLanguage': _childLanguage ?? ref.read(localeProvider).languageCode,
           },
         );
       }
@@ -198,7 +222,7 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _errorMessage = 'Failed to add child. Please try again.';
+          _errorMessage = t('errors.pleaseTryAgain');
         });
       }
     } finally {
@@ -218,7 +242,7 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Your Child'),
+        title: Text(t('onboarding.addChild')),
       ),
       body: SafeArea(
         child: Center(
@@ -234,14 +258,14 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
                     Semantics(
                       header: true,
                       child: Text(
-                        'Tell us about your child',
+                        t('onboarding.tellUsAboutChild'),
                         style: theme.textTheme.headlineSmall,
                         textAlign: TextAlign.center,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'This helps us personalize their learning experience.',
+                      t('onboarding.tellUsAboutChildSubtitle'),
                       style: theme.textTheme.bodyMedium,
                       textAlign: TextAlign.center,
                     ),
@@ -281,7 +305,7 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
                     // ---- Profile image ----
                     Center(
                       child: Semantics(
-                        label: 'Profile picture. Tap to change.',
+                        label: t('onboarding.addPhotoOptional'),
                         button: true,
                         child: GestureDetector(
                           onTap: _isSubmitting ? null : _pickProfileImage,
@@ -324,7 +348,7 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
                     const SizedBox(height: 8),
                     Center(
                       child: Text(
-                        'Add a photo (optional)',
+                        t('onboarding.addPhotoOptional'),
                         style: theme.textTheme.bodySmall,
                       ),
                     ),
@@ -332,7 +356,7 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
 
                     // ---- Name field ----
                     Semantics(
-                      label: "Child's name",
+                      label: t('onboarding.childName'),
                       textField: true,
                       child: TextFormField(
                         controller: _nameController,
@@ -340,17 +364,17 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
                         textCapitalization: TextCapitalization.words,
                         textInputAction: TextInputAction.next,
                         enabled: !_isSubmitting,
-                        decoration: const InputDecoration(
-                          labelText: "Child's Name",
-                          hintText: 'First name',
-                          prefixIcon: Icon(Icons.child_care_outlined),
+                        decoration: InputDecoration(
+                          labelText: t('onboarding.childName'),
+                          hintText: t('onboarding.firstName'),
+                          prefixIcon: const Icon(Icons.child_care_outlined),
                         ),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
-                            return "Child's name is required";
+                            return t('onboarding.childNameRequired');
                           }
                           if (value.trim().length < 2) {
-                            return 'Name must be at least 2 characters';
+                            return t('onboarding.childNameRequired');
                           }
                           return null;
                         },
@@ -360,20 +384,20 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
 
                     // ---- Date of birth ----
                     Semantics(
-                      label: 'Date of birth',
+                      label: t('onboarding.dateOfBirth'),
                       button: true,
                       child: InkWell(
                         onTap: _isSubmitting ? null : _pickDateOfBirth,
                         borderRadius: BorderRadius.circular(12),
                         child: InputDecorator(
-                          decoration: const InputDecoration(
-                            labelText: 'Date of Birth',
-                            prefixIcon: Icon(Icons.cake_outlined),
+                          decoration: InputDecoration(
+                            labelText: t('onboarding.dateOfBirth'),
+                            prefixIcon: const Icon(Icons.cake_outlined),
                           ),
                           child: Text(
                             _dateOfBirth != null
                                 ? dateFormat.format(_dateOfBirth!)
-                                : 'Select date',
+                                : t('onboarding.selectDate'),
                             style: _dateOfBirth != null
                                 ? theme.textTheme.bodyLarge
                                 : theme.textTheme.bodyMedium?.copyWith(
@@ -387,17 +411,19 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
 
                     // ---- Grade level ----
                     Semantics(
-                      label: 'Grade level',
+                      label: t('onboarding.enrolledGrade'),
                       child: DropdownButtonFormField<String>(
                         initialValue: _selectedGrade,
-                        decoration: const InputDecoration(
-                          labelText: 'Grade Level',
-                          prefixIcon: Icon(Icons.school_outlined),
+                        decoration: InputDecoration(
+                          labelText: t('onboarding.enrolledGrade'),
+                          prefixIcon: const Icon(Icons.school_outlined),
                         ),
                         items: _gradeOptions
                             .map((grade) => DropdownMenuItem(
                                   value: grade,
-                                  child: Text(grade),
+                                  child: Text(
+                                    t(_gradeI18nKeys[grade] ?? grade),
+                                  ),
                                 ),)
                             .toList(),
                         onChanged: _isSubmitting
@@ -409,7 +435,7 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
                               },
                         validator: (value) {
                           if (value == null) {
-                            return 'Please select a grade level';
+                            return t('onboarding.gradeLevelRequired');
                           }
                           return null;
                         },
@@ -417,9 +443,30 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
                     ),
                     const SizedBox(height: 16),
 
+                    // ---- Child's preferred language ----
+                    Semantics(
+                      label: t('onboarding.childPreferredLanguage'),
+                      child: LanguagePickerField(
+                        selectedLocaleCode: _childLanguage,
+                        onChanged: (code) =>
+                            setState(() => _childLanguage = code),
+                        labelText: t('onboarding.childPreferredLanguage'),
+                        enabled: !_isSubmitting,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: Text(
+                        t('onboarding.childLanguageHint'),
+                        style: theme.textTheme.bodySmall,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
                     // ---- PIN field ----
                     Semantics(
-                      label: 'Create a PIN for your child',
+                      label: t('onboarding.createLearnerPin'),
                       textField: true,
                       child: TextFormField(
                         controller: _pinController,
@@ -434,10 +481,9 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
                         ),
                         textAlign: TextAlign.center,
                         decoration: InputDecoration(
-                          labelText: 'Create PIN',
-                          hintText: 'Enter 4-6 digits',
-                          helperText:
-                              'Your child will use this PIN to access their dashboard',
+                          labelText: t('onboarding.createLearnerPin'),
+                          hintText: t('onboarding.pinMustBe4to6Digits'),
+                          helperText: t('onboarding.pinHelperText'),
                           prefixIcon: const Icon(Icons.pin_outlined),
                           counterText: '',
                           suffixIcon: IconButton(
@@ -451,10 +497,10 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'PIN is required';
+                            return t('onboarding.pinRequired');
                           }
                           if (!RegExp(r'^\d{4,6}$').hasMatch(value)) {
-                            return 'PIN must be 4-6 digits';
+                            return t('onboarding.pinMustBe4to6Digits');
                           }
                           return null;
                         },
@@ -464,7 +510,7 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
 
                     // ---- Confirm PIN field ----
                     Semantics(
-                      label: 'Confirm PIN',
+                      label: t('onboarding.confirmLearnerPin'),
                       textField: true,
                       child: TextFormField(
                         controller: _confirmPinController,
@@ -479,8 +525,8 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
                         ),
                         textAlign: TextAlign.center,
                         decoration: InputDecoration(
-                          labelText: 'Confirm PIN',
-                          hintText: 'Re-enter PIN',
+                          labelText: t('onboarding.confirmLearnerPin'),
+                          hintText: t('onboarding.reenterPin'),
                           prefixIcon: const Icon(Icons.pin_outlined),
                           counterText: '',
                           suffixIcon: IconButton(
@@ -495,7 +541,7 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
                         ),
                         validator: (value) {
                           if (value != _pinController.text) {
-                            return 'PINs do not match';
+                            return t('onboarding.pinsDoNotMatch');
                           }
                           return null;
                         },
@@ -517,7 +563,7 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
                                   color: colorScheme.onPrimary,
                                 ),
                               )
-                            : const Text('Continue'),
+                            : Text(t('common.continue')),
                       ),
                     ),
                   ],

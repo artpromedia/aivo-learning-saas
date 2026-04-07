@@ -11,6 +11,7 @@ interface LoginResponse {
     role: string;
     avatarUrl?: string;
     tenantId?: string;
+    preferredLanguage?: string;
   };
   token?: string;
 }
@@ -24,6 +25,10 @@ export function useAuth() {
         method: "POST",
         body: JSON.stringify({ email, password }),
       });
+      // Set locale cookie from user's stored preference
+      if (data.user.preferredLanguage) {
+        document.cookie = `NEXT_LOCALE=${data.user.preferredLanguage};path=/;max-age=31536000`;
+      }
       storeLogin(
         { ...data.user, role: data.user.role.toLowerCase() as "parent" | "learner" | "therapist" | "educator" | "admin" },
         data.token ?? "",

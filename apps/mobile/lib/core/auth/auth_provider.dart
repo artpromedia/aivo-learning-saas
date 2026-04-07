@@ -102,6 +102,7 @@ class AuthNotifier extends Notifier<AuthState> {
     required String email,
     required String password,
     required String role,
+    String? preferredLanguage,
   }) async {
     state = const AuthLoading();
 
@@ -111,6 +112,7 @@ class AuthNotifier extends Notifier<AuthState> {
         email: email,
         password: password,
         role: role,
+        preferredLanguage: preferredLanguage,
       );
       state = AuthAuthenticated(user);
     } catch (e) {

@@ -41,6 +41,7 @@ export const users = pgTable(
     name: varchar("name", { length: 255 }).notNull(),
     role: userRoleEnum("role").notNull(),
     avatarUrl: varchar("avatar_url", { length: 2048 }),
+    preferredLanguage: varchar("preferred_language", { length: 10 }).notNull().default("en"),
     status: userStatusEnum("status").notNull().default("ACTIVE"),
     emailVerifiedAt: timestamp("email_verified_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),

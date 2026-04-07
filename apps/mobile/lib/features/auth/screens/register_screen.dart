@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:aivo_mobile/core/auth/auth_provider.dart';
+import 'package:aivo_mobile/core/i18n/language_picker_field.dart';
+import 'package:aivo_mobile/core/i18n/locale_provider.dart';
+import 'package:aivo_mobile/core/i18n/t.dart';
 
 /// Registration screen with name, email, password, role selection, and terms.
 class RegisterScreen extends ConsumerStatefulWidget {
@@ -25,6 +28,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _confirmPasswordFocus = FocusNode();
 
   String _selectedRole = 'parent';
+  String? _selectedLanguage;
   bool _acceptedTerms = false;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
@@ -47,8 +51,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
     if (!_acceptedTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please accept the Terms of Service to continue.'),
+        SnackBar(
+          content: Text(t('auth.acceptTermsRequired')),
         ),
       );
       return;
@@ -59,6 +63,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           email: _emailController.text.trim(),
           password: _passwordController.text,
           role: _selectedRole,
+          preferredLanguage: _selectedLanguage ?? 'en',
         );
   }
 
@@ -89,11 +94,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Account'),
+        title: Text(t('auth.createYourAccount')),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.go('/login'),
-          tooltip: 'Back to login',
+          tooltip: t('auth.backToSignIn'),
         ),
       ),
       body: SafeArea(
@@ -113,14 +118,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       Semantics(
                         header: true,
                         child: Text(
-                          'Join AIVO Learning',
+                          t('auth.createYourAccount'),
                           style: theme.textTheme.headlineMedium,
                           textAlign: TextAlign.center,
                         ),
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Create your account to get started',
+                        t('auth.registerSubtitle'),
                         style: theme.textTheme.bodyMedium,
                         textAlign: TextAlign.center,
                       ),
@@ -159,7 +164,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
                       // ---- Name field ----
                       Semantics(
-                        label: 'Full name',
+                        label: t('auth.fullName'),
                         textField: true,
                         child: TextFormField(
                           controller: _nameController,
@@ -168,17 +173,17 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           textCapitalization: TextCapitalization.words,
                           autofillHints: const [AutofillHints.name],
                           enabled: !isLoading,
-                          decoration: const InputDecoration(
-                            labelText: 'Full Name',
-                            hintText: 'Jane Doe',
-                            prefixIcon: Icon(Icons.person_outlined),
+                          decoration: InputDecoration(
+                            labelText: t('auth.fullName'),
+                            hintText: t('auth.fullNamePlaceholder'),
+                            prefixIcon: const Icon(Icons.person_outlined),
                           ),
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
-                              return 'Name is required';
+                              return t('auth.nameMinLength');
                             }
                             if (value.trim().length < 2) {
-                              return 'Name must be at least 2 characters';
+                              return t('auth.nameMinLength');
                             }
                             return null;
                           },
@@ -190,7 +195,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
                       // ---- Email field ----
                       Semantics(
-                        label: 'Email address',
+                        label: t('auth.emailAddress'),
                         textField: true,
                         child: TextFormField(
                           controller: _emailController,
@@ -199,19 +204,19 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           textInputAction: TextInputAction.next,
                           autofillHints: const [AutofillHints.email],
                           enabled: !isLoading,
-                          decoration: const InputDecoration(
-                            labelText: 'Email',
-                            hintText: 'you@example.com',
-                            prefixIcon: Icon(Icons.email_outlined),
+                          decoration: InputDecoration(
+                            labelText: t('auth.emailAddress'),
+                            hintText: t('auth.emailPlaceholder'),
+                            prefixIcon: const Icon(Icons.email_outlined),
                           ),
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
-                              return 'Email is required';
+                              return t('auth.emailInvalid');
                             }
                             final emailRegex = RegExp(
                                 r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',);
                             if (!emailRegex.hasMatch(value.trim())) {
-                              return 'Enter a valid email address';
+                              return t('auth.emailInvalid');
                             }
                             return null;
                           },
@@ -223,7 +228,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
                       // ---- Password field ----
                       Semantics(
-                        label: 'Password',
+                        label: t('auth.password'),
                         textField: true,
                         child: TextFormField(
                           controller: _passwordController,
@@ -233,7 +238,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           autofillHints: const [AutofillHints.newPassword],
                           enabled: !isLoading,
                           decoration: InputDecoration(
-                            labelText: 'Password',
+                            labelText: t('auth.password'),
                             prefixIcon: const Icon(Icons.lock_outlined),
                             suffixIcon: IconButton(
                               icon: Icon(
@@ -247,16 +252,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                 });
                               },
                               tooltip: _obscurePassword
-                                  ? 'Show password'
-                                  : 'Hide password',
+                                  ? t('auth.showPassword')
+                                  : t('auth.hidePassword'),
                             ),
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Password is required';
+                              return t('auth.passwordRequired');
                             }
                             if (value.length < 8) {
-                              return 'Password must be at least 8 characters';
+                              return t('auth.passwordMinLength');
                             }
                             return null;
                           },
@@ -268,7 +273,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
                       // ---- Confirm password field ----
                       Semantics(
-                        label: 'Confirm password',
+                        label: t('auth.confirmPassword'),
                         textField: true,
                         child: TextFormField(
                           controller: _confirmPasswordController,
@@ -278,7 +283,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           autofillHints: const [AutofillHints.newPassword],
                           enabled: !isLoading,
                           decoration: InputDecoration(
-                            labelText: 'Confirm Password',
+                            labelText: t('auth.confirmPassword'),
                             prefixIcon: const Icon(Icons.lock_outlined),
                             suffixIcon: IconButton(
                               icon: Icon(
@@ -293,16 +298,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                 });
                               },
                               tooltip: _obscureConfirmPassword
-                                  ? 'Show password'
-                                  : 'Hide password',
+                                  ? t('auth.showPassword')
+                                  : t('auth.hidePassword'),
                             ),
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please confirm your password';
+                              return t('auth.confirmPassword');
                             }
                             if (value != _passwordController.text) {
-                              return 'Passwords do not match';
+                              return t('auth.passwordsMismatch');
                             }
                             return null;
                           },
@@ -313,26 +318,26 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
                       // ---- Role selection ----
                       Semantics(
-                        label: 'Select your role',
+                        label: t('auth.selectRole'),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'I am a...',
+                              t('auth.selectRole'),
                               style: theme.textTheme.titleMedium,
                             ),
                             const SizedBox(height: 8),
                             SegmentedButton<String>(
-                              segments: const [
+                              segments: [
                                 ButtonSegment<String>(
                                   value: 'parent',
-                                  label: Text('Parent'),
-                                  icon: Icon(Icons.family_restroom),
+                                  label: Text(t('auth.roleParent')),
+                                  icon: const Icon(Icons.family_restroom),
                                 ),
                                 ButtonSegment<String>(
                                   value: 'teacher',
-                                  label: Text('Teacher'),
-                                  icon: Icon(Icons.school_outlined),
+                                  label: Text(t('auth.roleTeacher')),
+                                  icon: const Icon(Icons.school_outlined),
                                 ),
                               ],
                               selected: {_selectedRole},
@@ -347,11 +352,26 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           ],
                         ),
                       ),
+                      const SizedBox(height: 16),
+
+                      // ---- Language preference ----
+                      Semantics(
+                        label: t('auth.preferredLanguage'),
+                        child: LanguagePickerField(
+                          selectedLocaleCode: _selectedLanguage,
+                          onChanged: (code) {
+                            setState(() => _selectedLanguage = code);
+                            ref.read(localeProvider.notifier).setLocale(code);
+                          },
+                          labelText: t('auth.preferredLanguage'),
+                          enabled: !isLoading,
+                        ),
+                      ),
                       const SizedBox(height: 24),
 
                       // ---- Terms checkbox ----
                       Semantics(
-                        label: 'Accept terms of service and privacy policy',
+                        label: t('auth.termsAgreement'),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -381,11 +401,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                       },
                                 child: Text.rich(
                                   TextSpan(
-                                    text: 'I agree to the ',
+                                    text: t('auth.termsAgreement'),
                                     style: theme.textTheme.bodyMedium,
                                     children: [
                                       TextSpan(
-                                        text: 'Terms of Service',
+                                        text: t('auth.termsOfService'),
                                         style: TextStyle(
                                           color: colorScheme.primary,
                                           fontWeight: FontWeight.w600,
@@ -393,7 +413,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                       ),
                                       const TextSpan(text: ' and '),
                                       TextSpan(
-                                        text: 'Privacy Policy',
+                                        text: t('auth.privacyPolicy'),
                                         style: TextStyle(
                                           color: colorScheme.primary,
                                           fontWeight: FontWeight.w600,
@@ -423,7 +443,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                     color: colorScheme.onPrimary,
                                   ),
                                 )
-                              : const Text('Create Account'),
+                              : Text(t('auth.createAccount')),
                         ),
                       ),
                       const SizedBox(height: 24),
@@ -434,14 +454,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         children: [
                           Flexible(
                             child: Text(
-                              'Already have an account?',
+                              t('auth.alreadyHaveAccount'),
                               style: theme.textTheme.bodyMedium,
                             ),
                           ),
                           TextButton(
                             onPressed:
                                 isLoading ? null : () => context.go('/login'),
-                            child: const Text('Sign in'),
+                            child: Text(t('auth.signIn')),
                           ),
                         ],
                       ),

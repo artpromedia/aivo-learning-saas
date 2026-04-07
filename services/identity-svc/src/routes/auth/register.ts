@@ -9,6 +9,7 @@ const registerBodySchema = z.object({
   password: z.string().min(8).max(128),
   name: z.string().min(1).max(255),
   role: z.enum(["PARENT", "TEACHER"]).optional(),
+  preferredLanguage: z.string().min(2).max(10).optional(),
 });
 
 export async function registerRoute(app: FastifyInstance) {
@@ -62,6 +63,7 @@ export async function registerRoute(app: FastifyInstance) {
         name: user.name,
         role: user.role,
         tenantId: tenant.id,
+        preferredLanguage: user.preferredLanguage ?? body.preferredLanguage ?? "en",
       },
       accessToken: session.accessToken,
       refreshToken: session.refreshToken,

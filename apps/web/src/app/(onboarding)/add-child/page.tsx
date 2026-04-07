@@ -9,6 +9,7 @@ import { useTranslations } from "next-intl";
 import { User, Calendar, GraduationCap, Lock } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardBody } from "@/components/ui/Card";
+import { LanguageSelect } from "@/components/ui/LanguageSelect";
 import { apiFetch } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
 import { useLearnerStore } from "@/stores/learner.store";
@@ -41,6 +42,7 @@ export default function AddChildPage() {
   const router = useRouter();
   const t = useTranslations("onboarding");
   const { addLearner, setActiveLearner } = useLearnerStore();
+  const [childLanguage, setChildLanguage] = useState<string>("");
   const [serverError, setServerError] = useState<string | null>(null);
 
   const addChildSchema = z.object({
@@ -83,6 +85,7 @@ export default function AddChildPage() {
           dateOfBirth: new Date(data.dateOfBirth).toISOString(),
           enrolledGrade: gradeToNumber(data.enrolledGrade),
           pin: data.pin,
+          preferredLanguage: childLanguage || undefined,
         }),
       });
       const learner = res.learner;
@@ -216,6 +219,18 @@ export default function AddChildPage() {
                   {errors.enrolledGrade.message}
                 </p>
               )}
+            </div>
+
+            {/* Child's preferred language */}
+            <div>
+              <LanguageSelect
+                value={childLanguage}
+                onChange={setChildLanguage}
+                label={t("childPreferredLanguage")}
+              />
+              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                {t("childLanguageHint")}
+              </p>
             </div>
 
             {/* PIN Creation */}

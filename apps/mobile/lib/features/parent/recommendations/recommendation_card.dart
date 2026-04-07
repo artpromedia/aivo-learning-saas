@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import 'package:aivo_mobile/config/theme.dart';
 import 'package:aivo_mobile/data/models/recommendation.dart';
+import 'package:aivo_mobile/core/i18n/t.dart';
 import 'package:aivo_mobile/data/repositories/family_repository.dart';
 
 // ---------------------------------------------------------------------------
@@ -42,13 +43,13 @@ class _RecommendationCardState extends ConsumerState<RecommendationCard> {
       widget.onUpdated?.call();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Recommendation approved')),
+          SnackBar(content: Text(t('dashboard.recommendationApproved'))),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to approve: $e')),
+          SnackBar(content: Text(t('dashboard.failedToApproveRecommendation'))),
         );
       }
     } finally {
@@ -60,21 +61,21 @@ class _RecommendationCardState extends ConsumerState<RecommendationCard> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Decline Recommendation'),
+        title: Text(t('dashboard.declineRecommendation')),
         content: Text(
-          'Are you sure you want to decline "${rec.title}"?',
+          t('dashboard.declineConfirmation', {'title': rec.title}),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Cancel'),
+            child: Text(t('common.cancel')),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
             style: TextButton.styleFrom(
               foregroundColor: AivoColors.error,
             ),
-            child: const Text('Decline'),
+            child: Text(t('dashboard.decline')),
           ),
         ],
       ),
@@ -91,13 +92,13 @@ class _RecommendationCardState extends ConsumerState<RecommendationCard> {
       widget.onUpdated?.call();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Recommendation declined')),
+          SnackBar(content: Text(t('dashboard.recommendationDeclined'))),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to decline: $e')),
+          SnackBar(content: Text(t('dashboard.failedToDeclineRecommendation'))),
         );
       }
     } finally {
@@ -132,13 +133,13 @@ class _RecommendationCardState extends ConsumerState<RecommendationCard> {
       widget.onUpdated?.call();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Recommendation adjusted')),
+          SnackBar(content: Text(t('dashboard.recommendationAdjusted'))),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to adjust: $e')),
+          SnackBar(content: Text(t('dashboard.failedToAdjustRecommendation'))),
         );
       }
     } finally {
@@ -152,7 +153,7 @@ class _RecommendationCardState extends ConsumerState<RecommendationCard> {
     final colorScheme = theme.colorScheme;
 
     return Semantics(
-      label: '${rec.type} recommendation: ${rec.title}, status ${rec.status}',
+      label: '${t('dashboard.recommendation')}: ${rec.title}, ${rec.status}',
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         child: Padding(
@@ -218,8 +219,8 @@ class _RecommendationCardState extends ConsumerState<RecommendationCard> {
                       const SizedBox(width: 4),
                       Text(
                         _isExpanded
-                            ? 'Hide rationale'
-                            : 'View rationale',
+                            ? t('dashboard.hideRationale')
+                            : t('dashboard.viewRationale'),
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: colorScheme.primary,
                           fontWeight: FontWeight.w600,
@@ -248,7 +249,7 @@ class _RecommendationCardState extends ConsumerState<RecommendationCard> {
               if (!isPending && rec.respondedAt != null) ...[
                 const SizedBox(height: 8),
                 Text(
-                  'Responded ${DateFormat.yMMMd().format(rec.respondedAt!.toLocal())}',
+                  t('dashboard.responded', {'date': DateFormat.yMMMd().format(rec.respondedAt!.toLocal())}),
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: colorScheme.outline,
                   ),
@@ -256,7 +257,7 @@ class _RecommendationCardState extends ConsumerState<RecommendationCard> {
                 if (rec.parentResponse != null) ...[
                   const SizedBox(height: 2),
                   Text(
-                    'Response: ${rec.parentResponse}',
+                    t('dashboard.response', {'response': rec.parentResponse!}),
                     style: theme.textTheme.bodySmall,
                   ),
                 ],
@@ -278,11 +279,11 @@ class _RecommendationCardState extends ConsumerState<RecommendationCard> {
                       Expanded(
                         child: Semantics(
                           button: true,
-                          label: 'Approve recommendation',
+                          label: t('dashboard.approveRecommendation'),
                           child: FilledButton.icon(
                             onPressed: _approve,
                             icon: const Icon(Icons.check, size: 18),
-                            label: const Text('Approve'),
+                            label: Text(t('dashboard.approve')),
                             style: FilledButton.styleFrom(
                               backgroundColor: AivoColors.secondary,
                               foregroundColor: Colors.white,
@@ -296,11 +297,11 @@ class _RecommendationCardState extends ConsumerState<RecommendationCard> {
                       Expanded(
                         child: Semantics(
                           button: true,
-                          label: 'Decline recommendation',
+                          label: t('dashboard.declineRecommendationLabel'),
                           child: FilledButton.icon(
                             onPressed: _decline,
                             icon: const Icon(Icons.close, size: 18),
-                            label: const Text('Decline'),
+                            label: Text(t('dashboard.decline')),
                             style: FilledButton.styleFrom(
                               backgroundColor: AivoColors.error,
                               foregroundColor: Colors.white,
@@ -314,11 +315,11 @@ class _RecommendationCardState extends ConsumerState<RecommendationCard> {
                       Expanded(
                         child: Semantics(
                           button: true,
-                          label: 'Adjust recommendation',
+                          label: t('dashboard.adjustRecommendationLabel'),
                           child: FilledButton.icon(
                             onPressed: _adjust,
                             icon: const Icon(Icons.tune, size: 18),
-                            label: const Text('Adjust'),
+                            label: Text(t('dashboard.adjust')),
                             style: FilledButton.styleFrom(
                               backgroundColor: AivoColors.accent,
                               foregroundColor: Colors.black,
@@ -452,15 +453,15 @@ class _StatusBadge extends StatelessWidget {
 // Adjustment bottom sheet
 // ---------------------------------------------------------------------------
 
-class _AdjustmentSheet extends StatefulWidget {
+class _AdjustmentSheet extends ConsumerStatefulWidget {
   const _AdjustmentSheet({required this.recommendation});
   final Recommendation recommendation;
 
   @override
-  State<_AdjustmentSheet> createState() => _AdjustmentSheetState();
+  ConsumerState<_AdjustmentSheet> createState() => _AdjustmentSheetState();
 }
 
-class _AdjustmentSheetState extends State<_AdjustmentSheet> {
+class _AdjustmentSheetState extends ConsumerState<_AdjustmentSheet> {
   final _notesController = TextEditingController();
   double _difficultyAdjustment = 0.5;
   double _frequencyAdjustment = 0.5;
@@ -504,7 +505,7 @@ class _AdjustmentSheetState extends State<_AdjustmentSheet> {
             Semantics(
               header: true,
               child: Text(
-                'Adjust Recommendation',
+                t('dashboard.adjustRecommendation'),
                 style: theme.textTheme.titleLarge,
               ),
             ),
@@ -516,11 +517,11 @@ class _AdjustmentSheetState extends State<_AdjustmentSheet> {
             const SizedBox(height: 24),
 
             // Difficulty slider
-            Text('Difficulty Level',
+            Text(t('dashboard.difficultyLevel'),
                 style: theme.textTheme.labelLarge,),
             Semantics(
               label:
-                  'Difficulty adjustment: ${(_difficultyAdjustment * 100).toInt()}%',
+                  '${t('dashboard.difficultyLevel')}: ${(_difficultyAdjustment * 100).toInt()}%',
               slider: true,
               child: Slider(
                 value: _difficultyAdjustment,
@@ -534,19 +535,19 @@ class _AdjustmentSheetState extends State<_AdjustmentSheet> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Easier',
+                Text(t('dashboard.easier'),
                     style: theme.textTheme.bodySmall,),
-                Text('Harder',
+                Text(t('dashboard.harder'),
                     style: theme.textTheme.bodySmall,),
               ],
             ),
             const SizedBox(height: 16),
 
             // Frequency slider
-            Text('Frequency', style: theme.textTheme.labelLarge),
+            Text(t('dashboard.frequency'), style: theme.textTheme.labelLarge),
             Semantics(
               label:
-                  'Frequency adjustment: ${(_frequencyAdjustment * 100).toInt()}%',
+                  '${t('dashboard.frequency')}: ${(_frequencyAdjustment * 100).toInt()}%',
               slider: true,
               child: Slider(
                 value: _frequencyAdjustment,
@@ -560,26 +561,25 @@ class _AdjustmentSheetState extends State<_AdjustmentSheet> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Less often',
+                Text(t('dashboard.lessOften'),
                     style: theme.textTheme.bodySmall,),
-                Text('More often',
+                Text(t('dashboard.moreOften'),
                     style: theme.textTheme.bodySmall,),
               ],
             ),
             const SizedBox(height: 16),
 
             // Notes
-            Text('Notes', style: theme.textTheme.labelLarge),
+            Text(t('dashboard.notes'), style: theme.textTheme.labelLarge),
             const SizedBox(height: 8),
             Semantics(
-              label: 'Adjustment notes',
+              label: t('dashboard.adjustmentNotesHint'),
               textField: true,
               child: TextField(
                 controller: _notesController,
                 maxLines: 3,
                 decoration: const InputDecoration(
-                  hintText:
-                      'Add any notes about this adjustment...',
+                  hintText: t('dashboard.adjustmentNotesHint'),
                 ),
               ),
             ),
@@ -598,7 +598,7 @@ class _AdjustmentSheetState extends State<_AdjustmentSheet> {
                   },
                 });
               },
-              child: const Text('Submit Adjustment'),
+              child: Text(t('dashboard.submitAdjustment')),
             ),
             const SizedBox(height: 16),
           ],
