@@ -4,6 +4,7 @@ import { subscribeEvent, BRAIN_SCHEMAS, IDENTITY_SCHEMAS, type Subscription } fr
 import { publishEvent } from "@aivo/events";
 import { brainStates, learners, users } from "@aivo/db";
 import { RecommendationService } from "../services/recommendation.service.js";
+import { generateInitialRecommendations } from "../services/contextual-recommendations.js";
 
 export async function setupSubscribers(app: FastifyInstance): Promise<void> {
   const nc = app.nats;
@@ -81,19 +82,44 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
     subs.push(sub);
   } catch { app.log.warn("Could not subscribe to brain.iep_goal.met"); }
 
-  // brain.cloned → create initial brain_profile_review recommendation
+  // brain.cloned → create contextual initial recommendations
   try {
     const sub = await subscribeEvent(nc, "brain.cloned", BRAIN_SCHEMAS["brain.cloned"], async (data) => {
       app.log.info({ data }, "Received brain.cloned");
       try {
-        await recService.createRecommendation({
-          learnerId: data.learnerId,
-          brainStateId: data.brainStateId,
-          type: "ASSESSMENT_REBASELINE",
-          title: "Review your child's Brain profile",
-          description: "Your child's Brain has been initialized. Please review the profile to ensure accuracy.",
-          payload: { functioningLevel: data.functioningLevel },
-        });
+        // Fetch learner name for personalized recommendation text
+        const [learner] = await app.db
+          .select()
+          .from(learners)
+          .where(eq(learners.id, data.learnerId))
+          .limit(1);
+        const childName = learner?.name ?? "your child";
+
+        // Optionally fetch brain context for richer data (mastery levels, etc.)
+        let brainContext = null;
+        try {
+          brainContext = await app.brainClient.getContext(data.learnerId);
+        } catch {
+          app.log.warn({ learnerId: data.learnerId }, "Could not fetch brain context for recommendations, using event data only");
+        }
+
+        const recs = generateInitialRecommendations(data, childName, brainContext);
+
+        for (const rec of recs) {
+          await recService.createRecommendation(rec);
+        }
+
+        // Notify parent about new recommendations
+        if (learner) {
+          await publishEvent(nc, "comms.notification.created", {
+            userId: learner.parentId,
+            type: "recommendation_pending",
+            title: `${childName}'s Brain profile is ready`,
+            body: `${recs.length} personalized recommendations are waiting for your review.`,
+          });
+        }
+
+        app.log.info({ learnerId: data.learnerId, count: recs.length }, "Created contextual recommendations from brain.cloned");
       } catch (err) {
         app.log.error({ err, data }, "Failed to process brain.cloned");
       }

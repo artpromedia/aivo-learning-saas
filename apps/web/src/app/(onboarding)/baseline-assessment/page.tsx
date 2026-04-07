@@ -1,15 +1,18 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Brain, ChevronRight, Loader2 } from "lucide-react";
+import { Brain, ChevronRight, Loader2, Rocket, Eye } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardBody } from "@/components/ui/Card";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { apiFetch, assessmentApiFetch } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
 import { useLearnerStore } from "@/stores/learner.store";
+import { useAuth } from "@/hooks/useAuth";
+import { isLearnerRole } from "@/lib/redirect-after-onboarding";
+import { AssessmentBreak, type EngagementBreakType } from "@/components/assessment/AssessmentBreak";
 
 interface BaselineQuestion {
   id: string;
@@ -21,20 +24,32 @@ interface BaselineQuestion {
   difficulty: number;
 }
 
+interface BreakConfig {
+  frequencyQuestions: number;
+  preferredTypes: EngagementBreakType[];
+  adaptiveBreaks?: boolean;
+}
+
 interface AnswerResult {
   correct: boolean;
   feedback: string;
   nextQuestion?: BaselineQuestion;
   progress: number;
   isComplete: boolean;
+  breakConfig?: BreakConfig;
+  shouldBreak?: boolean;
+  suggestedBreakType?: EngagementBreakType;
+  consecutiveWrong?: number;
 }
 
 export default function BaselineAssessmentPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations("onboarding");
+  const { user } = useAuth();
   const activeLearner = useLearnerStore((s) => s.activeLearner);
   const learnerId = activeLearner?.id ?? searchParams.get("learnerId");
+  const userIsLearner = isLearnerRole(user?.role);
 
   const [loading, setLoading] = useState(true);
   const [question, setQuestion] = useState<BaselineQuestion | null>(null);
@@ -44,18 +59,43 @@ export default function BaselineAssessmentPage() {
   const [feedback, setFeedback] = useState<{ correct: boolean; text: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [questionsAnswered, setQuestionsAnswered] = useState(0);
+  const [isComplete, setIsComplete] = useState(false);
+
+  // Break state
+  const [showBreak, setShowBreak] = useState(false);
+  const [breakType, setBreakType] = useState<EngagementBreakType>("music");
+  const [breakConfig, setBreakConfig] = useState<BreakConfig>({
+    frequencyQuestions: 8,
+    preferredTypes: ["music", "puzzle", "game"],
+  });
+  const breakRotationRef = useRef(0);
+  const pendingNextQuestion = useRef<BaselineQuestion | null>(null);
+
+  const pickBreakType = useCallback((): EngagementBreakType => {
+    const types = breakConfig.preferredTypes;
+    const idx = breakRotationRef.current % types.length;
+    breakRotationRef.current += 1;
+    return types[idx];
+  }, [breakConfig.preferredTypes]);
 
   useEffect(() => {
     if (!learnerId) return;
 
     async function startBaseline() {
       try {
-        const data = await apiFetch<{ question: BaselineQuestion; progress: number }>(
+        const data = await apiFetch<{
+          question: BaselineQuestion;
+          progress: number;
+          breakConfig?: BreakConfig;
+        }>(
           API_ROUTES.ONBOARDING.BASELINE_START(learnerId!),
           { method: "POST" },
         );
         setQuestion(data.question);
         setProgress(data.progress);
+        if (data.breakConfig && data.breakConfig.frequencyQuestions > 0) {
+          setBreakConfig(data.breakConfig);
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : t("failedToStartAssessment"));
       } finally {
@@ -85,15 +125,27 @@ export default function BaselineAssessmentPage() {
 
       setFeedback({ correct: result.correct, text: result.feedback });
       setProgress(result.progress);
-      setQuestionsAnswered((q) => q + 1);
+      const newCount = questionsAnswered + 1;
+      setQuestionsAnswered(newCount);
 
-      // Brief delay to show feedback, then advance
+      // Update breakConfig if returned by the server
+      if (result.breakConfig && result.breakConfig.frequencyQuestions > 0) {
+        setBreakConfig(result.breakConfig);
+      }
+
+      // Brief delay to show feedback, then advance (or trigger break)
       setTimeout(() => {
         setFeedback(null);
         setSelectedAnswer(null);
 
         if (result.isComplete) {
           handleComplete();
+        } else if (result.shouldBreak && result.nextQuestion) {
+          // Server says it's time for a break — stash next question
+          pendingNextQuestion.current = result.nextQuestion;
+          // Use server-suggested type for adaptive breaks, otherwise rotate
+          setBreakType(result.suggestedBreakType ?? pickBreakType());
+          setShowBreak(true);
         } else if (result.nextQuestion) {
           setQuestion(result.nextQuestion);
         }
@@ -111,11 +163,19 @@ export default function BaselineAssessmentPage() {
       await apiFetch(API_ROUTES.ONBOARDING.BASELINE_COMPLETE(learnerId), {
         method: "POST",
       });
-      router.push("/brain-profile-reveal");
+      setIsComplete(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : t("failedToCompleteAssessment"));
     }
   };
+
+  const handleBreakComplete = useCallback(() => {
+    setShowBreak(false);
+    if (pendingNextQuestion.current) {
+      setQuestion(pendingNextQuestion.current);
+      pendingNextQuestion.current = null;
+    }
+  }, []);
 
   if (loading) {
     return (
@@ -124,6 +184,69 @@ export default function BaselineAssessmentPage() {
         <p className="text-gray-500 dark:text-gray-400">
           {t("preparingAssessment")}
         </p>
+      </div>
+    );
+  }
+
+  if (isComplete) {
+    return (
+      <div className="text-center py-16">
+        <div className="text-5xl mb-4" aria-hidden="true">🎉</div>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+          Assessment Complete!
+        </h1>
+        <p className="text-gray-500 dark:text-gray-400 mb-8 max-w-md mx-auto">
+          Great job{activeLearner?.name ? `, ${activeLearner.name}` : ""}! We&apos;ve gathered
+          everything we need to build a personalized learning profile.
+        </p>
+
+        {error && (
+          <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+            {error}
+          </div>
+        )}
+
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+          {userIsLearner ? (
+            <>
+              <Button
+                size="lg"
+                onClick={() => router.push("/learner")}
+                rightIcon={<Rocket size={18} />}
+                className="min-w-[200px]"
+              >
+                Go to My Dashboard
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                onClick={() => router.push("/brain-profile-reveal")}
+                rightIcon={<Eye size={18} />}
+              >
+                View Brain Profile
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                size="lg"
+                onClick={() => router.push("/brain-profile-reveal")}
+                rightIcon={<Eye size={18} />}
+                className="min-w-[200px]"
+              >
+                View Brain Profile
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                onClick={() => router.push("/learner")}
+                rightIcon={<Rocket size={18} />}
+              >
+                Go to Learner Dashboard
+              </Button>
+            </>
+          )}
+        </div>
       </div>
     );
   }
@@ -161,7 +284,17 @@ export default function BaselineAssessmentPage() {
         </div>
       )}
 
-      {question && (
+      {showBreak && learnerId && (
+        <AssessmentBreak
+          breakType={breakType}
+          learnerId={learnerId}
+          soundEnabled={activeLearner?.preferences?.soundEnabled ?? true}
+          functioningLevel={activeLearner?.functioningLevel ?? "STANDARD"}
+          onComplete={handleBreakComplete}
+        />
+      )}
+
+      {!showBreak && question && (
         <Card>
           <CardBody>
             {question.imageUrl && (

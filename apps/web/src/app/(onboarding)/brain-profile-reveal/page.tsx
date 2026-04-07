@@ -22,9 +22,11 @@ import { Button } from "@/components/ui/Button";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { useBrain } from "@/hooks/useBrain";
+import { useAuth } from "@/hooks/useAuth";
 import { useLearnerStore } from "@/stores/learner.store";
 import { apiFetch } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
+import { getPostOnboardingRedirect, isLearnerRole } from "@/lib/redirect-after-onboarding";
 
 /** XAI pipeline steps shown to the parent during profile building */
 const XAI_STEPS = [
@@ -42,9 +44,11 @@ export default function BrainProfileRevealPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations("onboarding");
+  const { user } = useAuth();
   const activeLearner = useLearnerStore((s) => s.activeLearner);
   const learnerId = activeLearner?.id ?? searchParams.get("learnerId");
   const childName = activeLearner?.name ?? "your child";
+  const userIsLearner = isLearnerRole(user?.role);
 
   const {
     profile,
@@ -136,11 +140,13 @@ export default function BrainProfileRevealPage() {
     }
   }, [phase]);
 
+  const postProfileRedirect = getPostOnboardingRedirect(user?.role ?? "parent");
+
   const handleApprove = async () => {
     setActionError(null);
     try {
       await approve();
-      router.push("/complete");
+      router.push(postProfileRedirect);
     } catch (err) {
       setActionError(err instanceof Error ? err.message : t("failedToApprove"));
     }
@@ -150,7 +156,7 @@ export default function BrainProfileRevealPage() {
     setActionError(null);
     try {
       await decline();
-      router.push("/complete");
+      router.push(postProfileRedirect);
     } catch (err) {
       setActionError(err instanceof Error ? err.message : t("failedToDecline"));
     }
@@ -163,7 +169,7 @@ export default function BrainProfileRevealPage() {
       await addInsights({ text: insightText });
       setInsightText("");
       setShowInsightInput(false);
-      router.push("/complete");
+      router.push(postProfileRedirect);
     } catch (err) {
       setActionError(err instanceof Error ? err.message : t("failedToAddInsights"));
     }
@@ -539,6 +545,19 @@ export default function BrainProfileRevealPage() {
                 {t("approveProfile")}
               </Button>
             </div>
+
+            {userIsLearner && (
+              <div className="text-center mt-6">
+                <Button
+                  size="lg"
+                  onClick={() => router.push("/learner")}
+                  rightIcon={<Sparkles size={18} />}
+                  className="min-w-[200px]"
+                >
+                  Start Learning!
+                </Button>
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

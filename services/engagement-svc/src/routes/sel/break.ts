@@ -5,7 +5,7 @@ import { SelService } from "../../services/sel.service.js";
 
 const bodySchema = z.object({
   learnerId: z.string().uuid(),
-  activityType: z.enum(["breathing", "stretch", "mindfulness", "fidget"]),
+  activityType: z.enum(["breathing", "stretch", "mindfulness", "fidget", "music", "puzzle", "game"]),
 });
 
 export async function selBreakRoute(app: FastifyInstance) {

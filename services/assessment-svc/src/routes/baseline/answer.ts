@@ -10,6 +10,7 @@ import {
 } from "../../engine/irt.js";
 import { DOMAINS } from "../../engine/item-bank.js";
 import type { BaselineQuestion } from "../../plugins/ai-client.js";
+import { extractBreakConfig, shouldAdaptiveBreak, pickAdaptiveBreakType, type BreakConfig, type BreakActivityType } from "../../lib/break-config.js";
 
 const bodySchema = z.object({
   questionId: z.string(),
@@ -49,6 +50,8 @@ export async function baselineAnswerRoute(app: FastifyInstance) {
         iepProfile: Record<string, unknown> | null;
         currentQuestion: BaselineQuestion;
         administeredHistory: { domain: string; skill: string }[];
+        questionsAnswered?: number;
+        consecutiveWrong?: number;
       };
 
       const { irtState, functioningLevel, parentResponses, iepProfile, currentQuestion, administeredHistory } = sessionData;
@@ -168,6 +171,10 @@ export async function baselineAnswerRoute(app: FastifyInstance) {
         });
       }
 
+      // Track questions answered and consecutive wrong answers
+      const questionsAnswered = (sessionData.questionsAnswered ?? 0) + 1;
+      const consecutiveWrong = isCorrect ? 0 : (sessionData.consecutiveWrong ?? 0) + 1;
+
       // Update Redis cache with new state and next question
       await app.redis.set(
         `assessment:baseline:${assessment.id}`,
@@ -179,6 +186,8 @@ export async function baselineAnswerRoute(app: FastifyInstance) {
           iepProfile,
           currentQuestion: nextQuestion ?? currentQuestion,
           administeredHistory: updatedHistory,
+          questionsAnswered,
+          consecutiveWrong,
         }),
         "EX",
         3600,
@@ -197,6 +206,20 @@ export async function baselineAnswerRoute(app: FastifyInstance) {
         ? "Great job! That's correct."
         : `The correct answer was: ${currentQuestion.correctAnswer}`;
 
+      // Compute break configuration and whether a break should trigger
+      const breakConfig = extractBreakConfig(parentResponses);
+      const isScheduledBreak =
+        !isComplete && questionsAnswered > 0 && questionsAnswered % breakConfig.frequencyQuestions === 0;
+      const isAdaptiveBreak =
+        !isComplete && breakConfig.adaptiveBreaks && shouldAdaptiveBreak(consecutiveWrong);
+      const triggerBreak = isScheduledBreak || isAdaptiveBreak;
+
+      // Pick an appropriate break type for adaptive breaks (calming) vs scheduled
+      let suggestedBreakType: BreakActivityType | undefined;
+      if (isAdaptiveBreak && !isScheduledBreak) {
+        suggestedBreakType = pickAdaptiveBreakType(questionsAnswered);
+      }
+
       return reply.send({
         correct: isCorrect,
         feedback,
@@ -213,6 +236,11 @@ export async function baselineAnswerRoute(app: FastifyInstance) {
           : null,
         progress,
         isComplete: isComplete || !nextQuestion,
+        breakConfig,
+        shouldBreak: triggerBreak,
+        suggestedBreakType,
+        questionsAnswered,
+        consecutiveWrong,
       });
     },
   );

@@ -10,6 +10,7 @@ import {
   type FunctioningLevel,
 } from "../../engine/irt.js";
 import { DOMAINS } from "../../engine/item-bank.js";
+import { extractBreakConfig } from "../../lib/break-config.js";
 
 export async function baselineStartRoute(app: FastifyInstance) {
   app.post(
@@ -129,6 +130,9 @@ export async function baselineStartRoute(app: FastifyInstance) {
 
       app.log.info({ learnerId, assessmentId: assessment.id, mode: assessmentMode }, "Baseline assessment started");
 
+      // Extract break preferences from parent assessment responses
+      const breakConfig = extractBreakConfig(parentResponses);
+
       return reply.status(201).send({
         assessmentId: assessment.id,
         question: {
@@ -141,7 +145,9 @@ export async function baselineStartRoute(app: FastifyInstance) {
           difficulty: firstItem.difficulty,
         },
         progress: assessmentProgress(irtState),
+        breakConfig,
       });
     },
   );
 }
+

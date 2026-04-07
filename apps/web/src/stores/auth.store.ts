@@ -4,7 +4,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: "parent" | "therapist" | "educator" | "admin";
+  role: "parent" | "learner" | "therapist" | "educator" | "admin";
   avatarUrl?: string;
 }
 

@@ -15,7 +15,7 @@ export const SEL_EMOTIONS: SelPrompt[] = [
   { emotion: "sad", emoji: "😢", label: "Sad", followUpPrompt: "I'm sorry you're feeling sad. Remember, it's okay to feel this way. Want to talk about it?" },
 ];
 
-export type BreakActivityType = "breathing" | "stretch" | "mindfulness" | "fidget";
+export type BreakActivityType = "breathing" | "stretch" | "mindfulness" | "fidget" | "music" | "puzzle" | "game";
 
 export interface BreakActivity {
   type: BreakActivityType;
@@ -82,6 +82,45 @@ export const BREAK_ACTIVITIES: BreakActivity[] = [
       "Spin it as many times as you like",
     ],
     xpReward: 5,
+  },
+  {
+    type: "music",
+    name: "Calming Music",
+    description: "Listen to calming sounds and watch animated musical notes float across the screen.",
+    durationSeconds: 45,
+    instructions: [
+      "Sit back and relax",
+      "Listen to the calming melody",
+      "Watch the musical notes float by",
+      "Take slow, deep breaths while you listen",
+    ],
+    xpReward: 5,
+  },
+  {
+    type: "puzzle",
+    name: "Shape Match",
+    description: "A quick pattern-matching puzzle to give your brain a fun challenge.",
+    durationSeconds: 60,
+    instructions: [
+      "Look at the shapes on screen",
+      "Match each shape to its pair",
+      "Try to match them all before time runs out",
+      "Tap or click a shape to select it",
+    ],
+    xpReward: 10,
+  },
+  {
+    type: "game",
+    name: "Pop the Bubbles",
+    description: "Pop colorful bubbles floating across the screen for a quick fun break.",
+    durationSeconds: 30,
+    instructions: [
+      "Colorful bubbles will float up the screen",
+      "Tap or click to pop as many as you can",
+      "Each bubble you pop earns a point",
+      "Have fun!",
+    ],
+    xpReward: 10,
   },
 ];
 

@@ -12,6 +12,14 @@ export const BrainClonedSchema = z.object({
     "NON_VERBAL",
     "PRE_SYMBOLIC",
   ]),
+  domainScores: z.record(z.string(), z.number()).optional(),
+  iepGoals: z.array(z.object({
+    id: z.string(),
+    domain: z.string(),
+    targetMetric: z.string().optional(),
+    text: z.string().optional(),
+  })).optional(),
+  accommodations: z.array(z.string()).optional(),
 });
 export type BrainCloned = z.infer<typeof BrainClonedSchema>;
 

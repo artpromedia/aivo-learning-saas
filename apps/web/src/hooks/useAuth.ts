@@ -25,7 +25,7 @@ export function useAuth() {
         body: JSON.stringify({ email, password }),
       });
       storeLogin(
-        { ...data.user, role: data.user.role.toLowerCase() as "parent" | "therapist" | "educator" | "admin" },
+        { ...data.user, role: data.user.role.toLowerCase() as "parent" | "learner" | "therapist" | "educator" | "admin" },
         data.token ?? "",
       );
       return data;
