@@ -42,6 +42,14 @@ export async function apiFetch<T>(path: string, options?: RequestInit): Promise<
       }
       return retry.json();
     }
+    // Both session and refresh failed — redirect to login
+    if (typeof window !== "undefined") {
+      const currentPath = window.location.pathname;
+      if (currentPath !== "/login" && currentPath !== "/register") {
+        window.location.href = "/login";
+      }
+    }
+    throw new Error("Session expired. Please log in again.");
   }
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));

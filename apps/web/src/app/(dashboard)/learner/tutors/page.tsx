@@ -33,7 +33,7 @@ export default function LearnerTutorsPage() {
   useEffect(() => {
     async function fetchTutors() {
       try {
-        const data = await apiFetch<Tutor[]>(API_ROUTES.TUTOR.LIST);
+        const data = await apiFetch<Tutor[]>(API_ROUTES.TUTOR.LIST());
         setTutors(data);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load tutors");

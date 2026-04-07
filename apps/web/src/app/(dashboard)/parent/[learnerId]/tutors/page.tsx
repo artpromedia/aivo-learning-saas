@@ -57,8 +57,8 @@ export default function TutorsPage() {
     async function fetchTutors() {
       try {
         const [active, store] = await Promise.all([
-          apiFetch<ActiveTutor[]>(API_ROUTES.TUTOR.LIST),
-          apiFetch<StoreTutor[]>(API_ROUTES.TUTOR.STORE),
+          apiFetch<ActiveTutor[]>(API_ROUTES.TUTOR.LIST(learnerId)),
+          apiFetch<StoreTutor[]>(API_ROUTES.TUTOR.STORE(learnerId)),
         ]);
         setActiveTutors(active);
         setStoreTutors(store);

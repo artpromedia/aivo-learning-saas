@@ -95,9 +95,11 @@ export const SESSION_ROUTES = {
 // Tutor Chat
 export const TUTOR_ROUTES = {
   CHAT_SSE: (sessionId: string) => `/api/tutors/${sessionId}/chat`,
-  LIST: "/api/tutors",
-  STORE: "/api/tutors/store",
-} as const;
+  LIST: (learnerId?: string) =>
+    learnerId ? `/api/tutors?learnerId=${learnerId}` : "/api/tutors",
+  STORE: (learnerId?: string) =>
+    learnerId ? `/api/tutors/store?learnerId=${learnerId}` : "/api/tutors/store",
+};
 
 // Engagement (XP, streaks, badges, etc.)
 export const ENGAGEMENT_ROUTES = {
