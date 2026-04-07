@@ -47,8 +47,8 @@ function CheckoutContent() {
   useEffect(() => {
     async function fetchPlans() {
       try {
-        const data = await apiFetch<Plan[]>(API_ROUTES.BILLING.PLANS);
-        setPlans(data);
+        const data = await apiFetch<{ plans: Plan[] }>(API_ROUTES.BILLING.PLANS);
+        setPlans(data.plans);
         if (!selectedPlan && data.length > 0) {
           const recommended = data.find((p) => p.recommended);
           setSelectedPlan(recommended?.id ?? data[0].id);
