@@ -14,6 +14,7 @@ class Recommendation {
   final String status;
   final String? parentResponse;
   final Map<String, dynamic>? adjustments;
+  final Map<String, dynamic>? payload;
   final DateTime createdAt;
   final DateTime? respondedAt;
 
@@ -27,6 +28,7 @@ class Recommendation {
     required this.status,
     this.parentResponse,
     this.adjustments,
+    this.payload,
     required this.createdAt,
     this.respondedAt,
   });
@@ -41,6 +43,7 @@ class Recommendation {
     String? status,
     String? Function()? parentResponse,
     Map<String, dynamic>? Function()? adjustments,
+    Map<String, dynamic>? Function()? payload,
     DateTime? createdAt,
     DateTime? Function()? respondedAt,
   }) {
@@ -55,6 +58,7 @@ class Recommendation {
       parentResponse:
           parentResponse != null ? parentResponse() : this.parentResponse,
       adjustments: adjustments != null ? adjustments() : this.adjustments,
+      payload: payload != null ? payload() : this.payload,
       createdAt: createdAt ?? this.createdAt,
       respondedAt: respondedAt != null ? respondedAt() : this.respondedAt,
     );
@@ -71,6 +75,7 @@ class Recommendation {
       status: json['status'] as String,
       parentResponse: json['parentResponse'] as String?,
       adjustments: json['adjustments'] as Map<String, dynamic>?,
+      payload: json['payload'] as Map<String, dynamic>?,
       createdAt: DateTime.parse(json['createdAt'] as String),
       respondedAt: json['respondedAt'] != null
           ? DateTime.parse(json['respondedAt'] as String)
@@ -89,6 +94,7 @@ class Recommendation {
       'status': status,
       'parentResponse': parentResponse,
       'adjustments': adjustments,
+      'payload': payload,
       'createdAt': createdAt.toIso8601String(),
       'respondedAt': respondedAt?.toIso8601String(),
     };
@@ -107,6 +113,7 @@ class Recommendation {
         other.status == status &&
         other.parentResponse == parentResponse &&
         mapEquals(other.adjustments, adjustments) &&
+        mapEquals(other.payload, payload) &&
         other.createdAt == createdAt &&
         other.respondedAt == respondedAt;
   }
@@ -123,6 +130,7 @@ class Recommendation {
       status,
       parentResponse,
       adjustments != null ? Object.hashAll(adjustments!.entries) : null,
+      payload != null ? Object.hashAll(payload!.entries) : null,
       createdAt,
       respondedAt,
     );

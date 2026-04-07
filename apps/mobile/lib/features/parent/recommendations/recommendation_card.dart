@@ -170,6 +170,26 @@ class _RecommendationCardState extends ConsumerState<RecommendationCard> {
               ),
               const SizedBox(height: 12),
 
+              // Domain badge (from payload)
+              if (rec.payload?['domain'] != null) ...[
+                Semantics(
+                  label: 'Subject: ${rec.payload!['domain']}',
+                  child: Chip(
+                    avatar: const Icon(Icons.subject, size: 16),
+                    label: Text(
+                      rec.payload!['domain'] as String,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    visualDensity: VisualDensity.compact,
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    padding: EdgeInsets.zero,
+                  ),
+                ),
+                const SizedBox(height: 8),
+              ],
+
               // Title
               Text(rec.title, style: theme.textTheme.titleMedium),
               const SizedBox(height: 6),
@@ -331,25 +351,7 @@ class _TypeBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    IconData icon;
-    Color color;
-    switch (type.toLowerCase()) {
-      case 'accommodation':
-        icon = Icons.accessibility_new;
-        color = AivoColors.primary;
-      case 'curriculum':
-        icon = Icons.school;
-        color = AivoColors.secondary;
-      case 'goal':
-        icon = Icons.flag;
-        color = AivoColors.accent;
-      case 'tutor':
-        icon = Icons.smart_toy;
-        color = AivoColors.streakFlame;
-      default:
-        icon = Icons.lightbulb;
-        color = theme.colorScheme.primary;
-    }
+    final (IconData icon, Color color, String label) = _resolveType(type, theme);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -363,7 +365,7 @@ class _TypeBadge extends StatelessWidget {
           Icon(icon, size: 14, color: color),
           const SizedBox(width: 4),
           Text(
-            type[0].toUpperCase() + type.substring(1),
+            label,
             style: theme.textTheme.bodySmall?.copyWith(
               color: color,
               fontWeight: FontWeight.w600,
@@ -372,6 +374,34 @@ class _TypeBadge extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  static (IconData, Color, String) _resolveType(String type, ThemeData theme) {
+    switch (type) {
+      // New contextual types from backend
+      case 'CURRICULUM_ADJUSTMENT':
+        return (Icons.tune, AivoColors.primary, 'Learning Path');
+      case 'TUTOR_SUGGESTION':
+        return (Icons.school, AivoColors.secondary, 'Tutor Suggestion');
+      case 'IEP_GOAL_UPDATE':
+        return (Icons.flag, AivoColors.accent, 'IEP Goal');
+      case 'ASSESSMENT_REBASELINE':
+        return (Icons.psychology, AivoColors.primaryLight, 'Brain Review');
+      case 'REGRESSION_ALERT':
+        return (Icons.trending_down, AivoColors.error, 'Attention Needed');
+      // Legacy types
+      case 'accommodation':
+        return (Icons.accessibility_new, AivoColors.primary, 'Accommodation');
+      case 'curriculum':
+        return (Icons.school, AivoColors.secondary, 'Curriculum');
+      case 'goal':
+        return (Icons.flag, AivoColors.accent, 'Goal');
+      case 'tutor':
+        return (Icons.smart_toy, AivoColors.streakFlame, 'Tutor');
+      default:
+        return (Icons.lightbulb, theme.colorScheme.primary,
+            type.isNotEmpty ? type[0].toUpperCase() + type.substring(1) : 'Recommendation');
+    }
   }
 }
 

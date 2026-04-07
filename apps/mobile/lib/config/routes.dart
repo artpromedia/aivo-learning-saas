@@ -11,6 +11,7 @@ import 'package:aivo_mobile/features/learner/home/learner_home_screen.dart';
 import 'package:aivo_mobile/features/learner/pin/pin_gate_screen.dart';
 import 'package:aivo_mobile/features/parent/dashboard/parent_dashboard_screen.dart';
 import 'package:aivo_mobile/features/parent/dashboard/child_detail_screen.dart';
+import 'package:aivo_mobile/features/parent/recommendations/recommendation_list_screen.dart';
 import 'package:aivo_mobile/features/parent/settings/family_settings_screen.dart';
 
 // ---------------------------------------------------------------------------
@@ -256,7 +257,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/parent/recommendations',
         name: 'parent-recommendations',
-        builder: (_, __) => const _Placeholder('Recommendations'),
+        builder: (_, __) => const RecommendationListScreen(),
       ),
       GoRoute(
         path: '/parent/brain/:learnerId',

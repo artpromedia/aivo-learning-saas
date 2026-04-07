@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:aivo_mobile/core/accessibility/functioning_level_provider.dart';
 import 'package:aivo_mobile/core/api/api_client.dart';
 import 'package:aivo_mobile/core/api/endpoints.dart';
+import 'package:aivo_mobile/core/auth/auth_provider.dart';
 import 'package:aivo_mobile/data/models/break_config.dart';
 import 'package:aivo_mobile/features/onboarding/screens/assessment_break_screen.dart';
 import 'package:aivo_mobile/features/onboarding/widgets/picture_question.dart';
@@ -22,6 +23,7 @@ class BaselineQuestion {
     required this.id,
     required this.text,
     required this.options,
+    this.correctAnswer,
     this.imageUrlA,
     this.imageUrlB,
     this.audioUrl,
@@ -31,12 +33,37 @@ class BaselineQuestion {
   final String text;
   final List<BaselineOption> options;
 
+  /// The correct answer value (for adaptive break tracking).
+  final String? correctAnswer;
+
   /// For LOW_VERBAL picture-based questions.
   final String? imageUrlA;
   final String? imageUrlB;
 
   /// Optional audio narration URL.
   final String? audioUrl;
+
+  /// Parse a question from the assessment API response.
+  factory BaselineQuestion.fromApiJson(Map<String, dynamic> json) {
+    return BaselineQuestion(
+      id: json['id'] as String,
+      text: (json['prompt'] ?? json['text']) as String,
+      options: (json['options'] as List<dynamic>).map((o) {
+        if (o is Map<String, dynamic>) {
+          return BaselineOption(
+            value: (o['value'] ?? o.toString()) as String,
+            label: (o['label'] ?? o['value'] ?? o.toString()) as String,
+            imageUrl: o['imageUrl'] as String?,
+          );
+        }
+        return BaselineOption(value: o.toString(), label: o.toString());
+      }).toList(),
+      correctAnswer: json['correctAnswer'] as String?,
+      imageUrlA: json['imageUrlA'] as String?,
+      imageUrlB: json['imageUrlB'] as String?,
+      audioUrl: json['audioUrl'] as String?,
+    );
+  }
 }
 
 class BaselineOption {
@@ -287,12 +314,19 @@ class _BaselineAssessmentScreenState
   int _breakTypeIndex = 0;
   int _consecutiveWrong = 0;
   int _questionsAnsweredSinceBreak = 0;
-  final BreakConfig _breakConfig = BreakConfig.defaults();
+  BreakConfig _breakConfig = BreakConfig.defaults();
 
   /// Timer tracking for the assessment.
   final Stopwatch _stopwatch = Stopwatch();
   Timer? _timerRefresh;
   String _elapsedDisplay = '0:00';
+
+  // API-driven assessment state.
+  bool _isApiMode = false;
+  bool _isOffline = false;
+  String? _learnerId;
+  BaselineQuestion? _currentApiQuestion;
+  double _apiProgress = 0.0;
 
   // For partner-assisted / observational checklist modes.
   final Map<String, String> _partnerAnswers = {};
@@ -313,6 +347,53 @@ class _BaselineAssessmentScreenState
         });
       }
     });
+    _startAssessment();
+  }
+
+  String? _getLearnerId() {
+    final authState = ref.read(authProvider);
+    if (authState is AuthAuthenticated) {
+      return authState.user.learnerId;
+    }
+    return null;
+  }
+
+  Future<void> _startAssessment() async {
+    _learnerId = _getLearnerId();
+    if (_learnerId == null) return; // fall back to local mode
+
+    try {
+      final apiClient = ref.read(apiClientProvider);
+      final response = await apiClient.post(
+        Endpoints.baselineStart(_learnerId!),
+      );
+
+      final data = response.data as Map<String, dynamic>;
+      if (mounted) {
+        setState(() {
+          _isApiMode = true;
+          if (data['question'] != null) {
+            _currentApiQuestion = BaselineQuestion.fromApiJson(
+              data['question'] as Map<String, dynamic>,
+            );
+          }
+          _apiProgress = (data['progress'] as num?)?.toDouble() ?? 0.0;
+          if (data['breakConfig'] != null) {
+            _breakConfig = BreakConfig.fromJson(
+              data['breakConfig'] as Map<String, dynamic>,
+            );
+          }
+        });
+      }
+    } catch (_) {
+      // API unavailable — fall back to local question banks.
+      if (mounted) {
+        setState(() {
+          _isOffline = true;
+          _breakConfig = BreakConfig.defaults();
+        });
+      }
+    }
   }
 
   @override
@@ -360,13 +441,98 @@ class _BaselineAssessmentScreenState
     });
 
     // Track consecutive wrong answers for adaptive breaks.
-    final correct = _correctAnswers[questionId];
+    // In API mode, use correctAnswer from the question; in local mode, use the map.
+    String? correct;
+    if (_isApiMode && _currentApiQuestion != null) {
+      correct = _currentApiQuestion!.correctAnswer;
+    } else {
+      correct = _correctAnswers[questionId];
+    }
     if (correct != null) {
       if (value == correct) {
         _consecutiveWrong = 0;
       } else {
         _consecutiveWrong++;
       }
+    }
+  }
+
+  /// Submit an individual answer via API and receive the next question.
+  Future<void> _submitAnswerToApi(String questionId, String answer) async {
+    if (!_isApiMode || _learnerId == null) return;
+
+    try {
+      final apiClient = ref.read(apiClientProvider);
+      final response = await apiClient.post(
+        Endpoints.baselineAnswer(_learnerId!),
+        data: {'questionId': questionId, 'answer': answer},
+      );
+
+      final result = response.data as Map<String, dynamic>;
+      final correct = result['correct'] as bool? ?? true;
+      final serverBreak = result['shouldBreak'] as bool? ?? false;
+
+      // Update consecutive wrong tracking from server truth.
+      if (!correct) {
+        _consecutiveWrong++;
+      } else {
+        _consecutiveWrong = 0;
+      }
+
+      if (result['isComplete'] == true) {
+        await _completeApiAssessment();
+      } else if (serverBreak || _shouldTriggerBreak()) {
+        _showBreakScreen();
+      } else if (result['nextQuestion'] != null) {
+        setState(() {
+          _currentApiQuestion = BaselineQuestion.fromApiJson(
+            result['nextQuestion'] as Map<String, dynamic>,
+          );
+          _apiProgress = (result['progress'] as num?)?.toDouble() ?? _apiProgress;
+        });
+      }
+    } catch (_) {
+      // On API error, keep the current question and show error.
+      if (mounted) {
+        setState(() {
+          _errorMessage = 'Failed to submit answer. Please try again.';
+        });
+      }
+    }
+  }
+
+  bool _shouldTriggerBreak() {
+    _questionsAnsweredSinceBreak++;
+
+    if (_breakConfig.adaptiveBreaks && _consecutiveWrong >= 3) {
+      return true;
+    }
+    if (_questionsAnsweredSinceBreak > 0 &&
+        _questionsAnsweredSinceBreak % _breakConfig.frequencyQuestions == 0) {
+      return true;
+    }
+    return false;
+  }
+
+  void _showBreakScreen() {
+    final isAdaptive = _breakConfig.adaptiveBreaks && _consecutiveWrong >= 3;
+    setState(() {
+      _showBreak = true;
+      _breakType = isAdaptive ? 'breathing' : _getNextBreakType();
+      _consecutiveWrong = 0;
+      _questionsAnsweredSinceBreak = 0;
+    });
+  }
+
+  Future<void> _completeApiAssessment() async {
+    try {
+      final apiClient = ref.read(apiClientProvider);
+      await apiClient.post(Endpoints.baselineComplete(_learnerId!));
+    } catch (_) {
+      // Best-effort completion call.
+    }
+    if (mounted) {
+      context.go('/onboarding/brain-reveal');
     }
   }
 
@@ -544,6 +710,36 @@ class _BaselineAssessmentScreenState
                 ),
               ),
             ),
+
+            // ---- Offline banner ----
+            if (_isOffline)
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
+                child: Semantics(
+                  liveRegion: true,
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFDCB6E).withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.wifi_off, size: 18, color: Color(0xFFF9A825)),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Offline mode: using practice questions. '
+                            'Full assessment requires internet.',
+                            style: theme.textTheme.bodySmall,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
 
             // ---- Error banner ----
             if (_errorMessage != null)
