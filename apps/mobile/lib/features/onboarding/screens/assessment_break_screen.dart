@@ -4,6 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:aivo_mobile/core/api/api_client.dart';
 import 'package:aivo_mobile/core/api/endpoints.dart';
 import 'package:aivo_mobile/core/accessibility/large_touch_wrapper.dart';
+import 'package:aivo_mobile/features/learner/breaks/game_break_screen.dart';
+import 'package:aivo_mobile/features/learner/breaks/music_break_screen.dart';
+import 'package:aivo_mobile/features/learner/breaks/puzzle_break_screen.dart';
 import 'package:aivo_mobile/features/learner/breaks/sensory_break_screen.dart';
 
 // ---------------------------------------------------------------------------
@@ -171,22 +174,22 @@ class _AssessmentBreakScreenState extends ConsumerState<AssessmentBreakScreen>
           onComplete: _onBreakComplete,
         );
 
-      // TODO(Sprint M2): Implement dedicated MusicBreakScreen.
       case 'music':
-        return SensoryBreakScreen(
+        return MusicBreakScreen(
           onComplete: _onBreakComplete,
+          xpAwardCallback: widget.xpAwardCallback,
         );
 
-      // TODO(Sprint M2): Implement dedicated PuzzleBreakScreen.
       case 'puzzle':
-        return SensoryBreakScreen(
+        return PuzzleBreakScreen(
           onComplete: _onBreakComplete,
+          xpAwardCallback: widget.xpAwardCallback,
         );
 
-      // TODO(Sprint M2): Implement dedicated GameBreakScreen.
       case 'game':
-        return SensoryBreakScreen(
+        return GameBreakScreen(
           onComplete: _onBreakComplete,
+          xpAwardCallback: widget.xpAwardCallback,
         );
 
       default:
