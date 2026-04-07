@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Brain, ChevronRight, Loader2 } from "lucide-react";
@@ -10,6 +10,7 @@ import { ProgressBar } from "@/components/ui/ProgressBar";
 import { apiFetch, assessmentApiFetch } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
 import { useLearnerStore } from "@/stores/learner.store";
+import { AssessmentBreak, type EngagementBreakType } from "@/components/assessment/AssessmentBreak";
 
 interface BaselineQuestion {
   id: string;
@@ -19,6 +20,11 @@ interface BaselineQuestion {
   options?: string[];
   imageUrl?: string;
   difficulty: number;
+}
+
+interface BreakConfig {
+  frequencyQuestions: number;
+  preferredTypes: EngagementBreakType[];
 }
 
 interface AnswerResult {
@@ -45,17 +51,41 @@ export default function BaselineAssessmentPage() {
   const [error, setError] = useState<string | null>(null);
   const [questionsAnswered, setQuestionsAnswered] = useState(0);
 
+  // Break state
+  const [showBreak, setShowBreak] = useState(false);
+  const [breakType, setBreakType] = useState<EngagementBreakType>("music");
+  const [breakConfig, setBreakConfig] = useState<BreakConfig>({
+    frequencyQuestions: 8,
+    preferredTypes: ["music", "puzzle", "game"],
+  });
+  const breakRotationRef = useRef(0);
+  const pendingNextQuestion = useRef<BaselineQuestion | null>(null);
+
+  const pickBreakType = useCallback((): EngagementBreakType => {
+    const types = breakConfig.preferredTypes;
+    const idx = breakRotationRef.current % types.length;
+    breakRotationRef.current += 1;
+    return types[idx];
+  }, [breakConfig.preferredTypes]);
+
   useEffect(() => {
     if (!learnerId) return;
 
     async function startBaseline() {
       try {
-        const data = await apiFetch<{ question: BaselineQuestion; progress: number }>(
+        const data = await apiFetch<{
+          question: BaselineQuestion;
+          progress: number;
+          breakConfig?: BreakConfig;
+        }>(
           API_ROUTES.ONBOARDING.BASELINE_START(learnerId!),
           { method: "POST" },
         );
         setQuestion(data.question);
         setProgress(data.progress);
+        if (data.breakConfig) {
+          setBreakConfig(data.breakConfig);
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : t("failedToStartAssessment"));
       } finally {
@@ -85,15 +115,25 @@ export default function BaselineAssessmentPage() {
 
       setFeedback({ correct: result.correct, text: result.feedback });
       setProgress(result.progress);
-      setQuestionsAnswered((q) => q + 1);
+      const newCount = questionsAnswered + 1;
+      setQuestionsAnswered(newCount);
 
-      // Brief delay to show feedback, then advance
+      // Brief delay to show feedback, then advance (or trigger break)
       setTimeout(() => {
         setFeedback(null);
         setSelectedAnswer(null);
 
         if (result.isComplete) {
           handleComplete();
+        } else if (
+          newCount > 0 &&
+          newCount % breakConfig.frequencyQuestions === 0 &&
+          result.nextQuestion
+        ) {
+          // Time for a break — stash the next question and show break screen
+          pendingNextQuestion.current = result.nextQuestion;
+          setBreakType(pickBreakType());
+          setShowBreak(true);
         } else if (result.nextQuestion) {
           setQuestion(result.nextQuestion);
         }
@@ -116,6 +156,14 @@ export default function BaselineAssessmentPage() {
       setError(err instanceof Error ? err.message : t("failedToCompleteAssessment"));
     }
   };
+
+  const handleBreakComplete = useCallback(() => {
+    setShowBreak(false);
+    if (pendingNextQuestion.current) {
+      setQuestion(pendingNextQuestion.current);
+      pendingNextQuestion.current = null;
+    }
+  }, []);
 
   if (loading) {
     return (
@@ -161,7 +209,16 @@ export default function BaselineAssessmentPage() {
         </div>
       )}
 
-      {question && (
+      {showBreak && learnerId && (
+        <AssessmentBreak
+          breakType={breakType}
+          learnerId={learnerId}
+          soundEnabled={activeLearner?.preferences?.soundEnabled ?? true}
+          onComplete={handleBreakComplete}
+        />
+      )}
+
+      {!showBreak && question && (
         <Card>
           <CardBody>
             {question.imageUrl && (
