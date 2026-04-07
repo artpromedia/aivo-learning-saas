@@ -6,6 +6,7 @@ import 'package:lottie/lottie.dart';
 import 'package:aivo_mobile/core/api/api_client.dart';
 import 'package:aivo_mobile/core/api/endpoints.dart';
 import 'package:aivo_mobile/core/auth/auth_provider.dart';
+import 'package:aivo_mobile/core/i18n/t.dart';
 
 // ---------------------------------------------------------------------------
 // Brain profile model (local to this screen)
@@ -147,7 +148,7 @@ class _BrainRevealScreenState extends ConsumerState<BrainRevealScreen>
       if (mounted) {
         setState(() {
           _isLoading = false;
-          _errorMessage = 'Failed to load brain profile. Please try again.';
+          _errorMessage = t('onboarding.unableToLoadBrainProfile');
         });
       }
     }
@@ -205,7 +206,7 @@ class _BrainRevealScreenState extends ConsumerState<BrainRevealScreen>
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Brain Profile'),
+        title: Text(t('brain.brainProfile')),
         automaticallyImplyLeading: false,
       ),
       body: SafeArea(
@@ -241,12 +242,12 @@ class _BrainRevealScreenState extends ConsumerState<BrainRevealScreen>
                 });
                 _loadProfile();
               },
-              child: const Text('Retry'),
+              child: Text(t('common.retry')),
             ),
             const SizedBox(height: 12),
             TextButton(
               onPressed: _navigateToHome,
-              child: const Text('Skip to Home'),
+              child: Text(t('onboarding.skipToHome')),
             ),
           ],
         ),
@@ -291,7 +292,7 @@ class _BrainRevealScreenState extends ConsumerState<BrainRevealScreen>
                     Semantics(
                       header: true,
                       child: Text(
-                        'Brain Profile Ready!',
+                        t('onboarding.profileReady'),
                         style: theme.textTheme.headlineMedium,
                         textAlign: TextAlign.center,
                       ),
@@ -322,7 +323,7 @@ class _BrainRevealScreenState extends ConsumerState<BrainRevealScreen>
                     if (profile.strengths.isNotEmpty) ...[
                       _SectionHeader(
                         icon: Icons.star_outline,
-                        title: 'Strengths',
+                        title: t('brain.strengths'),
                         color: colorScheme.secondary,
                       ),
                       const SizedBox(height: 8),
@@ -337,7 +338,7 @@ class _BrainRevealScreenState extends ConsumerState<BrainRevealScreen>
                     if (profile.areasForGrowth.isNotEmpty) ...[
                       _SectionHeader(
                         icon: Icons.trending_up,
-                        title: 'Areas for Growth',
+                        title: t('brain.growthAreas'),
                         color: colorScheme.tertiary,
                       ),
                       const SizedBox(height: 8),
@@ -352,7 +353,7 @@ class _BrainRevealScreenState extends ConsumerState<BrainRevealScreen>
                     if (profile.accommodations.isNotEmpty) ...[
                       _SectionHeader(
                         icon: Icons.accessibility_new,
-                        title: 'Recommended Accommodations',
+                        title: t('onboarding.accommodations'),
                         color: colorScheme.primary,
                       ),
                       const SizedBox(height: 8),
@@ -381,7 +382,7 @@ class _BrainRevealScreenState extends ConsumerState<BrainRevealScreen>
                 height: 48,
                 child: ElevatedButton(
                   onPressed: _navigateToHome,
-                  child: const Text('Start Learning'),
+                  child: Text(t('onboarding.startLearning')),
                 ),
               ),
               const SizedBox(height: 8),
@@ -389,7 +390,7 @@ class _BrainRevealScreenState extends ConsumerState<BrainRevealScreen>
                 height: 48,
                 child: OutlinedButton(
                   onPressed: _viewFullProfile,
-                  child: const Text('View Full Profile'),
+                  child: Text(t('onboarding.viewFullProfile')),
                 ),
               ),
             ],

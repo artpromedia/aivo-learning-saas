@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:aivo_mobile/core/accessibility/functioning_level_provider.dart';
 import 'package:aivo_mobile/core/api/api_client.dart';
 import 'package:aivo_mobile/core/api/endpoints.dart';
+import 'package:aivo_mobile/core/i18n/t.dart';
 import 'package:aivo_mobile/features/onboarding/widgets/picture_question.dart';
 import 'package:aivo_mobile/features/onboarding/widgets/partner_assisted.dart';
 import 'package:aivo_mobile/features/onboarding/widgets/observational_checklist.dart';
@@ -402,7 +403,7 @@ class _BaselineAssessmentScreenState
       if (mounted) {
         _stopwatch.start();
         setState(() {
-          _errorMessage = 'Failed to submit. Please try again.';
+          _errorMessage = t('errors.pleaseTryAgain');
         });
       }
     } finally {
@@ -422,13 +423,13 @@ class _BaselineAssessmentScreenState
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Baseline Assessment'),
+        title: Text(t('onboarding.baselineAssessment')),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16),
             child: Center(
               child: Semantics(
-                label: 'Time elapsed: $_elapsedDisplay',
+                label: '${t('onboarding.timeElapsed')}: $_elapsedDisplay',
                 child: Text(
                   _elapsedDisplay,
                   style: theme.textTheme.bodyMedium,
@@ -593,7 +594,7 @@ class _BaselineAssessmentScreenState
                           // Audio playback would be handled by audioplayers.
                           // The URL is stored in q.audioUrl.
                         },
-                        tooltip: 'Listen to question',
+                        tooltip: t('onboarding.listenToQuestion'),
                         iconSize: 32,
                       ),
                   ],
@@ -724,7 +725,7 @@ class _BaselineAssessmentScreenState
               onPressed: _isSubmitting
                   ? null
                   : () => _submit(FunctioningLevel.preSymbolic),
-              child: const Text('Complete Assessment'),
+              child: Text(t('onboarding.completeAssessment')),
             ),
           ),
         ),
@@ -745,14 +746,14 @@ class _BaselineAssessmentScreenState
         children: [
           TextButton(
             onPressed: onSkip,
-            child: const Text('Skip'),
+            child: Text(t('onboarding.skip')),
           ),
           const Spacer(),
           SizedBox(
             height: 48,
             child: ElevatedButton(
               onPressed: canContinue ? onContinue : null,
-              child: const Text('Continue'),
+              child: Text(t('common.continue')),
             ),
           ),
         ],

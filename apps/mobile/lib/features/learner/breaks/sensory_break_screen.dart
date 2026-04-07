@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:aivo_mobile/core/accessibility/large_touch_wrapper.dart';
+import 'package:aivo_mobile/core/i18n/t.dart';
 import 'package:aivo_mobile/features/learner/breaks/sensory_break_timer.dart';
 
 // ---------------------------------------------------------------------------
@@ -148,7 +149,7 @@ class _SensoryBreakScreenState extends ConsumerState<SensoryBreakScreen>
                 _buildBreathingCircle(theme),
                 const SizedBox(height: 32),
                 Text(
-                  'Take a deep breath',
+                  t('gamification.takeDeepBreath'),
                   style: theme.textTheme.headlineMedium?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
@@ -162,7 +163,9 @@ class _SensoryBreakScreenState extends ConsumerState<SensoryBreakScreen>
                         ? true
                         : _breathingAnimation.value > 0.8;
                     return Text(
-                      breatheIn ? 'Breathe in...' : 'Breathe out...',
+                      breatheIn
+                          ? t('gamification.breatheIn')
+                          : t('gamification.breatheOut'),
                       style: theme.textTheme.titleLarge?.copyWith(
                         color: Colors.white70,
                       ),
@@ -183,13 +186,15 @@ class _SensoryBreakScreenState extends ConsumerState<SensoryBreakScreen>
                     _isPlayingAudio ? Icons.volume_off : Icons.volume_up,
                   ),
                   label: Text(
-                    _isPlayingAudio ? 'Stop Sounds' : 'Play Nature Sounds',
+                    _isPlayingAudio
+                        ? t('gamification.stopSounds')
+                        : t('gamification.playNatureSounds'),
                   ),
                 ),
                 const SizedBox(height: 24),
                 // Ready to continue
                 LargeTouchWrapper(
-                  semanticLabel: 'Ready to continue',
+                  semanticLabel: t('gamification.readyToContinue'),
                   onTap: _onReadyToContinue,
                   child: Container(
                     width: double.infinity,
@@ -199,7 +204,7 @@ class _SensoryBreakScreenState extends ConsumerState<SensoryBreakScreen>
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Text(
-                      'Ready to Continue',
+                      t('gamification.readyToContinue'),
                       textAlign: TextAlign.center,
                       style: theme.textTheme.titleLarge?.copyWith(
                         color: const Color(0xFF6C5CE7),

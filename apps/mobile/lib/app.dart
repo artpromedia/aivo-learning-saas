@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:aivo_mobile/config/routes.dart';
 import 'package:aivo_mobile/config/theme.dart';
 import 'package:aivo_mobile/core/i18n/locale_provider.dart';
+import 'package:aivo_mobile/core/i18n/translation_preloader.dart';
 
 // ---------------------------------------------------------------------------
 // Accessibility providers
@@ -41,9 +42,10 @@ class AivoApp extends ConsumerWidget {
     final functioningLevel = ref.watch(functioningLevelProvider);
     final locale = ref.watch(localeProvider);
 
-    return FunctioningLevelAdapter(
-      level: functioningLevel,
-      child: MaterialApp.router(
+    return TranslationPreloader(
+      child: FunctioningLevelAdapter(
+        level: functioningLevel,
+        child: MaterialApp.router(
         title: 'AIVO Learning',
         debugShowCheckedModeBanner: false,
         theme: AivoTheme.light(useDyslexicFont: useDyslexicFont),
@@ -72,6 +74,7 @@ class AivoApp extends ConsumerWidget {
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
+      ),
       ),
     );
   }
