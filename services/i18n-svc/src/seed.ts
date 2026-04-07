@@ -450,6 +450,7 @@ const SEED_TRANSLATIONS: Record<string, Record<string, string>> = {
     "brainProfile": "Brain Profile",
     "recommendations": "Recommendations",
     "gradebook": "Gradebook",
+    "learnerDashboard": "Learner Dashboard",
     "gradeNotSet": "Grade not set",
     "backToAllChildren": "Back to all children",
     "districtDashboard": "District Dashboard",

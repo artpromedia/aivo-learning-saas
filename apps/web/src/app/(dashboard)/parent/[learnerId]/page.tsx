@@ -15,6 +15,7 @@ import {
   Flame,
   Loader2,
   ArrowLeft,
+  Home,
 } from "lucide-react";
 import { Card, CardBody, CardHeader } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -25,6 +26,8 @@ import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
 import { useEngagement } from "@/hooks/useEngagement";
 import { apiFetch } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
+import { useLearnerStore } from "@/stores/learner.store";
+import { useRouter } from "next/navigation";
 
 interface LearnerDetail {
   id: string;
@@ -53,6 +56,22 @@ export default function ChildDashboardPage() {
   const [error, setError] = useState<string | null>(null);
 
   const { xp, streak, level, isLoading: engagementLoading } = useEngagement(learnerId);
+  const setActiveLearner = useLearnerStore((s) => s.setActiveLearner);
+  const router = useRouter();
+
+  const handleViewLearnerDashboard = () => {
+    if (learner) {
+      setActiveLearner({
+        id: learner.id,
+        name: learner.name,
+        avatarUrl: learner.avatarUrl,
+        dateOfBirth: learner.dateOfBirth,
+        functioningLevel: learner.functioningLevel,
+        preferences: {},
+      });
+    }
+    router.push("/learner");
+  };
 
   useEffect(() => {
     async function fetchData() {
@@ -102,7 +121,8 @@ export default function ChildDashboardPage() {
     { href: `/parent/${learnerId}/recommendations`, label: t("recommendations"), icon: <Lightbulb size={20} />, color: "text-amber-500" },
     { href: `/parent/${learnerId}/gradebook`, label: t("gradebook"), icon: <GraduationCap size={20} />, color: "text-[#38B2AC]" },
     { href: `/parent/${learnerId}/tutors`, label: t("tutors"), icon: <Bot size={20} />, color: "text-blue-500" },
-  ];
+    { href: "/learner", label: t("learnerDashboard", { defaultValue: "Learner Dashboard" }), icon: <Home size={20} />, color: "text-green-500", isLearnerView: true },
+  ] as const;
 
   return (
     <div>
@@ -186,19 +206,36 @@ export default function ChildDashboardPage() {
       </div>
 
       {/* Quick links */}
-      <div className="grid gap-3 grid-cols-2 lg:grid-cols-4 mb-8">
-        {quickLinks.map((link) => (
-          <Link key={link.href} href={link.href}>
-            <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
-              <CardBody className="flex flex-col items-center justify-center text-center py-6">
-                <div className={`mb-2 ${link.color}`}>{link.icon}</div>
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {link.label}
-                </span>
-              </CardBody>
-            </Card>
-          </Link>
-        ))}
+      <div className="grid gap-3 grid-cols-2 lg:grid-cols-5 mb-8">
+        {quickLinks.map((link) =>
+          "isLearnerView" in link && link.isLearnerView ? (
+            <div
+              key={link.href}
+              onClick={learner ? handleViewLearnerDashboard : undefined}
+              className={learner ? "cursor-pointer" : "opacity-50 cursor-not-allowed"}
+            >
+              <Card className="hover:shadow-md transition-shadow h-full">
+                <CardBody className="flex flex-col items-center justify-center text-center py-6">
+                  <div className={`mb-2 ${link.color}`}>{link.icon}</div>
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {link.label}
+                  </span>
+                </CardBody>
+              </Card>
+            </div>
+          ) : (
+            <Link key={link.href} href={link.href}>
+              <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
+                <CardBody className="flex flex-col items-center justify-center text-center py-6">
+                  <div className={`mb-2 ${link.color}`}>{link.icon}</div>
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {link.label}
+                  </span>
+                </CardBody>
+              </Card>
+            </Link>
+          ),
+        )}
       </div>
 
       {/* Subject mastery */}
