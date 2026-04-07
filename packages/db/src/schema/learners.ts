@@ -30,6 +30,7 @@ export const learners = pgTable(
     schoolName: varchar("school_name", { length: 255 }),
     functioningLevel: functioningLevelEnum("functioning_level").notNull().default("STANDARD"),
     communicationMode: communicationModeEnum("communication_mode").notNull().default("VERBAL"),
+    preferredLanguage: varchar("preferred_language", { length: 10 }).notNull().default("en"),
     status: userStatusEnum("status").notNull().default("ACTIVE"),
     /** Hashed 4–6 digit PIN for learner dashboard access */
     pinHash: varchar("pin_hash", { length: 255 }),

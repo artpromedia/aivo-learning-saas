@@ -10,6 +10,7 @@ import { User, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { AivoLogo } from "@/components/brand/AivoLogo";
 import { Button } from "@/components/ui/Button";
+import { LanguageSelect } from "@/components/ui/LanguageSelect";
 import { apiFetch } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
 
@@ -38,6 +39,7 @@ export default function RegisterPage() {
   const t = useTranslations("auth");
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [preferredLanguage, setPreferredLanguage] = useState<string>("");
   const [serverError, setServerError] = useState<string | null>(null);
 
   const registerSchema = createRegisterSchema(t);
@@ -59,6 +61,7 @@ export default function RegisterPage() {
           name: data.name,
           email: data.email,
           password: data.password,
+          preferredLanguage: preferredLanguage || undefined,
         }),
       });
       router.push("/verify-email?email=" + encodeURIComponent(data.email));
@@ -211,6 +214,17 @@ export default function RegisterPage() {
                 </p>
               )}
             </div>
+
+            <LanguageSelect
+              value={preferredLanguage}
+              onChange={(locale) => {
+                setPreferredLanguage(locale);
+                if (locale) {
+                  document.cookie = `NEXT_LOCALE=${locale};path=/;max-age=31536000`;
+                }
+              }}
+              label={t("preferredLanguage")}
+            />
 
             <Button
               type="submit"

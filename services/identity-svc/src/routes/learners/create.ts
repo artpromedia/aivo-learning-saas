@@ -17,6 +17,7 @@ const createLearnerBodySchema = z.object({
     .enum(["VERBAL", "LIMITED_VERBAL", "NON_VERBAL_AAC", "NON_VERBAL_PARTNER", "PRE_INTENTIONAL"])
     .optional(),
   pin: z.string().regex(/^\d{4,6}$/).optional(),
+  preferredLanguage: z.string().min(2).max(10).optional(),
 });
 
 export async function createLearnerRoute(app: FastifyInstance) {

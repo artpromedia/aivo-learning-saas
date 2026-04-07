@@ -9,6 +9,8 @@ import 'package:intl/intl.dart';
 import 'package:aivo_mobile/core/api/api_client.dart';
 import 'package:aivo_mobile/core/api/endpoints.dart';
 import 'package:aivo_mobile/core/auth/secure_storage.dart';
+import 'package:aivo_mobile/core/i18n/language_picker_field.dart';
+import 'package:aivo_mobile/core/i18n/locale_provider.dart';
 import 'package:aivo_mobile/core/i18n/t.dart';
 
 /// Grade levels offered during child creation.
@@ -67,6 +69,7 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
   DateTime? _dateOfBirth;
   String? _selectedGrade;
   File? _profileImage;
+  String? _childLanguage;
   bool _isSubmitting = false;
   String? _errorMessage;
 
@@ -187,6 +190,7 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
             'dateOfBirth': _dateOfBirth!.toIso8601String(),
             'gradeLevel': _selectedGrade,
             'pin': _pinController.text.trim(),
+            'preferredLanguage': _childLanguage ?? ref.read(localeProvider).languageCode,
           },
         );
       } else {
@@ -197,6 +201,7 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
             'dateOfBirth': _dateOfBirth!.toIso8601String(),
             'gradeLevel': _selectedGrade,
             'pin': _pinController.text.trim(),
+            'preferredLanguage': _childLanguage ?? ref.read(localeProvider).languageCode,
           },
         );
       }
@@ -434,6 +439,27 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
                           }
                           return null;
                         },
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // ---- Child's preferred language ----
+                    Semantics(
+                      label: t('onboarding.childPreferredLanguage'),
+                      child: LanguagePickerField(
+                        selectedLocaleCode: _childLanguage,
+                        onChanged: (code) =>
+                            setState(() => _childLanguage = code),
+                        labelText: t('onboarding.childPreferredLanguage'),
+                        enabled: !_isSubmitting,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: Text(
+                        t('onboarding.childLanguageHint'),
+                        style: theme.textTheme.bodySmall,
                       ),
                     ),
                     const SizedBox(height: 16),

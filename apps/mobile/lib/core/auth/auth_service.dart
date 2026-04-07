@@ -95,6 +95,7 @@ class AuthService {
     required String email,
     required String password,
     required String role,
+    String? preferredLanguage,
   }) async {
     final response = await _apiClient.post(
       Endpoints.register,
@@ -103,6 +104,7 @@ class AuthService {
         'email': email,
         'password': password,
         'role': role,
+        if (preferredLanguage != null) 'preferredLanguage': preferredLanguage,
       },
     );
 

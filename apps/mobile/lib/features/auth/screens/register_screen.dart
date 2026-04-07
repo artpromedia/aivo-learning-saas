@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:aivo_mobile/core/auth/auth_provider.dart';
+import 'package:aivo_mobile/core/i18n/language_picker_field.dart';
+import 'package:aivo_mobile/core/i18n/locale_provider.dart';
 import 'package:aivo_mobile/core/i18n/t.dart';
 
 /// Registration screen with name, email, password, role selection, and terms.
@@ -26,6 +28,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _confirmPasswordFocus = FocusNode();
 
   String _selectedRole = 'parent';
+  String? _selectedLanguage;
   bool _acceptedTerms = false;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
@@ -60,6 +63,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           email: _emailController.text.trim(),
           password: _passwordController.text,
           role: _selectedRole,
+          preferredLanguage: _selectedLanguage ?? 'en',
         );
   }
 
@@ -346,6 +350,21 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                     },
                             ),
                           ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // ---- Language preference ----
+                      Semantics(
+                        label: t('auth.preferredLanguage'),
+                        child: LanguagePickerField(
+                          selectedLocaleCode: _selectedLanguage,
+                          onChanged: (code) {
+                            setState(() => _selectedLanguage = code);
+                            ref.read(localeProvider.notifier).setLocale(code);
+                          },
+                          labelText: t('auth.preferredLanguage'),
+                          enabled: !isLoading,
                         ),
                       ),
                       const SizedBox(height: 24),

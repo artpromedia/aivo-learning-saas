@@ -10,6 +10,7 @@ import { Eye, EyeOff, Check, Brain, BookOpen, Sparkles, Shield } from "lucide-re
 import { useTranslations } from "next-intl";
 import { AivoLogo } from "@/components/brand/AivoLogo";
 import { Button } from "@/components/ui/Button";
+import { LanguageSelect } from "@/components/ui/LanguageSelect";
 import { apiFetch } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
 
@@ -65,6 +66,7 @@ export default function GetStartedPage() {
   const router = useRouter();
   const [accountType, setAccountType] = useState<AccountType>("parent");
   const [showPassword, setShowPassword] = useState(false);
+  const [preferredLanguage, setPreferredLanguage] = useState<string>("");
   const [submitted, setSubmitted] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
 
@@ -88,6 +90,7 @@ export default function GetStartedPage() {
           email: data.email,
           password: data.password,
           role: accountType,
+          preferredLanguage: preferredLanguage || undefined,
         }),
       });
       setSubmitted(true);
@@ -376,6 +379,17 @@ export default function GetStartedPage() {
                       </p>
                     )}
                   </div>
+
+                  <LanguageSelect
+                    value={preferredLanguage}
+                    onChange={(locale) => {
+                      setPreferredLanguage(locale);
+                      if (locale) {
+                        document.cookie = `NEXT_LOCALE=${locale};path=/;max-age=31536000`;
+                      }
+                    }}
+                    label={t("preferredLanguage")}
+                  />
 
                   <Button
                     type="submit"
