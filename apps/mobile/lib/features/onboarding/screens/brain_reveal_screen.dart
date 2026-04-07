@@ -192,8 +192,25 @@ class _BrainRevealScreenState extends ConsumerState<BrainRevealScreen>
     }
   }
 
+  bool _isLearnerRole() {
+    final authState = ref.read(authProvider);
+    if (authState is AuthAuthenticated) {
+      return authState.user.role.toLowerCase() == 'learner';
+    }
+    return false;
+  }
+
   void _viewFullProfile() {
-    if (_profile != null) {
+    if (_profile == null) return;
+    final authState = ref.read(authProvider);
+    if (authState is AuthAuthenticated) {
+      final role = authState.user.role.toLowerCase();
+      if (role == 'learner') {
+        context.go('/learner/profile');
+      } else {
+        context.go('/parent/brain/${_profile!.learnerId}');
+      }
+    } else {
       context.go('/parent/brain/${_profile!.learnerId}');
     }
   }
@@ -374,26 +391,38 @@ class _BrainRevealScreenState extends ConsumerState<BrainRevealScreen>
         // ---- Action buttons ----
         Padding(
           padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SizedBox(
-                height: 48,
-                child: ElevatedButton(
-                  onPressed: _navigateToHome,
-                  child: const Text('Start Learning'),
+          child: Builder(builder: (context) {
+            final isLearner = _isLearnerRole();
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SizedBox(
+                  height: 48,
+                  child: Semantics(
+                    button: true,
+                    label: isLearner ? 'Start Learning' : 'Go to Dashboard',
+                    child: ElevatedButton.icon(
+                      onPressed: _navigateToHome,
+                      icon: Icon(
+                          isLearner ? Icons.rocket_launch : Icons.dashboard),
+                      label: Text(
+                          isLearner ? 'Start Learning!' : 'Go to Dashboard'),
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              SizedBox(
-                height: 48,
-                child: OutlinedButton(
-                  onPressed: _viewFullProfile,
-                  child: const Text('View Full Profile'),
+                const SizedBox(height: 8),
+                SizedBox(
+                  height: 48,
+                  child: OutlinedButton(
+                    onPressed: _viewFullProfile,
+                    child: Text(isLearner
+                        ? 'View My Profile'
+                        : 'View Full Profile'),
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            );
+          }),
         ),
       ],
     );
