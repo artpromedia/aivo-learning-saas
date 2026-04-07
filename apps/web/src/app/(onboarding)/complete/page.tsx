@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/Button";
 import { apiFetch } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
 import { useLearnerStore } from "@/stores/learner.store";
+import { useAuth } from "@/hooks/useAuth";
+import { getDashboardPath, isLearnerRole } from "@/lib/redirect-after-onboarding";
 
 function ConfettiPiece({ delay, x }: { delay: number; x: number }) {
   const colors = ["#7C3AED", "#7C4DFF", "#38B2AC", "#F59E0B", "#EF4444", "#10B981"];
@@ -37,7 +39,10 @@ function ConfettiPiece({ delay, x }: { delay: number; x: number }) {
 export default function OnboardingCompletePage() {
   const router = useRouter();
   const t = useTranslations("onboarding");
+  const { user } = useAuth();
   const activeLearner = useLearnerStore((s) => s.activeLearner);
+  const userIsLearner = isLearnerRole(user?.role);
+  const dashboardPath = getDashboardPath(user?.role ?? "parent", activeLearner?.id);
   const [isCompleting, setIsCompleting] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -127,12 +132,12 @@ export default function OnboardingCompletePage() {
         >
           <Button
             size="lg"
-            onClick={() => router.push("/parent")}
+            onClick={() => router.push(dashboardPath)}
             loading={isCompleting}
             rightIcon={<Rocket size={20} />}
             className="min-w-[200px]"
           >
-            {t("goToDashboard")}
+            {userIsLearner ? "Go to My Learning Dashboard" : t("goToDashboard")}
           </Button>
         </motion.div>
       </motion.div>
