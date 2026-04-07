@@ -49,9 +49,9 @@ function CheckoutContent() {
       try {
         const data = await apiFetch<{ plans: Plan[] }>(API_ROUTES.BILLING.PLANS);
         setPlans(data.plans);
-        if (!selectedPlan && data.length > 0) {
-          const recommended = data.find((p) => p.recommended);
-          setSelectedPlan(recommended?.id ?? data[0].id);
+        if (!selectedPlan && data.plans.length > 0) {
+          const recommended = data.plans.find((p) => p.recommended);
+          setSelectedPlan(recommended?.id ?? data.plans[0].id);
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : t("failedToLoadPlans"));
