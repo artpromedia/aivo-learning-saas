@@ -282,6 +282,7 @@ export default function BaselineAssessmentPage() {
           breakType={breakType}
           learnerId={learnerId}
           soundEnabled={activeLearner?.preferences?.soundEnabled ?? true}
+          functioningLevel={activeLearner?.functioningLevel ?? "STANDARD"}
           onComplete={handleBreakComplete}
         />
       )}
