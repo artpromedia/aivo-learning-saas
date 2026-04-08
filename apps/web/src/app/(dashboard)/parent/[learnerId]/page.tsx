@@ -165,14 +165,14 @@ export default function ChildDashboardPage() {
             <p className="text-white/80 text-sm">
               {learner?.enrolledGrade ?? t("gradeNotSet")} &middot;{" "}
               {learner?.functioningLevel === "STANDARD"
-                ? "Standard"
+                ? t("standard")
                 : learner?.functioningLevel === "SUPPORTED"
-                  ? "Supported"
+                  ? t("supported")
                   : learner?.functioningLevel === "LOW_VERBAL"
-                    ? "Low Verbal"
+                    ? t("lowVerbal")
                     : learner?.functioningLevel === "NON_VERBAL"
-                      ? "Non-Verbal"
-                      : "Pre-Symbolic"}
+                      ? t("nonVerbal")
+                      : t("preSymbolic")}
             </p>
           </div>
         </div>
