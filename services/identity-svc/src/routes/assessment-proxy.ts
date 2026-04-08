@@ -32,17 +32,6 @@ async function proxyToAssessment(
 }
 
 export const assessmentProxyRoutes: FastifyPluginAsync = async (app) => {
-  // Accept multipart/form-data as raw buffer for forwarding to assessment-svc
-  app.addContentTypeParser(
-    "multipart/form-data",
-    function (_req, payload, done) {
-      const chunks: Buffer[] = [];
-      payload.on("data", (chunk: Buffer) => chunks.push(chunk));
-      payload.on("end", () => done(null, Buffer.concat(chunks)));
-      payload.on("error", done);
-    },
-  );
-
   // Proxy all /api/assessment/* requests to assessment-svc
   app.all<{ Params: { "*": string } }>(
     "/assessment/*",
@@ -55,8 +44,14 @@ export const assessmentProxyRoutes: FastifyPluginAsync = async (app) => {
       const method = request.method;
       const contentType = request.headers["content-type"];
 
-      // Handle multipart (file upload) — forward raw body
-      if (contentType?.includes("multipart/form-data") && Buffer.isBuffer(request.body)) {
+      // Handle multipart (file upload) — collect raw body from stream and forward
+      if (contentType?.includes("multipart/form-data")) {
+        const chunks: Buffer[] = [];
+        for await (const chunk of request.raw) {
+          chunks.push(chunk as Buffer);
+        }
+        const rawBody = Buffer.concat(chunks);
+
         const headers: Record<string, string> = {};
         if (accessToken) headers["Authorization"] = `Bearer ${accessToken}`;
         if (contentType) headers["Content-Type"] = contentType;
@@ -64,7 +59,7 @@ export const assessmentProxyRoutes: FastifyPluginAsync = async (app) => {
         const res = await fetch(`${ASSESSMENT_SVC_URL}${path}`, {
           method,
           headers,
-          body: request.body,
+          body: rawBody,
         });
 
         const data = await res.json().catch(() => null);
