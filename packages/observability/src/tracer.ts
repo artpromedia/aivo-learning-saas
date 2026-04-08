@@ -5,8 +5,7 @@ import { PgInstrumentation } from "@opentelemetry/instrumentation-pg";
 import { IORedisInstrumentation } from "@opentelemetry/instrumentation-ioredis";
 import { Resource } from "@opentelemetry/resources";
 import {
-  SEMRESATTRS_SERVICE_NAME,
-  SEMRESATTRS_DEPLOYMENT_ENVIRONMENT,
+  ATTR_SERVICE_NAME,
 } from "@opentelemetry/semantic-conventions";
 import { TraceIdRatioBasedSampler } from "@opentelemetry/sdk-trace-node";
 
@@ -27,8 +26,8 @@ export function initTracing(opts: TracingOptions): NodeSDK {
   );
 
   const resource = new Resource({
-    [SEMRESATTRS_SERVICE_NAME]: opts.serviceName,
-    [SEMRESATTRS_DEPLOYMENT_ENVIRONMENT]: environment,
+    [ATTR_SERVICE_NAME]: opts.serviceName,
+    ["deployment.environment"]: environment,
   });
 
   const traceExporter = new OTLPTraceExporter({

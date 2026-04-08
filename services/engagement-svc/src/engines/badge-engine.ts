@@ -1,6 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import { eq, and, sql } from "drizzle-orm";
-import { badges, learnerBadges, learnerQuests, xpEvents, learningSessions } from "@aivo/db";
+import { badges, learnerBadges, learnerQuests, xpEvents, learningSessions, learnerXp } from "@aivo/db";
 import { publishEvent } from "@aivo/events";
 import { BADGE_DEFINITIONS, type BadgeCriteria } from "../data/badge-definitions.js";
 import type { BrainEngagementProfile } from "../plugins/brain-client.js";
@@ -39,8 +39,12 @@ export class BadgeEngine {
           (await this.checkEventCount(learnerId, "brain.cloned")) >= 1;
 
       case "streak_days": {
-        const streakRaw = await this.app.redis.hget(`streak:${learnerId}`, "longestStreak");
-        const longest = parseInt(streakRaw || "0", 10);
+        const [xpRow] = await this.app.db
+          .select({ longestStreakDays: learnerXp.longestStreakDays })
+          .from(learnerXp)
+          .where(eq(learnerXp.learnerId, learnerId))
+          .limit(1);
+        const longest = xpRow?.longestStreakDays ?? 0;
         return longest >= criteria.days;
       }
 

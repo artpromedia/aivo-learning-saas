@@ -126,6 +126,12 @@ export async function buildApp() {
     timeWindow: "1 minute",
   });
 
+  // Allow multipart/form-data to pass through unparsed for proxy routes
+  // (e.g. homework upload). The body is streamed raw to the downstream service.
+  app.addContentTypeParser("multipart/form-data", function (_request, _payload, done) {
+    done(null);
+  });
+
   // Infrastructure plugins
   await app.register(dbPlugin);
   await app.register(natsPlugin);
