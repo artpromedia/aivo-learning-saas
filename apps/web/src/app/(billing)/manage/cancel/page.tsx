@@ -14,6 +14,7 @@ import {
   Sparkles,
   CheckCircle,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Card, CardBody, CardHeader } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -40,6 +41,7 @@ interface CurrentSubscription {
 type PageState = "confirm" | "cancelled" | "reactivated";
 
 export default function CancelSubscriptionPage() {
+  const t = useTranslations("billing");
   const { user } = useAuthStore();
   const [subscription, setSubscription] = useState<CurrentSubscription | null>(
     null,
@@ -64,7 +66,7 @@ export default function CancelSubscriptionPage() {
         setError(
           err instanceof Error
             ? err.message
-            : "Failed to load subscription data",
+            : t("failedToLoadSubscription"),
         );
       } finally {
         setLoading(false);
@@ -72,7 +74,7 @@ export default function CancelSubscriptionPage() {
     }
 
     fetchSubscription();
-  }, []);
+  }, [t]);
 
   const handleCancel = async () => {
     if (!subscription) return;
@@ -85,7 +87,7 @@ export default function CancelSubscriptionPage() {
       setPageState("cancelled");
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Failed to cancel subscription",
+        err instanceof Error ? err.message : t("failedToCancel"),
       );
     } finally {
       setCancelling(false);
@@ -106,7 +108,7 @@ export default function CancelSubscriptionPage() {
       setError(
         err instanceof Error
           ? err.message
-          : "Failed to reactivate subscription",
+          : t("failedToReactivate"),
       );
     } finally {
       setReactivating(false);
@@ -116,23 +118,23 @@ export default function CancelSubscriptionPage() {
   const loseFeatures = [
     {
       icon: <Brain size={18} />,
-      label: "AI-powered brain profiles",
-      description: "Personalized learning adaptations will stop updating",
+      label: t("featureBrainProfiles"),
+      description: t("featureBrainProfilesDesc"),
     },
     {
       icon: <BarChart3 size={18} />,
-      label: "Progress analytics",
-      description: "Real-time tracking and insights will be unavailable",
+      label: t("featureAnalytics"),
+      description: t("featureAnalyticsDesc"),
     },
     {
       icon: <Users size={18} />,
-      label: "Collaborator access",
-      description: "Teachers and therapists will lose shared access",
+      label: t("featureCollaborators"),
+      description: t("featureCollaboratorsDesc"),
     },
     {
       icon: <Sparkles size={18} />,
-      label: "Adaptive learning sessions",
-      description: "AI-driven session recommendations will stop",
+      label: t("featureSessions"),
+      description: t("featureSessionsDesc"),
     },
   ];
 
@@ -155,7 +157,7 @@ export default function CancelSubscriptionPage() {
           onClick={() => window.location.reload()}
           leftIcon={<RefreshCw size={16} />}
         >
-          Retry
+          {t("retry")}
         </Button>
       </div>
     );
@@ -168,7 +170,7 @@ export default function CancelSubscriptionPage() {
         className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-4"
       >
         <ArrowLeft size={16} />
-        Back to subscription
+        {t("backToSubscription")}
       </Link>
 
       {/* Cancelled Success State */}
@@ -179,30 +181,26 @@ export default function CancelSubscriptionPage() {
               <XCircle size={32} className="text-amber-600 dark:text-amber-400" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-              Your subscription has been cancelled
+              {t("subscriptionCancelled")}
             </h1>
             <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto">
-              You have 30 days to resubscribe without losing data. Your access
-              continues until{" "}
-              <span className="font-medium">
-                {new Date(subscription.currentPeriodEnd).toLocaleDateString()}
-              </span>
-              .
+              {t("cancellationGracePeriod", {
+                date: new Date(subscription.currentPeriodEnd).toLocaleDateString(),
+              })}
             </p>
           </div>
 
           <Card>
             <CardBody className="text-center py-6">
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                Changed your mind? You can reactivate your subscription at any
-                time during the grace period.
+                {t("resubscribePrompt")}
               </p>
               <Button
                 onClick={handleReactivate}
                 loading={reactivating}
                 leftIcon={<RefreshCw size={16} />}
               >
-                Resubscribe
+                {t("resubscribe")}
               </Button>
             </CardBody>
           </Card>
@@ -218,16 +216,15 @@ export default function CancelSubscriptionPage() {
               <div className="flex items-center gap-3 mb-3">
                 <Download size={18} className="text-[#7C3AED]" />
                 <h3 className="font-semibold text-gray-900 dark:text-white">
-                  Export your data
+                  {t("exportYourData")}
                 </h3>
               </div>
               <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                Make sure to download your brain data and learning history before
-                the grace period ends.
+                {t("exportBeforeCancel")}
               </p>
               <Link href="/parent">
                 <Button variant="outline" leftIcon={<Download size={16} />}>
-                  Go to Learner Settings to Export
+                  {t("goToLearnerSettings")}
                 </Button>
               </Link>
             </CardBody>
@@ -245,14 +242,13 @@ export default function CancelSubscriptionPage() {
             />
           </div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-            Welcome back!
+            {t("welcomeBack")}
           </h1>
           <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto mb-6">
-            Your subscription has been reactivated. All your data and features
-            are fully restored.
+            {t("reactivatedMessage")}
           </p>
           <Link href="/manage">
-            <Button>Back to Subscription Management</Button>
+            <Button>{t("backToSubscriptionManagement")}</Button>
           </Link>
         </div>
       )}
@@ -264,9 +260,9 @@ export default function CancelSubscriptionPage() {
             <div className="flex items-center gap-3">
               <AlertTriangle size={32} />
               <div>
-                <h1 className="text-2xl font-bold">Cancel Subscription</h1>
+                <h1 className="text-2xl font-bold">{t("cancelSubscription")}</h1>
                 <p className="text-white/80 text-sm">
-                  Review what you will lose before confirming.
+                  {t("cancelReviewSubtitle")}
                 </p>
               </div>
             </div>
@@ -285,19 +281,18 @@ export default function CancelSubscriptionPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Current plan
+                      {t("currentPlanLabel")}
                     </p>
                     <h3 className="text-lg font-bold text-gray-900 dark:text-white">
                       {subscription.plan.name}
                     </h3>
                     <p className="text-sm text-gray-500">
-                      {subscription.learnerCount} active learner
-                      {subscription.learnerCount !== 1 ? "s" : ""}
+                      {t("activeLearners", { count: subscription.learnerCount })}
                     </p>
                   </div>
                   <div className="text-right">
                     <Badge variant="success">
-                      {subscription.status === "trialing" ? "Trial" : "Active"}
+                      {subscription.status === "trialing" ? t("statusTrial") : t("statusActive")}
                     </Badge>
                     <p className="text-sm text-gray-500 mt-1">
                       ${subscription.plan.price}/{subscription.plan.interval}
@@ -312,7 +307,7 @@ export default function CancelSubscriptionPage() {
               <CardHeader>
                 <h3 className="font-semibold text-amber-700 dark:text-amber-400 flex items-center gap-2">
                   <AlertTriangle size={18} />
-                  What you will lose during the grace period
+                  {t("whatYouWillLose")}
                 </h3>
               </CardHeader>
               <CardBody>
@@ -335,10 +330,7 @@ export default function CancelSubscriptionPage() {
                 </div>
                 <div className="mt-4 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
                   <p className="text-sm text-amber-700 dark:text-amber-300">
-                    After cancellation, your data will be retained for{" "}
-                    <span className="font-medium">30 days</span>. You can
-                    resubscribe at any time during this period without losing any
-                    data.
+                    {t("dataRetentionNotice", { days: 30 })}
                   </p>
                 </div>
               </CardBody>
@@ -353,12 +345,10 @@ export default function CancelSubscriptionPage() {
                   </div>
                   <div className="flex-1">
                     <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
-                      Export Brain Data First
+                      {t("exportBrainDataFirst")}
                     </h3>
                     <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
-                      Before cancelling, we recommend exporting your
-                      learner&apos;s brain data so you have a complete backup of
-                      their learning profiles and progress history.
+                      {t("exportBrainDataDesc")}
                     </p>
                     <Link href="/parent">
                       <Button
@@ -366,7 +356,7 @@ export default function CancelSubscriptionPage() {
                         size="sm"
                         leftIcon={<Download size={14} />}
                       >
-                        Go to Learner Settings to Export
+                        {t("goToLearnerSettings")}
                       </Button>
                     </Link>
                   </div>
@@ -377,7 +367,7 @@ export default function CancelSubscriptionPage() {
             {/* Confirm Cancellation */}
             <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
               <Link href="/manage">
-                <Button variant="ghost">Keep My Subscription</Button>
+                <Button variant="ghost">{t("keepMySubscription")}</Button>
               </Link>
               <Button
                 variant="destructive"
@@ -385,7 +375,7 @@ export default function CancelSubscriptionPage() {
                 loading={cancelling}
                 leftIcon={<XCircle size={16} />}
               >
-                Confirm Cancellation
+                {t("confirmCancellation")}
               </Button>
             </div>
           </div>

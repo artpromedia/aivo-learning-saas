@@ -339,6 +339,7 @@ const SEED_TRANSLATIONS: Record<string, Record<string, string>> = {
   },
   dashboard: {
     "dashboard": "Dashboard",
+    "settings": "Settings",
     "notifications": "Notifications",
     "subscription": "Subscription",
     "home": "Home",
@@ -512,6 +513,8 @@ const SEED_TRANSLATIONS: Record<string, Record<string, string>> = {
     "review": "Review",
     "noLessonsScheduled": "No lessons scheduled for today",
     "topPerformers": "Top",
+    "translations": "Translations",
+    "level": "Level",
   },
   assessment: {
     "preparingAssessment": "Preparing personalized assessment...",

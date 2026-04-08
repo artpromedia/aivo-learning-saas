@@ -14,6 +14,7 @@ import {
   Plus,
   Check,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Card, CardBody, CardHeader } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -50,6 +51,7 @@ interface SubscriptionData {
 }
 
 export default function ManageSubscriptionPage() {
+  const t = useTranslations("billing");
   const router = useRouter();
   const [data, setData] = useState<SubscriptionData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -68,7 +70,7 @@ export default function ManageSubscriptionPage() {
           setData(result as SubscriptionData);
         }
       } catch (err) {
-        const message = err instanceof Error ? err.message : "Failed to load subscription data";
+        const message = err instanceof Error ? err.message : t("failedToLoadSubscription");
         if (message.includes("401") || message.includes("Authentication")) {
           router.replace("/login");
           return;
@@ -80,7 +82,7 @@ export default function ManageSubscriptionPage() {
     }
 
     fetchSubscription();
-  }, [router]);
+  }, [router, t]);
 
   const handleManageBilling = async () => {
     setOpeningPortal(true);
@@ -91,7 +93,7 @@ export default function ManageSubscriptionPage() {
       );
       window.location.href = url;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to open billing portal");
+      setError(err instanceof Error ? err.message : t("failedToOpenPortal"));
       setOpeningPortal(false);
     }
   };
@@ -104,10 +106,10 @@ export default function ManageSubscriptionPage() {
   };
 
   const statusLabel: Record<string, string> = {
-    active: "Active",
-    trialing: "Trial",
-    past_due: "Past Due",
-    canceled: "Canceled",
+    active: t("statusActive"),
+    trialing: t("statusTrial"),
+    past_due: t("statusPastDue"),
+    canceled: t("statusCanceled"),
   };
 
   if (loading) {
@@ -130,7 +132,7 @@ export default function ManageSubscriptionPage() {
           onClick={() => window.location.reload()}
           leftIcon={<RefreshCw size={16} />}
         >
-          Retry
+          {t("retry")}
         </Button>
       </div>
     );
@@ -144,18 +146,18 @@ export default function ManageSubscriptionPage() {
           className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-4"
         >
           <ArrowLeft size={16} />
-          Back to dashboard
+          {t("backToDashboard")}
         </Link>
         <div className="text-center py-16">
           <CreditCard size={48} className="mx-auto mb-4 text-gray-300 dark:text-gray-600" />
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-            No active subscription
+            {t("noActiveSubscription")}
           </h2>
           <p className="text-gray-500 dark:text-gray-400 mb-6">
-            Choose a plan to unlock the full AIVO learning experience.
+            {t("noSubscriptionDesc")}
           </p>
           <Link href="/checkout">
-            <Button>Choose a Plan</Button>
+            <Button>{t("choosePlan")}</Button>
           </Link>
         </div>
       </div>
@@ -169,16 +171,16 @@ export default function ManageSubscriptionPage() {
         className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-4"
       >
         <ArrowLeft size={16} />
-        Back to dashboard
+        {t("backToDashboard")}
       </Link>
 
       <PurpleGradientHeader className="rounded-xl mb-8">
         <div className="flex items-center gap-3">
           <CreditCard size={32} />
           <div>
-            <h1 className="text-2xl font-bold">Subscription Management</h1>
+            <h1 className="text-2xl font-bold">{t("subscriptionManagement")}</h1>
             <p className="text-white/80 text-sm">
-              Manage your plan, add-ons, and payment method.
+              {t("managePlanSubtitle")}
             </p>
           </div>
         </div>
@@ -198,7 +200,7 @@ export default function ManageSubscriptionPage() {
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                   <Package size={18} className="text-[#7C3AED]" />
-                  Current Plan
+                  {t("currentPlan")}
                 </h3>
                 <Badge variant={statusVariant[data.status]}>
                   {statusLabel[data.status]}
@@ -212,8 +214,7 @@ export default function ManageSubscriptionPage() {
                     {data.plan.name}
                   </h4>
                   <p className="text-sm text-gray-500">
-                    Up to {data.plan.maxLearners} learner
-                    {data.plan.maxLearners > 1 ? "s" : ""}
+                    {t("upToLearners", { count: data.plan.maxLearners })}
                   </p>
                 </div>
                 <div className="text-right">
@@ -221,19 +222,19 @@ export default function ManageSubscriptionPage() {
                     ${data.plan.price}
                   </span>
                   <span className="text-gray-500">
-                    /{data.plan.interval}
+                    {t("perInterval", { interval: data.plan.interval })}
                   </span>
                 </div>
               </div>
               <p className="text-sm text-gray-500 mb-4">
                 {data.cancelAtPeriodEnd
-                  ? `Cancels on ${new Date(data.currentPeriodEnd).toLocaleDateString()}`
-                  : `Renews on ${new Date(data.currentPeriodEnd).toLocaleDateString()}`}
+                  ? t("cancelsOn", { date: new Date(data.currentPeriodEnd).toLocaleDateString() })
+                  : t("renewsOn", { date: new Date(data.currentPeriodEnd).toLocaleDateString() })}
               </p>
               <div className="flex gap-2">
                 <Link href="/checkout">
                   <Button size="sm" variant="outline">
-                    Change Plan
+                    {t("changePlan")}
                   </Button>
                 </Link>
                 <Button
@@ -243,7 +244,7 @@ export default function ManageSubscriptionPage() {
                   loading={openingPortal}
                   rightIcon={<ExternalLink size={14} />}
                 >
-                  Billing Portal
+                  {t("billingPortal")}
                 </Button>
               </div>
             </CardBody>
@@ -255,7 +256,7 @@ export default function ManageSubscriptionPage() {
               <CardHeader>
                 <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                   <Plus size={18} className="text-[#7C3AED]" />
-                  Add-ons
+                  {t("addOns")}
                 </h3>
               </CardHeader>
               <CardBody className="space-y-3">
@@ -278,7 +279,7 @@ export default function ManageSubscriptionPage() {
                       </span>
                     </div>
                     <span className="text-sm text-gray-500">
-                      +${addon.price}/mo
+                      +${addon.price}{t("perMonth")}
                     </span>
                   </div>
                 ))}
@@ -291,7 +292,7 @@ export default function ManageSubscriptionPage() {
             <CardHeader>
               <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                 <CreditCard size={18} className="text-[#7C3AED]" />
-                Payment Method
+                {t("paymentMethod")}
               </h3>
             </CardHeader>
             <CardBody>
@@ -306,8 +307,10 @@ export default function ManageSubscriptionPage() {
                         **** **** **** {data.paymentMethod.last4}
                       </p>
                       <p className="text-xs text-gray-500">
-                        Expires {data.paymentMethod.expMonth}/
-                        {data.paymentMethod.expYear}
+                        {t("expires", {
+                          month: data.paymentMethod.expMonth,
+                          year: data.paymentMethod.expYear,
+                        })}
                       </p>
                     </div>
                   </div>
@@ -317,16 +320,16 @@ export default function ManageSubscriptionPage() {
                     onClick={handleManageBilling}
                     loading={openingPortal}
                   >
-                    Update
+                    {t("update")}
                   </Button>
                 </div>
               ) : (
                 <div className="text-center py-4">
                   <p className="text-gray-500 dark:text-gray-400 mb-2">
-                    No payment method on file.
+                    {t("noPaymentMethod")}
                   </p>
                   <Button size="sm" onClick={handleManageBilling} loading={openingPortal}>
-                    Add Payment Method
+                    {t("addPaymentMethod")}
                   </Button>
                 </div>
               )}
@@ -338,7 +341,7 @@ export default function ManageSubscriptionPage() {
             <CardHeader>
               <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                 <Receipt size={18} className="text-[#7C3AED]" />
-                Invoices
+                {t("invoices")}
               </h3>
             </CardHeader>
             <CardBody>
@@ -385,7 +388,7 @@ export default function ManageSubscriptionPage() {
                 </div>
               ) : (
                 <p className="text-center text-gray-500 dark:text-gray-400 py-4">
-                  No invoices yet.
+                  {t("noInvoices")}
                 </p>
               )}
             </CardBody>
