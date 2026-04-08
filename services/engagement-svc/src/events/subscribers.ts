@@ -1,5 +1,19 @@
 import type { FastifyInstance } from "fastify";
 import { subscribeEvent, LEARNING_SCHEMAS, ENGAGEMENT_SCHEMAS, BRAIN_SCHEMAS, IDENTITY_SCHEMAS, type Subscription } from "@aivo/events";
+import type {
+  LessonCompleted,
+  QuizCompleted,
+  QuizPerfectScore,
+} from "@aivo/events";
+import type {
+  FocusSession30min,
+  FocusSession90min,
+  BreakCompleted,
+  EngagementStreakExtended,
+  EngagementChallengeCompleted,
+} from "@aivo/events";
+import type { BrainCloned, BrainIepGoalMet } from "@aivo/events";
+import type { IdentityLearnerCreated } from "@aivo/events";
 import { XpEngine } from "../engines/xp-engine.js";
 import { StreakEngine } from "../engines/streak-engine.js";
 import { BadgeEngine } from "../engines/badge-engine.js";
@@ -30,7 +44,7 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
 
   // lesson.completed
   try {
-    const sub = await subscribeEvent(nc, "lesson.completed", LEARNING_SCHEMAS["lesson.completed"], async (data) => {
+    const sub = await subscribeEvent(nc, "lesson.completed", LEARNING_SCHEMAS["lesson.completed"], async (data: LessonCompleted) => {
       app.log.info({ data }, "Received lesson.completed");
       await handleXpEvent("lesson.completed", data.learnerId);
       await dailyService.markCompleted(data.learnerId, "complete_lesson");
@@ -40,7 +54,7 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
 
   // quiz.completed
   try {
-    const sub = await subscribeEvent(nc, "quiz.completed", LEARNING_SCHEMAS["quiz.completed"], async (data) => {
+    const sub = await subscribeEvent(nc, "quiz.completed", LEARNING_SCHEMAS["quiz.completed"], async (data: QuizCompleted) => {
       app.log.info({ data }, "Received quiz.completed");
       await handleXpEvent("quiz.completed", data.learnerId);
       await dailyService.markCompleted(data.learnerId, "quiz_attempt");
@@ -50,7 +64,7 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
 
   // quiz.perfect_score
   try {
-    const sub = await subscribeEvent(nc, "quiz.perfect_score", LEARNING_SCHEMAS["quiz.perfect_score"], async (data) => {
+    const sub = await subscribeEvent(nc, "quiz.perfect_score", LEARNING_SCHEMAS["quiz.perfect_score"], async (data: QuizPerfectScore) => {
       app.log.info({ data }, "Received quiz.perfect_score");
       await handleXpEvent("quiz.perfect_score", data.learnerId);
     });
@@ -59,7 +73,7 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
 
   // focus.session_30min
   try {
-    const sub = await subscribeEvent(nc, "focus.session_30min", ENGAGEMENT_SCHEMAS["focus.session_30min"], async (data) => {
+    const sub = await subscribeEvent(nc, "focus.session_30min", ENGAGEMENT_SCHEMAS["focus.session_30min"], async (data: FocusSession30min) => {
       app.log.info({ data }, "Received focus.session_30min");
       await handleXpEvent("focus.session_30min", data.learnerId);
     });
@@ -68,7 +82,7 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
 
   // focus.session_90min
   try {
-    const sub = await subscribeEvent(nc, "focus.session_90min", ENGAGEMENT_SCHEMAS["focus.session_90min"], async (data) => {
+    const sub = await subscribeEvent(nc, "focus.session_90min", ENGAGEMENT_SCHEMAS["focus.session_90min"], async (data: FocusSession90min) => {
       app.log.info({ data }, "Received focus.session_90min");
       await handleXpEvent("focus.session_90min", data.learnerId);
     });
@@ -77,7 +91,7 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
 
   // break.completed
   try {
-    const sub = await subscribeEvent(nc, "break.completed", ENGAGEMENT_SCHEMAS["break.completed"], async (data) => {
+    const sub = await subscribeEvent(nc, "break.completed", ENGAGEMENT_SCHEMAS["break.completed"], async (data: BreakCompleted) => {
       app.log.info({ data }, "Received break.completed");
       await handleXpEvent("break.completed", data.learnerId);
       await dailyService.markCompleted(data.learnerId, "break_activity");
@@ -87,7 +101,7 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
 
   // brain.cloned
   try {
-    const sub = await subscribeEvent(nc, "brain.cloned", BRAIN_SCHEMAS["brain.cloned"], async (data) => {
+    const sub = await subscribeEvent(nc, "brain.cloned", BRAIN_SCHEMAS["brain.cloned"], async (data: BrainCloned) => {
       app.log.info({ data }, "Received brain.cloned — awarding Brain Activated badge");
       await badgeEngine.evaluateAllBadges(data.learnerId, "brain.cloned");
     });
@@ -96,7 +110,7 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
 
   // brain.iep_goal.met
   try {
-    const sub = await subscribeEvent(nc, "brain.iep_goal.met", BRAIN_SCHEMAS["brain.iep_goal.met"], async (data) => {
+    const sub = await subscribeEvent(nc, "brain.iep_goal.met", BRAIN_SCHEMAS["brain.iep_goal.met"], async (data: BrainIepGoalMet) => {
       app.log.info({ data }, "Received brain.iep_goal.met");
       await handleXpEvent("brain.iep_goal.met", data.learnerId);
     });
@@ -105,7 +119,7 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
 
   // engagement.streak.extended (for streak XP bonus)
   try {
-    const sub = await subscribeEvent(nc, "engagement.streak.extended", ENGAGEMENT_SCHEMAS["engagement.streak.extended"], async (data) => {
+    const sub = await subscribeEvent(nc, "engagement.streak.extended", ENGAGEMENT_SCHEMAS["engagement.streak.extended"], async (data: EngagementStreakExtended) => {
       app.log.info({ data }, "Received engagement.streak.extended");
       await xpEngine.processEvent("engagement.streak.extended", data.learnerId, {
         currentStreak: data.currentStreak,
@@ -116,7 +130,7 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
 
   // engagement.challenge.completed
   try {
-    const sub = await subscribeEvent(nc, "engagement.challenge.completed", ENGAGEMENT_SCHEMAS["engagement.challenge.completed"], async (data) => {
+    const sub = await subscribeEvent(nc, "engagement.challenge.completed", ENGAGEMENT_SCHEMAS["engagement.challenge.completed"], async (data: EngagementChallengeCompleted) => {
       app.log.info({ data }, "Received engagement.challenge.completed");
       await dailyService.markCompleted(data.learnerId, "challenge_play");
     });
@@ -129,14 +143,14 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
       nc,
       "identity.learner.created",
       IDENTITY_SCHEMAS["identity.learner.created"],
-      async (data) => {
+      async (data: IdentityLearnerCreated) => {
         app.log.info({ data }, "Received identity.learner.created — initializing engagement data");
         try {
           await xpEngine.initializeLearner(data.learnerId);
           await streakEngine.initializeLearner(data.learnerId);
           await leaderboardEngine.addLearner(data.learnerId);
           app.log.info({ learnerId: data.learnerId }, "Engagement data initialized for new learner");
-        } catch (err) {
+        } catch (err: unknown) {
           app.log.error({ err, data }, "Failed to initialize engagement for new learner");
         }
       },

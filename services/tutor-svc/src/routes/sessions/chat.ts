@@ -40,7 +40,7 @@ export async function chatStreamRoute(app: FastifyInstance) {
 
         // Chunk the response content into small pieces to simulate streaming
         const content = (response as { content: string }).content ?? "";
-        const CHUNK_SIZE = 4; // characters per SSE frame
+        const CHUNK_SIZE = 80; // characters per SSE frame
 
         for (let i = 0; i < content.length; i += CHUNK_SIZE) {
           const token = content.slice(i, i + CHUNK_SIZE);

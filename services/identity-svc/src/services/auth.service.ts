@@ -89,7 +89,7 @@ export class AuthService {
       tenantId: tenant.id,
       role: userRole,
       email: user.email,
-    }).catch((err) => {
+    }).catch((err: unknown) => {
       this.app.log.warn({ err }, "Failed to publish user.created event");
     });
 
@@ -229,7 +229,7 @@ export class AuthService {
       tenantId: tenant.id,
       role: "PARENT",
       email: user.email,
-    }).catch((err) => {
+    }).catch((err: unknown) => {
       this.app.log.warn({ err }, "Failed to publish user.created event");
     });
 

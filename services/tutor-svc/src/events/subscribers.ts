@@ -1,5 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import { subscribeEvent, TUTOR_SCHEMAS, type Subscription } from "@aivo/events";
+import type { TutorAddonActivated, TutorAddonDeactivated } from "@aivo/events";
 import { ProvisioningService } from "../services/provisioning.service.js";
 import { DeprovisioningService } from "../services/deprovisioning.service.js";
 
@@ -15,11 +16,11 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
       nc,
       "tutor.addon.activated",
       TUTOR_SCHEMAS["tutor.addon.activated"],
-      async (data) => {
+      async (data: TutorAddonActivated) => {
         app.log.info({ data }, "Received tutor.addon.activated");
         try {
           await provisioning.provision(data.learnerId, data.tenantId, data.sku);
-        } catch (err) {
+        } catch (err: unknown) {
           app.log.error({ err, data }, "Failed to provision tutor addon");
         }
       },
@@ -35,7 +36,7 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
       nc,
       "tutor.addon.deactivated",
       TUTOR_SCHEMAS["tutor.addon.deactivated"],
-      async (data) => {
+      async (data: TutorAddonDeactivated) => {
         app.log.info({ data }, "Received tutor.addon.deactivated");
         try {
           // Find the subscription and finalize deprovisioning
@@ -61,7 +62,7 @@ export async function setupSubscribers(app: FastifyInstance): Promise<void> {
           for (const sub of subs) {
             await deprovisioning.finalizeDeprovisioning(sub.id);
           }
-        } catch (err) {
+        } catch (err: unknown) {
           app.log.error({ err, data }, "Failed to deprovision tutor addon");
         }
       },

@@ -28,6 +28,7 @@ export function AivoChatWidget() {
   const [sessionId, setSessionId] = useState<string | undefined>();
   const [input, setInput] = useState("");
   const [isStarting, setIsStarting] = useState(false);
+  const [sessionError, setSessionError] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { messages, isStreaming, error, sendMessage } =
@@ -41,6 +42,7 @@ export function AivoChatWidget() {
   const startSession = useCallback(async () => {
     if (!activeLearner?.id || sessionId || isStarting) return;
     setIsStarting(true);
+    setSessionError(false);
     try {
       const res = await apiFetch<SessionStartResponse>(
         API_ROUTES.TUTOR.SESSION_START,
@@ -56,7 +58,7 @@ export function AivoChatWidget() {
       );
       setSessionId(res.id);
     } catch {
-      // Session start failed — widget will show a retry state
+      setSessionError(true);
     } finally {
       setIsStarting(false);
     }
@@ -64,10 +66,10 @@ export function AivoChatWidget() {
 
   const handleOpen = useCallback(() => {
     setIsOpen(true);
-    if (!sessionId) {
+    if (!sessionId && !sessionError) {
       startSession();
     }
-  }, [sessionId, startSession]);
+  }, [sessionId, sessionError, startSession]);
 
   const handleClose = useCallback(() => {
     setIsOpen(false);
@@ -126,7 +128,7 @@ export function AivoChatWidget() {
 
           {/* Messages */}
           <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 min-h-0 max-h-72">
-            {messages.length === 0 && !isStarting && (
+            {messages.length === 0 && !isStarting && !sessionError && (
               <p className="text-center text-gray-400 dark:text-gray-500 text-sm py-6">
                 {t("aivoChatWelcome")}
               </p>
@@ -134,6 +136,14 @@ export function AivoChatWidget() {
             {isStarting && (
               <div className="flex justify-center py-6">
                 <Loader2 className="animate-spin text-[#7C3AED]" size={24} />
+              </div>
+            )}
+            {sessionError && (
+              <div className="text-center py-6 space-y-2">
+                <p className="text-sm text-red-500">Could not start chat session.</p>
+                <Button size="sm" variant="outline" onClick={startSession}>
+                  Retry
+                </Button>
               </div>
             )}
             {messages.map((msg) => (
