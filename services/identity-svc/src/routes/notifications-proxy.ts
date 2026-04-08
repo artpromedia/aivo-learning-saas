@@ -26,7 +26,7 @@ async function proxyToComms(
   return { status: res.status, data };
 }
 
-function getToken(request: { cookies?: Record<string, string>; headers: { authorization?: string } }): string | undefined {
+function getToken(request: { cookies?: Record<string, string | undefined>; headers: { authorization?: string } }): string | undefined {
   return request.cookies?.access_token ??
     request.headers.authorization?.replace("Bearer ", "");
 }

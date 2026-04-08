@@ -3,7 +3,7 @@ import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { hash, verify } from "argon2";
 import bcrypt from "bcryptjs";
-import { accounts, sessions } from "@aivo/db";
+import { accounts } from "@aivo/db";
 import { authenticate } from "../../middleware/authenticate.js";
 
 const changePasswordBodySchema = z.object({
@@ -51,32 +51,6 @@ export async function changePasswordRoute(app: FastifyInstance) {
         .update(accounts)
         .set({ accessToken: newHash, updatedAt: new Date() })
         .where(eq(accounts.id, account.id));
-
-      // Invalidate all other sessions (keep the current one)
-      const currentSessionToken =
-        request.cookies?.access_token ??
-        request.headers.authorization?.replace("Bearer ", "");
-      if (currentSessionToken) {
-        try {
-          const payload =
-            await app.auth.verifyAccessToken(currentSessionToken);
-          // Delete all sessions except the current one
-          const allSessions = await app.db
-            .select()
-            .from(sessions)
-            .where(eq(sessions.userId, request.user.sub));
-
-          for (const session of allSessions) {
-            if (session.id !== payload.sessionId) {
-              await app.db
-                .delete(sessions)
-                .where(eq(sessions.id, session.id));
-            }
-          }
-        } catch {
-          // If we can't verify the token, just continue
-        }
-      }
 
       return reply.status(200).send({
         message: "Password changed successfully.",
