@@ -140,7 +140,7 @@ export function AivoChatWidget() {
             )}
             {sessionError && (
               <div className="text-center py-6 space-y-2">
-                <p className="text-sm text-red-500">Could not start chat session.</p>
+                <p className="text-sm text-red-500">{t("aivoChatSessionError")}</p>
                 <Button size="sm" variant="outline" onClick={startSession}>
                   Retry
                 </Button>

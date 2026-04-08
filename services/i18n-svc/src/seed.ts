@@ -369,6 +369,7 @@ const SEED_TRANSLATIONS: Record<string, Record<string, string>> = {
     "aivoChatTitle": "Chat with Aivo",
     "aivoChatWelcome": "Hi! I'm Aivo, your AI learning buddy. Ask me anything!",
     "aivoChatPlaceholder": "Ask Aivo something...",
+    "aivoChatSessionError": "Could not start chat session.",
     "welcomeBack": "Welcome back, {name}",
     "childrenOverview": "Here's how your children are doing today.",
     "yourChildren": "Your Children",

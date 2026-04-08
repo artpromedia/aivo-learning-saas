@@ -127,8 +127,14 @@ export const tutorProxyRoutes: FastifyPluginAsync = async (app) => {
         body: JSON.stringify(request.body),
       });
 
+      // If upstream returned an error, forward as a normal JSON response
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        return reply.status(res.status).send(data);
+      }
+
       // Stream the SSE response back to the client
-      reply.raw.writeHead(res.status, {
+      reply.raw.writeHead(200, {
         "Content-Type": res.headers.get("content-type") ?? "text/event-stream",
         "Cache-Control": "no-cache",
         Connection: "keep-alive",
