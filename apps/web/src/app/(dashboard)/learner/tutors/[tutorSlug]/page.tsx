@@ -4,6 +4,7 @@ import React, { useCallback, useState, useRef, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Send, Loader2, StopCircle, User, Mic } from "lucide-react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -11,6 +12,7 @@ import { TutorAvatar, type TutorPersona } from "@/components/tutors/tutor-avatar
 import { EmotionCheckIn, type EmotionZone } from "@/components/tutors/emotion-check-in";
 import { SpeechPracticeRecorder } from "@/components/tutors/speech-practice-recorder";
 import { apiFetch } from "@/lib/api";
+import { API_ROUTES } from "@/lib/api-routes";
 import { useTutorChat, type ChatMessage } from "@/hooks/useTutorChat";
 import { useLearnerStore } from "@/stores/learner.store";
 import { cn } from "@/lib/utils";
@@ -50,6 +52,7 @@ function isPracticePrompt(content: string): boolean {
 export default function TutorChatPage() {
   const params = useParams();
   const router = useRouter();
+  const t = useTranslations("tutor");
   const tutorSlug = params.tutorSlug as string;
   const activeLearner = useLearnerStore((s) => s.activeLearner);
 
@@ -68,28 +71,52 @@ export default function TutorChatPage() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const messagesRef = useRef<ChatMessage[]>([]);
 
   const { messages, isStreaming, error: chatError, sendMessage, stopStreaming } =
     useTutorChat(tutor?.sessionId);
 
   useEffect(() => {
     async function fetchTutor() {
+      if (!activeLearner?.id) {
+        setError(t("noLearnerSelected"));
+        setLoading(false);
+        return;
+      }
       try {
-        const data = await apiFetch<TutorInfo>(
-          `/api/tutors/${tutorSlug}/session`,
-          { method: "POST" },
+        // Start a tutor session via the correct endpoint
+        const data = await apiFetch<{ session: { id: string; tutor: { name: string; slug: string; avatarUrl: string; specialty: string; greeting: string } } }>(
+          API_ROUTES.TUTOR.SESSION_START,
+          {
+            method: "POST",
+            body: JSON.stringify({
+              learnerId: activeLearner.id,
+              subject: tutorSlug,
+              sessionType: "LESSON",
+              locale: activeLearner.languagePreference ?? "en",
+            }),
+          },
         );
-        setTutor(data);
+        const sess = data.session;
+        setTutor({
+          id: sess.id,
+          name: sess.tutor?.name ?? tutorSlug,
+          slug: sess.tutor?.slug ?? tutorSlug,
+          avatarUrl: sess.tutor?.avatarUrl ?? "",
+          specialty: sess.tutor?.specialty ?? "",
+          greeting: sess.tutor?.greeting ?? "",
+          sessionId: sess.id,
+        });
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "Failed to load tutor",
+          err instanceof Error ? err.message : t("failedToLoadTutor"),
         );
       } finally {
         setLoading(false);
       }
     }
     fetchTutor();
-  }, [tutorSlug]);
+  }, [tutorSlug, activeLearner, t]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -138,8 +165,9 @@ export default function TutorChatPage() {
   );
 
   function getLastTargetSound(): string | null {
-    for (let i = allMessages.length - 1; i >= 0; i--) {
-      const msg = allMessages[i];
+    const msgs = messagesRef.current;
+    for (let i = msgs.length - 1; i >= 0; i--) {
+      const msg = msgs[i];
       if (msg.role === "tutor") {
         const target = parseTargetSound(msg.content);
         if (target) return target;
@@ -179,7 +207,7 @@ export default function TutorChatPage() {
           variant="outline"
           onClick={() => router.push("/learner/tutors")}
         >
-          Back to Tutors
+          {t("backToTutors")}
         </Button>
       </div>
     );
@@ -208,6 +236,9 @@ export default function TutorChatPage() {
         ...messages,
       ]
     : messages;
+
+  // Keep messagesRef in sync so callbacks always see latest messages
+  messagesRef.current = allMessages;
 
   return (
     <div className="flex flex-col h-[calc(100vh-8rem)]">
@@ -238,7 +269,7 @@ export default function TutorChatPage() {
         </div>
         {isStreaming && (
           <span className="ml-auto text-xs text-[#7C3AED] animate-pulse font-medium">
-            Typing...
+            {t("typing")}
           </span>
         )}
       </div>
@@ -327,7 +358,7 @@ export default function TutorChatPage() {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Type a message..."
+            placeholder={t("typeMessage")}
             disabled={isStreaming}
             className="flex-1 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none disabled:opacity-50"
           />

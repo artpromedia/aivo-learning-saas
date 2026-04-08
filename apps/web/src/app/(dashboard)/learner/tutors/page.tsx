@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { Bot, RefreshCw, MessageSquare, Clock } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -36,6 +37,7 @@ interface DisplayTutor {
 }
 
 export default function LearnerTutorsPage() {
+  const t = useTranslations("tutor");
   const activeLearner = useLearnerStore((s) => s.activeLearner);
   const [tutors, setTutors] = useState<DisplayTutor[]>([]);
   const [loading, setLoading] = useState(true);
@@ -103,7 +105,7 @@ export default function LearnerTutorsPage() {
           onClick={() => window.location.reload()}
           leftIcon={<RefreshCw size={16} />}
         >
-          Retry
+          {t("retry")}
         </Button>
       </div>
     );
@@ -115,9 +117,9 @@ export default function LearnerTutorsPage() {
         <div className="flex items-center gap-3">
           <Bot size={32} />
           <div>
-            <h1 className="text-2xl font-bold">My Tutors</h1>
+            <h1 className="text-2xl font-bold">{t("myTutors")}</h1>
             <p className="text-white/80 text-sm">
-              Chat with your 7 AI tutors to get help and learn new things.
+              {t("myTutorsDescription")}
             </p>
           </div>
         </div>
@@ -128,10 +130,10 @@ export default function LearnerTutorsPage() {
           <CardBody className="text-center py-12">
             <Bot className="mx-auto mb-3 text-gray-400" size={48} />
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              No tutors available
+              {t("noTutorsAvailable")}
             </h3>
             <p className="text-gray-500 dark:text-gray-400">
-              Ask your parent to subscribe to tutors for you.
+              {t("askParentToSubscribe")}
             </p>
           </CardBody>
         </Card>
