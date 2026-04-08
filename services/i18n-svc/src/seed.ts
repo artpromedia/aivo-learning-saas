@@ -638,7 +638,7 @@ const SEED_TRANSLATIONS: Record<string, Record<string, string>> = {
     "deleteAccountConfirm": "This action is permanent and cannot be undone. All your data and your children's learning data will be removed.",
     "deleteAccountButton": "Delete My Account",
     "deleteAccountConfirmPrompt": "Type DELETE to confirm",
-    "deleteAccountCancelled": "Account deletion cancelled",
+    "deleteAccountCancelled": "Cancel",
     "accountDeleted": "Your account has been deleted",
     "pinManaged": "Your parent manages your account PIN. Ask them to update it from the learner profile settings.",
     "language": "Language",
