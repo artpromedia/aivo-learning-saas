@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { ArrowLeft, GraduationCap, Loader2, RefreshCw } from "lucide-react";
 import {
@@ -49,6 +50,7 @@ const SUBJECT_COLORS = [
 export default function GradebookPage() {
   const params = useParams();
   const learnerId = params.learnerId as string;
+  const t = useTranslations("dashboard");
 
   const [data, setData] = useState<GradebookData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -63,7 +65,7 @@ export default function GradebookPage() {
         );
         setData(result);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load gradebook");
+        setError(err instanceof Error ? err.message : t("failedToLoadGradebook"));
       } finally {
         setLoading(false);
       }
@@ -95,7 +97,7 @@ export default function GradebookPage() {
           onClick={() => window.location.reload()}
           leftIcon={<RefreshCw size={16} />}
         >
-          Retry
+          {t("retry")}
         </Button>
       </div>
     );
@@ -125,16 +127,16 @@ export default function GradebookPage() {
         className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-4"
       >
         <ArrowLeft size={16} />
-        Back to dashboard
+        {t("backToDashboard")}
       </Link>
 
       <PurpleGradientHeader className="rounded-xl mb-8">
         <div className="flex items-center gap-3">
           <GraduationCap size={32} />
           <div>
-            <h1 className="text-2xl font-bold">Gradebook</h1>
+            <h1 className="text-2xl font-bold">{t("gradebook")}</h1>
             <p className="text-white/80 text-sm">
-              Track mastery progress across all subjects.
+              {t("subjectProgress")}
             </p>
           </div>
         </div>
@@ -146,7 +148,7 @@ export default function GradebookPage() {
             <p className="text-3xl font-bold text-[#7C3AED]">
               {data?.overallMastery ?? 0}%
             </p>
-            <p className="text-xs text-gray-500 mt-1">Overall Mastery</p>
+            <p className="text-xs text-gray-500 mt-1">{t("overallMastery")}</p>
           </CardBody>
         </Card>
         <Card>
@@ -154,7 +156,7 @@ export default function GradebookPage() {
             <p className="text-3xl font-bold text-[#38B2AC]">
               {data?.totalSessions ?? 0}
             </p>
-            <p className="text-xs text-gray-500 mt-1">Total Sessions</p>
+            <p className="text-xs text-gray-500 mt-1">{t("totalSessions")}</p>
           </CardBody>
         </Card>
       </div>
@@ -168,7 +170,7 @@ export default function GradebookPage() {
               : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
           }`}
         >
-          All Subjects
+          {t("allSubjects")}
         </button>
         {data?.subjects.map((s) => (
           <button
@@ -188,7 +190,7 @@ export default function GradebookPage() {
       <Card className="mb-8">
         <CardHeader>
           <h3 className="font-semibold text-gray-900 dark:text-white">
-            Mastery Over Time
+            {t("masteryOverTime")}
           </h3>
         </CardHeader>
         <CardBody>
@@ -229,14 +231,14 @@ export default function GradebookPage() {
             </ResponsiveContainer>
           ) : (
             <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-              No mastery data available yet. Complete some lessons to see progress.
+              {t("noMasteryDataYet")}
             </div>
           )}
         </CardBody>
       </Card>
 
       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-        Subject Breakdown
+        {t("subjectBreakdown")}
       </h3>
       <div className="grid gap-4 sm:grid-cols-2">
         {data?.subjects.map((subject, idx) => (
@@ -265,17 +267,17 @@ export default function GradebookPage() {
                   }
                 >
                   {subject.trend === "up"
-                    ? "Improving"
+                    ? t("improving")
                     : subject.trend === "down"
-                      ? "Needs Focus"
-                      : "Stable"}
+                      ? t("needsFocus")
+                      : t("stable")}
                 </Badge>
               </div>
               <div className="flex items-end gap-2">
                 <span className="text-2xl font-bold text-gray-900 dark:text-white">
                   {subject.currentMastery}%
                 </span>
-                <span className="text-sm text-gray-500 mb-0.5">mastery</span>
+                <span className="text-sm text-gray-500 mb-0.5">{t("mastery")}</span>
               </div>
               <div className="mt-2 w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                 <div
