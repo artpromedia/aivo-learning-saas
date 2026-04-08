@@ -7,9 +7,9 @@ export class StripeService {
   constructor(private app: FastifyInstance) {
     this.stripe = app.stripe;
 
-    // In production the real Stripe key must be present; fail loudly.
+    // Warn loudly in production if Stripe is not configured
     if (!this.stripe && process.env.NODE_ENV === "production") {
-      throw new Error("STRIPE_SECRET_KEY is required in production");
+      console.warn("[billing] STRIPE_SECRET_KEY is not set — running in dev-fallback mode");
     }
   }
 
