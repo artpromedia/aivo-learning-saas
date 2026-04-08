@@ -27,6 +27,19 @@ interface TutorInfo {
   sessionId: string;
 }
 
+interface TutorSessionResponse {
+  session: {
+    id: string;
+    tutor: {
+      name: string;
+      slug: string;
+      avatarUrl: string;
+      specialty: string;
+      greeting: string;
+    };
+  };
+}
+
 const KNOWN_PERSONAS = new Set<string>([
   "nova", "sage", "spark", "chrono", "pixel", "harmony", "echo",
 ]);
@@ -85,7 +98,7 @@ export default function TutorChatPage() {
       }
       try {
         // Start a tutor session via the correct endpoint
-        const data = await apiFetch<{ session: { id: string; tutor: { name: string; slug: string; avatarUrl: string; specialty: string; greeting: string } } }>(
+        const data = await apiFetch<TutorSessionResponse>(
           API_ROUTES.TUTOR.SESSION_START,
           {
             method: "POST",

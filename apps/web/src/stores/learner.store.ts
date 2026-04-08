@@ -15,7 +15,6 @@ export interface Learner {
     reduceAnimations?: boolean;
     fontSize?: "small" | "medium" | "large";
     soundEnabled?: boolean;
-    languagePreference?: string;
   };
 }
 

@@ -79,7 +79,7 @@ export default function HomeworkSessionPage() {
 
   const handleSend = async () => {
     const text = inputValue.trim();
-    if (!text || sending || !session) return;
+    if (!text || sending || !session || !activeLearner) return;
 
     const userMsg: HomeworkMessage = {
       id: `user-${Date.now()}`,
@@ -101,10 +101,10 @@ export default function HomeworkSessionPage() {
           method: "POST",
           body: JSON.stringify({
             content: text,
-            learnerId: activeLearner?.id,
-            functioningLevel: activeLearner?.functioningLevel,
-            gradeLevel: activeLearner?.gradeLevel,
-            locale: activeLearner?.languagePreference ?? "en",
+            learnerId: activeLearner.id,
+            functioningLevel: activeLearner.functioningLevel,
+            gradeLevel: activeLearner.gradeLevel,
+            locale: activeLearner.languagePreference ?? "en",
           }),
         },
       );
