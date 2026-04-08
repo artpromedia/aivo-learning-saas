@@ -26,7 +26,7 @@ export const PLANS: PlanDefinition[] = [
       "Community support",
       "AI Tutors available as add-ons ($9.99/mo each)",
     ],
-    stripePriceId: process.env.STRIPE_PRICE_STARTER ?? "price_starter",
+    stripePriceId: process.env.STRIPE_PRICE_STARTER || "price_starter_demo",
     trialDays: 30,
   },
   {
@@ -44,7 +44,7 @@ export const PLANS: PlanDefinition[] = [
       "Detailed progress analytics",
       "Priority email support",
     ],
-    stripePriceId: process.env.STRIPE_PRICE_FAMILY ?? "price_family",
+    stripePriceId: process.env.STRIPE_PRICE_FAMILY || "price_family_demo",
     trialDays: 30,
     includedTutors: ["ADDON_TUTOR_MATH", "ADDON_TUTOR_ELA"],
   },
@@ -64,7 +64,7 @@ export const PLANS: PlanDefinition[] = [
       "Offline mobile access",
       "Priority email support",
     ],
-    stripePriceId: process.env.STRIPE_PRICE_PREMIUM ?? "price_premium",
+    stripePriceId: process.env.STRIPE_PRICE_PREMIUM || "price_premium_demo",
     trialDays: 30,
     includedTutors: [
       "ADDON_TUTOR_MATH",
