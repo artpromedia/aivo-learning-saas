@@ -17,7 +17,8 @@ export class StripeService {
     trialDays: number = 0,
   ): Promise<string> {
     if (!this.stripe) {
-      const fakeUrl = `http://localhost:3000/checkout/success?session_id=fake_sess_${tenantId}_${planId}&trial_days=${trialDays}`;
+      const fakeSessionId = `fake_sess_${tenantId}_${planId}`;
+      const fakeUrl = successUrl.replace("{CHECKOUT_SESSION_ID}", fakeSessionId);
       console.log(`[stripe-dev] createCheckoutSession tenantId=${tenantId} planId=${planId} trialDays=${trialDays} → ${fakeUrl}`);
       return fakeUrl;
     }
@@ -73,9 +74,8 @@ export class StripeService {
     returnUrl: string,
   ): Promise<string> {
     if (!this.stripe) {
-      const fakeUrl = `http://localhost:3000/billing?customer=${customerId}`;
-      console.log(`[stripe-dev] createBillingPortalSession customer=${customerId} → ${fakeUrl}`);
-      return fakeUrl;
+      console.log(`[stripe-dev] createBillingPortalSession customer=${customerId} → ${returnUrl}`);
+      return returnUrl;
     }
 
     const session = await this.stripe.billingPortal.sessions.create({

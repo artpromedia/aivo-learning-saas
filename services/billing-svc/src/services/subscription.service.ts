@@ -51,8 +51,8 @@ export class SubscriptionService {
     }
 
     const config = getConfig();
-    const successUrl = `${config.APP_URL}/billing/success?session_id={CHECKOUT_SESSION_ID}`;
-    const cancelUrl = `${config.APP_URL}/billing/cancel`;
+    const successUrl = `${config.APP_URL}/success?session_id={CHECKOUT_SESSION_ID}`;
+    const cancelUrl = `${config.APP_URL}/checkout`;
 
     const checkoutUrl = await this.stripeService.createCheckoutSession(
       tenantId,
