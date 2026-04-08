@@ -112,7 +112,7 @@ export const ENGAGEMENT_ROUTES = {
 
 // Functioning Level
 export const FUNCTIONING_LEVEL_ROUTES = {
-  CURRENT: (learnerId: string) => `/api/learners/${learnerId}/functioning-level`,
+  CURRENT: (learnerId: string) => `/family/brain/${learnerId}/functioning-level`,
 } as const;
 
 // Onboarding (assessment-svc)

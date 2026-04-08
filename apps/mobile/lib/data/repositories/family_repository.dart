@@ -560,12 +560,13 @@ class FamilyRepository {
         response.data as Map<String, dynamic>,);
   }
 
-  /// Returns the functioning level label for a learner.
-  Future<String> getFunctioningLevel(String learnerId) async {
+  /// Returns the functioning level and history for a learner.
+  ///
+  /// The backend returns `{ current: string, history: [...] }`.
+  Future<Map<String, dynamic>> getFunctioningLevel(String learnerId) async {
     final response = await _apiClient
         .get(Endpoints.familyBrainFunctioningLevel(learnerId));
-    final data = response.data as Map<String, dynamic>;
-    return data['functioningLevel'] as String;
+    return response.data as Map<String, dynamic>;
   }
 
   /// Exports brain data for a learner.

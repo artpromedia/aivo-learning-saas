@@ -394,23 +394,22 @@ class _FunctioningLevelBadge extends StatelessWidget {
 
     Color badgeColor;
     String label;
-    switch (level.toLowerCase()) {
-      case 'level_1':
-      case 'significant_support':
-        badgeColor = AivoColors.error;
-        label = 'L1';
-      case 'level_2':
-      case 'moderate_support':
-        badgeColor = AivoColors.accent;
-        label = 'L2';
-      case 'level_3':
-      case 'standard':
+    switch (level.toUpperCase()) {
+      case 'STANDARD':
         badgeColor = AivoColors.secondary;
-        label = 'L3';
-      case 'level_4':
-      case 'advanced':
+        label = 'STD';
+      case 'SUPPORTED':
         badgeColor = AivoColors.primary;
-        label = 'L4';
+        label = 'SUP';
+      case 'LOW_VERBAL':
+        badgeColor = AivoColors.accent;
+        label = 'LV';
+      case 'NON_VERBAL':
+        badgeColor = AivoColors.error;
+        label = 'NV';
+      case 'PRE_SYMBOLIC':
+        badgeColor = AivoColors.errorDark;
+        label = 'PS';
       default:
         badgeColor = theme.colorScheme.outline;
         label = level.length > 3 ? level.substring(0, 3) : level;

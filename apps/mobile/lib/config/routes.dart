@@ -9,6 +9,8 @@ import 'package:aivo_mobile/features/onboarding/screens/brain_reveal_screen.dart
 import 'package:aivo_mobile/features/onboarding/screens/parent_assessment_screen.dart';
 import 'package:aivo_mobile/features/learner/home/learner_home_screen.dart';
 import 'package:aivo_mobile/features/learner/pin/pin_gate_screen.dart';
+import 'package:aivo_mobile/features/parent/brain/brain_profile_screen.dart';
+import 'package:aivo_mobile/features/parent/brain/functioning_level_screen.dart';
 import 'package:aivo_mobile/features/parent/dashboard/parent_dashboard_screen.dart';
 import 'package:aivo_mobile/features/parent/dashboard/child_detail_screen.dart';
 import 'package:aivo_mobile/features/parent/recommendations/recommendation_list_screen.dart';
@@ -262,7 +264,16 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/parent/brain/:learnerId',
         name: 'parent-brain',
-        builder: (_, state) => _Placeholder('Brain Map ${state.pathParameters['learnerId']}'),
+        builder: (_, state) => BrainProfileScreen(
+          learnerId: state.pathParameters['learnerId']!,
+        ),
+      ),
+      GoRoute(
+        path: '/parent/functioning-level/:learnerId',
+        name: 'parent-functioning-level',
+        builder: (_, state) => FunctioningLevelScreen(
+          learnerId: state.pathParameters['learnerId']!,
+        ),
       ),
       GoRoute(
         path: '/parent/iep/:learnerId',

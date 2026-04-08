@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import 'package:aivo_mobile/config/theme.dart';
@@ -61,7 +62,8 @@ class BrainProfileScreen extends ConsumerWidget {
 
               // Functioning level
               _FunctioningLevelSection(
-                  level: brain.functioningLevel,),
+                  level: brain.functioningLevel,
+                  learnerId: learnerId,),
               const SizedBox(height: 24),
 
               // Diagnoses
@@ -301,48 +303,61 @@ class _OverallProgressGauge extends StatelessWidget {
 // ---------------------------------------------------------------------------
 
 class _FunctioningLevelSection extends StatelessWidget {
-  const _FunctioningLevelSection({required this.level});
+  const _FunctioningLevelSection({
+    required this.level,
+    required this.learnerId,
+  });
   final String level;
+  final String learnerId;
 
   String get _description {
-    switch (level.toLowerCase()) {
-      case 'level_1':
-      case 'significant_support':
-        return 'Significant support needed. Lessons use large targets, '
-            'simplified language, audio narration, and extended time.';
-      case 'level_2':
-      case 'moderate_support':
-        return 'Moderate support. Lessons include visual scaffolding, '
-            'sentence starters, and frequent check-ins.';
-      case 'level_3':
-      case 'standard':
-        return 'Standard functioning. Balanced curriculum with grade-level '
-            'expectations and regular progress checks.';
-      case 'level_4':
-      case 'advanced':
-        return 'Advanced. Accelerated content with enrichment opportunities '
-            'and deeper analytical challenges.';
+    switch (level.toUpperCase()) {
+      case 'STANDARD':
+        return 'Grade-level curriculum with standard expectations and regular progress checks.';
+      case 'SUPPORTED':
+        return 'Moderate support with visual scaffolding, simplified language, and frequent check-ins.';
+      case 'LOW_VERBAL':
+        return 'Picture-based support with minimal text, audio narration, and up to 3 choices.';
+      case 'NON_VERBAL':
+        return 'Symbol-based communication with communication partner support and up to 2 choices.';
+      case 'PRE_SYMBOLIC':
+        return 'Sensory-only engagement; adult-directed sessions with full partner assistance.';
       default:
         return 'Functioning level: $level';
     }
   }
 
   String get _displayLevel {
-    switch (level.toLowerCase()) {
-      case 'level_1':
-      case 'significant_support':
-        return 'Level 1 - Significant Support';
-      case 'level_2':
-      case 'moderate_support':
-        return 'Level 2 - Moderate Support';
-      case 'level_3':
-      case 'standard':
-        return 'Level 3 - Standard';
-      case 'level_4':
-      case 'advanced':
-        return 'Level 4 - Advanced';
+    switch (level.toUpperCase()) {
+      case 'STANDARD':
+        return 'Standard';
+      case 'SUPPORTED':
+        return 'Supported';
+      case 'LOW_VERBAL':
+        return 'Low Verbal';
+      case 'NON_VERBAL':
+        return 'Non-Verbal';
+      case 'PRE_SYMBOLIC':
+        return 'Pre-Symbolic';
       default:
         return level;
+    }
+  }
+
+  Color _levelColor(BuildContext context) {
+    switch (level.toUpperCase()) {
+      case 'STANDARD':
+        return AivoColors.secondary;
+      case 'SUPPORTED':
+        return AivoColors.primary;
+      case 'LOW_VERBAL':
+        return AivoColors.accent;
+      case 'NON_VERBAL':
+        return AivoColors.error;
+      case 'PRE_SYMBOLIC':
+        return AivoColors.errorDark;
+      default:
+        return Theme.of(context).colorScheme.outline;
     }
   }
 
@@ -371,12 +386,32 @@ class _FunctioningLevelSection extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 8),
-              Text(_displayLevel,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),),
-              const SizedBox(height: 4),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: _levelColor(context).withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  _displayLevel,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: _levelColor(context),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
               Text(_description, style: theme.textTheme.bodyMedium),
+              const SizedBox(height: 12),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton.icon(
+                  onPressed: () =>
+                      context.go('/parent/functioning-level/$learnerId'),
+                  icon: const Icon(Icons.open_in_new, size: 16),
+                  label: const Text('View details'),
+                ),
+              ),
             ],
           ),
         ),

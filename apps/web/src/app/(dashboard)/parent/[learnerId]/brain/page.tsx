@@ -180,6 +180,15 @@ export default function BrainProfilePage() {
         <div className="text-xs text-gray-400 dark:text-gray-500 text-right">
           Last updated: {new Date(profile.updatedAt).toLocaleDateString()}
         </div>
+
+        <div className="text-center pt-2">
+          <Link
+            href={`/parent/${learnerId}/functioning-level`}
+            className="inline-flex items-center gap-1 text-sm text-[#7C3AED] hover:underline"
+          >
+            View Functioning Level details →
+          </Link>
+        </div>
       </div>
     </div>
   );
