@@ -465,19 +465,18 @@ export const brainProxyRoutes: FastifyPluginAsync = async (app) => {
       const { learnerId } = request.params;
       const token = request.cookies.access_token;
 
-      // Fetch XP and streak in parallel; badges and level individually
-      const [xpRes, streakRes, badgesRes, levelRes] = await Promise.all([
+      // Fetch XP, streak, and badges in parallel; level is derived from the XP response
+      const [xpRes, streakRes, badgesRes] = await Promise.all([
         proxyToEngagement(`/engagement/xp/${learnerId}`, token),
         proxyToEngagement(`/engagement/streaks/${learnerId}`, token),
         proxyToEngagement(`/engagement/badges/${learnerId}/earned`, token),
-        proxyToEngagement(`/engagement/xp/${learnerId}`, token),
       ]);
 
       return reply.send({
         xp: xpRes.status === 200 ? xpRes.data : { totalXp: 0, weeklyXp: 0, dailyXp: 0, xpToNextLevel: 100 },
         streak: streakRes.status === 200 ? streakRes.data : { currentStreak: 0, longestStreak: 0, lastActiveDate: new Date().toISOString() },
         badges: badgesRes.status === 200 ? badgesRes.data : [],
-        level: levelRes.status === 200 ? levelRes.data : { level: 1, title: "Beginner", currentXp: 0, requiredXp: 100 },
+        level: xpRes.status === 200 ? xpRes.data : { level: 1, title: "Beginner", currentXp: 0, requiredXp: 100 },
       });
     }
   );

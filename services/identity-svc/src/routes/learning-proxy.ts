@@ -7,6 +7,15 @@ import { loadConfig } from "../config.js";
 
 const { LEARNING_SVC_URL } = loadConfig();
 
+/**
+ * Extracts the query string from a Fastify request URL.
+ * The "http://localhost" base is arbitrary — URL() requires an absolute URL
+ * to parse, but only the search (query string) portion is used.
+ */
+function getQueryString(requestUrl: string): string {
+  return new URL(requestUrl, "http://localhost").search;
+}
+
 async function proxyToLearning(
   path: string,
   accessToken: string | undefined,
@@ -68,7 +77,7 @@ export const learningProxyRoutes: FastifyPluginAsync = async (app) => {
   // GET /learning/sessions/history/:learnerId
   app.get<{ Params: { learnerId: string } }>("/learning/sessions/history/:learnerId", async (request, reply) => {
     const token = request.cookies?.access_token ?? request.headers.authorization?.replace("Bearer ", "");
-    const queryString = new URL(request.url, "http://localhost").search;
+    const queryString = getQueryString(request.url);
     const { status, data } = await proxyToLearning(`/learning/sessions/history/${request.params.learnerId}${queryString}`, token);
     return reply.status(status).send(data);
   });
@@ -78,7 +87,7 @@ export const learningProxyRoutes: FastifyPluginAsync = async (app) => {
   // GET /learning/quests/worlds
   app.get("/learning/quests/worlds", async (request, reply) => {
     const token = request.cookies?.access_token ?? request.headers.authorization?.replace("Bearer ", "");
-    const queryString = new URL(request.url, "http://localhost").search;
+    const queryString = getQueryString(request.url);
     const { status, data } = await proxyToLearning(`/learning/quests/worlds${queryString}`, token);
     return reply.status(status).send(data);
   });
@@ -114,7 +123,7 @@ export const learningProxyRoutes: FastifyPluginAsync = async (app) => {
   // GET /learning/quests/progress
   app.get("/learning/quests/progress", async (request, reply) => {
     const token = request.cookies?.access_token ?? request.headers.authorization?.replace("Bearer ", "");
-    const queryString = new URL(request.url, "http://localhost").search;
+    const queryString = getQueryString(request.url);
     const { status, data } = await proxyToLearning(`/learning/quests/progress${queryString}`, token);
     return reply.status(status).send(data);
   });
@@ -124,7 +133,7 @@ export const learningProxyRoutes: FastifyPluginAsync = async (app) => {
   // GET /learning/gradebook
   app.get("/learning/gradebook", async (request, reply) => {
     const token = request.cookies?.access_token ?? request.headers.authorization?.replace("Bearer ", "");
-    const queryString = new URL(request.url, "http://localhost").search;
+    const queryString = getQueryString(request.url);
     const { status, data } = await proxyToLearning(`/learning/gradebook${queryString}`, token);
     return reply.status(status).send(data);
   });
@@ -132,7 +141,7 @@ export const learningProxyRoutes: FastifyPluginAsync = async (app) => {
   // GET /learning/gradebook/subject/:subject
   app.get<{ Params: { subject: string } }>("/learning/gradebook/subject/:subject", async (request, reply) => {
     const token = request.cookies?.access_token ?? request.headers.authorization?.replace("Bearer ", "");
-    const queryString = new URL(request.url, "http://localhost").search;
+    const queryString = getQueryString(request.url);
     const { status, data } = await proxyToLearning(`/learning/gradebook/subject/${request.params.subject}${queryString}`, token);
     return reply.status(status).send(data);
   });
@@ -140,7 +149,7 @@ export const learningProxyRoutes: FastifyPluginAsync = async (app) => {
   // GET /learning/gradebook/skill/:skillId
   app.get<{ Params: { skillId: string } }>("/learning/gradebook/skill/:skillId", async (request, reply) => {
     const token = request.cookies?.access_token ?? request.headers.authorization?.replace("Bearer ", "");
-    const queryString = new URL(request.url, "http://localhost").search;
+    const queryString = getQueryString(request.url);
     const { status, data } = await proxyToLearning(`/learning/gradebook/skill/${request.params.skillId}${queryString}`, token);
     return reply.status(status).send(data);
   });
@@ -166,7 +175,7 @@ export const learningProxyRoutes: FastifyPluginAsync = async (app) => {
   // GET /learning/goals
   app.get("/learning/goals", async (request, reply) => {
     const token = request.cookies?.access_token ?? request.headers.authorization?.replace("Bearer ", "");
-    const queryString = new URL(request.url, "http://localhost").search;
+    const queryString = getQueryString(request.url);
     const { status, data } = await proxyToLearning(`/learning/goals${queryString}`, token);
     return reply.status(status).send(data);
   });
