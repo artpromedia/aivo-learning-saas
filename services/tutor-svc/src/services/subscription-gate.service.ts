@@ -20,6 +20,12 @@ export class SubscriptionGateService {
     learnerId: string,
     subject: string,
   ): Promise<GateResult> {
+    // The "general" subject powers the built-in Aivo chat assistant and
+    // does not require a tutor add-on subscription.
+    if (subject === "general") {
+      return { allowed: true, sku: "PLATFORM_GENERAL" };
+    }
+
     const sku = getSkuForSubject(subject);
     if (!sku) {
       return {

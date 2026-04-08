@@ -489,7 +489,7 @@ const SEED_TRANSLATIONS: Record<string, Record<string, string>> = {
     "lessonsDone": "Lessons Done",
     "notificationsComingSoon": "Notifications coming soon",
     "addChildForBrain": "Add a child to view their brain profile",
-    "functioningLevel": "Functioning level {level}",
+    "functioningLevel": "Functioning Level",
     "childDashboard": "Child Dashboard",
     "failedToLoadChildDash": "Failed to load child dashboard",
     "subjectProgress": "Subject Progress",

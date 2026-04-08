@@ -65,6 +65,14 @@ describe("SubscriptionGateService", () => {
       expect(result.message).toContain("ADDON_TUTOR_BUNDLE");
     });
 
+    it("returns allowed=true for 'general' subject without checking subscription", async () => {
+      const result = await service.verifyAccess("learner-1", "general");
+
+      expect(result.allowed).toBe(true);
+      expect(result.sku).toBe("PLATFORM_GENERAL");
+      expect(app.db.select).not.toHaveBeenCalled();
+    });
+
     it("returns allowed=false with message for unknown subject", async () => {
       const result = await service.verifyAccess("learner-1", "music");
 
