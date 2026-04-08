@@ -29,7 +29,9 @@ export class StripeService {
   ): Promise<string> {
     if (!this.stripe) {
       if (process.env.NODE_ENV === "production") {
-        throw new Error("Payment processing is not configured. Please contact support.");
+        const err = new Error("Payment processing is temporarily unavailable. Please try again later.");
+        (err as any).statusCode = 503;
+        throw err;
       }
       const fakeSessionId = `fake_sess_${tenantId}_${planId}`;
       const fakeUrl = successUrl.replace("{CHECKOUT_SESSION_ID}", fakeSessionId);
@@ -89,7 +91,9 @@ export class StripeService {
   ): Promise<string> {
     if (!this.stripe) {
       if (process.env.NODE_ENV === "production") {
-        throw new Error("Payment processing is not configured. Please contact support.");
+        const err = new Error("Payment processing is temporarily unavailable. Please try again later.");
+        (err as any).statusCode = 503;
+        throw err;
       }
       this.devLog(`[stripe-dev] createBillingPortalSession customer=${customerId} → ${returnUrl}`);
       return returnUrl;
@@ -165,7 +169,9 @@ export class StripeService {
   async cancelSubscription(stripeSubscriptionId: string): Promise<void> {
     if (!this.stripe) {
       if (process.env.NODE_ENV === "production") {
-        throw new Error("Payment processing is not configured. Please contact support.");
+        const err = new Error("Payment processing is temporarily unavailable. Please try again later.");
+        (err as any).statusCode = 503;
+        throw err;
       }
       this.devLog(`[stripe-dev] cancelSubscription subId=${stripeSubscriptionId}`);
       return;

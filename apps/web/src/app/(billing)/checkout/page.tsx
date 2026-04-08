@@ -186,12 +186,14 @@ function CheckoutContent() {
                       </li>
                     ))}
                   </ul>
-                  <Link
-                    href="/demo"
+                  <a
+                    href="https://aivolearning.com/demo"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="block w-full rounded-lg bg-gray-100 dark:bg-gray-800 px-4 py-2.5 text-center text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                   >
                     {t("contactSales")}
-                  </Link>
+                  </a>
                 </CardBody>
               </Card>
             );

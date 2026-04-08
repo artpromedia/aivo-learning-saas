@@ -83,7 +83,11 @@ export async function buildApp() {
     }
 
     return reply.status(statusCode).send({
-      error: statusCode >= 500 ? "Internal server error" : (error as Error).message,
+      error: statusCode === 503
+        ? (error as Error).message
+        : statusCode >= 500
+          ? "Internal server error"
+          : (error as Error).message,
     });
   });
 
