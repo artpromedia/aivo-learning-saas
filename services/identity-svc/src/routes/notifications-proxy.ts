@@ -93,4 +93,38 @@ export const notificationsProxyRoutes: FastifyPluginAsync = async (app) => {
     );
     return reply.status(status).send(data);
   });
+
+  // GET /notifications/preferences → comms-svc GET /comms/notifications/preferences
+  app.get("/notifications/preferences", async (request, reply) => {
+    const token = getToken(request);
+    if (!token) {
+      return reply.status(401).send({ error: "Not authenticated" });
+    }
+
+    const { status, data } = await proxyToComms(
+      "/comms/notifications/preferences",
+      token,
+    );
+    return reply.status(status).send(data);
+  });
+
+  // PATCH /notifications/preferences → comms-svc PATCH /comms/notifications/preferences
+  app.patch("/notifications/preferences", async (request, reply) => {
+    const token = getToken(request);
+    if (!token) {
+      return reply.status(401).send({ error: "Not authenticated" });
+    }
+
+    const body = typeof request.body === "string"
+      ? request.body
+      : JSON.stringify(request.body);
+
+    const { status, data } = await proxyToComms(
+      "/comms/notifications/preferences",
+      token,
+      "PATCH",
+      body,
+    );
+    return reply.status(status).send(data);
+  });
 };

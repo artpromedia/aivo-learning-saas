@@ -9,6 +9,7 @@ export const AUTH_ROUTES = {
   REFRESH: "/api/auth/refresh",
   FORGOT_PASSWORD: "/api/auth/forgot-password",
   RESET_PASSWORD: "/api/auth/reset-password",
+  CHANGE_PASSWORD: "/api/auth/change-password",
 } as const;
 
 // Users
@@ -66,6 +67,7 @@ export const NOTIFICATION_ROUTES = {
   LIST: "/api/notifications",
   MARK_READ: (id: string) => `/api/notifications/${id}/read`,
   MARK_ALL_READ: "/api/notifications/read-all",
+  PREFERENCES: "/api/notifications/preferences",
 } as const;
 
 // Brain Profile

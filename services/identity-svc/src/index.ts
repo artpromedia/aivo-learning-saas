@@ -21,6 +21,7 @@ import { oauthCallbackRoute } from "./routes/auth/oauth-callback.js";
 import { verifyEmailRoute } from "./routes/auth/verify-email.js";
 import { forgotPasswordRoute } from "./routes/auth/forgot-password.js";
 import { resetPasswordRoute } from "./routes/auth/reset-password.js";
+import { changePasswordRoute } from "./routes/auth/change-password.js";
 import { refreshRoute } from "./routes/auth/refresh.js";
 import { sessionRoute } from "./routes/auth/session.js";
 
@@ -153,6 +154,7 @@ export async function buildApp() {
     await api.register(verifyEmailRoute);
     await api.register(forgotPasswordRoute);
     await api.register(resetPasswordRoute);
+    await api.register(changePasswordRoute);
     await api.register(refreshRoute);
     await api.register(sessionRoute);
     await api.register(meRoute);
