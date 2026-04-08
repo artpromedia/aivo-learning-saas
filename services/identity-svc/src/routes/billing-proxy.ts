@@ -8,10 +8,12 @@ async function proxyToBilling(
   path: string,
   accessToken: string | undefined,
   method = "GET",
-  body?: string
+  body?: string,
+  extraHeaders?: Record<string, string>,
 ): Promise<{ status: number; data: unknown }> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
+    ...extraHeaders,
   };
   if (accessToken) {
     headers["Authorization"] = `Bearer ${accessToken}`;
@@ -41,8 +43,25 @@ export const billingProxyRoutes: FastifyPluginAsync = async (app) => {
       request.cookies?.access_token ??
       request.headers.authorization?.replace("Bearer ", "");
     const method = request.method;
-    const body = ["GET", "HEAD"].includes(method) ? undefined : JSON.stringify(request.body);
-    const { status, data } = await proxyToBilling(path, accessToken, method, body);
+
+    // For Stripe webhook, pass raw body and stripe-signature header through
+    const isWebhook = rest.startsWith("webhooks/stripe");
+    const extraHeaders: Record<string, string> = {};
+    let body: string | undefined;
+
+    if (["GET", "HEAD"].includes(method)) {
+      body = undefined;
+    } else if (isWebhook && (request as any).rawBody) {
+      body = (request as any).rawBody;
+      const sig = request.headers["stripe-signature"];
+      if (sig) {
+        extraHeaders["stripe-signature"] = Array.isArray(sig) ? sig[0] : sig;
+      }
+    } else {
+      body = JSON.stringify(request.body);
+    }
+
+    const { status, data } = await proxyToBilling(path, accessToken, method, body, extraHeaders);
     return reply.status(status).send(data);
   });
 };

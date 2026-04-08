@@ -64,6 +64,20 @@ export async function buildApp() {
     },
   });
 
+  // Capture raw body for Stripe webhook signature verification
+  app.addContentTypeParser(
+    "application/json",
+    { parseAs: "string" },
+    (req, body, done) => {
+      (req as any).rawBody = body;
+      try {
+        done(null, JSON.parse(body as string));
+      } catch (err) {
+        done(err as Error, undefined);
+      }
+    },
+  );
+
   // Error handler
   app.setErrorHandler((error, _request, reply) => {
     if (error instanceof ZodError) {

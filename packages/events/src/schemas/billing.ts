@@ -80,6 +80,26 @@ export const BillingSubscriptionReactivatedSchema = z.object({
 });
 export type BillingSubscriptionReactivated = z.infer<typeof BillingSubscriptionReactivatedSchema>;
 
+// ─── billing.trial.reminder_3day ──────────────────────────────────────────────
+export const BillingTrialReminder3daySchema = z.object({
+  tenantId: z.string().uuid(),
+  subscriptionId: z.string().uuid(),
+  planId: z.string(),
+  trialEndsAt: z.string().datetime(),
+  daysRemaining: z.number(),
+});
+export type BillingTrialReminder3day = z.infer<typeof BillingTrialReminder3daySchema>;
+
+// ─── billing.trial.reminder_1day ──────────────────────────────────────────────
+export const BillingTrialReminder1daySchema = z.object({
+  tenantId: z.string().uuid(),
+  subscriptionId: z.string().uuid(),
+  planId: z.string(),
+  trialEndsAt: z.string().datetime(),
+  daysRemaining: z.number(),
+});
+export type BillingTrialReminder1day = z.infer<typeof BillingTrialReminder1daySchema>;
+
 export const BILLING_SUBJECTS = {
   "billing.subscription.created": "aivo.billing.subscription.created",
   "billing.subscription.cancelled": "aivo.billing.subscription.cancelled",
@@ -89,6 +109,8 @@ export const BILLING_SUBJECTS = {
   "billing.subscription.reactivated": "aivo.billing.subscription.reactivated",
   "billing.payment.succeeded": "aivo.billing.payment.succeeded",
   "billing.payment.failed": "aivo.billing.payment.failed",
+  "billing.trial.reminder_3day": "aivo.billing.trial.reminder_3day",
+  "billing.trial.reminder_1day": "aivo.billing.trial.reminder_1day",
   "marketing.conversion.signup": "aivo.marketing.conversion.signup",
   "marketing.conversion.subscribed": "aivo.marketing.conversion.subscribed",
 } as const;
@@ -102,6 +124,8 @@ export const BILLING_SCHEMAS = {
   "billing.subscription.reactivated": BillingSubscriptionReactivatedSchema,
   "billing.payment.succeeded": BillingPaymentSucceededSchema,
   "billing.payment.failed": BillingPaymentFailedSchema,
+  "billing.trial.reminder_3day": BillingTrialReminder3daySchema,
+  "billing.trial.reminder_1day": BillingTrialReminder1daySchema,
   "marketing.conversion.signup": MarketingConversionSignupSchema,
   "marketing.conversion.subscribed": MarketingConversionSubscribedSchema,
 } as const;

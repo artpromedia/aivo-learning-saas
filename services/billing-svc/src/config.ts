@@ -12,6 +12,9 @@ const configSchema = z.object({
   STRIPE_SECRET_KEY: z.string().default(""),
   STRIPE_WEBHOOK_SECRET: z.string().default(""),
   STRIPE_PUBLISHABLE_KEY: z.string().default(""),
+  STRIPE_PRICE_STARTER: z.string().default(""),
+  STRIPE_PRICE_FAMILY: z.string().default(""),
+  STRIPE_PRICE_PREMIUM: z.string().default(""),
   APP_URL: z.string().url().default("http://localhost:3000"),
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
 });

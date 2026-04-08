@@ -129,6 +129,21 @@ export async function buildApp() {
     timeWindow: "1 minute",
   });
 
+  // Capture raw body for JSON requests (needed for Stripe webhook signature
+  // verification when proxying to billing-svc).
+  app.addContentTypeParser(
+    "application/json",
+    { parseAs: "string" },
+    (req, body, done) => {
+      (req as any).rawBody = body;
+      try {
+        done(null, JSON.parse(body as string));
+      } catch (err) {
+        done(err as Error, undefined);
+      }
+    },
+  );
+
   // Allow multipart/form-data to pass through unparsed for proxy routes
   // (e.g. homework upload). The body is streamed raw to the downstream service.
   app.addContentTypeParser("multipart/form-data", function (_request, _payload, done) {

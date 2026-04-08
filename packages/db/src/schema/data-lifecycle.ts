@@ -24,6 +24,8 @@ export const dataLifecycleEventTypeEnum = pgEnum("data_lifecycle_event_type", [
   "DATA_DELETION_COMPLETED",
   "ERASURE_REQUESTED",
   "ERASURE_COMPLETED",
+  "TRIAL_REMINDER_3DAY",
+  "TRIAL_REMINDER_1DAY",
 ]);
 
 // ─── Data Lifecycle Events (Compliance Audit Trail) ────────────────────────────

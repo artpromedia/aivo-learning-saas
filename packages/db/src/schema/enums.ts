@@ -184,6 +184,7 @@ export const learningSessionTypeEnum = pgEnum("learning_session_type", [
 // Billing
 export const subscriptionStatusEnum = pgEnum("subscription_status", [
   "ACTIVE",
+  "TRIALING",
   "PAST_DUE",
   "CANCELLED",
   "GRACE_PERIOD",
