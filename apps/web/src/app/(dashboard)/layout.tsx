@@ -18,11 +18,14 @@ import {
   Compass,
   CreditCard,
   Languages,
+  Bot,
+  User,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { AivoLogo } from "@/components/brand/AivoLogo";
 import { useAuth } from "@/hooks/useAuth";
 import { useNotifications } from "@/hooks/useNotifications";
+import { LocaleSwitcher } from "@/components/locale-switcher";
 
 interface NavItem {
   href: string;
@@ -40,8 +43,11 @@ const parentNav: NavItem[] = [
 const learnerNav: NavItem[] = [
   { href: "/learner", labelKey: "home", icon: <Home size={20} /> },
   { href: "/learner/quests", labelKey: "quests", icon: <Compass size={20} /> },
+  { href: "/learner/tutors", labelKey: "tutors", icon: <Bot size={20} /> },
+  { href: "/learner/homework", labelKey: "homework", icon: <BookOpen size={20} /> },
   { href: "/learner/shop", labelKey: "shop", icon: <ShoppingBag size={20} /> },
   { href: "/learner/badges", labelKey: "badges", icon: <Trophy size={20} /> },
+  { href: "/learner/profile", labelKey: "profile", icon: <User size={20} /> },
   { href: "/learner/settings", labelKey: "settings", icon: <Settings size={20} /> },
 ];
 
@@ -204,6 +210,7 @@ export default function DashboardLayout({
           <div className="flex-1" />
 
           <div className="flex items-center gap-3">
+            <LocaleSwitcher />
             <Link
               href="/notifications"
               className="relative p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
