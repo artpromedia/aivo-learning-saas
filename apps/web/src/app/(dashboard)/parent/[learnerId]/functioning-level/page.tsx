@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { ArrowLeft, Brain, Loader2, RefreshCw } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -102,23 +103,12 @@ const LEVEL_META: Record<
   },
 };
 
-const TRIGGER_LABELS: Record<string, string> = {
-  assessment: "Initial assessment",
-  parent_questionnaire: "Parent questionnaire",
-  manual: "Manual update",
-  baseline_assessment: "Baseline assessment",
-  ai_recommendation: "AI recommendation",
-};
-
-function formatTrigger(trigger: string): string {
-  return TRIGGER_LABELS[trigger] ?? trigger;
-}
-
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function FunctioningLevelPage() {
   const params = useParams();
   const learnerId = params.learnerId as string;
+  const t = useTranslations("brain");
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["functioning-level", learnerId],
@@ -129,12 +119,34 @@ export default function FunctioningLevelPage() {
     enabled: !!learnerId,
   });
 
+  const levelLabel = (level: Level) => {
+    const labels: Record<Level, string> = {
+      STANDARD: t("standardLabel"),
+      SUPPORTED: t("supportedLabel"),
+      LOW_VERBAL: t("lowVerbalLabel"),
+      NON_VERBAL: t("nonVerbalLabel"),
+      PRE_SYMBOLIC: t("preSymbolicLabel"),
+    };
+    return labels[level] ?? level;
+  };
+
+  const triggerLabel = (trigger: string) => {
+    const labels: Record<string, string> = {
+      assessment: t("triggerAssessment"),
+      parent_questionnaire: t("triggerParentQuestionnaire"),
+      manual: t("triggerManual"),
+      baseline_assessment: t("triggerBaseline"),
+      ai_recommendation: t("triggerAiRecommendation"),
+    };
+    return labels[trigger] ?? trigger;
+  };
+
   if (isLoading) {
     return (
       <div className="text-center py-16">
         <Loader2 className="mx-auto mb-4 text-[#7C3AED] animate-spin" size={48} />
         <p className="text-gray-500 dark:text-gray-400">
-          Loading functioning level…
+          {t("loadingFunctioningLevel")}
         </p>
       </div>
     );
@@ -145,14 +157,14 @@ export default function FunctioningLevelPage() {
       <div className="text-center py-16">
         <Brain className="mx-auto mb-4 text-gray-400" size={48} />
         <p className="text-red-500 mb-4">
-          {error instanceof Error ? error.message : "Failed to load functioning level."}
+          {error instanceof Error ? error.message : t("failedToLoadFunctioningLevel")}
         </p>
         <Button
           variant="outline"
           onClick={() => refetch()}
           leftIcon={<RefreshCw size={16} />}
         >
-          Retry
+          {t("retry")}
         </Button>
       </div>
     );
@@ -168,16 +180,16 @@ export default function FunctioningLevelPage() {
         className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-4"
       >
         <ArrowLeft size={16} />
-        Back to Brain Profile
+        {t("backToBrainProfile")}
       </Link>
 
       <PurpleGradientHeader className="rounded-xl mb-8">
         <div className="flex items-center gap-3">
           <Brain size={32} />
           <div>
-            <h1 className="text-2xl font-bold">Functioning Level</h1>
+            <h1 className="text-2xl font-bold">{t("functioningLevel")}</h1>
             <p className="text-white/80 text-sm">
-              How your child's learning environment is adapted
+              {t("functioningLevelSubtitle")}
             </p>
           </div>
         </div>
@@ -188,13 +200,13 @@ export default function FunctioningLevelPage() {
         <Card>
           <CardHeader>
             <h3 className="font-semibold text-gray-900 dark:text-white">
-              Current Level
+              {t("currentLevel")}
             </h3>
           </CardHeader>
           <CardBody className="space-y-3">
             <div className="flex items-center gap-3">
               <Badge className={`text-sm px-4 py-1.5 ${meta.badgeClass}`}>
-                {meta.label}
+                {levelLabel(current)}
               </Badge>
             </div>
             <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
@@ -207,7 +219,7 @@ export default function FunctioningLevelPage() {
         <Card>
           <CardHeader>
             <h3 className="font-semibold text-gray-900 dark:text-white">
-              Active Adaptations
+              {t("activeAdaptations")}
             </h3>
           </CardHeader>
           <CardBody>
@@ -227,7 +239,7 @@ export default function FunctioningLevelPage() {
           <Card>
             <CardHeader>
               <h3 className="font-semibold text-gray-900 dark:text-white">
-                Level History
+                {t("levelHistory")}
               </h3>
             </CardHeader>
             <CardBody>
@@ -246,10 +258,10 @@ export default function FunctioningLevelPage() {
                       </time>
                       <div className="flex items-center gap-2 mt-0.5">
                         <Badge className={`text-xs px-2 py-0.5 ${entryMeta.badgeClass}`}>
-                          {entryMeta.label}
+                          {levelLabel(entry.level)}
                         </Badge>
                         <span className="text-xs text-gray-500 dark:text-gray-400">
-                          via {formatTrigger(entry.trigger)}
+                          {t("via", { trigger: triggerLabel(entry.trigger) })}
                         </span>
                       </div>
                     </li>
