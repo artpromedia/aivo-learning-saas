@@ -7,16 +7,13 @@ export class StripeService {
   constructor(private app: FastifyInstance) {
     this.stripe = app.stripe;
 
-    // Warn loudly in production if Stripe is not configured
-    if (!this.stripe && process.env.NODE_ENV === "production") {
-      console.warn("[billing] STRIPE_SECRET_KEY is not set — running in dev-fallback mode");
+    if (!this.stripe) {
+      console.warn("[billing] STRIPE_SECRET_KEY is not set — running in demo mode (fake checkout)");
     }
   }
 
-  private devLog(message: string): void {
-    if (process.env.NODE_ENV === "development") {
-      console.log(message);
-    }
+  private demoLog(message: string): void {
+    console.log(message);
   }
 
   async createCheckoutSession(
@@ -28,14 +25,9 @@ export class StripeService {
     trialDays: number = 0,
   ): Promise<string> {
     if (!this.stripe) {
-      if (process.env.NODE_ENV === "production") {
-        const err = new Error("Payment processing is temporarily unavailable. Please try again later.");
-        (err as any).statusCode = 503;
-        throw err;
-      }
       const fakeSessionId = `fake_sess_${tenantId}_${planId}`;
       const fakeUrl = successUrl.replace("{CHECKOUT_SESSION_ID}", fakeSessionId);
-      this.devLog(`[stripe-dev] createCheckoutSession tenantId=${tenantId} planId=${planId} trialDays=${trialDays} → ${fakeUrl}`);
+      this.demoLog(`[stripe-demo] createCheckoutSession tenantId=${tenantId} planId=${planId} trialDays=${trialDays} → ${fakeUrl}`);
       return fakeUrl;
     }
 
@@ -66,7 +58,7 @@ export class StripeService {
         subscription: subscriptionId,
         price: { id: priceId },
       } as unknown as Stripe.SubscriptionItem;
-      this.devLog(`[stripe-dev] createSubscriptionItem sub=${subscriptionId} price=${priceId} → ${fake.id}`);
+      this.demoLog(`[stripe-demo] createSubscriptionItem sub=${subscriptionId} price=${priceId} → ${fake.id}`);
       return fake;
     }
 
@@ -78,7 +70,7 @@ export class StripeService {
 
   async cancelSubscriptionItem(subscriptionItemId: string): Promise<void> {
     if (!this.stripe) {
-      this.devLog(`[stripe-dev] cancelSubscriptionItem itemId=${subscriptionItemId}`);
+      this.demoLog(`[stripe-demo] cancelSubscriptionItem itemId=${subscriptionItemId}`);
       return;
     }
 
@@ -90,12 +82,7 @@ export class StripeService {
     returnUrl: string,
   ): Promise<string> {
     if (!this.stripe) {
-      if (process.env.NODE_ENV === "production") {
-        const err = new Error("Payment processing is temporarily unavailable. Please try again later.");
-        (err as any).statusCode = 503;
-        throw err;
-      }
-      this.devLog(`[stripe-dev] createBillingPortalSession customer=${customerId} → ${returnUrl}`);
+      this.demoLog(`[stripe-demo] createBillingPortalSession customer=${customerId} → ${returnUrl}`);
       return returnUrl;
     }
 
@@ -122,7 +109,7 @@ export class StripeService {
         hosted_invoice_url: `${appUrl}/invoices/fake_${Date.now()}`,
         invoice_pdf: null,
       } as unknown as Stripe.Invoice;
-      this.devLog(`[stripe-dev] createInvoice customer=${customerId} items=${items.length} → ${fake.id}`);
+      this.demoLog(`[stripe-demo] createInvoice customer=${customerId} items=${items.length} → ${fake.id}`);
       return fake;
     }
 
@@ -145,7 +132,7 @@ export class StripeService {
 
   async listInvoices(customerId: string, limit = 20): Promise<Stripe.Invoice[]> {
     if (!this.stripe) {
-      this.devLog(`[stripe-dev] listInvoices customer=${customerId}`);
+      this.demoLog(`[stripe-demo] listInvoices customer=${customerId}`);
       return [];
     }
 
@@ -159,7 +146,7 @@ export class StripeService {
 
   async getInvoice(invoiceId: string): Promise<Stripe.Invoice | null> {
     if (!this.stripe) {
-      this.devLog(`[stripe-dev] getInvoice invoiceId=${invoiceId}`);
+      this.demoLog(`[stripe-demo] getInvoice invoiceId=${invoiceId}`);
       return null;
     }
 
@@ -168,12 +155,7 @@ export class StripeService {
 
   async cancelSubscription(stripeSubscriptionId: string): Promise<void> {
     if (!this.stripe) {
-      if (process.env.NODE_ENV === "production") {
-        const err = new Error("Payment processing is temporarily unavailable. Please try again later.");
-        (err as any).statusCode = 503;
-        throw err;
-      }
-      this.devLog(`[stripe-dev] cancelSubscription subId=${stripeSubscriptionId}`);
+      this.demoLog(`[stripe-demo] cancelSubscription subId=${stripeSubscriptionId}`);
       return;
     }
 
