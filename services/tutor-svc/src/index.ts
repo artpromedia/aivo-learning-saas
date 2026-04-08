@@ -22,6 +22,7 @@ import { messageSessionRoute } from "./routes/sessions/message.js";
 import { endSessionRoute } from "./routes/sessions/end.js";
 import { getSessionRoute } from "./routes/sessions/get.js";
 import { sessionHistoryRoute } from "./routes/sessions/history.js";
+import { chatStreamRoute } from "./routes/sessions/chat.js";
 import { uploadHomeworkRoute } from "./routes/homework/upload.js";
 import { getHomeworkRoute } from "./routes/homework/get.js";
 import { homeworkSessionStartRoute } from "./routes/homework/session-start.js";
@@ -86,6 +87,7 @@ export async function buildApp() {
   await app.register(endSessionRoute);
   await app.register(getSessionRoute);
   await app.register(sessionHistoryRoute);
+  await app.register(chatStreamRoute);
   await app.register(uploadHomeworkRoute);
   await app.register(getHomeworkRoute);
   await app.register(homeworkSessionStartRoute);

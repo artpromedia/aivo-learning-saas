@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useLearnerStore } from "@/stores/learner.store";
 import { PinGate } from "./pin-gate";
+import { AivoChatWidget } from "@/components/learner/aivo-chat-widget";
 
 const PIN_VERIFIED_KEY = "learner-pin-verified";
 
@@ -59,5 +60,10 @@ export default function LearnerLayout({
     );
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      <AivoChatWidget />
+    </>
+  );
 }
