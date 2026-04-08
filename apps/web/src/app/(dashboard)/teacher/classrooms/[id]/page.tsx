@@ -15,7 +15,9 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
+import { useTranslations } from "next-intl";
 import { apiFetch } from "@/lib/api";
+import { API_ROUTES } from "@/lib/api-routes";
 
 interface Learner {
   id: string;
@@ -37,6 +39,7 @@ type SortField = "name" | "masteryPct" | "lastActiveAt";
 type SortDir = "asc" | "desc";
 
 export default function ClassroomViewPage() {
+  const t = useTranslations("teacher");
   const params = useParams();
   const classroomId = params.id as string;
 
@@ -50,12 +53,12 @@ export default function ClassroomViewPage() {
     async function fetchClassroom() {
       try {
         const data = await apiFetch<ClassroomDetail>(
-          `/api/teacher/classrooms/${classroomId}`,
+          API_ROUTES.TEACHER.CLASSROOM_DETAIL(classroomId),
         );
         setClassroom(data);
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "Failed to load classroom",
+          err instanceof Error ? err.message : t("failedToLoadClassroom"),
         );
       } finally {
         setLoading(false);
@@ -152,7 +155,7 @@ export default function ClassroomViewPage() {
           className="inline-flex items-center gap-1 text-white/80 hover:text-white text-sm mb-3 transition-colors"
         >
           <ArrowLeft size={16} />
-          Back to Classrooms
+          {t("backToClassrooms")}
         </Link>
         <h1 className="text-2xl font-bold">{classroom.name}</h1>
         <div className="flex items-center gap-3 mt-2">
@@ -170,11 +173,11 @@ export default function ClassroomViewPage() {
       <Card>
         {/* Table header */}
         <div className="hidden sm:grid grid-cols-[1fr_120px_120px_100px_32px] gap-4 px-6 py-3 border-b border-gray-200 dark:border-gray-700">
-          <SortButton field="name" label="Learner" />
-          <SortButton field="masteryPct" label="Mastery" />
-          <SortButton field="lastActiveAt" label="Last Active" />
+          <SortButton field="name" label={t("learner")} />
+          <SortButton field="masteryPct" label={t("mastery")} />
+          <SortButton field="lastActiveAt" label={t("lastActive")} />
           <span className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-            Status
+            {t("status")}
           </span>
           <span />
         </div>
@@ -182,7 +185,7 @@ export default function ClassroomViewPage() {
         {/* Rows */}
         {sortedLearners.length === 0 ? (
           <CardBody className="text-center py-12 text-gray-500">
-            No learners in this classroom yet.
+            {t("noLearnersInClassroom")}
           </CardBody>
         ) : (
           sortedLearners.map((learner) => (
@@ -220,10 +223,10 @@ export default function ClassroomViewPage() {
                   {learner.atRisk ? (
                     <Badge variant="warning">
                       <AlertTriangle size={10} className="mr-1" />
-                      At Risk
+                      {t("atRisk")}
                     </Badge>
                   ) : (
-                    <Badge variant="success">On Track</Badge>
+                    <Badge variant="success">{t("onTrack")}</Badge>
                   )}
                 </div>
 

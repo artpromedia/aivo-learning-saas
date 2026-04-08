@@ -13,8 +13,11 @@ import {
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
+import { useTranslations } from "next-intl";
+import { API_ROUTES } from "@/lib/api-routes";
 
 export default function UploadIepPage() {
+  const t = useTranslations("teacher");
   const params = useParams();
   const router = useRouter();
   const learnerId = params.id as string;
@@ -34,11 +37,11 @@ export default function UploadIepPage() {
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     ];
     if (!allowed.includes(f.type)) {
-      setError("Please upload a PDF or Word document (.pdf, .doc, .docx).");
+      setError(t("invalidFileType"));
       return;
     }
     if (f.size > 20 * 1024 * 1024) {
-      setError("File size must be under 20 MB.");
+      setError(t("fileTooLarge"));
       return;
     }
     setFile(f);
@@ -70,10 +73,9 @@ export default function UploadIepPage() {
       const formData = new FormData();
       formData.append("file", file);
 
-      const API_BASE =
-        process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
       const res = await fetch(
-        `${API_BASE}/api/teacher/learners/${learnerId}/iep`,
+        `${baseUrl}${API_ROUTES.TEACHER.LEARNER_IEP_UPLOAD(learnerId)}`,
         {
           method: "POST",
           credentials: "include",
@@ -91,7 +93,7 @@ export default function UploadIepPage() {
         router.push(`/teacher/learners/${learnerId}`);
       }, 3000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Upload failed");
+      setError(err instanceof Error ? err.message : t("uploadFailed"));
     } finally {
       setUploading(false);
     }
@@ -107,7 +109,7 @@ export default function UploadIepPage() {
     return (
       <div>
         <PurpleGradientHeader className="rounded-xl mb-8">
-          <h1 className="text-2xl font-bold">Upload IEP</h1>
+          <h1 className="text-2xl font-bold">{t("uploadIepTitle")}</h1>
         </PurpleGradientHeader>
 
         <Card className="max-w-lg mx-auto">
@@ -116,13 +118,13 @@ export default function UploadIepPage() {
               <CheckCircle className="text-green-600" size={32} />
             </div>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              IEP Uploaded Successfully
+              {t("iepUploadedTitle")}
             </h3>
             <p className="text-gray-500 dark:text-gray-400 mb-6">
-              IEP uploaded. The parent will be asked to review and confirm.
+              {t("iepUploadedDesc")}
             </p>
             <p className="text-sm text-gray-400">
-              Redirecting back to learner view...
+              {t("redirecting")}
             </p>
           </CardBody>
         </Card>
@@ -138,11 +140,11 @@ export default function UploadIepPage() {
           className="inline-flex items-center gap-1 text-white/80 hover:text-white text-sm mb-3 transition-colors"
         >
           <ArrowLeft size={16} />
-          Back to Learner
+          {t("backToLearner")}
         </Link>
-        <h1 className="text-2xl font-bold">Upload IEP</h1>
+        <h1 className="text-2xl font-bold">{t("uploadIepTitle")}</h1>
         <p className="mt-1 text-white/80">
-          Upload an IEP document for review.
+          {t("uploadIepDesc")}
         </p>
       </PurpleGradientHeader>
 
@@ -183,10 +185,10 @@ export default function UploadIepPage() {
               <Upload className="text-[#7C3AED]" size={24} />
             </div>
             <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Drag and drop your IEP file here
+              {t("dragDropIep")}
             </p>
             <p className="text-xs text-gray-500 mt-1">
-              or click to browse. PDF, DOC, DOCX up to 20 MB.
+              {t("orClickToBrowse")}
             </p>
           </div>
 
@@ -218,7 +220,7 @@ export default function UploadIepPage() {
           <div className="flex items-center justify-end gap-3 mt-6">
             <Link href={`/teacher/learners/${learnerId}`}>
               <Button variant="ghost" size="sm">
-                Cancel
+                {t("cancel")}
               </Button>
             </Link>
             <Button
@@ -228,7 +230,7 @@ export default function UploadIepPage() {
               leftIcon={<Upload size={14} />}
               onClick={handleUpload}
             >
-              Upload IEP
+              {t("uploadIep")}
             </Button>
           </div>
         </CardBody>
