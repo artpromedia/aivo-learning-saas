@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { PartyPopper, Rocket, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
@@ -33,6 +34,7 @@ function ConfettiPiece({ delay, x }: { delay: number; x: number }) {
 
 export default function PaymentSuccessPage() {
   const router = useRouter();
+  const t = useTranslations("billing");
   const [showContent, setShowContent] = useState(false);
 
   useEffect(() => {
@@ -81,7 +83,7 @@ export default function PaymentSuccessPage() {
             transition={{ delay: 0.4 }}
             className="text-3xl font-bold text-gray-900 dark:text-white mb-3"
           >
-            Payment Successful!
+            {t("paymentSuccessful")}
           </motion.h1>
 
           <motion.p
@@ -90,7 +92,7 @@ export default function PaymentSuccessPage() {
             transition={{ delay: 0.6 }}
             className="text-lg text-gray-500 dark:text-gray-400 mb-2"
           >
-            Welcome to AIVO Premium! Your subscription is now active.
+            {t("welcomeToPremium")}
           </motion.p>
 
           <motion.div
@@ -101,10 +103,10 @@ export default function PaymentSuccessPage() {
             <Card className="mb-8 mx-auto max-w-sm">
               <CardBody className="space-y-3">
                 {[
-                  "Unlimited AI tutoring sessions",
-                  "Full access to all quest worlds",
-                  "Advanced brain profile analytics",
-                  "Priority recommendation engine",
+                  t("featureUnlimitedTutoring"),
+                  t("featureFullQuests"),
+                  t("featureAdvancedBrain"),
+                  t("featurePriorityRecs"),
                 ].map((feature) => (
                   <div
                     key={feature}
@@ -132,7 +134,7 @@ export default function PaymentSuccessPage() {
               rightIcon={<Rocket size={20} />}
               className="min-w-[200px]"
             >
-              Go to Dashboard
+              {t("goToDashboard")}
             </Button>
           </motion.div>
         </motion.div>
