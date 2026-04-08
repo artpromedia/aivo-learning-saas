@@ -9,9 +9,10 @@ const configSchema = z.object({
   REDIS_URL: z.string().min(1),
   NATS_URL: z.string().min(1),
   JWT_PUBLIC_KEY: z.string().min(1),
-  BRAIN_SVC_URL: z.string().url().default("http://localhost:3005"),
+  BRAIN_SVC_URL: z.string().url().min(1).default("http://localhost:3005"),
   APP_URL: z.string().url().default("http://localhost:3000"),
   MARKETING_URL: z.string().url().optional(),
+  CORS_ORIGINS: z.string().optional(),
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
 });
 

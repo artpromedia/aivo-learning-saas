@@ -17,6 +17,7 @@ import {
   Users,
   Compass,
   CreditCard,
+  Languages,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { AivoLogo } from "@/components/brand/AivoLogo";
@@ -33,6 +34,7 @@ const parentNav: NavItem[] = [
   { href: "/parent", labelKey: "dashboard", icon: <Home size={20} /> },
   { href: "/notifications", labelKey: "notifications", icon: <Bell size={20} /> },
   { href: "/manage", labelKey: "subscription", icon: <CreditCard size={20} /> },
+  { href: "/parent/settings", labelKey: "settings", icon: <Settings size={20} /> },
 ];
 
 const learnerNav: NavItem[] = [
@@ -40,6 +42,7 @@ const learnerNav: NavItem[] = [
   { href: "/learner/quests", labelKey: "quests", icon: <Compass size={20} /> },
   { href: "/learner/shop", labelKey: "shop", icon: <ShoppingBag size={20} /> },
   { href: "/learner/badges", labelKey: "badges", icon: <Trophy size={20} /> },
+  { href: "/learner/settings", labelKey: "settings", icon: <Settings size={20} /> },
 ];
 
 const teacherNav: NavItem[] = [
@@ -53,6 +56,7 @@ const districtAdminNav: NavItem[] = [
   { href: "/admin/district/classrooms", labelKey: "classrooms", icon: <BookOpen size={20} /> },
   { href: "/admin/district/integrations", labelKey: "integrations", icon: <Settings size={20} /> },
   { href: "/admin/district/licenses", labelKey: "licenses", icon: <CreditCard size={20} /> },
+  { href: "/admin/translations", labelKey: "translations", icon: <Languages size={20} /> },
 ];
 
 export default function DashboardLayout({

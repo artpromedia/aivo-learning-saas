@@ -1,6 +1,7 @@
 import type { FastifyPluginAsync } from "fastify";
+import { loadConfig } from "../config.js";
 
-const BILLING_SVC_URL = process.env.BILLING_SVC_URL ?? "http://localhost:3008";
+const { BILLING_SVC_URL } = loadConfig();
 
 async function proxyToBilling(
   path: string,
@@ -30,10 +31,11 @@ async function proxyToBilling(
 }
 
 export const billingProxyRoutes: FastifyPluginAsync = async (app) => {
-  // Proxy all /api/billing/* requests to billing-svc
+  // Proxy all /api/billing/* requests to billing-svc, preserving query strings
   app.all<{ Params: { "*": string } }>("/billing/*", async (request, reply) => {
     const rest = (request.params as Record<string, string>)["*"];
-    const path = `/billing/${rest}`;
+    const queryString = new URL(request.url, "http://localhost").search;
+    const path = `/billing/${rest}${queryString}`;
     const accessToken =
       request.cookies?.access_token ??
       request.headers.authorization?.replace("Bearer ", "");

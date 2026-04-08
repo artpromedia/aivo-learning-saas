@@ -1,6 +1,7 @@
 import type { FastifyPluginAsync } from "fastify";
+import { loadConfig } from "../config.js";
 
-const COMMS_SVC_URL = process.env.COMMS_SVC_URL ?? "http://localhost:3007";
+const { COMMS_SVC_URL } = loadConfig();
 
 async function proxyToComms(
   path: string,

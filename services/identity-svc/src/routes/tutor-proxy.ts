@@ -1,6 +1,7 @@
 import type { FastifyPluginAsync } from "fastify";
+import { loadConfig } from "../config.js";
 
-const TUTOR_SVC_URL = process.env.TUTOR_SVC_URL ?? "http://localhost:3006";
+const { TUTOR_SVC_URL } = loadConfig();
 
 async function proxyToTutor(
   path: string,

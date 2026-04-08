@@ -57,15 +57,17 @@ class OonrumailClient implements EmailClient {
 
 class ConsoleEmailClient implements EmailClient {
   async send(params: { to: string; subject: string; html: string; tags?: string[]; attachments?: EmailAttachment[] }): Promise<void> {
-    console.log("──── DEV EMAIL ────");
-    console.log(`To: ${params.to}`);
-    console.log(`Subject: ${params.subject}`);
-    console.log(`HTML length: ${params.html.length} chars`);
-    console.log(`Tags: ${(params.tags ?? []).join(", ")}`);
-    if (params.attachments?.length) {
-      console.log(`Attachments: ${params.attachments.map((a) => `${a.filename} (${a.contentType})`).join(", ")}`);
+    if (process.env.NODE_ENV === "development") {
+      console.log("──── DEV EMAIL ────");
+      console.log(`To: ${params.to}`);
+      console.log(`Subject: ${params.subject}`);
+      console.log(`HTML length: ${params.html.length} chars`);
+      console.log(`Tags: ${(params.tags ?? []).join(", ")}`);
+      if (params.attachments?.length) {
+        console.log(`Attachments: ${params.attachments.map((a) => `${a.filename} (${a.contentType})`).join(", ")}`);
+      }
+      console.log("───────────────────");
     }
-    console.log("───────────────────");
   }
 }
 

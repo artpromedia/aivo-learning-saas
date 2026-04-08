@@ -6,6 +6,17 @@ export class StripeService {
 
   constructor(private app: FastifyInstance) {
     this.stripe = app.stripe;
+
+    // In production the real Stripe key must be present; fail loudly.
+    if (!this.stripe && process.env.NODE_ENV === "production") {
+      throw new Error("STRIPE_SECRET_KEY is required in production");
+    }
+  }
+
+  private devLog(message: string): void {
+    if (process.env.NODE_ENV === "development") {
+      console.log(message);
+    }
   }
 
   async createCheckoutSession(
@@ -19,7 +30,7 @@ export class StripeService {
     if (!this.stripe) {
       const fakeSessionId = `fake_sess_${tenantId}_${planId}`;
       const fakeUrl = successUrl.replace("{CHECKOUT_SESSION_ID}", fakeSessionId);
-      console.log(`[stripe-dev] createCheckoutSession tenantId=${tenantId} planId=${planId} trialDays=${trialDays} → ${fakeUrl}`);
+      this.devLog(`[stripe-dev] createCheckoutSession tenantId=${tenantId} planId=${planId} trialDays=${trialDays} → ${fakeUrl}`);
       return fakeUrl;
     }
 
@@ -50,7 +61,7 @@ export class StripeService {
         subscription: subscriptionId,
         price: { id: priceId },
       } as unknown as Stripe.SubscriptionItem;
-      console.log(`[stripe-dev] createSubscriptionItem sub=${subscriptionId} price=${priceId} → ${fake.id}`);
+      this.devLog(`[stripe-dev] createSubscriptionItem sub=${subscriptionId} price=${priceId} → ${fake.id}`);
       return fake;
     }
 
@@ -62,7 +73,7 @@ export class StripeService {
 
   async cancelSubscriptionItem(subscriptionItemId: string): Promise<void> {
     if (!this.stripe) {
-      console.log(`[stripe-dev] cancelSubscriptionItem itemId=${subscriptionItemId}`);
+      this.devLog(`[stripe-dev] cancelSubscriptionItem itemId=${subscriptionItemId}`);
       return;
     }
 
@@ -74,7 +85,7 @@ export class StripeService {
     returnUrl: string,
   ): Promise<string> {
     if (!this.stripe) {
-      console.log(`[stripe-dev] createBillingPortalSession customer=${customerId} → ${returnUrl}`);
+      this.devLog(`[stripe-dev] createBillingPortalSession customer=${customerId} → ${returnUrl}`);
       return returnUrl;
     }
 
@@ -101,7 +112,7 @@ export class StripeService {
         hosted_invoice_url: `${appUrl}/invoices/fake_${Date.now()}`,
         invoice_pdf: null,
       } as unknown as Stripe.Invoice;
-      console.log(`[stripe-dev] createInvoice customer=${customerId} items=${items.length} → ${fake.id}`);
+      this.devLog(`[stripe-dev] createInvoice customer=${customerId} items=${items.length} → ${fake.id}`);
       return fake;
     }
 
@@ -124,7 +135,7 @@ export class StripeService {
 
   async listInvoices(customerId: string, limit = 20): Promise<Stripe.Invoice[]> {
     if (!this.stripe) {
-      console.log(`[stripe-dev] listInvoices customer=${customerId}`);
+      this.devLog(`[stripe-dev] listInvoices customer=${customerId}`);
       return [];
     }
 
@@ -138,7 +149,7 @@ export class StripeService {
 
   async getInvoice(invoiceId: string): Promise<Stripe.Invoice | null> {
     if (!this.stripe) {
-      console.log(`[stripe-dev] getInvoice invoiceId=${invoiceId}`);
+      this.devLog(`[stripe-dev] getInvoice invoiceId=${invoiceId}`);
       return null;
     }
 
@@ -147,7 +158,7 @@ export class StripeService {
 
   async cancelSubscription(stripeSubscriptionId: string): Promise<void> {
     if (!this.stripe) {
-      console.log(`[stripe-dev] cancelSubscription subId=${stripeSubscriptionId}`);
+      this.devLog(`[stripe-dev] cancelSubscription subId=${stripeSubscriptionId}`);
       return;
     }
 

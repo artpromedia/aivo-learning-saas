@@ -73,6 +73,9 @@ import { familyProxyRoutes } from "./routes/family-proxy.js";
 // Routes — Tutor Proxy (API Gateway → tutor-svc)
 import { tutorProxyRoutes } from "./routes/tutor-proxy.js";
 
+// Routes — Learning Proxy (API Gateway → learning-svc)
+import { learningProxyRoutes } from "./routes/learning-proxy.js";
+
 // Routes — Test support (non-production only)
 import { testSupportRoutes } from "./routes/test-support.js";
 
@@ -137,8 +140,8 @@ export async function buildApp() {
   // Register routes
   await app.register(healthRoutes);
 
-  // Test-support routes — only in non-production, no /api prefix
-  if (config.NODE_ENV !== "production") {
+  // Test-support routes — only in test environments, no /api prefix
+  if (config.NODE_ENV === "test") {
     await app.register(testSupportRoutes);
   }
 
@@ -175,6 +178,7 @@ export async function buildApp() {
     await api.register(notificationsProxyRoutes);
     await api.register(assessmentProxyRoutes);
     await api.register(tutorProxyRoutes);
+    await api.register(learningProxyRoutes);
   }, { prefix: "/api" });
 
   // Register at root level for direct /family/* access (used by e2e + family-svc clients)

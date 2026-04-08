@@ -7,9 +7,9 @@
  */
 import type { FastifyPluginAsync } from "fastify";
 import { sql } from "drizzle-orm";
+import { loadConfig } from "../config.js";
 
-const BRAIN_SVC_URL =
-  process.env.BRAIN_SVC_URL ?? "http://localhost:3002";
+const { BRAIN_SVC_URL, ENGAGEMENT_SVC_URL } = loadConfig();
 
 async function proxyToBrain(
   path: string,
@@ -32,6 +32,33 @@ async function proxyToBrain(
 
   const data = await res.json().catch(() => null);
   return { status: res.status, data };
+}
+
+async function proxyToEngagement(
+  path: string,
+  accessToken: string | undefined,
+  method = "GET",
+  body?: string
+): Promise<{ status: number; data: unknown }> {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+  if (accessToken) {
+    headers["Authorization"] = `Bearer ${accessToken}`;
+  }
+
+  try {
+    const res = await fetch(`${ENGAGEMENT_SVC_URL}${path}`, {
+      method,
+      headers,
+      body: method === "GET" ? undefined : body,
+    });
+
+    const data = await res.json().catch(() => null);
+    return { status: res.status, data };
+  } catch {
+    return { status: 502, data: { error: "Engagement service unavailable" } };
+  }
 }
 
 function transformBrainProfile(data: unknown) {
@@ -430,76 +457,107 @@ export const brainProxyRoutes: FastifyPluginAsync = async (app) => {
     }
   );
 
-  /* ── Engagement (service not yet built — return defaults) ── */
+  /* ── Engagement — forwarded to engagement-svc ── */
 
   app.get<{ Params: { learnerId: string } }>(
     "/learners/:learnerId/engagement",
-    async (_request, reply) => {
+    async (request, reply) => {
+      const { learnerId } = request.params;
+      const token = request.cookies.access_token;
+
+      // Fetch XP and streak in parallel; badges and level individually
+      const [xpRes, streakRes, badgesRes, levelRes] = await Promise.all([
+        proxyToEngagement(`/engagement/xp/${learnerId}`, token),
+        proxyToEngagement(`/engagement/streaks/${learnerId}`, token),
+        proxyToEngagement(`/engagement/badges/${learnerId}/earned`, token),
+        proxyToEngagement(`/engagement/xp/${learnerId}`, token),
+      ]);
+
       return reply.send({
-        xp: { totalXp: 0, weeklyXp: 0, dailyXp: 0, xpToNextLevel: 100 },
-        streak: {
-          currentStreak: 0,
-          longestStreak: 0,
-          lastActiveDate: new Date().toISOString(),
-        },
-        badges: [],
-        level: { level: 1, title: "Beginner", currentXp: 0, requiredXp: 100 },
+        xp: xpRes.status === 200 ? xpRes.data : { totalXp: 0, weeklyXp: 0, dailyXp: 0, xpToNextLevel: 100 },
+        streak: streakRes.status === 200 ? streakRes.data : { currentStreak: 0, longestStreak: 0, lastActiveDate: new Date().toISOString() },
+        badges: badgesRes.status === 200 ? badgesRes.data : [],
+        level: levelRes.status === 200 ? levelRes.data : { level: 1, title: "Beginner", currentXp: 0, requiredXp: 100 },
       });
     }
   );
 
   app.get<{ Params: { learnerId: string } }>(
     "/learners/:learnerId/engagement/xp",
-    async (_request, reply) => {
-      return reply.send({
-        totalXp: 0,
-        weeklyXp: 0,
-        dailyXp: 0,
-        xpToNextLevel: 100,
-      });
+    async (request, reply) => {
+      const { learnerId } = request.params;
+      const token = request.cookies.access_token;
+      const { status, data } = await proxyToEngagement(`/engagement/xp/${learnerId}`, token);
+      if (status !== 200) return reply.status(status).send(data);
+      return reply.send(data);
     }
   );
 
   app.get<{ Params: { learnerId: string } }>(
     "/learners/:learnerId/engagement/streaks",
-    async (_request, reply) => {
-      return reply.send({
-        currentStreak: 0,
-        longestStreak: 0,
-        lastActiveDate: new Date().toISOString(),
-      });
+    async (request, reply) => {
+      const { learnerId } = request.params;
+      const token = request.cookies.access_token;
+      const { status, data } = await proxyToEngagement(`/engagement/streaks/${learnerId}`, token);
+      if (status !== 200) return reply.status(status).send(data);
+      return reply.send(data);
     }
   );
 
   app.get<{ Params: { learnerId: string } }>(
     "/learners/:learnerId/engagement/badges",
-    async (_request, reply) => {
-      return reply.send([]);
+    async (request, reply) => {
+      const { learnerId } = request.params;
+      const token = request.cookies.access_token;
+      const { status, data } = await proxyToEngagement(`/engagement/badges/${learnerId}/earned`, token);
+      if (status !== 200) return reply.status(status).send(data);
+      return reply.send(data);
     }
   );
 
   app.get<{ Params: { learnerId: string } }>(
     "/learners/:learnerId/engagement/level",
-    async (_request, reply) => {
-      return reply.send({
-        level: 1,
-        title: "Beginner",
-        currentXp: 0,
-        requiredXp: 100,
-      });
+    async (request, reply) => {
+      // engagement-svc exposes level info as part of the XP summary
+      const { learnerId } = request.params;
+      const token = request.cookies.access_token;
+      const { status, data } = await proxyToEngagement(`/engagement/xp/${learnerId}`, token);
+      if (status !== 200) return reply.status(status).send(data);
+      return reply.send(data);
     }
   );
 
-  /* ── Progress (service not yet built — return defaults) ── */
+  /* ── Progress — forwarded to engagement-svc ── */
 
   app.get<{ Params: { learnerId: string } }>(
     "/learners/:learnerId/progress",
-    async (_request, reply) => {
+    async (request, reply) => {
+      const { learnerId } = request.params;
+      const token = request.cookies.access_token;
+
+      // Combine XP and mastery data to produce a progress summary
+      const [xpRes, masteryRes] = await Promise.all([
+        proxyToEngagement(`/engagement/xp/${learnerId}`, token),
+        proxyToBrain(`/mastery/learner/${learnerId}`, token),
+      ]);
+
+      const xp = (xpRes.status === 200 ? xpRes.data : null) as Record<string, unknown> | null;
+      const mastery = (masteryRes.status === 200 ? masteryRes.data : null) as Record<string, unknown> | null;
+      const domainScores = (mastery?.domain_scores ?? {}) as Record<string, number>;
+      const recentSubjects = Object.entries(domainScores).map(([name, score]) => ({
+        name,
+        mastery: Math.round(score * 100),
+      }));
+      const overallMastery =
+        recentSubjects.length > 0
+          ? Math.round(recentSubjects.reduce((s, x) => s + x.mastery, 0) / recentSubjects.length)
+          : 0;
+
       return reply.send({
-        overallMastery: 0,
-        sessionsThisWeek: 0,
-        averageAccuracy: 0,
-        recentSubjects: [],
+        overallMastery,
+        sessionsThisWeek: (xp?.sessionsThisWeek as number) ?? 0,
+        averageAccuracy: (xp?.averageAccuracy as number) ?? 0,
+        recentSubjects,
       });
     }
   );

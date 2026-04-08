@@ -112,12 +112,11 @@ export async function buildApp() {
 
   // Core plugins
   await app.register(cookie);
+  const corsOrigins = config.CORS_ORIGINS
+    ? config.CORS_ORIGINS.split(",").map((s) => s.trim())
+    : [config.APP_URL, ...(config.MARKETING_URL ? [config.MARKETING_URL] : [])];
   await app.register(cors, {
-    origin: [
-      config.APP_URL,
-      config.MARKETING_URL ?? "https://aivolearning.com",
-      "http://localhost:3001",
-    ],
+    origin: corsOrigins,
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   });

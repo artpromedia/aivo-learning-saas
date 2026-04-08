@@ -1,7 +1,7 @@
 import type { FastifyPluginAsync } from "fastify";
+import { loadConfig } from "../config.js";
 
-const ASSESSMENT_SVC_URL =
-  process.env.ASSESSMENT_SVC_URL ?? "http://localhost:3012";
+const { ASSESSMENT_SVC_URL } = loadConfig();
 
 async function proxyToAssessment(
   path: string,

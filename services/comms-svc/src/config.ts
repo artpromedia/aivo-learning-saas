@@ -18,6 +18,7 @@ const configSchema = z.object({
   VAPID_PRIVATE_KEY: z.string().default(""),
   VAPID_CONTACT_EMAIL: z.string().email().default("support@aivolearning.com"),
   APP_URL: z.string().url().default("http://localhost:3000"),
+  CORS_ORIGINS: z.string().optional(),
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
 });
 
