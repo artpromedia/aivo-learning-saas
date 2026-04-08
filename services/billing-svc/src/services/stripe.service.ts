@@ -91,12 +91,14 @@ export class StripeService {
     items: Array<{ priceId: string; quantity: number }>,
   ): Promise<Stripe.Invoice> {
     if (!this.stripe) {
+      const { getConfig } = await import("../config.js");
+      const appUrl = getConfig().APP_URL;
       const fake = {
         id: `inv_fake_${Date.now()}`,
         object: "invoice" as const,
         customer: customerId,
         status: "draft",
-        hosted_invoice_url: `http://localhost:3000/invoices/fake_${Date.now()}`,
+        hosted_invoice_url: `${appUrl}/invoices/fake_${Date.now()}`,
         invoice_pdf: null,
       } as unknown as Stripe.Invoice;
       console.log(`[stripe-dev] createInvoice customer=${customerId} items=${items.length} → ${fake.id}`);

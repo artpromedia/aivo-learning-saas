@@ -46,8 +46,8 @@ export class DistrictContractEndService {
             schoolName,
             contractEndDate,
             dataDeletionDate: deletionDate.toISOString().split("T")[0],
-            exportUrl: `${process.env.APP_URL ?? "https://app.aivo.com"}/parent/${learner.learnerId}/settings`,
-            subscribeUrl: `${process.env.APP_URL ?? "https://app.aivo.com"}/billing/plans`,
+            exportUrl: `${process.env.APP_URL ?? "https://app.aivolearning.com"}/parent/${learner.learnerId}/settings`,
+            subscribeUrl: `${process.env.APP_URL ?? "https://app.aivolearning.com"}/billing/plans`,
           },
         });
 
