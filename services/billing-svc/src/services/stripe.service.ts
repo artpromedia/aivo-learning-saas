@@ -28,6 +28,9 @@ export class StripeService {
     trialDays: number = 0,
   ): Promise<string> {
     if (!this.stripe) {
+      if (process.env.NODE_ENV === "production") {
+        throw new Error("Payment processing is not configured. Please contact support.");
+      }
       const fakeSessionId = `fake_sess_${tenantId}_${planId}`;
       const fakeUrl = successUrl.replace("{CHECKOUT_SESSION_ID}", fakeSessionId);
       this.devLog(`[stripe-dev] createCheckoutSession tenantId=${tenantId} planId=${planId} trialDays=${trialDays} → ${fakeUrl}`);
@@ -85,6 +88,9 @@ export class StripeService {
     returnUrl: string,
   ): Promise<string> {
     if (!this.stripe) {
+      if (process.env.NODE_ENV === "production") {
+        throw new Error("Payment processing is not configured. Please contact support.");
+      }
       this.devLog(`[stripe-dev] createBillingPortalSession customer=${customerId} → ${returnUrl}`);
       return returnUrl;
     }
@@ -158,6 +164,9 @@ export class StripeService {
 
   async cancelSubscription(stripeSubscriptionId: string): Promise<void> {
     if (!this.stripe) {
+      if (process.env.NODE_ENV === "production") {
+        throw new Error("Payment processing is not configured. Please contact support.");
+      }
       this.devLog(`[stripe-dev] cancelSubscription subId=${stripeSubscriptionId}`);
       return;
     }
