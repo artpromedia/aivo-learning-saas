@@ -18,6 +18,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
 import { TutorAvatar, type TutorPersona } from "@/components/tutors/tutor-avatar";
+import { useTranslations } from "next-intl";
 import { apiFetch } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
 
@@ -56,6 +57,7 @@ interface SubscriptionRow {
 export default function TutorsPage() {
   const params = useParams();
   const learnerId = params.learnerId as string;
+  const t = useTranslations("dashboard");
 
   const [activeTutors, setActiveTutors] = useState<ActiveTutor[]>([]);
   const [storeTutors, setStoreTutors] = useState<StoreTutor[]>([]);
@@ -84,7 +86,7 @@ export default function TutorsPage() {
         setActiveTutors(mapped);
         setStoreTutors(storeResponse.catalog.filter((t) => !t.subscribed));
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load tutors");
+        setError(err instanceof Error ? err.message : t("failedToLoadTutors"));
       } finally {
         setLoading(false);
       }
@@ -96,7 +98,7 @@ export default function TutorsPage() {
   const handleSubscribe = async (tutor: StoreTutor) => {
     setSubscribingSku(tutor.sku);
     try {
-      await apiFetch("/api/tutors/subscribe", {
+      await apiFetch(API_ROUTES.TUTOR_SUBSCRIPTION.SUBSCRIBE, {
         method: "POST",
         body: JSON.stringify({ learnerId, sku: tutor.sku }),
       });
@@ -113,7 +115,7 @@ export default function TutorsPage() {
       ]);
       setStoreTutors((prev) => prev.filter((t) => t.sku !== tutor.sku));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to subscribe");
+      setError(err instanceof Error ? err.message : t("failedToSubscribe"));
     } finally {
       setSubscribingSku(null);
     }
@@ -141,7 +143,7 @@ export default function TutorsPage() {
           onClick={() => window.location.reload()}
           leftIcon={<RefreshCw size={16} />}
         >
-          Retry
+          {t("retry")}
         </Button>
       </div>
     );
@@ -154,16 +156,16 @@ export default function TutorsPage() {
         className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-4"
       >
         <ArrowLeft size={16} />
-        Back to dashboard
+        {t("backToDashboard")}
       </Link>
 
       <PurpleGradientHeader className="rounded-xl mb-8">
         <div className="flex items-center gap-3">
           <Bot size={32} />
           <div>
-            <h1 className="text-2xl font-bold">AI Tutors</h1>
+            <h1 className="text-2xl font-bold">{t("aiTutors")}</h1>
             <p className="text-white/80 text-sm">
-              Manage your child&apos;s 7 AI tutors and discover new ones.
+              {t("aiTutorsSubtitle")}
             </p>
           </div>
         </div>
@@ -176,7 +178,7 @@ export default function TutorsPage() {
       )}
 
       <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-        Active Tutors ({activeTutors.length})
+        {t("activeTutorsCount", { count: activeTutors.length })}
       </h2>
 
       {activeTutors.length > 0 ? (
@@ -198,7 +200,7 @@ export default function TutorsPage() {
                 </div>
                 <Link href={`/learner/tutors/${tutor.persona}`}>
                   <Button size="sm" variant="outline">
-                    Chat
+                    {t("chat")}
                   </Button>
                 </Link>
               </CardBody>
@@ -210,14 +212,14 @@ export default function TutorsPage() {
           <CardBody className="text-center py-8">
             <Bot className="mx-auto mb-3 text-gray-400" size={40} />
             <p className="text-gray-500 dark:text-gray-400">
-              No active tutors yet. Subscribe to a tutor below to get started.
+              {t("noActiveTutors")}
             </p>
           </CardBody>
         </Card>
       )}
 
       <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-        Tutor Store
+        {t("tutorStoreLabel")}
       </h2>
 
       {storeTutors.length > 0 ? (
@@ -249,7 +251,7 @@ export default function TutorsPage() {
                   loading={subscribingSku === tutor.sku}
                   onClick={() => handleSubscribe(tutor)}
                 >
-                  Subscribe
+                  {t("subscribe")}
                 </Button>
               </CardBody>
             </Card>
@@ -259,7 +261,7 @@ export default function TutorsPage() {
         <Card>
           <CardBody className="text-center py-8">
             <p className="text-gray-500 dark:text-gray-400">
-              No additional tutors available at this time.
+              {t("noAdditionalTutors")}
             </p>
           </CardBody>
         </Card>

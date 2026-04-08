@@ -19,7 +19,9 @@ import { Badge } from "@/components/ui/Badge";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
+import { useTranslations } from "next-intl";
 import { apiFetch } from "@/lib/api";
+import { API_ROUTES } from "@/lib/api-routes";
 
 interface IepGoal {
   id: string;
@@ -48,6 +50,7 @@ export default function IepPage() {
   const params = useParams();
   const learnerId = params.learnerId as string;
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const t = useTranslations("dashboard");
 
   const [data, setData] = useState<IepData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -59,11 +62,11 @@ export default function IepPage() {
     async function fetchIep() {
       try {
         const result = await apiFetch<IepData>(
-          `/api/learners/${learnerId}/iep`,
+          API_ROUTES.IEP.GET(learnerId),
         );
         setData(result);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load IEP data");
+        setError(err instanceof Error ? err.message : t("failedToLoadIep"));
       } finally {
         setLoading(false);
       }
@@ -78,8 +81,9 @@ export default function IepPage() {
     try {
       const formData = new FormData();
       formData.append("file", file);
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
       await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001"}/api/learners/${learnerId}/iep/documents`,
+        `${baseUrl}${API_ROUTES.IEP.UPLOAD_DOCUMENT(learnerId)}`,
         {
           method: "POST",
           credentials: "include",
@@ -88,11 +92,11 @@ export default function IepPage() {
       );
       // Refresh data
       const result = await apiFetch<IepData>(
-        `/api/learners/${learnerId}/iep`,
+        API_ROUTES.IEP.GET(learnerId),
       );
       setData(result);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Upload failed");
+      setError(err instanceof Error ? err.message : t("uploadFailed"));
     } finally {
       setUploading(false);
     }
@@ -101,7 +105,7 @@ export default function IepPage() {
   const handleDelete = async (docId: string) => {
     setDeletingId(docId);
     try {
-      await apiFetch(`/api/learners/${learnerId}/iep/documents/${docId}`, {
+      await apiFetch(API_ROUTES.IEP.DELETE_DOCUMENT(learnerId, docId), {
         method: "DELETE",
       });
       setData((prev) =>
@@ -113,7 +117,7 @@ export default function IepPage() {
           : null,
       );
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Delete failed");
+      setError(err instanceof Error ? err.message : t("deleteFailed"));
     } finally {
       setDeletingId(null);
     }
@@ -126,9 +130,9 @@ export default function IepPage() {
   };
 
   const statusLabels: Record<string, string> = {
-    on_track: "On Track",
-    at_risk: "At Risk",
-    met: "Met",
+    on_track: t("onTrack"),
+    at_risk: t("atRiskStatus"),
+    met: t("metStatus"),
   };
 
   if (loading) {
@@ -153,7 +157,7 @@ export default function IepPage() {
           onClick={() => window.location.reload()}
           leftIcon={<RefreshCw size={16} />}
         >
-          Retry
+          {t("retry")}
         </Button>
       </div>
     );
@@ -166,16 +170,16 @@ export default function IepPage() {
         className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-4"
       >
         <ArrowLeft size={16} />
-        Back to dashboard
+        {t("backToDashboard")}
       </Link>
 
       <PurpleGradientHeader className="rounded-xl mb-8">
         <div className="flex items-center gap-3">
           <FileText size={32} />
           <div>
-            <h1 className="text-2xl font-bold">IEP Goals & Documents</h1>
+            <h1 className="text-2xl font-bold">{t("iepGoalsDocuments")}</h1>
             <p className="text-white/80 text-sm">
-              Track IEP goal progress and manage documents.
+              {t("iepGoalsDocumentsSubtitle")}
               {data?.nextReviewDate && (
                 <span>
                   {" "}
@@ -196,7 +200,7 @@ export default function IepPage() {
 
       {/* Goals Section */}
       <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-        IEP Goals
+        {t("iepGoals")}
       </h2>
 
       {data?.goals && data.goals.length > 0 ? (
@@ -239,7 +243,7 @@ export default function IepPage() {
                   showLabel
                 />
                 <p className="text-xs text-gray-400 mt-2">
-                  Target: {new Date(goal.targetDate).toLocaleDateString()}
+                  {t("target")} {new Date(goal.targetDate).toLocaleDateString()}
                 </p>
               </CardBody>
             </Card>
@@ -250,8 +254,7 @@ export default function IepPage() {
           <CardBody className="text-center py-8">
             <FileText className="mx-auto mb-3 text-gray-400" size={40} />
             <p className="text-gray-500 dark:text-gray-400">
-              No IEP goals found. Upload an IEP document to automatically
-              extract goals.
+              {t("noIepGoalsDesc")}
             </p>
           </CardBody>
         </Card>
@@ -261,7 +264,7 @@ export default function IepPage() {
       {data?.accommodations && data.accommodations.length > 0 && (
         <div className="mb-8">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Accommodations
+            {t("accommodations")}
           </h2>
           <Card>
             <CardBody>
@@ -283,7 +286,7 @@ export default function IepPage() {
       {/* Documents Section */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-          Documents
+          {t("documents")}
         </h2>
         <Button
           size="sm"
@@ -291,7 +294,7 @@ export default function IepPage() {
           loading={uploading}
           onClick={() => fileInputRef.current?.click()}
         >
-          Upload Document
+          {t("uploadDocument")}
         </Button>
         <input
           ref={fileInputRef}
@@ -351,7 +354,7 @@ export default function IepPage() {
           <CardBody className="text-center py-8">
             <Upload className="mx-auto mb-3 text-gray-400" size={40} />
             <p className="text-gray-500 dark:text-gray-400">
-              No documents uploaded yet.
+              {t("noDocuments")}
             </p>
           </CardBody>
         </Card>

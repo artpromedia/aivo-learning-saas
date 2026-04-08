@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Modal } from "@/components/ui/Modal";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
+import { useTranslations } from "next-intl";
 import { useRecommendations, type Recommendation } from "@/hooks/useRecommendations";
 
 const priorityVariant: Record<string, "error" | "warning" | "default"> = {
@@ -36,6 +37,8 @@ const typeIcon: Record<string, string> = {
 export default function RecommendationsPage() {
   const params = useParams();
   const learnerId = params.learnerId as string;
+  const t = useTranslations("dashboard");
+  const tc = useTranslations("common");
   const {
     recommendations,
     isLoading,
@@ -60,7 +63,7 @@ export default function RecommendationsPage() {
     try {
       await approve(recId);
     } catch (err) {
-      setActionError(err instanceof Error ? err.message : "Failed to approve");
+      setActionError(err instanceof Error ? err.message : t("failedToApprove"));
     } finally {
       setProcessingId(null);
     }
@@ -72,7 +75,7 @@ export default function RecommendationsPage() {
     try {
       await decline(recId);
     } catch (err) {
-      setActionError(err instanceof Error ? err.message : "Failed to decline");
+      setActionError(err instanceof Error ? err.message : t("failedToDecline"));
     } finally {
       setProcessingId(null);
     }
@@ -87,7 +90,7 @@ export default function RecommendationsPage() {
       setAdjustNotes("");
       setSelectedRec(null);
     } catch (err) {
-      setActionError(err instanceof Error ? err.message : "Failed to adjust");
+      setActionError(err instanceof Error ? err.message : t("failedToAdjust"));
     }
   };
 
@@ -98,7 +101,7 @@ export default function RecommendationsPage() {
     return (
       <div className="text-center py-16">
         <Loader2 className="mx-auto mb-4 text-[#7C3AED] animate-spin" size={48} />
-        <p className="text-gray-500 dark:text-gray-400">Loading recommendations...</p>
+        <p className="text-gray-500 dark:text-gray-400">{t("loadingRecommendations")}</p>
       </div>
     );
   }
@@ -108,7 +111,7 @@ export default function RecommendationsPage() {
       <div className="text-center py-16">
         <p className="text-red-500 mb-4">{error.message}</p>
         <Button variant="outline" onClick={() => window.location.reload()} leftIcon={<RefreshCw size={16} />}>
-          Retry
+          {t("retry")}
         </Button>
       </div>
     );
@@ -121,16 +124,16 @@ export default function RecommendationsPage() {
         className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-4"
       >
         <ArrowLeft size={16} />
-        Back to dashboard
+        {t("backToDashboard")}
       </Link>
 
       <PurpleGradientHeader className="rounded-xl mb-8">
         <div className="flex items-center gap-3">
           <Lightbulb size={32} />
           <div>
-            <h1 className="text-2xl font-bold">Recommendations</h1>
+            <h1 className="text-2xl font-bold">{t("recommendationsTitle")}</h1>
             <p className="text-white/80 text-sm">
-              AI-powered suggestions to optimize your child&apos;s learning path.
+              {t("recommendationsSubtitle")}
             </p>
           </div>
         </div>
@@ -145,7 +148,7 @@ export default function RecommendationsPage() {
       {pendingRecs.length > 0 && (
         <div className="mb-8">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Pending Review ({pendingRecs.length})
+            {t("pendingReview", { count: pendingRecs.length })}
           </h2>
           <div className="space-y-4">
             {pendingRecs.map((rec) => (
@@ -161,7 +164,7 @@ export default function RecommendationsPage() {
                           {rec.title}
                         </h3>
                         <Badge variant={priorityVariant[rec.priority]}>
-                          {rec.priority} priority
+                          {t("priority", { level: rec.priority })}
                         </Badge>
                         <Badge variant="secondary">{rec.type}</Badge>
                       </div>
@@ -183,7 +186,7 @@ export default function RecommendationsPage() {
                       disabled={processingId === rec.id}
                       leftIcon={<X size={16} />}
                     >
-                      Decline
+                      {t("decline")}
                     </Button>
                     <Button
                       variant="outline"
@@ -194,7 +197,7 @@ export default function RecommendationsPage() {
                       }}
                       leftIcon={<SlidersHorizontal size={16} />}
                     >
-                      Adjust
+                      {t("adjust")}
                     </Button>
                     <Button
                       size="sm"
@@ -203,7 +206,7 @@ export default function RecommendationsPage() {
                       disabled={processingId === rec.id}
                       leftIcon={<Check size={16} />}
                     >
-                      Approve
+                      {t("approve")}
                     </Button>
                   </div>
                 </CardBody>
@@ -218,10 +221,10 @@ export default function RecommendationsPage() {
           <CardBody className="text-center py-12">
             <Lightbulb className="mx-auto mb-3 text-gray-400" size={40} />
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
-              All caught up!
+              {t("allCaughtUpTitle")}
             </h3>
             <p className="text-gray-500 dark:text-gray-400">
-              No pending recommendations. Check back later for new suggestions.
+              {t("noPendingRecommendations")}
             </p>
           </CardBody>
         </Card>
@@ -230,7 +233,7 @@ export default function RecommendationsPage() {
       {resolvedRecs.length > 0 && (
         <div>
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            History
+            {t("history")}
           </h2>
           <div className="space-y-3">
             {resolvedRecs.map((rec) => (
@@ -267,24 +270,24 @@ export default function RecommendationsPage() {
           setSelectedRec(null);
           setAdjustNotes("");
         }}
-        title="Adjust Recommendation"
+        title={t("adjustRecommendation")}
         footer={
           <div className="flex justify-end gap-2">
             <Button variant="ghost" onClick={() => setShowAdjustModal(false)}>
-              Cancel
+              {tc("cancel")}
             </Button>
             <Button
               onClick={handleAdjust}
               loading={isAdjusting}
               disabled={!adjustNotes.trim()}
             >
-              Submit Adjustment
+              {t("submitAdjustment")}
             </Button>
           </div>
         }
       >
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-          Tell us how you&apos;d like to adjust &quot;{selectedRec?.title}&quot;.
+          {t("adjustPrompt", { title: selectedRec?.title })}
         </p>
         <textarea
           value={adjustNotes}
