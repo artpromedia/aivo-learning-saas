@@ -1,6 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import { z } from "zod";
-import { eq, and } from "drizzle-orm";
+import { eq, and, sql } from "drizzle-orm";
 import { translations, translationNamespaces } from "@aivo/db";
 
 const upsertBodySchema = z.record(z.string(), z.string());
@@ -107,7 +107,7 @@ export async function translationRoutes(app: FastifyInstance) {
         .onConflictDoUpdate({
           target: [translations.namespaceId, translations.localeCode, translations.key],
           set: {
-            value: translations.value,
+            value: sql`excluded.value`,
             updatedAt: new Date(),
           },
         });

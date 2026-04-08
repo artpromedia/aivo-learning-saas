@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import type { Database } from "@aivo/db";
 import {
   locales,
@@ -784,7 +784,14 @@ export async function seedTranslations(db: Database) {
       await db
         .insert(translations)
         .values(values)
-        .onConflictDoNothing();
+        .onConflictDoUpdate({
+          target: [translations.namespaceId, translations.localeCode, translations.key],
+          set: {
+            value: sql`excluded.value`,
+            isVerified: sql`excluded.is_verified`,
+            updatedAt: new Date(),
+          },
+        });
     }
   }
 }

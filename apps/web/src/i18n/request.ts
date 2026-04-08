@@ -86,8 +86,11 @@ export default getRequestConfig(async () => {
       console.error("[i18n]", error);
     },
     getMessageFallback({ namespace, key }) {
-      // Return the key itself as a readable fallback rather than crashing
-      return key;
+      // Strip namespace prefix and return a readable fallback rather than crashing
+      const shortKey = namespace && key.startsWith(`${namespace}.`)
+        ? key.slice(namespace.length + 1)
+        : key;
+      return shortKey;
     },
   };
 });

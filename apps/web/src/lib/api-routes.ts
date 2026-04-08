@@ -56,7 +56,7 @@ export const ANALYTICS_ROUTES = {
 // Subscriptions / Billing
 export const BILLING_ROUTES = {
   PLANS: "/api/billing/plans",
-  SUBSCRIBE: "/api/billing/subscribe",
+  SUBSCRIBE: "/api/billing/subscriptions",
   PORTAL: "/api/billing/portal",
   CURRENT: "/api/billing/current",
 } as const;
