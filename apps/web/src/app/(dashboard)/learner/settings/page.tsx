@@ -9,6 +9,7 @@ import {
   Save,
   CheckCircle,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Card, CardBody, CardHeader } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
@@ -18,6 +19,7 @@ import { apiFetch } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
 
 export default function LearnerSettingsPage() {
+  const t = useTranslations("settings");
   const { user } = useAuth();
   const setUser = useAuthStore((s) => s.setUser);
   const [name, setName] = useState(user?.name ?? "");
@@ -55,8 +57,8 @@ export default function LearnerSettingsPage() {
         <div className="flex items-center gap-3">
           <Settings size={32} />
           <div>
-            <h1 className="text-2xl font-bold">Settings</h1>
-            <p className="text-white/80 text-sm">Manage your profile and preferences</p>
+            <h1 className="text-2xl font-bold">{t("settings")}</h1>
+            <p className="text-white/80 text-sm">{t("manageProfileAndPreferences")}</p>
           </div>
         </div>
       </PurpleGradientHeader>
@@ -67,13 +69,13 @@ export default function LearnerSettingsPage() {
           <CardHeader>
             <div className="flex items-center gap-2">
               <User size={18} className="text-[#7C3AED]" />
-              <h3 className="font-semibold text-gray-900 dark:text-white">Profile</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white">{t("account")}</h3>
             </div>
           </CardHeader>
           <CardBody className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Display Name
+                {t("displayName")}
               </label>
               <input
                 type="text"
@@ -89,12 +91,12 @@ export default function LearnerSettingsPage() {
                 disabled={saving}
                 leftIcon={saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
               >
-                {saving ? "Saving…" : "Save changes"}
+                {saving ? t("saving") : t("saveChanges")}
               </Button>
               {saved && (
                 <span className="flex items-center gap-1 text-sm text-green-600">
                   <CheckCircle size={16} />
-                  Saved
+                  {t("saved")}
                 </span>
               )}
             </div>
@@ -106,12 +108,12 @@ export default function LearnerSettingsPage() {
           <CardHeader>
             <div className="flex items-center gap-2">
               <Shield size={18} className="text-[#7C3AED]" />
-              <h3 className="font-semibold text-gray-900 dark:text-white">PIN</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white">{t("learnerPin")}</h3>
             </div>
           </CardHeader>
           <CardBody>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Your parent manages your account PIN. Ask them to update it from the learner profile settings.
+              {t("pinDescription")}
             </p>
           </CardBody>
         </Card>
