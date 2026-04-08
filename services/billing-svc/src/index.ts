@@ -26,6 +26,7 @@ import { cancelSubscriptionRoute } from "./routes/subscriptions/cancel.js";
 import { reactivateSubscriptionRoute } from "./routes/subscriptions/reactivate.js";
 import { updatePaymentRoute } from "./routes/subscriptions/update-payment.js";
 import { currentSubscriptionRoute } from "./routes/subscriptions/current.js";
+import { verifyCheckoutRoute } from "./routes/subscriptions/verify-checkout.js";
 
 // Routes — Addons
 import { subscribeAddonRoute } from "./routes/addons/subscribe.js";
@@ -118,6 +119,7 @@ export async function buildApp() {
   await app.register(reactivateSubscriptionRoute);
   await app.register(updatePaymentRoute);
   await app.register(currentSubscriptionRoute);
+  await app.register(verifyCheckoutRoute);
   await app.register(subscribeAddonRoute);
   await app.register(cancelAddonRoute);
   await app.register(listAddonsRoute);

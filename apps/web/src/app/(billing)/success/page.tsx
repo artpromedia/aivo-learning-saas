@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
-import { PartyPopper, Rocket, CheckCircle } from "lucide-react";
+import { PartyPopper, Rocket, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardBody } from "@/components/ui/Card";
+import { apiFetch } from "@/lib/api";
 
 function ConfettiPiece({ delay, x }: { delay: number; x: number }) {
   const colors = ["#7C3AED", "#7C4DFF", "#38B2AC", "#F59E0B", "#EF4444", "#10B981"];
@@ -34,18 +35,80 @@ function ConfettiPiece({ delay, x }: { delay: number; x: number }) {
 
 export default function PaymentSuccessPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const t = useTranslations("billing");
   const [showContent, setShowContent] = useState(false);
+  const [verifying, setVerifying] = useState(true);
+  const [verified, setVerified] = useState(false);
+  const [verifyError, setVerifyError] = useState<string | null>(null);
 
   useEffect(() => {
-    const timer = setTimeout(() => setShowContent(true), 500);
-    return () => clearTimeout(timer);
-  }, []);
+    const sessionId = searchParams.get("session_id");
+
+    if (!sessionId) {
+      setVerifying(false);
+      setVerifyError("No checkout session found. Please try subscribing again.");
+      return;
+    }
+
+    async function verifyCheckout() {
+      try {
+        const data = await apiFetch<{ verified: boolean; error?: string }>(
+          `/api/billing/verify-checkout?session_id=${encodeURIComponent(sessionId!)}`,
+        );
+        if (data.verified) {
+          setVerified(true);
+          setTimeout(() => setShowContent(true), 500);
+        } else {
+          setVerifyError(data.error ?? "Checkout could not be verified.");
+        }
+      } catch {
+        setVerifyError("Unable to verify checkout. Please check your subscription status.");
+        // Still show success after a delay — the webhook may not have fired yet
+        setVerified(true);
+        setTimeout(() => setShowContent(true), 500);
+      } finally {
+        setVerifying(false);
+      }
+    }
+
+    verifyCheckout();
+  }, [searchParams]);
 
   const confettiPieces = Array.from({ length: 40 }).map((_, i) => ({
     delay: Math.random() * 0.8,
     x: Math.random() * 100,
   }));
+
+  if (verifying) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <div className="text-center">
+          <Loader2 className="animate-spin text-[#7C3AED] mx-auto mb-4" size={40} />
+          <p className="text-gray-500 dark:text-gray-400">Verifying your payment...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (verifyError && !verified) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <div className="text-center max-w-md">
+          <div className="w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center mx-auto mb-4">
+            <AlertCircle className="text-red-500" size={32} />
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+            Checkout Incomplete
+          </h1>
+          <p className="text-gray-500 dark:text-gray-400 mb-6">{verifyError}</p>
+          <Button onClick={() => router.push("/checkout")} className="min-w-[200px]">
+            Try Again
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative overflow-hidden min-h-screen flex items-center justify-center px-4">
