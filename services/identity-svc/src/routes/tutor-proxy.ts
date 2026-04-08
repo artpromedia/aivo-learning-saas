@@ -1,5 +1,6 @@
 import type { FastifyPluginAsync } from "fastify";
 import { loadConfig } from "../config.js";
+import { getQueryString } from "./proxy-utils.js";
 
 const { TUTOR_SVC_URL } = loadConfig();
 
@@ -36,7 +37,7 @@ export const tutorProxyRoutes: FastifyPluginAsync = async (app) => {
     const accessToken =
       request.cookies?.access_token ??
       request.headers.authorization?.replace("Bearer ", "");
-    const queryString = new URL(request.url, "http://localhost").search;
+    const queryString = getQueryString(request.url);
     const { status, data } = await proxyToTutor(`/tutors/subscriptions${queryString}`, accessToken);
     return reply.status(status).send(data);
   });
@@ -46,7 +47,7 @@ export const tutorProxyRoutes: FastifyPluginAsync = async (app) => {
     const accessToken =
       request.cookies?.access_token ??
       request.headers.authorization?.replace("Bearer ", "");
-    const queryString = new URL(request.url, "http://localhost").search;
+    const queryString = getQueryString(request.url);
     const { status, data } = await proxyToTutor(`/tutors/catalog${queryString}`, accessToken);
     return reply.status(status).send(data);
   });
@@ -54,7 +55,7 @@ export const tutorProxyRoutes: FastifyPluginAsync = async (app) => {
   // Catch-all: proxy all other /api/tutors/* requests to tutor-svc /tutors/*
   app.all<{ Params: { "*": string } }>("/tutors/*", async (request, reply) => {
     const rest = (request.params as Record<string, string>)["*"];
-    const queryString = new URL(request.url, "http://localhost").search;
+    const queryString = getQueryString(request.url);
     const path = `/tutors/${rest}${queryString}`;
     const accessToken =
       request.cookies?.access_token ??

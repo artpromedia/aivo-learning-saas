@@ -4,17 +4,9 @@
  */
 import type { FastifyPluginAsync } from "fastify";
 import { loadConfig } from "../config.js";
+import { getQueryString } from "./proxy-utils.js";
 
 const { LEARNING_SVC_URL } = loadConfig();
-
-/**
- * Extracts the query string from a Fastify request URL.
- * The "http://localhost" base is arbitrary — URL() requires an absolute URL
- * to parse, but only the search (query string) portion is used.
- */
-function getQueryString(requestUrl: string): string {
-  return new URL(requestUrl, "http://localhost").search;
-}
 
 async function proxyToLearning(
   path: string,
