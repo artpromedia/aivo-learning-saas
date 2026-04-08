@@ -110,10 +110,14 @@ export const TUTOR_ROUTES = {
 export const HOMEWORK_ROUTES = {
   LIST: (learnerId: string) => `/api/tutors/homework/learner/${learnerId}`,
   UPLOAD: "/api/tutors/homework/upload",
-  GET: (assignmentId: string) => `/api/tutors/homework/${assignmentId}`,
-  SESSION_START: (assignmentId: string) => `/api/tutors/homework/${assignmentId}/session/start`,
-  SESSION_MESSAGE: (sessionId: string) => `/api/tutors/homework/${sessionId}/session/message`,
-  SESSION_END: (sessionId: string) => `/api/tutors/homework/${sessionId}/session/end`,
+  /** Get homework assignment details */
+  GET: (id: string) => `/api/tutors/homework/${id}`,
+  /** Start a new homework help session for a given assignment/session */
+  SESSION_START: (id: string) => `/api/tutors/homework/${id}/session/start`,
+  /** Send a message within a homework session */
+  SESSION_MESSAGE: (id: string) => `/api/tutors/homework/${id}/session/message`,
+  /** End a homework session */
+  SESSION_END: (id: string) => `/api/tutors/homework/${id}/session/end`,
 } as const;
 
 // Engagement (XP, streaks, badges, etc.)
