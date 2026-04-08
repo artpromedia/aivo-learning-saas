@@ -219,7 +219,7 @@ export default function ManageSubscriptionPage() {
                 </div>
                 <div className="text-right">
                   <span className="text-2xl font-bold text-gray-900 dark:text-white">
-                    ${data.plan.price}
+                    ${(data.plan.price / 100).toFixed(2)}
                   </span>
                   <span className="text-gray-500">
                     /{data.plan.interval}
@@ -279,7 +279,7 @@ export default function ManageSubscriptionPage() {
                       </span>
                     </div>
                     <span className="text-sm text-gray-500">
-                      +${addon.price}/mo
+                      +${(addon.price / 100).toFixed(2)}/mo
                     </span>
                   </div>
                 ))}

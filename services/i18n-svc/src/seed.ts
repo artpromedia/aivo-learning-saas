@@ -1000,6 +1000,98 @@ const SEED_TRANSLATIONS: Record<string, Record<string, string>> = {
   },
 };
 
+// ─── Spanish billing translations ──────────────────────────────────────────────
+const SEED_TRANSLATIONS_ES: Record<string, Record<string, string>> = {
+  billing: {
+    "backToDashboard": "Volver al panel",
+    "chooseYourPlan": "Elige tu plan",
+    "choosePlanSubtitle": "Desbloquea la experiencia completa de aprendizaje AIVO para tu familia.",
+    "recommended": "Recomendado",
+    "perInterval": "/{interval}",
+    "upToLearners": "{count, plural, one {Hasta # estudiante} other {Hasta # estudiantes}}",
+    "continueToPayment": "Continuar al pago",
+    "securePayment": "Pago seguro con Stripe. Cancela en cualquier momento.",
+    "failedToLoadPlans": "Error al cargar los planes. Int\u00e9ntalo de nuevo.",
+    "failedToStartCheckout": "Error al iniciar el pago. Int\u00e9ntalo de nuevo.",
+    "unlimitedLearners": "Estudiantes ilimitados",
+    "trialBadge": "Prueba gratis de {days} d\u00edas",
+    "afterTrial": "despu\u00e9s de la prueba gratis de {days} d\u00edas",
+    "startTrial": "Iniciar prueba gratis de {days} d\u00edas",
+    "trialReassurance": "No se te cobrar\u00e1 durante {days} d\u00edas. Cancela en cualquier momento.",
+    "contactUs": "Cont\u00e1ctanos",
+    "contactSales": "Contactar ventas",
+    "perMonth": "/mes",
+    "retry": "Reintentar",
+    "subscriptionManagement": "Gesti\u00f3n de suscripci\u00f3n",
+    "managePlanSubtitle": "Administra tu plan, complementos y m\u00e9todo de pago.",
+    "noActiveSubscription": "Sin suscripci\u00f3n activa",
+    "choosePlanPrompt": "Elige un plan para desbloquear la experiencia completa de AIVO.",
+    "choosePlan": "Elegir un plan",
+    "currentPlan": "Plan actual",
+    "statusActive": "Activo",
+    "statusTrial": "Prueba",
+    "statusPastDue": "Pago vencido",
+    "statusCanceled": "Cancelado",
+    "learnersCount": "{count, plural, one {Hasta # estudiante} other {Hasta # estudiantes}}",
+    "cancelsOn": "Se cancela el {date}",
+    "renewsOn": "Se renueva el {date}",
+    "changePlan": "Cambiar plan",
+    "billingPortal": "Portal de facturaci\u00f3n",
+    "addOns": "Complementos",
+    "paymentMethod": "M\u00e9todo de pago",
+    "noPaymentMethod": "No hay m\u00e9todo de pago registrado.",
+    "addPaymentMethod": "Agregar m\u00e9todo de pago",
+    "update": "Actualizar",
+    "expires": "Vence",
+    "invoices": "Facturas",
+    "noInvoices": "A\u00fan no hay facturas.",
+    "invoicePaid": "pagada",
+    "invoiceOpen": "abierta",
+    "invoiceVoid": "anulada",
+    "failedToLoad": "Error al cargar datos de suscripci\u00f3n",
+    "failedToOpenPortal": "Error al abrir el portal de facturaci\u00f3n",
+    "cancelSubscription": "Cancelar suscripci\u00f3n",
+    "cancelReviewSubtitle": "Revisa lo que perder\u00e1s antes de confirmar.",
+    "currentPlanLabel": "Plan actual",
+    "activeLearnerCount": "{count, plural, one {# estudiante activo} other {# estudiantes activos}}",
+    "active": "Activo",
+    "trial": "Prueba",
+    "whatYouWillLose": "Lo que perder\u00e1s durante el per\u00edodo de gracia",
+    "featureBrainProfiles": "Perfiles cerebrales con IA",
+    "featureBrainProfilesDesc": "Las adaptaciones personalizadas de aprendizaje dejar\u00e1n de actualizarse",
+    "featureAnalytics": "An\u00e1lisis de progreso",
+    "featureAnalyticsDesc": "El seguimiento en tiempo real y los reportes no estar\u00e1n disponibles",
+    "featureCollaborators": "Acceso de colaboradores",
+    "featureCollaboratorsDesc": "Maestros y terapeutas perder\u00e1n acceso compartido",
+    "featureAdaptiveSessions": "Sesiones de aprendizaje adaptativo",
+    "featureAdaptiveSessionsDesc": "Las recomendaciones de sesiones con IA se detendr\u00e1n",
+    "dataRetentionNotice": "Despu\u00e9s de la cancelaci\u00f3n, tus datos se conservar\u00e1n por {days} d\u00edas. Puedes volver a suscribirte en cualquier momento durante este per\u00edodo sin perder datos.",
+    "exportBrainDataFirst": "Exporta los datos cerebrales primero",
+    "exportBrainDataDesc": "Antes de cancelar, te recomendamos exportar los datos cerebrales de tu estudiante para tener una copia completa de sus perfiles y progreso.",
+    "goToLearnerSettings": "Ir a configuraci\u00f3n del estudiante para exportar",
+    "keepMySubscription": "Mantener mi suscripci\u00f3n",
+    "confirmCancellation": "Confirmar cancelaci\u00f3n",
+    "subscriptionCancelled": "Tu suscripci\u00f3n ha sido cancelada",
+    "cancelledGraceInfo": "Tienes 30 d\u00edas para volver a suscribirte sin perder datos. Tu acceso contin\u00faa hasta el {date}.",
+    "reactivateGraceInfo": "\u00bfCambiaste de opini\u00f3n? Puedes reactivar tu suscripci\u00f3n en cualquier momento durante el per\u00edodo de gracia.",
+    "resubscribe": "Volver a suscribirse",
+    "exportYourData": "Exporta tus datos",
+    "exportDataDesc": "Aseg\u00farate de descargar tus datos cerebrales e historial de aprendizaje antes de que termine el per\u00edodo de gracia.",
+    "welcomeBack": "\u00a1Bienvenido de vuelta!",
+    "reactivatedDesc": "Tu suscripci\u00f3n ha sido reactivada. Todos tus datos y funciones est\u00e1n completamente restaurados.",
+    "backToSubscription": "Volver a gesti\u00f3n de suscripci\u00f3n",
+    "failedToCancel": "Error al cancelar la suscripci\u00f3n",
+    "failedToReactivate": "Error al reactivar la suscripci\u00f3n",
+    "paymentSuccessful": "\u00a1Pago exitoso!",
+    "welcomeToPremium": "\u00a1Bienvenido a AIVO Premium! Tu suscripci\u00f3n est\u00e1 activa.",
+    "featureUnlimitedTutoring": "Sesiones ilimitadas de tutor\u00eda con IA",
+    "featureFullQuests": "Acceso completo a todos los mundos de misiones",
+    "featureAdvancedBrain": "An\u00e1lisis avanzado de perfil cerebral",
+    "featurePriorityRecs": "Motor de recomendaciones prioritarias",
+    "goToDashboard": "Ir al panel",
+  },
+};
+
 export async function seedTranslations(db: Database) {
   // Seed locales
   for (const locale of SEED_LOCALES) {
@@ -1040,6 +1132,35 @@ export async function seedTranslations(db: Database) {
     const values = Object.entries(keys).map(([key, value]) => ({
       namespaceId: nsId,
       localeCode: "en",
+      key,
+      value,
+      isVerified: true,
+      updatedAt: new Date(),
+    }));
+
+    if (values.length > 0) {
+      await db
+        .insert(translations)
+        .values(values)
+        .onConflictDoUpdate({
+          target: [translations.namespaceId, translations.localeCode, translations.key],
+          set: {
+            value: sql`excluded.value`,
+            isVerified: sql`excluded.is_verified`,
+            updatedAt: new Date(),
+          },
+        });
+    }
+  }
+
+  // Seed Spanish translations
+  for (const [nsKey, keys] of Object.entries(SEED_TRANSLATIONS_ES)) {
+    const nsId = nsIds.get(nsKey);
+    if (!nsId) continue;
+
+    const values = Object.entries(keys).map(([key, value]) => ({
+      namespaceId: nsId,
+      localeCode: "es",
       key,
       value,
       isVerified: true,

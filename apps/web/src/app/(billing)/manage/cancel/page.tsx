@@ -294,7 +294,7 @@ export default function CancelSubscriptionPage() {
                       {subscription.status === "trialing" ? t("trial") : t("active")}
                     </Badge>
                     <p className="text-sm text-gray-500 mt-1">
-                      ${subscription.plan.price}/{subscription.plan.interval}
+                      ${(subscription.plan.price / 100).toFixed(2)}/{subscription.plan.interval}
                     </p>
                   </div>
                 </div>

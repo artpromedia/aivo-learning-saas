@@ -2,8 +2,9 @@
 /**
  * Stripe Test Setup Script
  *
- * Creates the products and prices in Stripe that match the billing-svc plans.
- * Run once against your Stripe test-mode account to bootstrap price IDs.
+ * Creates the products and prices in Stripe that match the billing-svc plans
+ * and add-on tutors. Run once against your Stripe test-mode account to
+ * bootstrap price IDs.
  *
  * Usage:
  *   STRIPE_SECRET_KEY=sk_test_... npx tsx scripts/stripe-setup.ts
@@ -27,7 +28,7 @@ const stripe = new Stripe(STRIPE_SECRET_KEY, {
   apiVersion: "2024-12-18.acacia",
 });
 
-interface PlanSpec {
+interface ProductSpec {
   id: string;
   name: string;
   description: string;
@@ -35,7 +36,8 @@ interface PlanSpec {
   envVar: string;
 }
 
-const plans: PlanSpec[] = [
+// ─── Subscription plans ────────────────────────────────────────────────────────
+const plans: ProductSpec[] = [
   {
     id: "STARTER",
     name: "AIVO Starter",
@@ -59,63 +61,87 @@ const plans: PlanSpec[] = [
   },
 ];
 
+// ─── Add-on tutors ─────────────────────────────────────────────────────────────
+const addons: ProductSpec[] = [
+  { id: "ADDON_TUTOR_MATH",    name: "AIVO Math Tutor",       description: "AI-powered math tutor add-on",       priceAmountCents: 999,  envVar: "STRIPE_PRICE_TUTOR_MATH" },
+  { id: "ADDON_TUTOR_ELA",     name: "AIVO ELA Tutor",        description: "AI-powered ELA tutor add-on",        priceAmountCents: 999,  envVar: "STRIPE_PRICE_TUTOR_ELA" },
+  { id: "ADDON_TUTOR_SCIENCE", name: "AIVO Science Tutor",    description: "AI-powered science tutor add-on",    priceAmountCents: 999,  envVar: "STRIPE_PRICE_TUTOR_SCIENCE" },
+  { id: "ADDON_TUTOR_HISTORY", name: "AIVO History Tutor",    description: "AI-powered history tutor add-on",    priceAmountCents: 999,  envVar: "STRIPE_PRICE_TUTOR_HISTORY" },
+  { id: "ADDON_TUTOR_CODING",  name: "AIVO Coding Tutor",     description: "AI-powered coding tutor add-on",     priceAmountCents: 999,  envVar: "STRIPE_PRICE_TUTOR_CODING" },
+  { id: "ADDON_TUTOR_SEL",     name: "AIVO SEL Coach",        description: "AI-powered SEL coaching add-on",     priceAmountCents: 999,  envVar: "STRIPE_PRICE_TUTOR_SEL" },
+  { id: "ADDON_TUTOR_SPEECH",  name: "AIVO Speech Companion", description: "AI-powered speech companion add-on", priceAmountCents: 999,  envVar: "STRIPE_PRICE_TUTOR_SPEECH" },
+  { id: "ADDON_TUTOR_BUNDLE",  name: "AIVO Tutor Bundle",     description: "All 7 AI tutors bundled together",   priceAmountCents: 4999, envVar: "STRIPE_PRICE_TUTOR_BUNDLE" },
+];
+
+async function createOrFindProduct(spec: ProductSpec): Promise<{ product: Stripe.Product; price: Stripe.Price; envLine: string }> {
+  // Check if product already exists
+  const existing = await stripe.products.search({
+    query: `metadata["aivo_plan_id"]:"${spec.id}"`,
+  });
+
+  let product: Stripe.Product;
+  if (existing.data.length > 0) {
+    product = existing.data[0];
+    console.log(`  Product "${spec.name}" already exists: ${product.id}`);
+  } else {
+    product = await stripe.products.create({
+      name: spec.name,
+      description: spec.description,
+      metadata: { aivo_plan_id: spec.id },
+    });
+    console.log(`  Created product "${spec.name}": ${product.id}`);
+  }
+
+  // Check for existing active price
+  const existingPrices = await stripe.prices.list({
+    product: product.id,
+    active: true,
+    type: "recurring",
+    limit: 10,
+  });
+
+  const matchingPrice = existingPrices.data.find(
+    (p) =>
+      p.unit_amount === spec.priceAmountCents &&
+      p.currency === "usd" &&
+      p.recurring?.interval === "month",
+  );
+
+  let price: Stripe.Price;
+  if (matchingPrice) {
+    price = matchingPrice;
+    console.log(`  Price already exists: ${price.id} ($${(price.unit_amount! / 100).toFixed(2)}/month)`);
+  } else {
+    price = await stripe.prices.create({
+      product: product.id,
+      unit_amount: spec.priceAmountCents,
+      currency: "usd",
+      recurring: { interval: "month" },
+      metadata: { aivo_plan_id: spec.id },
+    });
+    console.log(`  Created price: ${price.id} ($${(price.unit_amount! / 100).toFixed(2)}/month)`);
+  }
+
+  return { product, price, envLine: `${spec.envVar}=${price.id}` };
+}
+
 async function main() {
   console.log("Setting up Stripe test products and prices...\n");
 
   const envLines: string[] = [];
 
+  // Create subscription plan products
+  console.log("── Subscription Plans ──");
   for (const plan of plans) {
-    // Check if product already exists by searching metadata
-    const existingProducts = await stripe.products.search({
-      query: `metadata["aivo_plan_id"]:"${plan.id}"`,
-    });
+    const { envLine } = await createOrFindProduct(plan);
+    envLines.push(envLine);
+  }
 
-    let product: Stripe.Product;
-
-    if (existingProducts.data.length > 0) {
-      product = existingProducts.data[0];
-      console.log(`  Product "${plan.name}" already exists: ${product.id}`);
-    } else {
-      product = await stripe.products.create({
-        name: plan.name,
-        description: plan.description,
-        metadata: { aivo_plan_id: plan.id },
-      });
-      console.log(`  Created product "${plan.name}": ${product.id}`);
-    }
-
-    // Check for existing active price on this product
-    const existingPrices = await stripe.prices.list({
-      product: product.id,
-      active: true,
-      type: "recurring",
-      limit: 10,
-    });
-
-    const matchingPrice = existingPrices.data.find(
-      (p) =>
-        p.unit_amount === plan.priceAmountCents &&
-        p.currency === "usd" &&
-        p.recurring?.interval === "month",
-    );
-
-    let price: Stripe.Price;
-
-    if (matchingPrice) {
-      price = matchingPrice;
-      console.log(`  Price already exists: ${price.id} ($${(price.unit_amount! / 100).toFixed(2)}/month)`);
-    } else {
-      price = await stripe.prices.create({
-        product: product.id,
-        unit_amount: plan.priceAmountCents,
-        currency: "usd",
-        recurring: { interval: "month" },
-        metadata: { aivo_plan_id: plan.id },
-      });
-      console.log(`  Created price: ${price.id} ($${(price.unit_amount! / 100).toFixed(2)}/month)`);
-    }
-
-    envLines.push(`${plan.envVar}=${price.id}`);
+  // Create add-on tutor products
+  console.log("\n── Add-on Tutors ──");
+  for (const addon of addons) {
+    const { envLine } = await createOrFindProduct(addon);
+    envLines.push(envLine);
   }
 
   // Set up the customer portal configuration
@@ -132,7 +158,6 @@ async function main() {
     });
     console.log("\n  Customer portal configured.");
   } catch (err: any) {
-    // Portal config may already exist
     if (err.code !== "resource_already_exists") {
       console.warn(`\n  Warning: Could not configure customer portal: ${err.message}`);
     } else {
@@ -148,7 +173,7 @@ async function main() {
   }
   console.log(`\nSTRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}`);
   console.log("STRIPE_WEBHOOK_SECRET=whsec_...  # from 'stripe listen' CLI");
-  console.log(`STRIPE_PUBLISHABLE_KEY=pk_test_...  # from Stripe dashboard`);
+  console.log("STRIPE_PUBLISHABLE_KEY=pk_test_...  # from Stripe dashboard");
   console.log("\n========================================");
   console.log("To test webhooks locally, run:");
   console.log("  stripe listen --forward-to localhost:3008/billing/webhooks/stripe");
