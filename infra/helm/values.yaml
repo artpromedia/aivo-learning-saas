@@ -61,6 +61,10 @@ identity-svc:
     BRAIN_SVC_URL: "http://brain-svc:3002"
     COMMS_SVC_URL: "http://comms-svc:3007"
     ASSESSMENT_SVC_URL: "http://assessment-svc:3012"
+    ENGAGEMENT_SVC_URL: "http://engagement-svc:3004"
+    LEARNING_SVC_URL: "http://learning-svc:3003"
+    TUTOR_SVC_URL: "http://tutor-svc:3006"
+    FAMILY_SVC_URL: "http://family-svc:3005"
 
 billing-svc:
   enabled: true
