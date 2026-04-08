@@ -80,10 +80,7 @@ export const tutorProxyRoutes: FastifyPluginAsync = async (app) => {
   });
 
   // POST /api/tutors/homework/upload — multipart proxy (must be before catch-all)
-  app.post<{ Params: { "*": string } }>("/tutors/homework/upload", {
-    // Tell Fastify not to parse the body — we stream it raw
-    config: { rawBody: true },
-  }, async (request, reply) => {
+  app.post("/tutors/homework/upload", async (request, reply) => {
     const accessToken =
       request.cookies?.access_token ??
       request.headers.authorization?.replace("Bearer ", "");
