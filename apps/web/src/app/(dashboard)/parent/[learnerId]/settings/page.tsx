@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import {
   ArrowLeft,
   Settings,
@@ -55,6 +56,8 @@ export default function LearnerSettingsPage() {
   const params = useParams();
   const router = useRouter();
   const learnerId = params.learnerId as string;
+  const t = useTranslations("settings");
+  const td = useTranslations("dashboard");
 
   const [settings, setSettings] = useState<LearnerSettings | null>(null);
   const [loading, setLoading] = useState(true);
@@ -112,7 +115,7 @@ export default function LearnerSettingsPage() {
           downloadUrl?: string;
           expiresAt?: string;
           error?: string;
-        }>(`/api/family/learners/${learnerId}/export/status`);
+        }>(`${API_ROUTES.FAMILY.EXPORT_STATUS(learnerId)}`);
 
         if (result.status === "ready" && result.downloadUrl) {
           setBrainExportStatus("ready");
@@ -147,7 +150,7 @@ export default function LearnerSettingsPage() {
     setBrainExportExpiresAt(null);
     setError(null);
     try {
-      await apiFetch(`/api/family/learners/${learnerId}/export`, {
+      await apiFetch(`${API_ROUTES.FAMILY.EXPORT(learnerId)}`, {
         method: "POST",
       });
       pollExportStatus();
@@ -163,7 +166,7 @@ export default function LearnerSettingsPage() {
     setDeletingAllData(true);
     setError(null);
     try {
-      await apiFetch(`/api/family/learners/${learnerId}/delete-all-data`, {
+      await apiFetch(`${API_ROUTES.FAMILY.DELETE_ALL_DATA(learnerId)}`, {
         method: "POST",
         body: JSON.stringify({ password: deletePassword }),
       });
@@ -180,11 +183,11 @@ export default function LearnerSettingsPage() {
     setReactivating(true);
     setError(null);
     try {
-      await apiFetch(`/api/billing/subscriptions/${subscriptionStatus.subscriptionId}/reactivate`, {
+      await apiFetch(`${API_ROUTES.BILLING.REACTIVATE(subscriptionStatus.subscriptionId)}`, {
         method: "POST",
       });
       setSubscriptionStatus({ ...subscriptionStatus, status: "ACTIVE", gracePeriodEndsAt: undefined });
-      setSuccessMsg("Subscription reactivated successfully. All data has been preserved.");
+      setSuccessMsg(t("reactivateSuccess"));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to reactivate subscription");
     } finally {
@@ -267,7 +270,7 @@ export default function LearnerSettingsPage() {
         method: "PUT",
         body: JSON.stringify(settings),
       });
-      setSuccessMsg("Settings saved successfully.");
+      setSuccessMsg(t("settingsSaved"));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to save settings");
     } finally {
@@ -280,7 +283,7 @@ export default function LearnerSettingsPage() {
     setError(null);
     try {
       const blob = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001"}/api/learners/${learnerId}/data-export`,
+        `${process.env.NEXT_PUBLIC_API_URL ?? ""}/api/learners/${learnerId}/data-export`,
         { credentials: "include" },
       ).then((r) => r.blob());
 
@@ -345,16 +348,16 @@ export default function LearnerSettingsPage() {
         className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-4"
       >
         <ArrowLeft size={16} />
-        Back to dashboard
+        {td("backToDashboard")}
       </Link>
 
       <PurpleGradientHeader className="rounded-xl mb-8">
         <div className="flex items-center gap-3">
           <Settings size={32} />
           <div>
-            <h1 className="text-2xl font-bold">Learner Settings</h1>
+            <h1 className="text-2xl font-bold">{t("title")}</h1>
             <p className="text-white/80 text-sm">
-              Privacy, data management, and account settings.
+              {t("subtitle")}
             </p>
           </div>
         </div>

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -19,6 +20,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
 import { apiFetch } from "@/lib/api";
+import { API_ROUTES } from "@/lib/api-routes";
 
 interface CollaborationMember {
   id: string;
@@ -32,6 +34,7 @@ interface CollaborationMember {
 export default function CollaborationPage() {
   const params = useParams();
   const learnerId = params.learnerId as string;
+  const t = useTranslations("dashboard");
 
   const [members, setMembers] = useState<CollaborationMember[]>([]);
   const [loading, setLoading] = useState(true);
@@ -46,12 +49,12 @@ export default function CollaborationPage() {
     async function fetchMembers() {
       try {
         const result = await apiFetch<CollaborationMember[]>(
-          `/api/learners/${learnerId}/collaboration`,
+          API_ROUTES.COLLABORATION.LIST(learnerId),
         );
         setMembers(result);
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "Failed to load team members",
+          err instanceof Error ? err.message : t("failedToLoadTeam"),
         );
       } finally {
         setLoading(false);
@@ -69,7 +72,7 @@ export default function CollaborationPage() {
     setError(null);
     try {
       const newMember = await apiFetch<CollaborationMember>(
-        `/api/learners/${learnerId}/collaboration/invite`,
+        API_ROUTES.COLLABORATION.INVITE(learnerId),
         {
           method: "POST",
           body: JSON.stringify({ email: inviteEmail, role: inviteRole }),
@@ -78,7 +81,7 @@ export default function CollaborationPage() {
       setMembers((prev) => [...prev, newMember]);
       setInviteEmail("");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to send invite");
+      setError(err instanceof Error ? err.message : t("failedToSendInvite"));
     } finally {
       setInviting(false);
     }
@@ -87,12 +90,12 @@ export default function CollaborationPage() {
   const handleRemove = async (memberId: string) => {
     setRemovingId(memberId);
     try {
-      await apiFetch(`/api/learners/${learnerId}/collaboration/${memberId}`, {
+      await apiFetch(API_ROUTES.COLLABORATION.REMOVE(learnerId, memberId), {
         method: "DELETE",
       });
       setMembers((prev) => prev.filter((m) => m.id !== memberId));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to remove member");
+      setError(err instanceof Error ? err.message : t("failedToRemoveMember"));
     } finally {
       setRemovingId(null);
     }
@@ -125,16 +128,16 @@ export default function CollaborationPage() {
         className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-4"
       >
         <ArrowLeft size={16} />
-        Back to dashboard
+        {t("backToDashboard")}
       </Link>
 
       <PurpleGradientHeader className="rounded-xl mb-8">
         <div className="flex items-center gap-3">
           <Users size={32} />
           <div>
-            <h1 className="text-2xl font-bold">Collaboration Team</h1>
+            <h1 className="text-2xl font-bold">{t("collaborationTeam")}</h1>
             <p className="text-white/80 text-sm">
-              Invite teachers, therapists, and caregivers to collaborate.
+              {t("collaborationDesc")}
             </p>
           </div>
         </div>
@@ -151,14 +154,14 @@ export default function CollaborationPage() {
         <CardHeader>
           <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
             <UserPlus size={18} className="text-[#7C3AED]" />
-            Invite a Team Member
+            {t("inviteTeamMember")}
           </h3>
         </CardHeader>
         <CardBody>
           <form onSubmit={handleInvite} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Email Address
+                {t("emailAddress")}
               </label>
               <input
                 type="email"
@@ -171,7 +174,7 @@ export default function CollaborationPage() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Role
+                {t("role")}
               </label>
               <select
                 value={inviteRole}
@@ -182,9 +185,9 @@ export default function CollaborationPage() {
                 }
                 className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none"
               >
-                <option value="teacher">Teacher</option>
-                <option value="therapist">Therapist</option>
-                <option value="caregiver">Caregiver</option>
+                <option value="teacher">{t("teacher")}</option>
+                <option value="therapist">{t("therapist")}</option>
+                <option value="caregiver">{t("caregiver")}</option>
               </select>
             </div>
             <Button
@@ -192,7 +195,7 @@ export default function CollaborationPage() {
               loading={inviting}
               leftIcon={<Mail size={16} />}
             >
-              Send Invitation
+              {t("sendInvitation")}
             </Button>
           </form>
         </CardBody>
@@ -200,7 +203,7 @@ export default function CollaborationPage() {
 
       {/* Current Members */}
       <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-        Current Members ({members.length})
+        {t("currentMembers", { count: members.length })}
       </h2>
 
       {members.length > 0 ? (
@@ -227,7 +230,7 @@ export default function CollaborationPage() {
                       {member.role}
                     </Badge>
                     {member.status === "pending" && (
-                      <Badge variant="secondary">Pending</Badge>
+                      <Badge variant="secondary">{t("pending")}</Badge>
                     )}
                   </div>
                   <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
@@ -238,7 +241,7 @@ export default function CollaborationPage() {
                   onClick={() => handleRemove(member.id)}
                   disabled={removingId === member.id}
                   className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50"
-                  title="Remove member"
+                  title={t("removeMember")}
                 >
                   {removingId === member.id ? (
                     <Loader2 className="animate-spin" size={16} />
@@ -255,8 +258,7 @@ export default function CollaborationPage() {
           <CardBody className="text-center py-8">
             <Users className="mx-auto mb-3 text-gray-400" size={40} />
             <p className="text-gray-500 dark:text-gray-400">
-              No team members yet. Send an invitation above to start
-              collaborating.
+              {t("noTeamMembers")}
             </p>
           </CardBody>
         </Card>

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   CreditCard,
   ArrowLeft,
@@ -14,7 +15,6 @@ import {
   Plus,
   Check,
 } from "lucide-react";
-import { useTranslations } from "next-intl";
 import { Card, CardBody, CardHeader } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -51,8 +51,8 @@ interface SubscriptionData {
 }
 
 export default function ManageSubscriptionPage() {
-  const t = useTranslations("billing");
   const router = useRouter();
+  const t = useTranslations("billing");
   const [data, setData] = useState<SubscriptionData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -70,7 +70,7 @@ export default function ManageSubscriptionPage() {
           setData(result as SubscriptionData);
         }
       } catch (err) {
-        const message = err instanceof Error ? err.message : t("failedToLoadSubscription");
+        const message = err instanceof Error ? err.message : t("failedToLoad");
         if (message.includes("401") || message.includes("Authentication")) {
           router.replace("/login");
           return;
@@ -154,7 +154,7 @@ export default function ManageSubscriptionPage() {
             {t("noActiveSubscription")}
           </h2>
           <p className="text-gray-500 dark:text-gray-400 mb-6">
-            {t("noSubscriptionDesc")}
+            {t("choosePlanPrompt")}
           </p>
           <Link href="/checkout">
             <Button>{t("choosePlan")}</Button>
@@ -214,7 +214,7 @@ export default function ManageSubscriptionPage() {
                     {data.plan.name}
                   </h4>
                   <p className="text-sm text-gray-500">
-                    {t("upToLearners", { count: data.plan.maxLearners })}
+                    {t("learnersCount", { count: data.plan.maxLearners })}
                   </p>
                 </div>
                 <div className="text-right">
@@ -222,7 +222,7 @@ export default function ManageSubscriptionPage() {
                     ${data.plan.price}
                   </span>
                   <span className="text-gray-500">
-                    {t("perInterval", { interval: data.plan.interval })}
+                    /{data.plan.interval}
                   </span>
                 </div>
               </div>
@@ -279,7 +279,7 @@ export default function ManageSubscriptionPage() {
                       </span>
                     </div>
                     <span className="text-sm text-gray-500">
-                      +${addon.price}{t("perMonth")}
+                      +${addon.price}/mo
                     </span>
                   </div>
                 ))}
@@ -307,10 +307,8 @@ export default function ManageSubscriptionPage() {
                         **** **** **** {data.paymentMethod.last4}
                       </p>
                       <p className="text-xs text-gray-500">
-                        {t("expires", {
-                          month: data.paymentMethod.expMonth,
-                          year: data.paymentMethod.expYear,
-                        })}
+                        {t("expires")} {data.paymentMethod.expMonth}/
+                        {data.paymentMethod.expYear}
                       </p>
                     </div>
                   </div>

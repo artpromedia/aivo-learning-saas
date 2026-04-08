@@ -19,7 +19,9 @@ import { Badge } from "@/components/ui/Badge";
 import { Skeleton, SkeletonText } from "@/components/ui/Skeleton";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
+import { useTranslations } from "next-intl";
 import { apiFetch } from "@/lib/api";
+import { API_ROUTES } from "@/lib/api-routes";
 
 interface SubjectMastery {
   subject: string;
@@ -58,6 +60,7 @@ interface LearnerBrain {
 }
 
 export default function LearnerBrainViewPage() {
+  const t = useTranslations("teacher");
   const params = useParams();
   const learnerId = params.id as string;
 
@@ -77,12 +80,12 @@ export default function LearnerBrainViewPage() {
     async function fetchBrain() {
       try {
         const data = await apiFetch<LearnerBrain>(
-          `/api/teacher/learners/${learnerId}/brain`,
+          API_ROUTES.TEACHER.LEARNER_BRAIN(learnerId),
         );
         setBrain(data);
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "Failed to load learner data",
+          err instanceof Error ? err.message : t("failedToLoadLearner"),
         );
       } finally {
         setLoading(false);
@@ -97,7 +100,7 @@ export default function LearnerBrainViewPage() {
     setSubmittingInsight(true);
     setInsightSuccess(false);
     try {
-      await apiFetch(`/api/family/insights/${learnerId}`, {
+      await apiFetch(API_ROUTES.TEACHER.LEARNER_INSIGHTS(learnerId), {
         method: "POST",
         body: JSON.stringify({ text: insightText.trim() }),
       });
@@ -106,7 +109,7 @@ export default function LearnerBrainViewPage() {
       setTimeout(() => setInsightSuccess(false), 3000);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Failed to submit insight",
+        err instanceof Error ? err.message : t("failedToSubmit"),
       );
     } finally {
       setSubmittingInsight(false);
@@ -122,10 +125,9 @@ export default function LearnerBrainViewPage() {
       const formData = new FormData();
       formData.append("file", file);
 
-      const API_BASE =
-        process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
       const res = await fetch(
-        `${API_BASE}/api/teacher/learners/${learnerId}/iep`,
+        `${baseUrl}${API_ROUTES.TEACHER.LEARNER_IEP_UPLOAD(learnerId)}`,
         {
           method: "POST",
           credentials: "include",
@@ -139,7 +141,7 @@ export default function LearnerBrainViewPage() {
       setIepSuccess(true);
       setTimeout(() => setIepSuccess(false), 5000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to upload IEP");
+      setError(err instanceof Error ? err.message : t("failedToUploadIep"));
     } finally {
       setUploadingIep(false);
       if (iepFileRef.current) iepFileRef.current.value = "";
@@ -171,11 +173,11 @@ export default function LearnerBrainViewPage() {
   const levelLabel = (level: string) => {
     switch (level) {
       case "level1":
-        return "Level 1";
+        return t("level1");
       case "level2":
-        return "Level 2";
+        return t("level2");
       case "level3":
-        return "Level 3";
+        return t("level3");
       default:
         return level;
     }
@@ -218,7 +220,7 @@ export default function LearnerBrainViewPage() {
           className="inline-flex items-center gap-1 text-white/80 hover:text-white text-sm mb-3 transition-colors"
         >
           <ArrowLeft size={16} />
-          Back to Classrooms
+          {t("backToClassrooms")}
         </Link>
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-white text-xl font-bold">
@@ -245,12 +247,12 @@ export default function LearnerBrainViewPage() {
           <CardHeader>
             <h2 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
               <Brain size={18} className="text-[#7C3AED]" />
-              Mastery by Subject
+              {t("masteryBySubject")}
             </h2>
           </CardHeader>
           <CardBody className="space-y-4">
             {brain.subjects.length === 0 ? (
-              <p className="text-gray-500 text-sm">No subject data yet.</p>
+              <p className="text-gray-500 text-sm">{t("noSubjectData")}</p>
             ) : (
               brain.subjects.map((s) => (
                 <div key={s.subject}>
@@ -279,13 +281,13 @@ export default function LearnerBrainViewPage() {
           <CardHeader>
             <h2 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
               <ShieldCheck size={18} className="text-[#7C3AED]" />
-              Accommodations
+              {t("accommodations")}
             </h2>
           </CardHeader>
           <CardBody>
             {brain.accommodations.length === 0 ? (
               <p className="text-gray-500 text-sm">
-                No accommodations listed.
+                {t("noAccommodations")}
               </p>
             ) : (
               <ul className="space-y-3">
@@ -315,12 +317,12 @@ export default function LearnerBrainViewPage() {
           <CardHeader>
             <h2 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
               <Target size={18} className="text-[#7C3AED]" />
-              IEP Goals
+              {t("iepGoals")}
             </h2>
           </CardHeader>
           <CardBody className="space-y-5">
             {brain.iepGoals.length === 0 ? (
-              <p className="text-gray-500 text-sm">No IEP goals on file.</p>
+              <p className="text-gray-500 text-sm">{t("noIepGoals")}</p>
             ) : (
               brain.iepGoals.map((goal) => (
                 <div key={goal.id}>
@@ -330,7 +332,7 @@ export default function LearnerBrainViewPage() {
                     </span>
                     {goal.targetDate && (
                       <span className="text-xs text-gray-400">
-                        Target: {formatDate(goal.targetDate)}
+                        {t("target")} {formatDate(goal.targetDate)}
                       </span>
                     )}
                   </div>
@@ -353,12 +355,12 @@ export default function LearnerBrainViewPage() {
           <CardHeader>
             <h2 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
               <Clock size={18} className="text-[#7C3AED]" />
-              Recent Sessions
+              {t("recentSessions")}
             </h2>
           </CardHeader>
           <CardBody>
             {brain.recentSessions.length === 0 ? (
-              <p className="text-gray-500 text-sm">No sessions recorded.</p>
+              <p className="text-gray-500 text-sm">{t("noSessions")}</p>
             ) : (
               <ul className="divide-y divide-gray-100 dark:divide-gray-800">
                 {brain.recentSessions.map((session) => (
@@ -396,11 +398,10 @@ export default function LearnerBrainViewPage() {
           <div className="flex-1">
             <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
               <Upload size={16} className="text-[#7C3AED]" />
-              Upload IEP
+              {t("uploadIep")}
             </h3>
             <p className="text-sm text-gray-500 mt-1">
-              Upload a new IEP document. The parent will be asked to review and
-              confirm.
+              {t("uploadIepHint")}
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -419,11 +420,11 @@ export default function LearnerBrainViewPage() {
               leftIcon={<Upload size={14} />}
               onClick={() => iepFileRef.current?.click()}
             >
-              Choose File
+              {t("chooseFile")}
             </Button>
             {iepSuccess && (
               <span className="text-sm text-green-600 font-medium">
-                IEP uploaded successfully.
+                {t("iepUploadedSuccess")}
               </span>
             )}
           </div>
@@ -435,21 +436,21 @@ export default function LearnerBrainViewPage() {
         <CardHeader>
           <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
             <BookOpen size={16} className="text-[#7C3AED]" />
-            Submit Insight
+            {t("submitInsight")}
           </h3>
         </CardHeader>
         <CardBody>
           <textarea
             value={insightText}
             onChange={(e) => setInsightText(e.target.value)}
-            placeholder="Share an observation or insight about this learner..."
+            placeholder={t("insightPlaceholder")}
             rows={3}
             className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent resize-none"
           />
           <div className="flex items-center justify-between mt-3">
             {insightSuccess && (
               <span className="text-sm text-green-600 font-medium">
-                Insight submitted successfully.
+                {t("insightSubmittedMsg")}
               </span>
             )}
             {!insightSuccess && <span />}
@@ -460,7 +461,7 @@ export default function LearnerBrainViewPage() {
               leftIcon={<Send size={14} />}
               onClick={handleSubmitInsight}
             >
-              Submit
+              {t("submit")}
             </Button>
           </div>
         </CardBody>

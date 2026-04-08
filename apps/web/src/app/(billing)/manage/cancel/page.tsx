@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import {
   ArrowLeft,
   AlertTriangle,
@@ -14,13 +15,13 @@ import {
   Sparkles,
   CheckCircle,
 } from "lucide-react";
-import { useTranslations } from "next-intl";
 import { Card, CardBody, CardHeader } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
 import { apiFetch } from "@/lib/api";
+import { API_ROUTES } from "@/lib/api-routes";
 import { useAuthStore } from "@/stores/auth.store";
 
 interface CurrentSubscription {
@@ -41,8 +42,8 @@ interface CurrentSubscription {
 type PageState = "confirm" | "cancelled" | "reactivated";
 
 export default function CancelSubscriptionPage() {
-  const t = useTranslations("billing");
   const { user } = useAuthStore();
+  const t = useTranslations("billing");
   const [subscription, setSubscription] = useState<CurrentSubscription | null>(
     null,
   );
@@ -56,7 +57,7 @@ export default function CancelSubscriptionPage() {
     async function fetchSubscription() {
       try {
         const result = await apiFetch<CurrentSubscription>(
-          "/api/billing/subscriptions/current",
+          API_ROUTES.BILLING.CURRENT_SUBSCRIPTION,
         );
         setSubscription(result);
         if (result.cancelAtPeriodEnd) {
@@ -66,7 +67,7 @@ export default function CancelSubscriptionPage() {
         setError(
           err instanceof Error
             ? err.message
-            : t("failedToLoadSubscription"),
+            : t("failedToLoad"),
         );
       } finally {
         setLoading(false);
@@ -81,7 +82,7 @@ export default function CancelSubscriptionPage() {
     setCancelling(true);
     setError(null);
     try {
-      await apiFetch(`/api/billing/subscriptions/${subscription.id}/cancel`, {
+      await apiFetch(API_ROUTES.BILLING.CANCEL(subscription.id), {
         method: "POST",
       });
       setPageState("cancelled");
@@ -100,7 +101,7 @@ export default function CancelSubscriptionPage() {
     setError(null);
     try {
       await apiFetch(
-        `/api/billing/subscriptions/${subscription.id}/reactivate`,
+        API_ROUTES.BILLING.REACTIVATE(subscription.id),
         { method: "POST" },
       );
       setPageState("reactivated");
@@ -133,8 +134,8 @@ export default function CancelSubscriptionPage() {
     },
     {
       icon: <Sparkles size={18} />,
-      label: t("featureSessions"),
-      description: t("featureSessionsDesc"),
+      label: t("featureAdaptiveSessions"),
+      description: t("featureAdaptiveSessionsDesc"),
     },
   ];
 
@@ -184,16 +185,14 @@ export default function CancelSubscriptionPage() {
               {t("subscriptionCancelled")}
             </h1>
             <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto">
-              {t("cancellationGracePeriod", {
-                date: new Date(subscription.currentPeriodEnd).toLocaleDateString(),
-              })}
+              {t("cancelledGraceInfo", { date: new Date(subscription.currentPeriodEnd).toLocaleDateString() })}
             </p>
           </div>
 
           <Card>
             <CardBody className="text-center py-6">
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                {t("resubscribePrompt")}
+                {t("reactivateGraceInfo")}
               </p>
               <Button
                 onClick={handleReactivate}
@@ -220,7 +219,7 @@ export default function CancelSubscriptionPage() {
                 </h3>
               </div>
               <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                {t("exportBeforeCancel")}
+                {t("exportDataDesc")}
               </p>
               <Link href="/parent">
                 <Button variant="outline" leftIcon={<Download size={16} />}>
@@ -245,10 +244,10 @@ export default function CancelSubscriptionPage() {
             {t("welcomeBack")}
           </h1>
           <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto mb-6">
-            {t("reactivatedMessage")}
+            {t("reactivatedDesc")}
           </p>
           <Link href="/manage">
-            <Button>{t("backToSubscriptionManagement")}</Button>
+            <Button>{t("backToSubscription")}</Button>
           </Link>
         </div>
       )}
@@ -287,12 +286,12 @@ export default function CancelSubscriptionPage() {
                       {subscription.plan.name}
                     </h3>
                     <p className="text-sm text-gray-500">
-                      {t("activeLearners", { count: subscription.learnerCount })}
+                      {t("activeLearnerCount", { count: subscription.learnerCount })}
                     </p>
                   </div>
                   <div className="text-right">
                     <Badge variant="success">
-                      {subscription.status === "trialing" ? t("statusTrial") : t("statusActive")}
+                      {subscription.status === "trialing" ? t("trial") : t("active")}
                     </Badge>
                     <p className="text-sm text-gray-500 mt-1">
                       ${subscription.plan.price}/{subscription.plan.interval}

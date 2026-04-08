@@ -60,6 +60,9 @@ export const BILLING_ROUTES = {
   SUBSCRIBE: "/api/billing/subscriptions",
   PORTAL: "/api/billing/portal",
   CURRENT: "/api/billing/current",
+  CURRENT_SUBSCRIPTION: "/api/billing/subscriptions/current",
+  CANCEL: (subscriptionId: string) => `/api/billing/subscriptions/${subscriptionId}/cancel`,
+  REACTIVATE: (subscriptionId: string) => `/api/billing/subscriptions/${subscriptionId}/reactivate`,
 } as const;
 
 // Notifications
@@ -169,6 +172,42 @@ export const SHOP_ROUTES = {
   EQUIPPED: (learnerId: string) => `/api/learners/${learnerId}/avatar`,
 } as const;
 
+// Collaboration
+export const COLLABORATION_ROUTES = {
+  LIST: (learnerId: string) => `/api/learners/${learnerId}/collaboration`,
+  INVITE: (learnerId: string) => `/api/learners/${learnerId}/collaboration/invite`,
+  REMOVE: (learnerId: string, memberId: string) => `/api/learners/${learnerId}/collaboration/${memberId}`,
+} as const;
+
+// IEP (parent dashboard)
+export const IEP_ROUTES = {
+  GET: (learnerId: string) => `/api/learners/${learnerId}/iep`,
+  UPLOAD_DOCUMENT: (learnerId: string) => `/api/learners/${learnerId}/iep/documents`,
+  DELETE_DOCUMENT: (learnerId: string, docId: string) => `/api/learners/${learnerId}/iep/documents/${docId}`,
+} as const;
+
+// Family account operations
+export const FAMILY_ROUTES = {
+  EXPORT_STATUS: (learnerId: string) => `/api/family/learners/${learnerId}/export/status`,
+  EXPORT: (learnerId: string) => `/api/family/learners/${learnerId}/export`,
+  DELETE_ALL_DATA: (learnerId: string) => `/api/family/learners/${learnerId}/delete-all-data`,
+  INSIGHTS: (learnerId: string) => `/api/family/insights/${learnerId}`,
+} as const;
+
+// Teacher dashboard
+export const TEACHER_ROUTES = {
+  CLASSROOMS: "/api/teacher/classrooms",
+  CLASSROOM_DETAIL: (id: string) => `/api/teacher/classrooms/${id}`,
+  LEARNER_BRAIN: (id: string) => `/api/teacher/learners/${id}/brain`,
+  LEARNER_IEP_UPLOAD: (id: string) => `/api/teacher/learners/${id}/iep`,
+  LEARNER_INSIGHTS: (id: string) => `/api/teacher/learners/${id}/insights`,
+} as const;
+
+// Tutor subscription (parent dashboard)
+export const TUTOR_SUBSCRIPTION_ROUTES = {
+  SUBSCRIBE: "/api/tutors/subscribe",
+} as const;
+
 // Combined API_ROUTES re-export
 export const API_ROUTES = {
   AUTH: AUTH_ROUTES,
@@ -190,4 +229,9 @@ export const API_ROUTES = {
   GRADEBOOK: GRADEBOOK_ROUTES,
   QUEST: QUEST_ROUTES,
   SHOP: SHOP_ROUTES,
+  COLLABORATION: COLLABORATION_ROUTES,
+  IEP: IEP_ROUTES,
+  FAMILY: FAMILY_ROUTES,
+  TEACHER: TEACHER_ROUTES,
+  TUTOR_SUBSCRIPTION: TUTOR_SUBSCRIPTION_ROUTES,
 } as const;
