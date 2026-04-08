@@ -58,7 +58,7 @@ export default function LearnerSettingsPage() {
           <Settings size={32} />
           <div>
             <h1 className="text-2xl font-bold">{t("settings")}</h1>
-            <p className="text-white/80 text-sm">{t("manageProfilePrefs")}</p>
+            <p className="text-white/80 text-sm">{t("manageProfileAndPreferences")}</p>
           </div>
         </div>
       </PurpleGradientHeader>
@@ -69,7 +69,7 @@ export default function LearnerSettingsPage() {
           <CardHeader>
             <div className="flex items-center gap-2">
               <User size={18} className="text-[#7C3AED]" />
-              <h3 className="font-semibold text-gray-900 dark:text-white">{t("profile")}</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white">{t("account")}</h3>
             </div>
           </CardHeader>
           <CardBody className="space-y-4">
@@ -113,7 +113,7 @@ export default function LearnerSettingsPage() {
           </CardHeader>
           <CardBody>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              {t("pinManaged")}
+              {t("pinDescription")}
             </p>
           </CardBody>
         </Card>

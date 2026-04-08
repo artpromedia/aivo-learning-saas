@@ -12,11 +12,13 @@ import {
   Loader2,
   CheckCircle,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { apiFetch } from "@/lib/api";
+import { API_ROUTES } from "@/lib/api-routes";
 import { useLearnerStore } from "@/stores/learner.store";
 
 interface HomeworkMessage {
@@ -38,6 +40,7 @@ interface HomeworkSessionDetail {
 export default function HomeworkSessionPage() {
   const params = useParams();
   const router = useRouter();
+  const t = useTranslations("homework");
   const sessionId = params.sessionId as string;
   const activeLearner = useLearnerStore((s) => s.activeLearner);
 
@@ -55,12 +58,12 @@ export default function HomeworkSessionPage() {
     async function fetchSession() {
       try {
         const data = await apiFetch<HomeworkSessionDetail>(
-          `/api/homework/${sessionId}`,
+          API_ROUTES.HOMEWORK.GET(sessionId),
         );
         setSession(data);
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "Failed to load session",
+          err instanceof Error ? err.message : t("failedToLoadSession"),
         );
       } finally {
         setLoading(false);
@@ -76,7 +79,7 @@ export default function HomeworkSessionPage() {
 
   const handleSend = async () => {
     const text = inputValue.trim();
-    if (!text || sending || !session) return;
+    if (!text || sending || !session || !activeLearner) return;
 
     const userMsg: HomeworkMessage = {
       id: `user-${Date.now()}`,
@@ -93,10 +96,16 @@ export default function HomeworkSessionPage() {
 
     try {
       const response = await apiFetch<{ message: HomeworkMessage }>(
-        `/api/homework/${sessionId}/message`,
+        API_ROUTES.HOMEWORK.SESSION_MESSAGE(sessionId),
         {
           method: "POST",
-          body: JSON.stringify({ content: text }),
+          body: JSON.stringify({
+            content: text,
+            learnerId: activeLearner.id,
+            functioningLevel: activeLearner.functioningLevel,
+            gradeLevel: activeLearner.gradeLevel,
+            locale: activeLearner.languagePreference ?? "en",
+          }),
         },
       );
       setSession((prev) =>
@@ -105,7 +114,7 @@ export default function HomeworkSessionPage() {
           : null,
       );
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to send message");
+      setError(err instanceof Error ? err.message : t("failedToSendMessage"));
     } finally {
       setSending(false);
       inputRef.current?.focus();
@@ -115,13 +124,13 @@ export default function HomeworkSessionPage() {
   const handleComplete = async () => {
     setCompleting(true);
     try {
-      await apiFetch(`/api/homework/${sessionId}/complete`, {
+      await apiFetch(API_ROUTES.HOMEWORK.SESSION_END(sessionId), {
         method: "POST",
       });
       setSession((prev) => (prev ? { ...prev, status: "completed" } : null));
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Failed to complete session",
+        err instanceof Error ? err.message : t("failedToCompleteSession"),
       );
     } finally {
       setCompleting(false);
@@ -156,7 +165,7 @@ export default function HomeworkSessionPage() {
           variant="outline"
           onClick={() => router.push("/learner/homework")}
         >
-          Back to Homework
+          {t("backToHomework")}
         </Button>
       </div>
     );
@@ -184,7 +193,7 @@ export default function HomeworkSessionPage() {
                   session?.status === "completed" ? "success" : "warning"
                 }
               >
-                {session?.status === "completed" ? "Completed" : "Active"}
+                {session?.status === "completed" ? t("completed") : t("active")}
               </Badge>
             </div>
           </div>
@@ -197,7 +206,7 @@ export default function HomeworkSessionPage() {
             loading={completing}
             leftIcon={<CheckCircle size={16} />}
           >
-            Mark Done
+            {t("markDone")}
           </Button>
         )}
       </div>
@@ -285,7 +294,7 @@ export default function HomeworkSessionPage() {
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Ask for help..."
+              placeholder={t("askForHelp")}
               disabled={sending}
               className="flex-1 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none disabled:opacity-50"
             />

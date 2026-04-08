@@ -21,6 +21,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
 import { apiFetch } from "@/lib/api";
+import { API_ROUTES } from "@/lib/api-routes";
 import { useLearnerStore } from "@/stores/learner.store";
 import { useEngagement } from "@/hooks/useEngagement";
 
@@ -50,7 +51,7 @@ export default function LearnerHomePage() {
     async function fetchActivities() {
       try {
         const data = await apiFetch<LearningActivity[]>(
-          `/api/learners/${activeLearner!.id}/recommended-activities`,
+          API_ROUTES.SESSION.LEARNING_PATH_NEXT(activeLearner!.id),
         );
         setActivities(data);
       } catch (err) {

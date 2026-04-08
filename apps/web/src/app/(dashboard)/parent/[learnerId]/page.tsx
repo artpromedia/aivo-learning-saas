@@ -37,6 +37,14 @@ interface LearnerDetail {
   functioningLevel: "STANDARD" | "SUPPORTED" | "LOW_VERBAL" | "NON_VERBAL" | "PRE_SYMBOLIC";
   dateOfBirth: string;
   enrolledGrade?: string;
+  enrolledSubjects?: string[];
+  languagePreference?: string;
+  preferences?: {
+    theme?: string;
+    reduceAnimations?: boolean;
+    fontSize?: "small" | "medium" | "large";
+    soundEnabled?: boolean;
+  };
 }
 
 interface ProgressData {
@@ -68,7 +76,10 @@ export default function ChildDashboardPage() {
         avatarUrl: learner.avatarUrl,
         dateOfBirth: learner.dateOfBirth,
         functioningLevel: learner.functioningLevel,
-        preferences: {},
+        gradeLevel: learner.enrolledGrade,
+        enrolledSubjects: learner.enrolledSubjects,
+        languagePreference: learner.languagePreference,
+        preferences: learner.preferences ?? {},
       });
     }
     router.push("/learner");

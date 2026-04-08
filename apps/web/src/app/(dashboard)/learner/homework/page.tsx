@@ -173,11 +173,10 @@ export default function HomeworkPage() {
             </div>
             <div className="flex-1">
               <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
-                Tutor Subscription Required
+                {t("tutorSubscriptionRequired")}
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                This subject requires an active tutor subscription. Subscribe to
-                unlock homework help for this subject.
+                {t("subscribeToUnlockHomework")}
               </p>
               <p className="text-xs text-gray-400 mt-1">
                 Required: {lockedInfo.requiredSku?.replace("ADDON_TUTOR_", "").replace("_", " ")}
@@ -254,7 +253,7 @@ export default function HomeworkPage() {
       {activeAssignments.length > 0 && (
         <div className="mb-8">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            In Progress ({activeAssignments.length})
+            {t("inProgressCount", { count: activeAssignments.length })}
           </h2>
           <div className="space-y-3">
             {activeAssignments.map((assignment) => (
@@ -314,7 +313,7 @@ export default function HomeworkPage() {
       {completedAssignments.length > 0 && (
         <div>
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Completed ({completedAssignments.length})
+            {t("completedCount", { count: completedAssignments.length })}
           </h2>
           <div className="space-y-3">
             {completedAssignments.map((assignment) => (

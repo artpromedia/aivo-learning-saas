@@ -6,6 +6,9 @@ export interface Learner {
   name: string;
   avatarUrl?: string;
   dateOfBirth: string;
+  gradeLevel?: string;
+  enrolledSubjects?: string[];
+  languagePreference?: string;
   functioningLevel: "STANDARD" | "SUPPORTED" | "LOW_VERBAL" | "NON_VERBAL" | "PRE_SYMBOLIC";
   preferences: {
     theme?: string;

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ChevronRight, Loader2, Trophy, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { ProgressBar } from "@/components/ui/ProgressBar";
@@ -30,6 +31,7 @@ interface SessionStart {
 export default function LearnSessionPage() {
   const params = useParams();
   const router = useRouter();
+  const t = useTranslations("dashboard");
   const sessionId = params.sessionId as string;
   const activeLearner = useLearnerStore((s) => s.activeLearner);
   const {
@@ -56,7 +58,7 @@ export default function LearnSessionPage() {
     async function loadSession() {
       try {
         const data = await apiFetch<SessionStart>(
-          `/api/sessions/${sessionId}`,
+          API_ROUTES.SESSION.GET(sessionId),
         );
         setQuestion(data.question);
         setTotalQuestions(data.totalQuestions);
@@ -134,7 +136,7 @@ export default function LearnSessionPage() {
       <div className="text-center py-16">
         <p className="text-red-500 mb-4">{error}</p>
         <Button variant="outline" onClick={() => router.push("/learner")}>
-          Back to Home
+          {t("backToHome")}
         </Button>
       </div>
     );
@@ -147,10 +149,10 @@ export default function LearnSessionPage() {
           <Trophy className="text-white" size={40} />
         </div>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-          Session Complete!
+          {t("sessionComplete")}
         </h1>
         <p className="text-gray-500 dark:text-gray-400 mb-6">
-          Great work, {activeLearner?.name ?? "learner"}!
+          {t("greatWork", { name: activeLearner?.name ?? "learner" })}
         </p>
 
         <div className="grid grid-cols-3 gap-4 mb-8">
@@ -159,7 +161,7 @@ export default function LearnSessionPage() {
               <p className="text-2xl font-bold text-[#7C3AED]">
                 +{summary.totalXp}
               </p>
-              <p className="text-xs text-gray-500">XP Earned</p>
+              <p className="text-xs text-gray-500">{t("xpEarned")}</p>
             </CardBody>
           </Card>
           <Card>
@@ -167,7 +169,7 @@ export default function LearnSessionPage() {
               <p className="text-2xl font-bold text-[#38B2AC]">
                 {summary.accuracy}%
               </p>
-              <p className="text-xs text-gray-500">Accuracy</p>
+              <p className="text-xs text-gray-500">{t("accuracy")}</p>
             </CardBody>
           </Card>
           <Card>
@@ -175,7 +177,7 @@ export default function LearnSessionPage() {
               <p className="text-2xl font-bold text-orange-500">
                 {Math.round(summary.duration / 60)}m
               </p>
-              <p className="text-xs text-gray-500">Duration</p>
+              <p className="text-xs text-gray-500">{t("duration")}</p>
             </CardBody>
           </Card>
         </div>
@@ -184,7 +186,7 @@ export default function LearnSessionPage() {
           <Card className="mb-6">
             <CardBody>
               <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Badges Earned
+                {t("badgesEarnedLabel")}
               </p>
               <div className="flex flex-wrap justify-center gap-2">
                 {summary.badgesEarned.map((badge) => (
@@ -201,7 +203,7 @@ export default function LearnSessionPage() {
         )}
 
         <Button onClick={() => router.push("/learner")} size="lg">
-          Back to Home
+          {t("backToHome")}
         </Button>
       </div>
     );
@@ -283,7 +285,7 @@ export default function LearnSessionPage() {
                 onChange={(e) => setSelectedAnswer(e.target.value)}
                 disabled={!!feedback}
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none text-lg"
-                placeholder="Type your answer..."
+                placeholder={t("typeYourAnswer")}
               />
             )}
 
@@ -295,7 +297,7 @@ export default function LearnSessionPage() {
                 rightIcon={<ChevronRight size={18} />}
                 size="lg"
               >
-                Submit
+                {t("submitAnswer")}
               </Button>
             </div>
           </CardBody>
@@ -305,24 +307,23 @@ export default function LearnSessionPage() {
       <Modal
         open={showExitModal}
         onClose={() => setShowExitModal(false)}
-        title="Leave Session?"
+        title={t("leaveSession")}
         footer={
           <div className="flex justify-end gap-2">
             <Button variant="ghost" onClick={() => setShowExitModal(false)}>
-              Stay
+              {t("stay")}
             </Button>
             <Button
               variant="destructive"
               onClick={() => router.push("/learner")}
             >
-              Leave
+              {t("leave")}
             </Button>
           </div>
         }
       >
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          Your progress in this session will be saved, but you won&apos;t earn
-          completion XP. Are you sure you want to leave?
+          {t("leaveSessionDescription")}
         </p>
       </Modal>
     </div>

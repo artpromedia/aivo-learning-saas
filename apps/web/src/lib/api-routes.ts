@@ -87,11 +87,15 @@ export const RECOMMENDATION_ROUTES = {
   ADJUST: (learnerId: string, recId: string) => `/api/learners/${learnerId}/recommendations/${recId}/adjust`,
 } as const;
 
-// Learning Sessions
+// Learning Sessions (proxied via identity-svc under /api/learning/...)
 export const SESSION_ROUTES = {
-  START: "/api/sessions/start",
-  INTERACT: (sessionId: string) => `/api/sessions/${sessionId}/interact`,
-  COMPLETE: (sessionId: string) => `/api/sessions/${sessionId}/complete`,
+  START: "/api/learning/sessions/start",
+  GET: (sessionId: string) => `/api/learning/sessions/${sessionId}`,
+  INTERACT: (sessionId: string) => `/api/learning/sessions/${sessionId}/interact`,
+  COMPLETE: (sessionId: string) => `/api/learning/sessions/${sessionId}/complete`,
+  HISTORY: (learnerId: string) => `/api/learning/sessions/history/${learnerId}`,
+  LEARNING_PATH: (learnerId: string) => `/api/learning/learning-path/${learnerId}`,
+  LEARNING_PATH_NEXT: (learnerId: string) => `/api/learning/learning-path/${learnerId}/next`,
 } as const;
 
 // Tutor Chat
@@ -101,7 +105,22 @@ export const TUTOR_ROUTES = {
     learnerId ? `/api/tutors?learnerId=${learnerId}` : "/api/tutors",
   STORE: (learnerId?: string) =>
     learnerId ? `/api/tutors/store?learnerId=${learnerId}` : "/api/tutors/store",
+  SESSION_START: "/api/tutors/sessions/start",
 };
+
+// Homework Helper (routed through tutor-svc catch-all proxy)
+export const HOMEWORK_ROUTES = {
+  LIST: (learnerId: string) => `/api/tutors/homework/learner/${learnerId}`,
+  UPLOAD: "/api/tutors/homework/upload",
+  /** Get homework assignment details */
+  GET: (id: string) => `/api/tutors/homework/${id}`,
+  /** Start a new homework help session for a given assignment/session */
+  SESSION_START: (id: string) => `/api/tutors/homework/${id}/session/start`,
+  /** Send a message within a homework session */
+  SESSION_MESSAGE: (id: string) => `/api/tutors/homework/${id}/session/message`,
+  /** End a homework session */
+  SESSION_END: (id: string) => `/api/tutors/homework/${id}/session/end`,
+} as const;
 
 // Engagement (XP, streaks, badges, etc.)
 export const ENGAGEMENT_ROUTES = {
@@ -164,6 +183,7 @@ export const API_ROUTES = {
   RECOMMENDATION: RECOMMENDATION_ROUTES,
   SESSION: SESSION_ROUTES,
   TUTOR: TUTOR_ROUTES,
+  HOMEWORK: HOMEWORK_ROUTES,
   ENGAGEMENT: ENGAGEMENT_ROUTES,
   FUNCTIONING_LEVEL: FUNCTIONING_LEVEL_ROUTES,
   ONBOARDING: ONBOARDING_ROUTES,
