@@ -64,6 +64,14 @@ services:
       APPLE_CLIENT_SECRET: ${APPLE_CLIENT_SECRET:-}
       OONRUMAIL_API_KEY: ${OONRUMAIL_API_KEY:-}
       OONRUMAIL_BASE_URL: ${OONRUMAIL_BASE_URL:-https://api.oonrumail.com/v1}
+      ENGAGEMENT_SVC_URL: http://engagement-svc:3004
+      LEARNING_SVC_URL: http://learning-svc:3003
+      TUTOR_SVC_URL: http://tutor-svc:3006
+      FAMILY_SVC_URL: http://family-svc:3005
+      BILLING_SVC_URL: http://billing-svc:3008
+      BRAIN_SVC_URL: http://brain-svc:3002
+      COMMS_SVC_URL: http://comms-svc:3007
+      ASSESSMENT_SVC_URL: http://assessment-svc:3012
       NODE_ENV: development
     depends_on:
       postgres:

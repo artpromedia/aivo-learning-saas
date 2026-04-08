@@ -48,6 +48,10 @@ identity-svc:
   env:
     APP_URL: "https://staging.aivolearning.com"
     CORS_ORIGINS: "https://staging.aivolearning.com,https://app.aivolearning.com"
+    ENGAGEMENT_SVC_URL: "http://engagement-svc:3004"
+    LEARNING_SVC_URL: "http://learning-svc:3003"
+    TUTOR_SVC_URL: "http://tutor-svc:3006"
+    FAMILY_SVC_URL: "http://family-svc:3005"
   resources:
     requests:
       cpu: 50m
