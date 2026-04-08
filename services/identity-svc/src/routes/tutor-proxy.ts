@@ -31,6 +31,33 @@ async function proxyToTutor(
   }
 }
 
+/**
+ * Raw proxy that preserves the original Content-Type and streams the raw
+ * request body to tutor-svc. Used for multipart/form-data uploads and SSE
+ * streaming responses where JSON re-encoding would break the payload.
+ */
+async function proxyRawToTutor(
+  path: string,
+  accessToken: string | undefined,
+  method: string,
+  rawBody: Buffer | undefined,
+  contentType: string | undefined,
+): Promise<Response> {
+  const headers: Record<string, string> = {};
+  if (accessToken) {
+    headers["Authorization"] = `Bearer ${accessToken}`;
+  }
+  if (contentType) {
+    headers["Content-Type"] = contentType;
+  }
+
+  return fetch(`${TUTOR_SVC_URL}${path}`, {
+    method,
+    headers,
+    body: ["GET", "HEAD"].includes(method) ? undefined : rawBody,
+  });
+}
+
 export const tutorProxyRoutes: FastifyPluginAsync = async (app) => {
   // GET /api/tutors → tutor-svc GET /tutors/subscriptions
   app.get("/tutors", async (request, reply) => {
@@ -50,6 +77,89 @@ export const tutorProxyRoutes: FastifyPluginAsync = async (app) => {
     const queryString = getQueryString(request.url);
     const { status, data } = await proxyToTutor(`/tutors/catalog${queryString}`, accessToken);
     return reply.status(status).send(data);
+  });
+
+  // POST /api/tutors/homework/upload — multipart proxy (must be before catch-all)
+  app.post("/tutors/homework/upload", async (request, reply) => {
+    const accessToken =
+      request.cookies?.access_token ??
+      request.headers.authorization?.replace("Bearer ", "");
+    const queryString = getQueryString(request.url);
+    const contentType = request.headers["content-type"];
+
+    try {
+      // Collect the raw body from the request
+      const chunks: Buffer[] = [];
+      for await (const chunk of request.raw) {
+        chunks.push(chunk as Buffer);
+      }
+      const rawBody = Buffer.concat(chunks);
+
+      const res = await proxyRawToTutor(
+        `/tutors/homework/upload${queryString}`,
+        accessToken,
+        "POST",
+        rawBody,
+        contentType,
+      );
+
+      const data = await res.json().catch(() => null);
+      return reply.status(res.status).send(data);
+    } catch {
+      return reply.status(502).send({ error: "Tutor service unavailable" });
+    }
+  });
+
+  // POST /api/tutors/:sessionId/chat — SSE streaming proxy (must be before catch-all)
+  app.post<{ Params: { sessionId: string } }>("/tutors/:sessionId/chat", async (request, reply) => {
+    const { sessionId } = request.params;
+    const accessToken =
+      request.cookies?.access_token ??
+      request.headers.authorization?.replace("Bearer ", "");
+
+    try {
+      const res = await fetch(`${TUTOR_SVC_URL}/tutors/sessions/${sessionId}/chat`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+        },
+        body: JSON.stringify(request.body),
+      });
+
+      // If upstream returned an error, forward as a normal JSON response
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        return reply.status(res.status).send(data);
+      }
+
+      // Stream the SSE response back to the client
+      reply.raw.writeHead(200, {
+        "Content-Type": res.headers.get("content-type") ?? "text/event-stream",
+        "Cache-Control": "no-cache",
+        Connection: "keep-alive",
+      });
+
+      if (!res.body) {
+        reply.raw.end();
+        return reply;
+      }
+
+      const reader = (res.body as ReadableStream<Uint8Array>).getReader();
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          reply.raw.write(value);
+        }
+      } finally {
+        reply.raw.end();
+      }
+
+      return reply;
+    } catch {
+      return reply.status(502).send({ error: "Tutor service unavailable" });
+    }
   });
 
   // Catch-all: proxy all other /api/tutors/* requests to tutor-svc /tutors/*

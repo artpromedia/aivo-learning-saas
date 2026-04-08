@@ -24,14 +24,18 @@ async function proxyToBrain(
     headers["Authorization"] = `Bearer ${accessToken}`;
   }
 
-  const res = await fetch(`${BRAIN_SVC_URL}${path}`, {
-    method,
-    headers,
-    body: method === "GET" ? undefined : body,
-  });
+  try {
+    const res = await fetch(`${BRAIN_SVC_URL}${path}`, {
+      method,
+      headers,
+      body: method === "GET" ? undefined : body,
+    });
 
-  const data = await res.json().catch(() => null);
-  return { status: res.status, data };
+    const data = await res.json().catch(() => null);
+    return { status: res.status, data };
+  } catch {
+    return { status: 502, data: { error: "Brain service unavailable" } };
+  }
 }
 
 async function proxyToEngagement(
@@ -469,7 +473,7 @@ export const brainProxyRoutes: FastifyPluginAsync = async (app) => {
       const [xpRes, streakRes, badgesRes] = await Promise.all([
         proxyToEngagement(`/engagement/xp/${learnerId}`, token),
         proxyToEngagement(`/engagement/streaks/${learnerId}`, token),
-        proxyToEngagement(`/engagement/badges/${learnerId}/earned`, token),
+        proxyToEngagement(`/engagement/badges/${learnerId}`, token),
       ]);
 
       return reply.send({
@@ -508,7 +512,7 @@ export const brainProxyRoutes: FastifyPluginAsync = async (app) => {
     async (request, reply) => {
       const { learnerId } = request.params;
       const token = request.cookies.access_token;
-      const { status, data } = await proxyToEngagement(`/engagement/badges/${learnerId}/earned`, token);
+      const { status, data } = await proxyToEngagement(`/engagement/badges/${learnerId}`, token);
       if (status !== 200) return reply.status(status).send(data);
       return reply.send(data);
     }

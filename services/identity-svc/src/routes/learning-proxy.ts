@@ -151,14 +151,14 @@ export const learningProxyRoutes: FastifyPluginAsync = async (app) => {
   // GET /learning/learning-path/:learnerId
   app.get<{ Params: { learnerId: string } }>("/learning/learning-path/:learnerId", async (request, reply) => {
     const token = request.cookies?.access_token ?? request.headers.authorization?.replace("Bearer ", "");
-    const { status, data } = await proxyToLearning(`/learning/learning-path/${request.params.learnerId}`, token);
+    const { status, data } = await proxyToLearning(`/learning/path/${request.params.learnerId}`, token);
     return reply.status(status).send(data);
   });
 
   // GET /learning/learning-path/:learnerId/next
   app.get<{ Params: { learnerId: string } }>("/learning/learning-path/:learnerId/next", async (request, reply) => {
     const token = request.cookies?.access_token ?? request.headers.authorization?.replace("Bearer ", "");
-    const { status, data } = await proxyToLearning(`/learning/learning-path/${request.params.learnerId}/next`, token);
+    const { status, data } = await proxyToLearning(`/learning/path/${request.params.learnerId}/next`, token);
     return reply.status(status).send(data);
   });
 
