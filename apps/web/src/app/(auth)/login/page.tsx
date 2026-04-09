@@ -30,10 +30,11 @@ export default function LoginPage() {
 
   const handleTestLogin = (role: keyof typeof TEST_USERS) => {
     const user = TEST_USERS[role];
-    document.cookie = `user_role=${user.role === "educator" ? "teacher" : user.role};path=/;max-age=86400`;
+    const cookieRole = user.role === "educator" ? "teacher" : user.role;
+    document.cookie = `user_role=${cookieRole};path=/;max-age=86400`;
     storeLogin(user, "test-token-" + role);
     const redirectMap: Record<string, string> = { parent: "/parent", learner: "/learner", teacher: "/teacher", admin: "/admin/district" };
-    router.push(redirectMap[role] || "/parent");
+    window.location.href = redirectMap[role] || "/parent";
   };
 
   const loginSchema = z.object({
