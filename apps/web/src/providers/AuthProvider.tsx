@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuthStore, hydrateTestUser } from "@/stores/auth.store";
+import { useLearnerStore } from "@/stores/learner.store";
 import { apiFetch } from "@/lib/api";
 import { AUTH_ROUTES } from "@/lib/api-routes";
 
@@ -28,6 +29,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     let cancelled = false;
 
     if (hydrateTestUser()) {
+      const { learners, setLearners, setActiveLearner } = useLearnerStore.getState();
+      if (learners.length === 0) {
+        const mockLearners = [
+          {
+            id: "learner-001",
+            name: "Alex Johnson",
+            avatarUrl: "",
+            dateOfBirth: "2017-03-15",
+            gradeLevel: "3rd",
+            enrolledSubjects: ["Math", "Science", "Language Arts"],
+            languagePreference: "en",
+            functioningLevel: "SUPPORTED" as const,
+            preferences: { theme: "light", reduceAnimations: false, fontSize: "medium" as const, soundEnabled: true },
+          },
+          {
+            id: "learner-002",
+            name: "Maya Johnson",
+            avatarUrl: "",
+            dateOfBirth: "2019-07-22",
+            gradeLevel: "1st",
+            enrolledSubjects: ["Math", "Language Arts"],
+            languagePreference: "en",
+            functioningLevel: "STANDARD" as const,
+            preferences: { theme: "light", reduceAnimations: false, fontSize: "medium" as const, soundEnabled: true },
+          },
+        ];
+        setLearners(mockLearners);
+        setActiveLearner(mockLearners[0]);
+      }
       return;
     }
 

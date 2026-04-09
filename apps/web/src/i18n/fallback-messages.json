@@ -571,7 +571,8 @@
     "notificationsHint": "Manage your notification preferences in the Notifications section.",
     "securitySection": "Security",
     "securityHint": "To change your password, use the Forgot password flow.",
-    "failedToSave": "Failed to save"
+    "failedToSave": "Failed to save",
+    "backToDashboard": "Back to dashboard"
   },
   "assessment": {
     "preparingAssessment": "Preparing personalized assessment...",
