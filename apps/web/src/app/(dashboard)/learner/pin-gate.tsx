@@ -57,6 +57,10 @@ export function PinGate({ learnerId, learnerName, onSuccess }: PinGateProps) {
       );
       if (res.success && res.token) {
         onSuccess(res.token);
+      } else {
+        setError(t("invalidPin"));
+        setPin(["", "", "", ""]);
+        inputRefs.current[0]?.focus();
       }
     } catch {
       setError(t("invalidPin"));

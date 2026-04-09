@@ -386,7 +386,17 @@ function matchRoute(path: string, routes: [string | RegExp, () => unknown][]): u
   return undefined;
 }
 
-export function getMockResponse(path: string, method: string = "GET"): unknown | undefined {
+export function getMockResponse(path: string, method: string = "GET", body?: string): unknown | undefined {
+  if (method === "POST" && /\/api\/learners\/[^/]+\/pin\/verify$/.test(path)) {
+    try {
+      const parsed = body ? JSON.parse(body) : {};
+      if (parsed.pin === "1234") {
+        return { success: true, token: "mock-learner-session-token" };
+      }
+    } catch {}
+    return { success: false, error: "Invalid PIN" };
+  }
+
   if (method !== "GET") return {};
 
   const routes: [string | RegExp, () => unknown][] = [

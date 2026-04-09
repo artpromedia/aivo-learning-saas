@@ -37,7 +37,7 @@ export async function apiFetch<T>(path: string, options?: RequestInit): Promise<
     });
   } catch {
     if (isTestMode()) {
-      const mock = getMockResponse(path, method);
+      const mock = getMockResponse(path, method, typeof options?.body === "string" ? options.body : undefined);
       if (mock !== undefined) return mock as T;
     }
     throw new Error("Failed to fetch");
@@ -45,7 +45,7 @@ export async function apiFetch<T>(path: string, options?: RequestInit): Promise<
 
   if (res.status === 401 && !path.includes("/auth/refresh") && !path.includes("/auth/login")) {
     if (isTestMode()) {
-      const mock = getMockResponse(path, method);
+      const mock = getMockResponse(path, method, typeof options?.body === "string" ? options.body : undefined);
       if (mock !== undefined) return mock as T;
     }
 
@@ -75,7 +75,7 @@ export async function apiFetch<T>(path: string, options?: RequestInit): Promise<
   }
   if (!res.ok) {
     if (isTestMode()) {
-      const mock = getMockResponse(path, method);
+      const mock = getMockResponse(path, method, typeof options?.body === "string" ? options.body : undefined);
       if (mock !== undefined) return mock as T;
     }
     const body = await res.json().catch(() => ({}));
