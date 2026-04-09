@@ -22,28 +22,31 @@ function AivoLogoMark({ size, variant = "purple" }: { size: number; variant?: "p
     <svg
       width={size}
       height={size}
-      viewBox="400 40 1130 2160"
+      viewBox="0 0 32 32"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
       <defs>
-        <linearGradient id={`${id}-gl`} x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor={isWhite ? "#ffffff" : "#9666e3"} />
-          <stop offset="100%" stopColor={isWhite ? "#ffffff" : "#8143e1"} />
+        <linearGradient id={`${id}-gr`} x1="18.5" y1="10.29" x2="24.68" y2="24.46" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor={isWhite ? "#ffffff" : "#35cbda"} />
+          <stop offset="1" stopColor={isWhite ? "#ffffff" : "#1d95b1"} />
         </linearGradient>
-        <linearGradient id={`${id}-gr`} x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor={isWhite ? "#ffffff" : "#35cbda"} />
-          <stop offset="100%" stopColor={isWhite ? "#ffffff" : "#1d95b1"} />
+        <linearGradient id={`${id}-gl`} x1="5.77" y1="10.16" x2="17.66" y2="28.24" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor={isWhite ? "#ffffff" : "#9666e3"} />
+          <stop offset="1" stopColor={isWhite ? "#ffffff" : "#8143e1"} />
         </linearGradient>
       </defs>
-      <circle cx="956.67" cy="500" r="360" fill={isWhite ? "#ffffff" : "#915ee3"} />
       <path
-        d="M500,1000 Q500,900 600,900 L850,900 Q935,900 935,1000 L935,2000 Q935,2100 850,2100 L600,2100 Q500,2100 500,2000 Z"
+        d="M20.22,26.27h-3.57v-14.18c0-1.2.97-2.18,2.18-2.18h6.91c1.2,0,2.18.97,2.18,2.18v6.49c0,4.25-3.44,7.69-7.69,7.69Z"
+        fill={`url(#${id}-gr)`}
+      />
+      <path
+        d="M18.42,26.64l-2.39,5.36-2.55-5.73h-1.7c-4.25,0-7.69-3.44-7.69-7.69v-6.49c0-1.2.97-2.18,2.18-2.18h6.91c1.2,0,2.18.97,2.18,2.18v8.63l.67-1.59,2.42,5.77c.23.56.23,1.18-.02,1.73Z"
         fill={`url(#${id}-gl)`}
       />
       <path
-        d="M980,1150 Q980,1050 1080,1050 L1330,1050 Q1430,1050 1430,1150 L1430,2000 Q1430,2100 1330,2100 L1080,2100 Q980,2100 980,2000 Z"
-        fill={`url(#${id}-gr)`}
+        d="M20.23,4.23c0,2.33-1.89,4.23-4.23,4.23s-4.23-1.89-4.23-4.23S13.67,0,16,0s4.23,1.89,4.23,4.23Z"
+        fill={isWhite ? "#ffffff" : "#915ee3"}
       />
     </svg>
   );
@@ -62,14 +65,14 @@ function AivoLogo({ size = "md", variant = "purple", className = "" }: AivoLogoP
           isWhite
             ? { color: "#ffffff", fontFamily: "var(--font-display)" }
             : {
-                background: "linear-gradient(135deg, #7C3AED, #A855F7)",
+                background: "linear-gradient(135deg, #8a43c1, #352288)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 fontFamily: "var(--font-display)",
               }
         }
       >
-        AIVO
+        Aivo
       </span>
     </div>
   );
