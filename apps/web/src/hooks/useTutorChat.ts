@@ -9,7 +9,7 @@ export interface ChatMessage {
   timestamp: string;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+const API_BASE = "";
 
 export function useTutorChat(sessionId: string | undefined) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);

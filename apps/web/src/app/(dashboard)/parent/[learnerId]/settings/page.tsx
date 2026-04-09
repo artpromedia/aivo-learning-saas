@@ -297,7 +297,7 @@ export default function LearnerSettingsPage() {
         URL.revokeObjectURL(url);
       } else {
         const blob = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL ?? ""}/api/learners/${learnerId}/data-export`,
+          `/api/learners/${learnerId}/data-export`,
           { credentials: "include" },
         ).then((r) => r.blob());
 

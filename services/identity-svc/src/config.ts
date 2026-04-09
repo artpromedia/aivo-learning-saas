@@ -26,7 +26,7 @@ const configSchema = z.object({
   TUTOR_SVC_URL: z.string().url().default("http://localhost:3006"),
   ENGAGEMENT_SVC_URL: z.string().url().default("http://localhost:3004"),
   LEARNING_SVC_URL: z.string().url().default("http://localhost:3003"),
-  APP_URL: z.string().url().default("http://localhost:3000"),
+  APP_URL: z.string().url().default("http://localhost:5000"),
   CORS_ORIGINS: z.string().optional(),
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
 });

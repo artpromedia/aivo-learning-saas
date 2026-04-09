@@ -80,8 +80,7 @@ export default function IepPage() {
       } else {
         const formData = new FormData();
         formData.append("file", file);
-        const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
-        await fetch(`${baseUrl}${API_ROUTES.IEP.UPLOAD_DOCUMENT(learnerId)}`, { method: "POST", credentials: "include", body: formData });
+        await fetch(`${API_ROUTES.IEP.UPLOAD_DOCUMENT(learnerId)}`, { method: "POST", credentials: "include", body: formData });
         const result = await apiFetch<IepData>(API_ROUTES.IEP.GET(learnerId));
         setData(result);
       }

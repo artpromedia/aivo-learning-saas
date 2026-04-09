@@ -89,8 +89,7 @@ export default function HomeworkPage() {
         const formData = new FormData();
         formData.append("file", file);
         formData.append("learnerId", activeLearner.id);
-        const apiBase = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
-        const res = await fetch(`${apiBase}/api/tutors/homework/upload`, { method: "POST", credentials: "include", body: formData });
+        const res = await fetch(`/api/tutors/homework/upload`, { method: "POST", credentials: "include", body: formData });
         const data: UploadResponse = await res.json();
         if (data.locked) { setLockedInfo({ locked: true, requiredSku: data.requiredSku ?? "" }); return; }
         if (!res.ok) throw new Error(t("uploadFailed"));

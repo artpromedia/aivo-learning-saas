@@ -97,3 +97,8 @@ l0dAxB+uaSW/uKMc/WvxP4nk8SXKX57iqVIdnM5MOCtufaEjcTQg3T4LR7ZsNRvF
 fQIDAQAB
 -----END PUBLIC KEY-----"""
 IDENTITY_SVC_PORT = "3001"
+
+[deployment]
+deploymentTarget = "autoscale"
+run = ["bash", "start.sh"]
+build = ["bash", "-c", "cd services/identity-svc && npx tsup --no-dts && cd ../.. && cd apps/web && pnpm run build"]

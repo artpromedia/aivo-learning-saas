@@ -143,9 +143,8 @@ export default function LearnerHubPage() {
       } else {
         const formData = new FormData();
         formData.append("file", file);
-        const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
         const res = await fetch(
-          `${baseUrl}${API_ROUTES.TEACHER.LEARNER_IEP_UPLOAD(learnerId)}`,
+          `${API_ROUTES.TEACHER.LEARNER_IEP_UPLOAD(learnerId)}`,
           { method: "POST", credentials: "include", body: formData },
         );
         if (!res.ok) {

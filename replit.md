@@ -121,10 +121,20 @@ Every dashboard page follows this consistent pattern:
 - **Stat cards**: colorful icon squares with warm backgrounds
 - No `dark:` gray variants — dark mode uses warm purple tones (#2A1E45, #3D2D5C)
 
+## API Proxy Architecture
+
+All API calls from the frontend use **relative URLs** (no `NEXT_PUBLIC_API_URL`). The Next.js server proxies requests to identity-svc via `rewrites()` in `next.config.ts`:
+
+- `/api/auth/*`, `/api/users/*`, `/api/learners/*`, `/api/notifications/*`, `/api/billing/*`, `/api/learning/*`, `/api/tutors/*`, `/api/shop/*`, `/api/teacher/*`, `/api/onboarding/*`, `/api/assessment/*`, `/api/family/*` → `http://localhost:3001/api/...`
+- `/family/*` → `http://localhost:3001/family/*` (family-proxy, root level)
+- `/assessment/*` → `http://localhost:3001/assessment/*` (assessment-proxy, root level)
+
+The `BACKEND_URL` env var (server-side only, defaults to `http://localhost:3001`) configures the proxy target. No `NEXT_PUBLIC_*` API URL is used.
+
 ## Environment Variables
 
 See `.env.example` for all required variables. Key ones:
-- `NEXT_PUBLIC_API_URL` — URL of the identity-svc API gateway
+- `BACKEND_URL` — Identity-svc URL for Next.js rewrites (server-side only, default: `http://localhost:3001`)
 - `AUTH_SECRET` — 32-char secret for auth sessions
 - `DATABASE_URL` — PostgreSQL connection string
 - Stripe keys for billing
@@ -257,6 +267,13 @@ pnpm --filter @aivo/observability build
 
 ### Workflow
 The "Identity Service" workflow runs `cd services/identity-svc && NODE_ENV=development tsx src/index.ts` on port 3001.
+
+## Deployment
+
+Configured for **autoscale** deployment:
+- **Build**: `cd services/identity-svc && npx tsup --no-dts && cd ../.. && cd apps/web && pnpm run build`
+- **Run**: `bash start.sh` (starts identity-svc + Next.js in parallel)
+- **start.sh**: Launches identity-svc (port 3001) and Next.js (port 5000) as background processes
 
 ## Notes
 

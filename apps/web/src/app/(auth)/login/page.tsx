@@ -51,8 +51,7 @@ export default function LoginPage() {
   };
 
   const handleOAuth = (provider: "google" | "apple") => {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
-    window.location.href = `${baseUrl}/api/auth/${provider}`;
+    window.location.href = `/api/auth/${provider}`;
   };
 
   return (

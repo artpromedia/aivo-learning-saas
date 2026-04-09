@@ -84,7 +84,7 @@ export default function LearnerProfilePage() {
         const formData = new FormData();
         formData.append("avatar", file);
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001"}/api/learners/${activeLearner.id}/avatar`,
+          `/api/learners/${activeLearner.id}/avatar`,
           { method: "PUT", credentials: "include", body: formData }
         );
         if (!res.ok) throw new Error(t("avatarUploadFailed"));

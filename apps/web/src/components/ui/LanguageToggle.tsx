@@ -51,7 +51,7 @@ export function LanguageToggle() {
     }
     if (open) {
       document.addEventListener("mousedown", handleClickOutside);
-      const idx = locales.indexOf(current);
+      const idx = (locales as readonly string[]).indexOf(current);
       setFocusIndex(idx >= 0 ? idx : 0);
     }
     return () => document.removeEventListener("mousedown", handleClickOutside);
