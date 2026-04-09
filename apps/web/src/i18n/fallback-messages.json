@@ -628,7 +628,8 @@
     "supportedLabel": "Supported",
     "lowVerbalLabel": "Low Verbal",
     "nonVerbalLabel": "Non-Verbal",
-    "preSymbolicLabel": "Pre-Symbolic"
+    "preSymbolicLabel": "Pre-Symbolic",
+    "retry": "Retry"
   },
   "tutor": {
     "startSession": "Start Session",
