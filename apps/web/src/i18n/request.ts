@@ -2,6 +2,7 @@ import { getRequestConfig } from "next-intl/server";
 import type { AbstractIntlMessages } from "next-intl";
 import { cookies, headers } from "next/headers";
 import { defaultLocale, getI18nServiceUrl, locales, type Locale } from "./config";
+import fallbackMessages from "./fallback-messages.json";
 
 function toNestedMessages(flatMessages: Record<string, string>): AbstractIntlMessages {
   const nested: Record<string, unknown> = {};
@@ -27,6 +28,24 @@ function toNestedMessages(flatMessages: Record<string, string>): AbstractIntlMes
   }
 
   return nested as AbstractIntlMessages;
+}
+
+function deepMerge(base: Record<string, unknown>, override: Record<string, unknown>): Record<string, unknown> {
+  const result = { ...base };
+  for (const key of Object.keys(override)) {
+    const baseVal = result[key];
+    const overrideVal = override[key];
+    if (
+      baseVal && overrideVal &&
+      typeof baseVal === "object" && !Array.isArray(baseVal) &&
+      typeof overrideVal === "object" && !Array.isArray(overrideVal)
+    ) {
+      result[key] = deepMerge(baseVal as Record<string, unknown>, overrideVal as Record<string, unknown>);
+    } else {
+      result[key] = overrideVal;
+    }
+  }
+  return result;
 }
 
 async function fetchTranslations(locale: string): Promise<Record<string, string>> {
@@ -67,17 +86,19 @@ export default getRequestConfig(async () => {
   const locale = detectLocale(cookieStore, headerList);
 
   const flatMessages = await fetchTranslations(locale);
-  const messages = toNestedMessages(flatMessages);
+  const serviceMessages = toNestedMessages(flatMessages);
+
+  const hasServiceMessages = Object.keys(flatMessages).length > 0;
+  const messages = hasServiceMessages
+    ? deepMerge(fallbackMessages as Record<string, unknown>, serviceMessages as Record<string, unknown>) as AbstractIntlMessages
+    : (fallbackMessages as AbstractIntlMessages);
 
   return {
     locale,
     messages,
     timeZone: "UTC",
     onError(error) {
-      // Suppress MISSING_MESSAGE warnings — the i18n service may not have been
-      // seeded yet or the key may be new. Log instead of throwing.
       if (error.code === "MISSING_MESSAGE") {
-        // silent in production, log in dev
         if (process.env.NODE_ENV !== "production") {
           console.warn(`[i18n] ${error.message}`);
         }
@@ -86,7 +107,6 @@ export default getRequestConfig(async () => {
       console.error("[i18n]", error);
     },
     getMessageFallback({ namespace, key }) {
-      // Strip namespace prefix and return a readable fallback rather than crashing
       const shortKey = namespace && key.startsWith(`${namespace}.`)
         ? key.slice(namespace.length + 1)
         : key;
