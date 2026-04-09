@@ -11,13 +11,30 @@ import { useTranslations } from "next-intl";
 import { AivoLogo } from "@/components/brand/AivoLogo";
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/hooks/useAuth";
+import { useAuthStore } from "@/stores/auth.store";
+
+const TEST_USERS = {
+  parent: { id: "test-parent-1", email: "parent@test.aivo.com", name: "Sarah Johnson", role: "parent" as const },
+  learner: { id: "test-learner-1", email: "learner@test.aivo.com", name: "Alex Johnson", role: "learner" as const },
+  teacher: { id: "test-teacher-1", email: "teacher@test.aivo.com", name: "Ms. Rivera", role: "educator" as const },
+  admin: { id: "test-admin-1", email: "admin@test.aivo.com", name: "Admin User", role: "admin" as const },
+};
 
 export default function LoginPage() {
   const t = useTranslations("auth");
   const router = useRouter();
   const { login } = useAuth();
+  const storeLogin = useAuthStore((s) => s.login);
   const [showPassword, setShowPassword] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+
+  const handleTestLogin = (role: keyof typeof TEST_USERS) => {
+    const user = TEST_USERS[role];
+    document.cookie = `user_role=${user.role === "educator" ? "teacher" : user.role};path=/;max-age=86400`;
+    storeLogin(user, "test-token-" + role);
+    const redirectMap: Record<string, string> = { parent: "/parent", learner: "/learner", teacher: "/teacher", admin: "/admin/district" };
+    router.push(redirectMap[role] || "/parent");
+  };
 
   const loginSchema = z.object({
     email: z.string().email(t("emailInvalid")),
@@ -186,6 +203,32 @@ export default function LoginPage() {
             </div>
           </div>
         </div>
+
+        {process.env.NODE_ENV !== "production" && (
+          <div className="mt-6 rounded-3xl p-5" style={{ backgroundColor: "var(--aivo-purple-50)", border: "2px dashed var(--aivo-purple-200, #DDD6FE)" }}>
+            <p className="text-xs font-bold text-center mb-3" style={{ color: "var(--aivo-purple-500)" }}>
+              Test Accounts (Dev Only)
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              {(Object.keys(TEST_USERS) as (keyof typeof TEST_USERS)[]).map((role) => (
+                <button
+                  key={role}
+                  type="button"
+                  onClick={() => handleTestLogin(role)}
+                  className="px-3 py-2.5 rounded-2xl text-xs font-bold text-white transition-all hover:scale-[1.03] active:scale-[0.98]"
+                  style={{
+                    background: role === "parent" ? "linear-gradient(135deg, #7C3AED, #A855F7)"
+                      : role === "learner" ? "linear-gradient(135deg, #2DD4BF, #38BDF8)"
+                      : role === "teacher" ? "linear-gradient(135deg, #FB923C, #F472B6)"
+                      : "linear-gradient(135deg, #6366F1, #8B5CF6)",
+                  }}
+                >
+                  {role === "parent" ? "Parent" : role === "learner" ? "Learner" : role === "teacher" ? "Teacher" : "Admin"}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         <p className="mt-6 text-center text-sm font-medium" style={{ color: "var(--aivo-text-secondary)" }}>
           {t("noAccount")}{" "}
