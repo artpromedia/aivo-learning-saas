@@ -124,10 +124,10 @@ export default function TutorsPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={80} className="w-full rounded-xl" />
+        <Skeleton height={80} className="w-full rounded-2xl" />
         <div className="grid gap-4 sm:grid-cols-2">
           {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} height={160} className="w-full rounded-lg" />
+            <Skeleton key={i} height={160} className="w-full rounded-2xl" />
           ))}
         </div>
       </div>
@@ -153,17 +153,17 @@ export default function TutorsPage() {
     <div>
       <Link
         href={`/parent/${learnerId}`}
-        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-4"
+        className="inline-flex items-center gap-1 text-sm text-[var(--aivo-text-secondary)] hover:text-[var(--aivo-text)] dark:text-[var(--aivo-text-muted)] dark:hover:text-[#A89BB5] mb-4"
       >
         <ArrowLeft size={16} />
         {t("backToDashboard")}
       </Link>
 
-      <PurpleGradientHeader className="rounded-xl mb-8">
+      <PurpleGradientHeader className="rounded-2xl mb-8">
         <div className="flex items-center gap-3">
           <Bot size={32} />
           <div>
-            <h1 className="text-2xl font-bold">{t("aiTutors")}</h1>
+            <h1 className="text-2xl font-extrabold">{t("aiTutors")}</h1>
             <p className="text-white/80 text-sm">
               {t("aiTutorsSubtitle")}
             </p>
@@ -172,29 +172,29 @@ export default function TutorsPage() {
       </PurpleGradientHeader>
 
       {error && (
-        <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+        <div className="mb-4 p-3 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171] text-sm">
           {error}
         </div>
       )}
 
-      <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+      <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-4">
         {t("activeTutorsCount", { count: activeTutors.length })}
       </h2>
 
       {activeTutors.length > 0 ? (
         <div className="grid gap-4 sm:grid-cols-2 mb-10">
           {activeTutors.map((tutor) => (
-            <Card key={tutor.id} className="hover:shadow-md transition-shadow">
+            <Card key={tutor.id} className="hover:shadow-[var(--shadow-card)] transition-all">
               <CardBody className="flex items-center gap-4">
                 <TutorAvatar
                   persona={tutor.persona as TutorPersona}
                   size="sm"
                 />
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-gray-900 dark:text-white">
+                  <h3 className="font-semibold text-[var(--aivo-text)]">
                     {tutor.name}
                   </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                  <p className="text-sm text-[var(--aivo-text-secondary)]">
                     {tutor.subject}
                   </p>
                 </div>
@@ -210,15 +210,15 @@ export default function TutorsPage() {
       ) : (
         <Card className="mb-10">
           <CardBody className="text-center py-8">
-            <Bot className="mx-auto mb-3 text-gray-400" size={40} />
-            <p className="text-gray-500 dark:text-gray-400">
+            <Bot className="mx-auto mb-3 text-[#A89BB5]" size={40} />
+            <p className="text-[var(--aivo-text-secondary)]">
               {t("noActiveTutors")}
             </p>
           </CardBody>
         </Card>
       )}
 
-      <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+      <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-4">
         {t("tutorStoreLabel")}
       </h2>
 
@@ -233,13 +233,13 @@ export default function TutorsPage() {
                     size="sm"
                   />
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-gray-900 dark:text-white">
+                    <h3 className="font-semibold text-[var(--aivo-text)]">
                       {tutor.name}
                     </h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                    <p className="text-sm text-[var(--aivo-text-secondary)] mb-2">
                       {tutor.description}
                     </p>
-                    <div className="flex items-center gap-3 text-xs text-gray-400 mb-3">
+                    <div className="flex items-center gap-3 text-xs text-[var(--aivo-text-muted)] mb-3">
                       <span>${tutor.price.toFixed(2)}/mo</span>
                     </div>
                   </div>
@@ -260,7 +260,7 @@ export default function TutorsPage() {
       ) : (
         <Card>
           <CardBody className="text-center py-8">
-            <p className="text-gray-500 dark:text-gray-400">
+            <p className="text-[var(--aivo-text-secondary)]">
               {t("noAdditionalTutors")}
             </p>
           </CardBody>

@@ -159,10 +159,10 @@ export function BreakWrapper({
               >
                 🎉
               </motion.span>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              <h2 className="text-2xl font-extrabold text-[var(--aivo-text)] mb-2">
                 Time for a break!
               </h2>
-              <p className="text-gray-500 dark:text-gray-400">
+              <p className="text-[var(--aivo-text-secondary)]">
                 {label.emoji} {label.title} — let&apos;s have some fun!
               </p>
               <div role="status" className="sr-only">
@@ -182,7 +182,7 @@ export function BreakWrapper({
             >
               {/* Header with timer */}
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                <h2 className="text-lg font-bold text-[var(--aivo-text)] flex items-center gap-2">
                   <span aria-hidden="true">{label.emoji}</span>
                   {label.title}
                 </h2>
@@ -193,7 +193,7 @@ export function BreakWrapper({
                   aria-label={`${secondsLeft} seconds remaining`}
                 >
                   <div
-                    className="h-2 w-24 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden"
+                    className="h-2 w-24 bg-[#F0E6FF] dark:bg-[#3D2D5C] rounded-full overflow-hidden"
                     role="progressbar"
                     aria-valuemin={0}
                     aria-valuemax={duration}
@@ -204,7 +204,7 @@ export function BreakWrapper({
                       style={{ width: `${(secondsLeft / duration) * 100}%` }}
                     />
                   </div>
-                  <span className="text-sm font-mono font-medium text-gray-600 dark:text-gray-300 tabular-nums min-w-[3ch]">
+                  <span className="text-sm font-mono font-medium text-[var(--aivo-text-secondary)] dark:text-[#A89BB5] tabular-nums min-w-[3ch]">
                     {timerDisplay}
                   </span>
                 </div>
@@ -267,7 +267,7 @@ export function BreakWrapper({
               >
                 ⭐
               </motion.span>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
+              <h2 className="text-xl font-extrabold text-[var(--aivo-text)] mb-1">
                 Great break!
               </h2>
               {xpAwarded !== null && (
@@ -280,7 +280,7 @@ export function BreakWrapper({
                   +{xpAwarded} XP earned!
                 </motion.p>
               )}
-              <p className="text-gray-500 dark:text-gray-400 text-sm mt-2">
+              <p className="text-[var(--aivo-text-secondary)] text-sm mt-2">
                 Returning to your assessment...
               </p>
               <div role="status" className="sr-only">

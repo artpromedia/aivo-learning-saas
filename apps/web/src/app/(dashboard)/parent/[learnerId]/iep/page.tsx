@@ -138,10 +138,10 @@ export default function IepPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={80} className="w-full rounded-xl" />
+        <Skeleton height={80} className="w-full rounded-2xl" />
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
-            <Skeleton key={i} height={120} className="w-full rounded-lg" />
+            <Skeleton key={i} height={120} className="w-full rounded-2xl" />
           ))}
         </div>
       </div>
@@ -167,17 +167,17 @@ export default function IepPage() {
     <div>
       <Link
         href={`/parent/${learnerId}`}
-        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-4"
+        className="inline-flex items-center gap-1 text-sm text-[var(--aivo-text-secondary)] hover:text-[var(--aivo-text)] dark:text-[var(--aivo-text-muted)] dark:hover:text-[#A89BB5] mb-4"
       >
         <ArrowLeft size={16} />
         {t("backToDashboard")}
       </Link>
 
-      <PurpleGradientHeader className="rounded-xl mb-8">
+      <PurpleGradientHeader className="rounded-2xl mb-8">
         <div className="flex items-center gap-3">
           <FileText size={32} />
           <div>
-            <h1 className="text-2xl font-bold">{t("iepGoalsDocuments")}</h1>
+            <h1 className="text-2xl font-extrabold">{t("iepGoalsDocuments")}</h1>
             <p className="text-white/80 text-sm">
               {t("iepGoalsDocumentsSubtitle")}
               {data?.nextReviewDate && (
@@ -193,13 +193,13 @@ export default function IepPage() {
       </PurpleGradientHeader>
 
       {error && (
-        <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+        <div className="mb-4 p-3 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171] text-sm">
           {error}
         </div>
       )}
 
       {/* Goals Section */}
-      <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+      <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-4">
         {t("iepGoals")}
       </h2>
 
@@ -225,7 +225,7 @@ export default function IepPage() {
                         {statusLabels[goal.status]}
                       </Badge>
                     </div>
-                    <p className="text-sm text-gray-700 dark:text-gray-300">
+                    <p className="text-sm text-[var(--aivo-text)]">
                       {goal.description}
                     </p>
                   </div>
@@ -242,7 +242,7 @@ export default function IepPage() {
                   size="sm"
                   showLabel
                 />
-                <p className="text-xs text-gray-400 mt-2">
+                <p className="text-xs text-[var(--aivo-text-muted)] mt-2">
                   {t("target")} {new Date(goal.targetDate).toLocaleDateString()}
                 </p>
               </CardBody>
@@ -252,8 +252,8 @@ export default function IepPage() {
       ) : (
         <Card className="mb-8">
           <CardBody className="text-center py-8">
-            <FileText className="mx-auto mb-3 text-gray-400" size={40} />
-            <p className="text-gray-500 dark:text-gray-400">
+            <FileText className="mx-auto mb-3 text-[#A89BB5]" size={40} />
+            <p className="text-[var(--aivo-text-secondary)]">
               {t("noIepGoalsDesc")}
             </p>
           </CardBody>
@@ -263,7 +263,7 @@ export default function IepPage() {
       {/* Accommodations */}
       {data?.accommodations && data.accommodations.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-4">
             {t("accommodations")}
           </h2>
           <Card>
@@ -285,7 +285,7 @@ export default function IepPage() {
 
       {/* Documents Section */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+        <h2 className="text-lg font-bold text-[var(--aivo-text)]">
           {t("documents")}
         </h2>
         <Button
@@ -313,21 +313,21 @@ export default function IepPage() {
           {data.documents.map((doc) => (
             <Card key={doc.id}>
               <CardBody className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-lg bg-[#7C3AED]/10 flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-2xl bg-[#7C3AED]/10 flex items-center justify-center shrink-0">
                   <FileText className="text-[#7C3AED]" size={20} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                  <p className="text-sm font-medium text-[var(--aivo-text)] truncate">
                     {doc.fileName}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-[var(--aivo-text-secondary)]">
                     Uploaded {new Date(doc.uploadedAt).toLocaleDateString()}{" "}
                     &middot; {(doc.fileSize / 1024 / 1024).toFixed(1)} MB
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
-                    className="p-2 rounded-lg text-gray-400 hover:text-[#7C3AED] hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                    className="p-2 rounded-2xl text-[var(--aivo-text-muted)] hover:text-[#7C3AED] hover:bg-[#FFF5EB] dark:hover:bg-[#2A1E45] transition-colors"
                     title="Download"
                   >
                     <Download size={16} />
@@ -335,7 +335,7 @@ export default function IepPage() {
                   <button
                     onClick={() => handleDelete(doc.id)}
                     disabled={deletingId === doc.id}
-                    className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50"
+                    className="p-2 rounded-2xl text-[var(--aivo-text-muted)] hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50"
                     title="Delete"
                   >
                     {deletingId === doc.id ? (
@@ -352,8 +352,8 @@ export default function IepPage() {
       ) : (
         <Card>
           <CardBody className="text-center py-8">
-            <Upload className="mx-auto mb-3 text-gray-400" size={40} />
-            <p className="text-gray-500 dark:text-gray-400">
+            <Upload className="mx-auto mb-3 text-[#A89BB5]" size={40} />
+            <p className="text-[var(--aivo-text-secondary)]">
               {t("noDocuments")}
             </p>
           </CardBody>

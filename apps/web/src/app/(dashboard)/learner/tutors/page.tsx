@@ -86,10 +86,10 @@ export default function LearnerTutorsPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={80} className="w-full rounded-xl" />
+        <Skeleton height={80} className="w-full rounded-2xl" />
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
-            <Skeleton key={i} height={100} className="w-full rounded-lg" />
+            <Skeleton key={i} height={100} className="w-full rounded-2xl" />
           ))}
         </div>
       </div>
@@ -113,11 +113,11 @@ export default function LearnerTutorsPage() {
 
   return (
     <div>
-      <PurpleGradientHeader className="rounded-xl mb-8">
+      <PurpleGradientHeader className="rounded-2xl mb-8">
         <div className="flex items-center gap-3">
           <Bot size={32} />
           <div>
-            <h1 className="text-2xl font-bold">{t("myTutors")}</h1>
+            <h1 className="text-2xl font-extrabold">{t("myTutors")}</h1>
             <p className="text-white/80 text-sm">
               {t("myTutorsDescription")}
             </p>
@@ -128,11 +128,11 @@ export default function LearnerTutorsPage() {
       {tutors.length === 0 ? (
         <Card>
           <CardBody className="text-center py-12">
-            <Bot className="mx-auto mb-3 text-gray-400" size={48} />
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            <Bot className="mx-auto mb-3 text-[#A89BB5]" size={48} />
+            <h3 className="text-lg font-bold text-[var(--aivo-text)] mb-2">
               {t("noTutorsAvailable")}
             </h3>
-            <p className="text-gray-500 dark:text-gray-400">
+            <p className="text-[var(--aivo-text-secondary)]">
               {t("askParentToSubscribe")}
             </p>
           </CardBody>
@@ -141,21 +141,21 @@ export default function LearnerTutorsPage() {
         <div className="space-y-4">
           {tutors.map((tutor) => (
             <Link key={tutor.id} href={`/learner/tutors/${tutor.persona}`}>
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer group">
+              <Card className="hover:shadow-[var(--shadow-hover)] transition-all cursor-pointer group">
                 <CardBody className="flex items-center gap-4">
                   <TutorAvatar
                     persona={tutor.persona as TutorPersona}
                     size="sm"
                   />
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-gray-900 dark:text-white">
+                    <h3 className="font-semibold text-[var(--aivo-text)]">
                       {tutor.name}
                     </h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                    <p className="text-sm text-[var(--aivo-text-secondary)] truncate">
                       {tutor.description}
                     </p>
                     {tutor.activatedAt && (
-                      <div className="flex items-center gap-3 mt-1 text-xs text-gray-400">
+                      <div className="flex items-center gap-3 mt-1 text-xs text-[#A89BB5]">
                         <span className="flex items-center gap-1">
                           <Clock size={12} />
                           Since: {new Date(tutor.activatedAt).toLocaleDateString()}

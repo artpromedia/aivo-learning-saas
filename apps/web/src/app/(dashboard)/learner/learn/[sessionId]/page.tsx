@@ -126,7 +126,7 @@ export default function LearnSessionPage() {
     return (
       <div className="max-w-2xl mx-auto space-y-6">
         <Skeleton height={12} className="w-full rounded-full" />
-        <Skeleton height={300} className="w-full rounded-lg" />
+        <Skeleton height={300} className="w-full rounded-2xl" />
       </div>
     );
   }
@@ -145,39 +145,39 @@ export default function LearnSessionPage() {
   if (summary) {
     return (
       <div className="max-w-lg mx-auto text-center py-12">
-        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#7C4DFF] flex items-center justify-center mx-auto mb-6 shadow-lg shadow-[#7C3AED]/30">
+        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#A855F7] flex items-center justify-center mx-auto mb-6 shadow-lg shadow-[#7C3AED]/30">
           <Trophy className="text-white" size={40} />
         </div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+        <h1 className="text-2xl font-extrabold text-[var(--aivo-text)] mb-2">
           {t("sessionComplete")}
         </h1>
-        <p className="text-gray-500 dark:text-gray-400 mb-6">
+        <p className="text-[var(--aivo-text-secondary)] mb-6">
           {t("greatWork", { name: activeLearner?.name ?? "learner" })}
         </p>
 
         <div className="grid grid-cols-3 gap-4 mb-8">
           <Card>
             <CardBody className="text-center py-4">
-              <p className="text-2xl font-bold text-[#7C3AED]">
+              <p className="text-2xl font-extrabold text-[#7C3AED]">
                 +{summary.totalXp}
               </p>
-              <p className="text-xs text-gray-500">{t("xpEarned")}</p>
+              <p className="text-xs text-[var(--aivo-text-secondary)]">{t("xpEarned")}</p>
             </CardBody>
           </Card>
           <Card>
             <CardBody className="text-center py-4">
-              <p className="text-2xl font-bold text-[#38B2AC]">
+              <p className="text-2xl font-extrabold text-[#38B2AC]">
                 {summary.accuracy}%
               </p>
-              <p className="text-xs text-gray-500">{t("accuracy")}</p>
+              <p className="text-xs text-[var(--aivo-text-secondary)]">{t("accuracy")}</p>
             </CardBody>
           </Card>
           <Card>
             <CardBody className="text-center py-4">
-              <p className="text-2xl font-bold text-orange-500">
+              <p className="text-2xl font-extrabold text-orange-500">
                 {Math.round(summary.duration / 60)}m
               </p>
-              <p className="text-xs text-gray-500">{t("duration")}</p>
+              <p className="text-xs text-[var(--aivo-text-secondary)]">{t("duration")}</p>
             </CardBody>
           </Card>
         </div>
@@ -185,7 +185,7 @@ export default function LearnSessionPage() {
         {summary.badgesEarned.length > 0 && (
           <Card className="mb-6">
             <CardBody>
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <p className="text-sm font-medium text-[var(--aivo-text)] mb-2">
                 {t("badgesEarnedLabel")}
               </p>
               <div className="flex flex-wrap justify-center gap-2">
@@ -215,14 +215,14 @@ export default function LearnSessionPage() {
       <div className="flex items-center gap-4 mb-6">
         <button
           onClick={() => setShowExitModal(true)}
-          className="p-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          className="p-2 rounded-2xl text-[var(--aivo-text-muted)] hover:text-[var(--aivo-text-secondary)] hover:bg-[#FFF5EB] dark:hover:bg-[#2A1E45] transition-colors"
         >
           <X size={20} />
         </button>
         <div className="flex-1">
           <ProgressBar value={progress} max={100} size="sm" showLabel={false} />
         </div>
-        <span className="text-sm text-gray-500 whitespace-nowrap">
+        <span className="text-sm text-[var(--aivo-text-secondary)] whitespace-nowrap">
           {questionsAnswered}/{totalQuestions}
         </span>
       </div>
@@ -231,7 +231,7 @@ export default function LearnSessionPage() {
         <Card>
           <CardBody>
             {question.imageUrl && (
-              <div className="mb-4 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
+              <div className="mb-4 rounded-2xl overflow-hidden bg-[var(--aivo-bg-alt,#FFF5EB)]">
                 <img
                   src={question.imageUrl}
                   alt="Question visual"
@@ -240,13 +240,13 @@ export default function LearnSessionPage() {
               </div>
             )}
 
-            <p className="text-lg font-medium text-gray-900 dark:text-white mb-6">
+            <p className="text-lg font-medium text-[var(--aivo-text)] mb-6">
               {question.prompt}
             </p>
 
             {feedback && (
               <div
-                className={`mb-4 p-3 rounded-lg text-sm font-medium ${
+                className={`mb-4 p-3 rounded-2xl text-sm font-medium ${
                   feedback.correct
                     ? "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800"
                     : "bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400 border border-orange-200 dark:border-orange-800"
@@ -264,13 +264,13 @@ export default function LearnSessionPage() {
                     type="button"
                     disabled={!!feedback}
                     onClick={() => setSelectedAnswer(option)}
-                    className={`w-full text-left p-4 rounded-lg border-2 transition-all ${
+                    className={`w-full text-left p-4 rounded-2xl border-2 transition-all ${
                       selectedAnswer === option
-                        ? "border-[#7C3AED] bg-[#7C3AED]/5 shadow-sm"
-                        : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
+                        ? "border-[#7C3AED] bg-[#7C3AED]/5 shadow-[var(--shadow-card)]"
+                        : "border-[#E8DDF0] dark:border-[#3D2D5C] hover:border-[#E8DDF0] dark:hover:border-[#3D2D5C]"
                     } ${feedback ? "opacity-75 cursor-not-allowed" : ""}`}
                   >
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <span className="text-sm font-medium text-[var(--aivo-text)]">
                       {option}
                     </span>
                   </button>
@@ -284,7 +284,7 @@ export default function LearnSessionPage() {
                 value={selectedAnswer ?? ""}
                 onChange={(e) => setSelectedAnswer(e.target.value)}
                 disabled={!!feedback}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none text-lg"
+                className="w-full px-4 py-3 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none text-lg"
                 placeholder={t("typeYourAnswer")}
               />
             )}
@@ -322,7 +322,7 @@ export default function LearnSessionPage() {
           </div>
         }
       >
-        <p className="text-sm text-gray-600 dark:text-gray-400">
+        <p className="text-sm text-[var(--aivo-text-secondary)]">
           {t("leaveSessionDescription")}
         </p>
       </Modal>

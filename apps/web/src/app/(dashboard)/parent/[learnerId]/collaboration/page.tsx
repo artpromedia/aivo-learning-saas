@@ -110,11 +110,11 @@ export default function CollaborationPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={80} className="w-full rounded-xl" />
-        <Skeleton height={200} className="w-full rounded-lg" />
+        <Skeleton height={80} className="w-full rounded-2xl" />
+        <Skeleton height={200} className="w-full rounded-2xl" />
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <Skeleton key={i} height={72} className="w-full rounded-lg" />
+            <Skeleton key={i} height={72} className="w-full rounded-2xl" />
           ))}
         </div>
       </div>
@@ -125,17 +125,17 @@ export default function CollaborationPage() {
     <div>
       <Link
         href={`/parent/${learnerId}`}
-        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-4"
+        className="inline-flex items-center gap-1 text-sm text-[var(--aivo-text-secondary)] hover:text-[var(--aivo-text)] dark:text-[var(--aivo-text-muted)] dark:hover:text-[#A89BB5] mb-4"
       >
         <ArrowLeft size={16} />
         {t("backToDashboard")}
       </Link>
 
-      <PurpleGradientHeader className="rounded-xl mb-8">
+      <PurpleGradientHeader className="rounded-2xl mb-8">
         <div className="flex items-center gap-3">
           <Users size={32} />
           <div>
-            <h1 className="text-2xl font-bold">{t("collaborationTeam")}</h1>
+            <h1 className="text-2xl font-extrabold">{t("collaborationTeam")}</h1>
             <p className="text-white/80 text-sm">
               {t("collaborationDesc")}
             </p>
@@ -144,7 +144,7 @@ export default function CollaborationPage() {
       </PurpleGradientHeader>
 
       {error && (
-        <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+        <div className="mb-4 p-3 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171] text-sm">
           {error}
         </div>
       )}
@@ -152,7 +152,7 @@ export default function CollaborationPage() {
       {/* Invite Form */}
       <Card className="mb-8">
         <CardHeader>
-          <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+          <h3 className="font-semibold text-[var(--aivo-text)] flex items-center gap-2">
             <UserPlus size={18} className="text-[#7C3AED]" />
             {t("inviteTeamMember")}
           </h3>
@@ -160,20 +160,20 @@ export default function CollaborationPage() {
         <CardBody>
           <form onSubmit={handleInvite} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-[var(--aivo-text)] mb-1">
                 {t("emailAddress")}
               </label>
               <input
                 type="email"
                 value={inviteEmail}
                 onChange={(e) => setInviteEmail(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none"
+                className="w-full px-4 py-2.5 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none"
                 placeholder="colleague@school.edu"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-[var(--aivo-text)] mb-1">
                 {t("role")}
               </label>
               <select
@@ -183,7 +183,7 @@ export default function CollaborationPage() {
                     e.target.value as "teacher" | "therapist" | "caregiver",
                   )
                 }
-                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none"
+                className="w-full px-4 py-2.5 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none"
               >
                 <option value="teacher">{t("teacher")}</option>
                 <option value="therapist">{t("therapist")}</option>
@@ -202,7 +202,7 @@ export default function CollaborationPage() {
       </Card>
 
       {/* Current Members */}
-      <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+      <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-4">
         {t("currentMembers", { count: members.length })}
       </h2>
 
@@ -216,7 +216,7 @@ export default function CollaborationPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <h3 className="font-medium text-gray-900 dark:text-white truncate">
+                    <h3 className="font-medium text-[var(--aivo-text)] truncate">
                       {member.name || member.email}
                     </h3>
                     <Badge
@@ -233,14 +233,14 @@ export default function CollaborationPage() {
                       <Badge variant="secondary">{t("pending")}</Badge>
                     )}
                   </div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                  <p className="text-sm text-[var(--aivo-text-secondary)] truncate">
                     {member.email}
                   </p>
                 </div>
                 <button
                   onClick={() => handleRemove(member.id)}
                   disabled={removingId === member.id}
-                  className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50"
+                  className="p-2 rounded-2xl text-[var(--aivo-text-muted)] hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50"
                   title={t("removeMember")}
                 >
                   {removingId === member.id ? (
@@ -256,8 +256,8 @@ export default function CollaborationPage() {
       ) : (
         <Card>
           <CardBody className="text-center py-8">
-            <Users className="mx-auto mb-3 text-gray-400" size={40} />
-            <p className="text-gray-500 dark:text-gray-400">
+            <Users className="mx-auto mb-3 text-[#A89BB5]" size={40} />
+            <p className="text-[var(--aivo-text-secondary)]">
               {t("noTeamMembers")}
             </p>
           </CardBody>

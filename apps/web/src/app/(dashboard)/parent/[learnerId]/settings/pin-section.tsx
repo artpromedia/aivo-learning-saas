@@ -56,14 +56,14 @@ export function PinSection({ learnerId, hasPinSet }: PinSectionProps) {
       <CardHeader>
         <div className="flex items-center gap-2">
           <Key size={20} className="text-[#7C3AED]" />
-          <h3 className="text-lg font-semibold">{t("learnerPin")}</h3>
+          <h3 className="text-lg font-bold">{t("learnerPin")}</h3>
         </div>
-        <p className="text-sm text-gray-500 mt-1">{t("learnerPinDescription")}</p>
+        <p className="text-sm text-[var(--aivo-text-secondary)] mt-1">{t("learnerPinDescription")}</p>
       </CardHeader>
       <CardBody>
         <form onSubmit={handleSubmit} className="space-y-4 max-w-xs">
           <div>
-            <label htmlFor="newPin" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label htmlFor="newPin" className="block text-sm font-medium text-[var(--aivo-text)] mb-1">
               {hasPinSet ? t("newPin") : t("createPin")}
             </label>
             <input
@@ -74,12 +74,12 @@ export function PinSection({ learnerId, hasPinSet }: PinSectionProps) {
               pattern="[0-9]*"
               value={newPin}
               onChange={(e) => setNewPin(e.target.value.replace(/\D/g, ""))}
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 tracking-[0.5em] text-center text-lg"
+              className="w-full px-4 py-2.5 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] tracking-[0.5em] text-center text-lg"
               placeholder="••••"
             />
           </div>
           <div>
-            <label htmlFor="confirmNewPin" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label htmlFor="confirmNewPin" className="block text-sm font-medium text-[var(--aivo-text)] mb-1">
               {t("confirmPin")}
             </label>
             <input
@@ -90,7 +90,7 @@ export function PinSection({ learnerId, hasPinSet }: PinSectionProps) {
               pattern="[0-9]*"
               value={confirmPin}
               onChange={(e) => setConfirmPin(e.target.value.replace(/\D/g, ""))}
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 tracking-[0.5em] text-center text-lg"
+              className="w-full px-4 py-2.5 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] tracking-[0.5em] text-center text-lg"
               placeholder="••••"
             />
           </div>

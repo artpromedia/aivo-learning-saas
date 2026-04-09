@@ -2,12 +2,13 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { Plus, Brain, BookOpen, Trophy, ChevronRight, Loader2 } from "lucide-react";
+import { Plus, Brain, BookOpen, Trophy, ChevronRight, Loader2, Flame, Star } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Skeleton, SkeletonAvatar } from "@/components/ui/Skeleton";
+import { ProgressBar } from "@/components/ui/ProgressBar";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
 import { useAuth } from "@/hooks/useAuth";
 import { apiFetch } from "@/lib/api";
@@ -24,6 +25,14 @@ interface LearnerSummary {
   lastActiveAt: string;
   todayProgress: number;
 }
+
+const levelColors: Record<string, { variant: "default" | "teal" | "sunny" | "coral" | "pink" }> = {
+  STANDARD: { variant: "teal" },
+  SUPPORTED: { variant: "sunny" },
+  LOW_VERBAL: { variant: "coral" },
+  NON_VERBAL: { variant: "pink" },
+  PRE_SYMBOLIC: { variant: "default" },
+};
 
 export default function ParentDashboardPage() {
   const t = useTranslations("dashboard");
@@ -49,40 +58,34 @@ export default function ParentDashboardPage() {
 
   const levelLabel = (fl: string) => {
     switch (fl) {
-      case "STANDARD":
-        return t("standard");
-      case "SUPPORTED":
-        return t("supported");
-      case "LOW_VERBAL":
-        return t("lowVerbal");
-      case "NON_VERBAL":
-        return t("nonVerbal");
-      case "PRE_SYMBOLIC":
-        return t("preSymbolic");
-      default:
-        return fl;
+      case "STANDARD": return t("standard");
+      case "SUPPORTED": return t("supported");
+      case "LOW_VERBAL": return t("lowVerbal");
+      case "NON_VERBAL": return t("nonVerbal");
+      case "PRE_SYMBOLIC": return t("preSymbolic");
+      default: return fl;
     }
   };
 
   return (
     <div>
-      <PurpleGradientHeader className="rounded-xl mb-8">
-        <h1 className="text-2xl font-bold">
+      <PurpleGradientHeader className="mb-8">
+        <h1 className="text-2xl font-extrabold" style={{ fontFamily: "var(--font-display)" }}>
           {t("welcomeBack", { name: user?.name?.split(" ")[0] ?? "Parent" })}
         </h1>
-        <p className="mt-1 text-white/80">
+        <p className="mt-1 text-white/80 font-medium">
           {t("childrenOverview")}
         </p>
       </PurpleGradientHeader>
 
       {error && (
-        <div className="mb-6 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400">
+        <div className="mb-6 p-4 rounded-2xl text-sm font-medium" style={{ backgroundColor: "#FFE0E0", color: "#991B1B", border: "1px solid #FECACA" }}>
           {error}
         </div>
       )}
 
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+        <h2 className="text-lg font-extrabold" style={{ color: "var(--aivo-text)", fontFamily: "var(--font-display)" }}>
           {t("yourChildren")}
         </h2>
         <Link href="/add-child">
@@ -110,13 +113,13 @@ export default function ParentDashboardPage() {
       ) : learners.length === 0 ? (
         <Card>
           <CardBody className="text-center py-12">
-            <div className="w-16 h-16 rounded-full bg-[#7C3AED]/10 flex items-center justify-center mx-auto mb-4">
-              <Plus className="text-[#7C3AED]" size={32} />
+            <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 animate-float" style={{ backgroundColor: "var(--aivo-purple-50)", color: "var(--aivo-purple-500)" }}>
+              <Plus size={32} />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            <h3 className="text-lg font-extrabold mb-2" style={{ color: "var(--aivo-text)", fontFamily: "var(--font-display)" }}>
               {t("noChildrenYet")}
             </h3>
-            <p className="text-gray-500 dark:text-gray-400 mb-4">
+            <p className="font-medium mb-4" style={{ color: "var(--aivo-text-secondary)" }}>
               {t("addChildPrompt")}
             </p>
             <Link href="/add-child">
@@ -128,69 +131,55 @@ export default function ParentDashboardPage() {
         <div className="grid gap-4 sm:grid-cols-2">
           {learners.map((learner) => (
             <Link key={learner.id} href={`/parent/${learner.id}`}>
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer group">
+              <Card className="hover:shadow-[var(--shadow-hover)] transition-all cursor-pointer group hover:scale-[1.01]">
                 <CardBody>
                   <div className="flex items-start gap-4">
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#7C4DFF] flex items-center justify-center text-white text-xl font-bold shrink-0">
+                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-xl font-bold shrink-0" style={{ background: "linear-gradient(135deg, #7C3AED, #A855F7, #2DD4BF)" }}>
                       {learner.avatarUrl ? (
-                        <img
-                          src={learner.avatarUrl}
-                          alt={learner.name}
-                          className="w-full h-full rounded-full object-cover"
-                        />
+                        <img src={learner.avatarUrl} alt={learner.name} className="w-full h-full rounded-2xl object-cover" />
                       ) : (
                         learner.name.charAt(0).toUpperCase()
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white truncate">
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <h3 className="text-lg font-bold truncate" style={{ color: "var(--aivo-text)" }}>
                           {learner.name}
                         </h3>
-                        <Badge variant="default">{levelLabel(learner.functioningLevel)}</Badge>
+                        <Badge variant={levelColors[learner.functioningLevel]?.variant ?? "default"}>
+                          {levelLabel(learner.functioningLevel)}
+                        </Badge>
                       </div>
 
                       <div className="grid grid-cols-3 gap-3 mt-3">
-                        <div className="text-center">
-                          <div className="flex items-center justify-center gap-1 text-[#7C3AED]">
+                        <div className="text-center p-2 rounded-2xl" style={{ backgroundColor: "var(--aivo-purple-50)" }}>
+                          <div className="flex items-center justify-center gap-1" style={{ color: "var(--aivo-purple-500)" }}>
                             <Trophy size={14} />
                             <span className="text-sm font-bold">{learner.totalXp}</span>
                           </div>
-                          <span className="text-xs text-gray-500">{t("xp")}</span>
+                          <span className="text-xs font-semibold" style={{ color: "var(--aivo-text-muted)" }}>{t("xp")}</span>
                         </div>
-                        <div className="text-center">
-                          <div className="flex items-center justify-center gap-1 text-orange-500">
-                            <span className="text-sm">🔥</span>
+                        <div className="text-center p-2 rounded-2xl" style={{ backgroundColor: "#FFF7ED" }}>
+                          <div className="flex items-center justify-center gap-1" style={{ color: "#FB923C" }}>
+                            <Flame size={14} />
                             <span className="text-sm font-bold">{learner.currentStreak}</span>
                           </div>
-                          <span className="text-xs text-gray-500">{t("streak")}</span>
+                          <span className="text-xs font-semibold" style={{ color: "var(--aivo-text-muted)" }}>{t("streak")}</span>
                         </div>
-                        <div className="text-center">
-                          <div className="flex items-center justify-center gap-1 text-[#38B2AC]">
-                            <BookOpen size={14} />
+                        <div className="text-center p-2 rounded-2xl" style={{ backgroundColor: "#CCFBF1" }}>
+                          <div className="flex items-center justify-center gap-1" style={{ color: "#2DD4BF" }}>
+                            <Star size={14} />
                             <span className="text-sm font-bold">Lv.{learner.level}</span>
                           </div>
-                          <span className="text-xs text-gray-500">{t("level")}</span>
+                          <span className="text-xs font-semibold" style={{ color: "var(--aivo-text-muted)" }}>{t("level")}</span>
                         </div>
                       </div>
 
                       <div className="mt-3">
-                        <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
-                          <span>{t("todaysProgress")}</span>
-                          <span>{learner.todayProgress}%</span>
-                        </div>
-                        <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-gradient-to-r from-[#7C3AED] to-[#7C4DFF] rounded-full transition-all"
-                            style={{ width: `${learner.todayProgress}%` }}
-                          />
-                        </div>
+                        <ProgressBar value={learner.todayProgress} showLabel={true} size="sm" color="rainbow" />
                       </div>
                     </div>
-                    <ChevronRight
-                      className="text-gray-400 group-hover:text-[#7C3AED] transition-colors shrink-0 mt-1"
-                      size={20}
-                    />
+                    <ChevronRight className="shrink-0 mt-1 transition-all group-hover:translate-x-1" size={20} style={{ color: "var(--aivo-text-muted)" }} />
                   </div>
                 </CardBody>
               </Card>

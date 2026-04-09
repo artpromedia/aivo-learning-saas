@@ -78,7 +78,7 @@ function NotificationBell({
     <div className={`relative ${className}`} ref={dropdownRef}>
       <button
         onClick={() => setOpen(!open)}
-        className="relative p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+        className="relative p-2 rounded-2xl text-[var(--aivo-text-secondary)] dark:text-[var(--aivo-text-muted)] hover:bg-[#FFF5EB] dark:hover:bg-[#2A1E45] transition-colors"
         aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ""}`}
       >
         <Bell size={20} />
@@ -90,9 +90,9 @@ function NotificationBell({
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-80 bg-white dark:bg-gray-900 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
+        <div className="absolute right-0 top-full mt-2 w-80 bg-white dark:bg-[#2A1E45] rounded-2xl shadow-xl border border-[#E8DDF0] dark:border-[#3D2D5C] z-50 overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-[#E8DDF0] dark:border-[#3D2D5C]">
+            <h3 className="text-sm font-semibold text-[var(--aivo-text)] ">
               Notifications
             </h3>
             {unreadCount > 0 && (
@@ -107,7 +107,7 @@ function NotificationBell({
 
           <div className="max-h-80 overflow-y-auto">
             {notifications.length === 0 ? (
-              <div className="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400">
+              <div className="px-4 py-8 text-center text-sm text-[var(--aivo-text-secondary)] dark:text-[var(--aivo-text-muted)]">
                 No notifications yet
               </div>
             ) : (
@@ -115,7 +115,7 @@ function NotificationBell({
                 <button
                   key={notification.id}
                   onClick={() => markAsRead(notification.id)}
-                  className={`w-full text-left px-4 py-3 border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors ${
+                  className={`w-full text-left px-4 py-3 border-b border-[#F0E6FF] dark:border-[#3D2D5C] hover:bg-[var(--aivo-bg)] dark:hover:bg-[#2A1E45]/50 transition-colors ${
                     !notification.read ? "bg-[#7C3AED]/5" : ""
                   }`}
                 >
@@ -128,13 +128,13 @@ function NotificationBell({
                       }`}
                     />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                      <p className="text-sm font-medium text-[var(--aivo-text)]  truncate">
                         {notification.title}
                       </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-2">
+                      <p className="text-xs text-[var(--aivo-text-secondary)] dark:text-[var(--aivo-text-muted)] mt-0.5 line-clamp-2">
                         {notification.message}
                       </p>
-                      <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-1">
+                      <p className="text-[10px] text-[var(--aivo-text-muted)] dark:text-[var(--aivo-text-secondary)] mt-1">
                         {new Date(notification.createdAt).toLocaleDateString()}
                       </p>
                     </div>

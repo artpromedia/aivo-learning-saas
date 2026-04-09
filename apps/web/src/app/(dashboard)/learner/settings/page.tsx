@@ -53,11 +53,11 @@ export default function LearnerSettingsPage() {
 
   return (
     <div>
-      <PurpleGradientHeader className="rounded-xl mb-8">
+      <PurpleGradientHeader className="rounded-2xl mb-8">
         <div className="flex items-center gap-3">
           <Settings size={32} />
           <div>
-            <h1 className="text-2xl font-bold">{t("settings")}</h1>
+            <h1 className="text-2xl font-extrabold">{t("settings")}</h1>
             <p className="text-white/80 text-sm">{t("manageProfileAndPreferences")}</p>
           </div>
         </div>
@@ -69,19 +69,19 @@ export default function LearnerSettingsPage() {
           <CardHeader>
             <div className="flex items-center gap-2">
               <User size={18} className="text-[#7C3AED]" />
-              <h3 className="font-semibold text-gray-900 dark:text-white">{t("account")}</h3>
+              <h3 className="font-semibold text-[var(--aivo-text)]">{t("account")}</h3>
             </div>
           </CardHeader>
           <CardBody className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-[var(--aivo-text)] mb-1">
                 {t("displayName")}
               </label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#7C3AED]"
+                className="w-full px-3 py-2 border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-2xl bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:outline-none focus:ring-2 focus:ring-[#7C3AED]"
               />
             </div>
             {error && <p className="text-sm text-red-500">{error}</p>}
@@ -108,11 +108,11 @@ export default function LearnerSettingsPage() {
           <CardHeader>
             <div className="flex items-center gap-2">
               <Shield size={18} className="text-[#7C3AED]" />
-              <h3 className="font-semibold text-gray-900 dark:text-white">{t("learnerPin")}</h3>
+              <h3 className="font-semibold text-[var(--aivo-text)]">{t("learnerPin")}</h3>
             </div>
           </CardHeader>
           <CardBody>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-[var(--aivo-text-secondary)]">
               {t("pinDescription")}
             </p>
           </CardBody>

@@ -33,9 +33,7 @@ function VerifyEmailContent() {
         setStatus("success");
       } catch (err) {
         setStatus("error");
-        setErrorMessage(
-          err instanceof Error ? err.message : t("verificationFailed"),
-        );
+        setErrorMessage(err instanceof Error ? err.message : t("verificationFailed"));
       }
     }
 
@@ -51,28 +49,24 @@ function VerifyEmailContent() {
         body: JSON.stringify({ email }),
       });
     } catch {
-      // Silently fail - don't reveal whether email exists
     } finally {
       setResending(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 px-4">
+    <div className="min-h-screen flex items-center justify-center px-4 bg-bubbles" style={{ backgroundColor: "var(--aivo-bg)" }}>
       <div className="w-full max-w-md text-center">
         <AivoLogo size="lg" className="mx-auto mb-8" />
 
-        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-8">
+        <div className="rounded-3xl shadow-[var(--shadow-playful)] p-8" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
           {status === "verifying" && (
             <>
-              <Loader2
-                className="mx-auto mb-4 text-[#7C3AED] animate-spin"
-                size={48}
-              />
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+              <Loader2 className="mx-auto mb-4 animate-spin" size={48} style={{ color: "var(--aivo-purple-500)" }} />
+              <h1 className="text-xl font-extrabold mb-2" style={{ color: "var(--aivo-text)", fontFamily: "var(--font-display)" }}>
                 {t("verifyingEmail")}
               </h1>
-              <p className="text-gray-500 dark:text-gray-400">
+              <p className="font-medium" style={{ color: "var(--aivo-text-secondary)" }}>
                 {t("verifyingEmailDescription")}
               </p>
             </>
@@ -80,47 +74,38 @@ function VerifyEmailContent() {
 
           {status === "success" && (
             <>
-              <CheckCircle
-                className="mx-auto mb-4 text-green-500"
-                size={48}
-              />
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: "var(--aivo-mint-light)" }}>
+                <CheckCircle size={32} style={{ color: "var(--aivo-mint)" }} />
+              </div>
+              <h1 className="text-xl font-extrabold mb-2" style={{ color: "var(--aivo-text)", fontFamily: "var(--font-display)" }}>
                 {t("emailVerified")}
               </h1>
-              <p className="text-gray-500 dark:text-gray-400 mb-6">
+              <p className="font-medium mb-6" style={{ color: "var(--aivo-text-secondary)" }}>
                 {t("emailVerifiedDescription")}
               </p>
               <Link href="/login">
-                <Button className="w-full" size="lg">
-                  {t("continueToSignIn")}
-                </Button>
+                <Button className="w-full" size="lg">{t("continueToSignIn")}</Button>
               </Link>
             </>
           )}
 
           {status === "error" && (
             <>
-              <XCircle className="mx-auto mb-4 text-red-500" size={48} />
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: "var(--aivo-coral-light, #FFE0E0)" }}>
+                <XCircle size={32} style={{ color: "var(--aivo-coral)" }} />
+              </div>
+              <h1 className="text-xl font-extrabold mb-2" style={{ color: "var(--aivo-text)", fontFamily: "var(--font-display)" }}>
                 {t("verificationFailed")}
               </h1>
-              <p className="text-gray-500 dark:text-gray-400 mb-6">
-                {errorMessage ||
-                  t("verificationLinkExpired")}
+              <p className="font-medium mb-6" style={{ color: "var(--aivo-text-secondary)" }}>
+                {errorMessage || t("verificationLinkExpired")}
               </p>
               <div className="space-y-3">
-                <Button
-                  onClick={handleResend}
-                  loading={resending}
-                  variant="outline"
-                  className="w-full"
-                >
+                <Button onClick={handleResend} loading={resending} variant="outline" className="w-full">
                   {t("resendVerificationEmail")}
                 </Button>
                 <Link href="/login">
-                  <Button variant="ghost" className="w-full">
-                    {t("backToSignIn")}
-                  </Button>
+                  <Button variant="ghost" className="w-full">{t("backToSignIn")}</Button>
                 </Link>
               </div>
             </>
@@ -128,37 +113,27 @@ function VerifyEmailContent() {
 
           {status === "pending" && (
             <>
-              <div className="w-16 h-16 rounded-full bg-[#7C3AED]/10 flex items-center justify-center mx-auto mb-4">
-                <Mail className="text-[#7C3AED]" size={32} />
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: "var(--aivo-purple-50, #F0E6FF)" }}>
+                <Mail size={32} style={{ color: "var(--aivo-purple-500)" }} />
               </div>
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+              <h1 className="text-xl font-extrabold mb-2" style={{ color: "var(--aivo-text)", fontFamily: "var(--font-display)" }}>
                 {t("checkYourEmail")}
               </h1>
-              <p className="text-gray-500 dark:text-gray-400 mb-2">
+              <p className="font-medium mb-2" style={{ color: "var(--aivo-text-secondary)" }}>
                 {t("verificationSentTo")}
               </p>
               {email && (
-                <p className="font-semibold text-gray-900 dark:text-white mb-6">
-                  {email}
-                </p>
+                <p className="font-bold mb-6" style={{ color: "var(--aivo-text)" }}>{email}</p>
               )}
-              <p className="text-sm text-gray-400 dark:text-gray-500 mb-6">
+              <p className="text-sm mb-6" style={{ color: "var(--aivo-text-muted)" }}>
                 {t("verificationSentDescription")}
               </p>
               <div className="space-y-3">
-                <Button
-                  onClick={handleResend}
-                  loading={resending}
-                  variant="outline"
-                  className="w-full"
-                  disabled={!email}
-                >
+                <Button onClick={handleResend} loading={resending} variant="outline" className="w-full" disabled={!email}>
                   {t("resendVerificationEmail")}
                 </Button>
                 <Link href="/login">
-                  <Button variant="ghost" className="w-full">
-                    {t("backToSignIn")}
-                  </Button>
+                  <Button variant="ghost" className="w-full">{t("backToSignIn")}</Button>
                 </Link>
               </div>
             </>
@@ -171,7 +146,7 @@ function VerifyEmailContent() {
 
 export default function VerifyEmailPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Loader2 className="animate-spin text-[#7C3AED]" size={32} /></div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "var(--aivo-bg)" }}><Loader2 className="animate-spin" size={32} style={{ color: "var(--aivo-purple-500)" }} /></div>}>
       <VerifyEmailContent />
     </Suspense>
   );

@@ -50,12 +50,12 @@ function QuestWorldMap({
               className={`
                 relative flex flex-col items-center text-center p-6 rounded-2xl border-2 transition-all duration-200
                 ${isLocked
-                  ? "border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 opacity-60 cursor-not-allowed"
+                  ? "border-[#E8DDF0] dark:border-[#3D2D5C] bg-[var(--aivo-bg)]/50 opacity-60 cursor-not-allowed"
                   : isActive
-                    ? "border-[#7C3AED] bg-white dark:bg-gray-900 shadow-lg shadow-purple-500/10 hover:shadow-xl hover:-translate-y-0.5"
+                    ? "border-[#7C3AED] bg-white dark:bg-[#2A1E45] shadow-lg shadow-purple-500/10 hover:shadow-xl hover:-translate-y-0.5"
                     : isCompleted
-                      ? "border-green-300 dark:border-green-700 bg-green-50/50 dark:bg-green-900/10 hover:shadow-md hover:-translate-y-0.5"
-                      : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:shadow-md hover:-translate-y-0.5"
+                      ? "border-green-300 dark:border-green-700 bg-green-50/50 dark:bg-green-900/10 hover:shadow-[var(--shadow-card)] hover:-translate-y-0.5"
+                      : "border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] hover:shadow-[var(--shadow-card)] hover:-translate-y-0.5"
                 }
               `}
             >
@@ -72,7 +72,7 @@ function QuestWorldMap({
                 }}
               >
                 {isLocked ? (
-                  <Lock size={22} className="text-gray-400" />
+                  <Lock size={22} className="text-[#A89BB5]" />
                 ) : isCompleted ? (
                   <CheckCircle2 size={24} className="text-green-500" />
                 ) : (
@@ -85,8 +85,8 @@ function QuestWorldMap({
               <h3
                 className={`text-sm font-bold mb-1 ${
                   isLocked
-                    ? "text-gray-400 dark:text-gray-500"
-                    : "text-gray-900 dark:text-white"
+                    ? "text-[var(--aivo-text-muted)]"
+                    : "text-[var(--aivo-text)]"
                 }`}
               >
                 {world.name}
@@ -94,8 +94,8 @@ function QuestWorldMap({
               <p
                 className={`text-xs ${
                   isLocked
-                    ? "text-gray-400 dark:text-gray-500"
-                    : "text-gray-500 dark:text-gray-400"
+                    ? "text-[var(--aivo-text-muted)]"
+                    : "text-[var(--aivo-text-secondary)]"
                 }`}
               >
                 {world.description}
@@ -103,7 +103,7 @@ function QuestWorldMap({
 
               {!isLocked && world.totalQuests !== undefined && (
                 <div className="mt-3 w-full">
-                  <div className="w-full h-1.5 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+                  <div className="w-full h-1.5 rounded-full bg-[#F0E6FF] dark:bg-[#3D2D5C] overflow-hidden">
                     <div
                       className="h-full rounded-full transition-all duration-500"
                       style={{
@@ -112,7 +112,7 @@ function QuestWorldMap({
                       }}
                     />
                   </div>
-                  <p className="mt-1 text-[10px] text-gray-400">
+                  <p className="mt-1 text-[10px] text-[#A89BB5]">
                     {world.completedQuests || 0}/{world.totalQuests} quests
                   </p>
                 </div>

@@ -206,7 +206,7 @@ export function GameBreak({
       {/* Score display */}
       <div className="absolute top-3 left-0 right-0 text-center z-10">
         <span
-          className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-white/80 dark:bg-gray-800/80 rounded-full text-sm font-bold text-purple-700 dark:text-purple-300 shadow-sm"
+          className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-white/80 dark:bg-[#2A1E45]/80 rounded-full text-sm font-bold text-purple-700 dark:text-purple-300 shadow-[var(--shadow-card)]"
           aria-live="polite"
         >
           <span aria-hidden="true">⭐</span> Stars caught: {score}

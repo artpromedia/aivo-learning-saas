@@ -156,21 +156,21 @@ export default function WebhooksPage() {
     <div>
       <Link
         href="/admin/district/integrations"
-        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-4"
+        className="inline-flex items-center gap-1 text-sm text-[var(--aivo-text-secondary)] hover:text-[var(--aivo-text)] dark:text-[var(--aivo-text-muted)] dark:hover:text-[#A89BB5] mb-4"
       >
         <ArrowLeft size={16} />
         Back to Integrations
       </Link>
 
-      <PurpleGradientHeader className="rounded-xl mb-8">
-        <h1 className="text-2xl font-bold">Outbound Webhooks</h1>
+      <PurpleGradientHeader className="rounded-2xl mb-8">
+        <h1 className="text-2xl font-extrabold">Outbound Webhooks</h1>
         <p className="mt-1 text-white/80">
           Manage webhook endpoints and view delivery logs.
         </p>
       </PurpleGradientHeader>
 
       {error && (
-        <div className="mb-6 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400">
+        <div className="mb-6 p-4 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171]">
           {error}
         </div>
       )}
@@ -184,7 +184,7 @@ export default function WebhooksPage() {
       {loading ? (
         <div className="space-y-4">
           {[1, 2].map((i) => (
-            <Skeleton key={i} height={100} className="w-full rounded-lg" />
+            <Skeleton key={i} height={100} className="w-full rounded-2xl" />
           ))}
         </div>
       ) : (
@@ -193,8 +193,8 @@ export default function WebhooksPage() {
             <Card>
               <CardBody>
                 <div className="text-center py-8">
-                  <Webhook size={48} className="mx-auto text-gray-300 dark:text-gray-600 mb-4" />
-                  <p className="text-gray-500">No webhook endpoints registered.</p>
+                  <Webhook size={48} className="mx-auto text-[#A89BB5] dark:text-[#7B6A94] mb-4" />
+                  <p className="text-[var(--aivo-text-secondary)]">No webhook endpoints registered.</p>
                 </div>
               </CardBody>
             </Card>
@@ -208,7 +208,7 @@ export default function WebhooksPage() {
                       onClick={() => fetchDeliveries(endpoint.id)}
                     >
                       <div className="flex items-center gap-2 mb-1">
-                        <p className="text-sm font-mono text-gray-900 dark:text-white">
+                        <p className="text-sm font-mono text-[var(--aivo-text)]">
                           {endpoint.url}
                         </p>
                         <Badge variant={endpoint.enabled ? "success" : "secondary"}>
@@ -216,7 +216,7 @@ export default function WebhooksPage() {
                         </Badge>
                       </div>
                       {endpoint.description && (
-                        <p className="text-xs text-gray-500 mb-2">{endpoint.description}</p>
+                        <p className="text-xs text-[var(--aivo-text-secondary)] mb-2">{endpoint.description}</p>
                       )}
                       <div className="flex flex-wrap gap-1">
                         {endpoint.eventTypes.map((et) => (
@@ -249,19 +249,19 @@ export default function WebhooksPage() {
       {selectedEndpoint && (
         <Card className="mt-6">
           <CardBody>
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-4">
               Recent Deliveries
             </h2>
             {loadingDeliveries ? (
-              <Skeleton height={100} className="w-full rounded-lg" />
+              <Skeleton height={100} className="w-full rounded-2xl" />
             ) : deliveries.length === 0 ? (
-              <p className="text-sm text-gray-500 py-4 text-center">No deliveries yet.</p>
+              <p className="text-sm text-[var(--aivo-text-secondary)] py-4 text-center">No deliveries yet.</p>
             ) : (
               <div className="space-y-2">
                 {deliveries.map((d) => (
                   <div
                     key={d.id}
-                    className="flex items-center gap-4 p-3 border border-gray-200 dark:border-gray-700 rounded-lg"
+                    className="flex items-center gap-4 p-3 border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-2xl"
                   >
                     {d.status === "DELIVERED" ? (
                       <CheckCircle size={16} className="text-green-500" />
@@ -275,10 +275,10 @@ export default function WebhooksPage() {
                         <span className="text-sm font-mono">{d.eventType}</span>
                         {deliveryStatusBadge(d.status)}
                         {d.httpStatus && (
-                          <span className="text-xs text-gray-400">HTTP {d.httpStatus}</span>
+                          <span className="text-xs text-[#A89BB5]">HTTP {d.httpStatus}</span>
                         )}
                       </div>
-                      <p className="text-xs text-gray-400">
+                      <p className="text-xs text-[#A89BB5]">
                         {new Date(d.createdAt).toLocaleString()} — {d.attempts} attempt(s)
                       </p>
                     </div>
@@ -311,29 +311,29 @@ export default function WebhooksPage() {
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-[var(--aivo-text)] mb-1">
               Endpoint URL
             </label>
             <input
               value={form.url}
               onChange={(e) => setForm({ ...form, url: e.target.value })}
               placeholder="https://your-server.com/webhooks/aivo"
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none text-sm"
+              className="w-full px-4 py-2.5 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none text-sm"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-[var(--aivo-text)] mb-1">
               Description (optional)
             </label>
             <input
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
               placeholder="e.g., District data warehouse"
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none text-sm"
+              className="w-full px-4 py-2.5 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none text-sm"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--aivo-text)] mb-2">
               Event Types
             </label>
             <div className="space-y-2">
@@ -343,9 +343,9 @@ export default function WebhooksPage() {
                     type="checkbox"
                     checked={form.eventTypes.includes(et)}
                     onChange={() => toggleEventType(et)}
-                    className="w-4 h-4 rounded border-gray-300 text-[#7C3AED] focus:ring-[#7C3AED]"
+                    className="w-4 h-4 rounded border-[#E8DDF0] text-[#7C3AED] focus:ring-[#7C3AED]"
                   />
-                  <span className="text-sm text-gray-700 dark:text-gray-300 font-mono">{et}</span>
+                  <span className="text-sm text-[var(--aivo-text)] font-mono">{et}</span>
                 </label>
               ))}
             </div>

@@ -74,10 +74,10 @@ export function PinGate({ learnerId, learnerName, onSuccess }: PinGateProps) {
           <div className="w-20 h-20 rounded-full bg-[#7C3AED]/10 flex items-center justify-center mx-auto mb-6">
             <Lock className="text-[#7C3AED]" size={36} />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+          <h1 className="text-2xl font-extrabold text-[var(--aivo-text)] mb-2">
             {t("welcomeBack", { name: learnerName })}
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 mb-8">
+          <p className="text-[var(--aivo-text-secondary)] mb-8">
             {t("enterYourPin")}
           </p>
           <div className="flex justify-center gap-3 mb-6">
@@ -91,7 +91,7 @@ export function PinGate({ learnerId, learnerName, onSuccess }: PinGateProps) {
                 value={digit}
                 onChange={(e) => handleChange(i, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(i, e)}
-                className="w-14 h-14 text-center text-2xl font-bold rounded-xl border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-[#7C3AED] focus:ring-2 focus:ring-[#7C3AED]/30 outline-none transition-all"
+                className="w-14 h-14 text-center text-2xl font-extrabold rounded-2xl border-2 border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:border-[#7C3AED] focus:ring-2 focus:ring-[#7C3AED]/30 outline-none transition-all"
                 aria-label={`PIN digit ${i + 1}`}
               />
             ))}
@@ -100,7 +100,7 @@ export function PinGate({ learnerId, learnerName, onSuccess }: PinGateProps) {
             <p className="text-sm text-red-600 dark:text-red-400 mb-4">{error}</p>
           )}
           {loading && (
-            <p className="text-sm text-gray-500 dark:text-gray-400">{t("verifying")}</p>
+            <p className="text-sm text-[var(--aivo-text-secondary)]">{t("verifying")}</p>
           )}
         </CardBody>
       </Card>

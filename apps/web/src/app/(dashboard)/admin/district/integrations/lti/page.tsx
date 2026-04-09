@@ -123,22 +123,22 @@ export default function LtiConfigPage() {
   }
 
   const inputClass =
-    "w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none text-sm";
+    "w-full px-4 py-2.5 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none text-sm";
 
   return (
     <div>
       <Link
         href="/admin/district/integrations"
-        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-4"
+        className="inline-flex items-center gap-1 text-sm text-[var(--aivo-text-secondary)] hover:text-[var(--aivo-text)] dark:text-[var(--aivo-text-muted)] dark:hover:text-[#A89BB5] mb-4"
       >
         <ArrowLeft size={16} />
         Back to Integrations
       </Link>
 
-      <PurpleGradientHeader className="rounded-xl mb-8">
+      <PurpleGradientHeader className="rounded-2xl mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold">LTI 1.3 Configuration</h1>
+            <h1 className="text-2xl font-extrabold">LTI 1.3 Configuration</h1>
             <p className="mt-1 text-white/80">
               Register and manage LTI platform connections.
             </p>
@@ -147,7 +147,7 @@ export default function LtiConfigPage() {
       </PurpleGradientHeader>
 
       {error && (
-        <div className="mb-6 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400">
+        <div className="mb-6 p-4 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171]">
           {error}
         </div>
       )}
@@ -164,15 +164,15 @@ export default function LtiConfigPage() {
       {loading ? (
         <div className="space-y-4">
           {[1, 2].map((i) => (
-            <Skeleton key={i} height={120} className="w-full rounded-lg" />
+            <Skeleton key={i} height={120} className="w-full rounded-2xl" />
           ))}
         </div>
       ) : platforms.length === 0 ? (
         <Card>
           <CardBody>
             <div className="text-center py-8">
-              <Key size={48} className="mx-auto text-gray-300 dark:text-gray-600 mb-4" />
-              <p className="text-gray-500 dark:text-gray-400">
+              <Key size={48} className="mx-auto text-[#A89BB5] dark:text-[#7B6A94] mb-4" />
+              <p className="text-[var(--aivo-text-secondary)]">
                 No LTI platforms registered yet. Register one to enable LTI 1.3 launches.
               </p>
             </div>
@@ -186,7 +186,7 @@ export default function LtiConfigPage() {
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                      <h3 className="text-lg font-bold text-[var(--aivo-text)]">
                         {platform.name}
                       </h3>
                       <Badge variant={platform.enabled ? "success" : "secondary"}>
@@ -199,7 +199,7 @@ export default function LtiConfigPage() {
                         <Badge variant="error">Connection Failed</Badge>
                       )}
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-gray-500 dark:text-gray-400">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-[var(--aivo-text-secondary)]">
                       <p>
                         <span className="font-medium">Issuer:</span> {platform.platformId}
                       </p>
@@ -268,7 +268,7 @@ export default function LtiConfigPage() {
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-[var(--aivo-text)] mb-1">
               Platform Name
             </label>
             <input
@@ -279,7 +279,7 @@ export default function LtiConfigPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-[var(--aivo-text)] mb-1">
               Issuer URL (Platform ID)
             </label>
             <input
@@ -291,7 +291,7 @@ export default function LtiConfigPage() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-[var(--aivo-text)] mb-1">
                 Client ID
               </label>
               <input
@@ -302,7 +302,7 @@ export default function LtiConfigPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-[var(--aivo-text)] mb-1">
                 Deployment ID (optional)
               </label>
               <input
@@ -314,7 +314,7 @@ export default function LtiConfigPage() {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-[var(--aivo-text)] mb-1">
               Auth Login URL
             </label>
             <input
@@ -325,7 +325,7 @@ export default function LtiConfigPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-[var(--aivo-text)] mb-1">
               Auth Token URL
             </label>
             <input
@@ -336,7 +336,7 @@ export default function LtiConfigPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-[var(--aivo-text)] mb-1">
               JSON Web Key Set URL
             </label>
             <input

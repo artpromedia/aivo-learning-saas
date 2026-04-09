@@ -179,7 +179,7 @@ export default function BrainProfileRevealPage() {
     return (
       <div className="text-center py-16">
         <Loader2 className="mx-auto mb-4 text-[#7C3AED] animate-spin" size={48} />
-        <p className="text-gray-500 dark:text-gray-400">
+        <p className="text-[var(--aivo-text-secondary)]">
           {t("loading")}
         </p>
       </div>
@@ -192,10 +192,10 @@ export default function BrainProfileRevealPage() {
         <div className="w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center mx-auto mb-4">
           <Brain className="text-red-500" size={32} />
         </div>
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+        <h2 className="text-xl font-extrabold text-[var(--aivo-text)] mb-2">
           {t("unableToLoadBrainProfile")}
         </h2>
-        <p className="text-gray-500 dark:text-gray-400 mb-4">
+        <p className="text-[var(--aivo-text-secondary)] mb-4">
           {error.message}
         </p>
         <Button variant="outline" onClick={() => globalThis.location.reload()}>
@@ -221,14 +221,14 @@ export default function BrainProfileRevealPage() {
               <motion.div
                 animate={{ scale: [1, 1.05, 1] }}
                 transition={{ duration: 3, repeat: Infinity }}
-                className="w-20 h-20 rounded-full bg-linear-to-br from-[#7C3AED] to-[#7C4DFF] flex items-center justify-center mx-auto mb-5 shadow-lg shadow-[#7C3AED]/30"
+                className="w-20 h-20 rounded-full bg-linear-to-br from-[#7C3AED] to-[#A855F7] flex items-center justify-center mx-auto mb-5 shadow-lg shadow-[#7C3AED]/30"
               >
                 <Brain className="text-white" size={40} />
               </motion.div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              <h1 className="text-2xl font-extrabold text-[var(--aivo-text)] mb-2">
                 {t("buildingBrainProfile", { childName })}
               </h1>
-              <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto">
+              <p className="text-[var(--aivo-text-secondary)] max-w-md mx-auto">
                 {t("buildingBrainProfileDescription")}
               </p>
             </div>
@@ -247,7 +247,7 @@ export default function BrainProfileRevealPage() {
                 } else if (isComplete) {
                   cardClass = "border-green-200 dark:border-green-800 bg-green-50/50 dark:bg-green-900/10";
                 } else {
-                  cardClass = "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50";
+                  cardClass = "border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45]/50";
                 }
 
                 let iconBgClass: string;
@@ -256,7 +256,7 @@ export default function BrainProfileRevealPage() {
                 } else if (isComplete) {
                   iconBgClass = "bg-green-500 text-white";
                 } else {
-                  iconBgClass = "bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500";
+                  iconBgClass = "bg-[var(--aivo-bg-alt,#FFF5EB)] text-[var(--aivo-text-muted)]";
                 }
 
                 let titleClass: string;
@@ -265,7 +265,7 @@ export default function BrainProfileRevealPage() {
                 } else if (isComplete) {
                   titleClass = "text-green-700 dark:text-green-400";
                 } else {
-                  titleClass = "text-gray-400 dark:text-gray-500";
+                  titleClass = "text-[var(--aivo-text-muted)]";
                 }
 
                 let stepIcon: React.ReactNode;
@@ -296,10 +296,10 @@ export default function BrainProfileRevealPage() {
                     transition={{ delay: i * 0.15, duration: 0.4 }}
                   >
                     <div
-                      className={`flex items-start gap-4 p-4 rounded-xl border transition-all duration-500 ${cardClass}`}
+                      className={`flex items-start gap-4 p-4 rounded-2xl border transition-all duration-500 ${cardClass}`}
                     >
                       <div
-                        className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 transition-colors duration-500 ${iconBgClass}`}
+                        className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 transition-colors duration-500 ${iconBgClass}`}
                       >
                         {stepIcon}
                       </div>
@@ -313,7 +313,7 @@ export default function BrainProfileRevealPage() {
                               initial={{ opacity: 0, height: 0 }}
                               animate={{ opacity: 1, height: "auto" }}
                               exit={{ opacity: 0, height: 0 }}
-                              className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed"
+                              className="text-xs text-[var(--aivo-text-secondary)] mt-1 leading-relaxed"
                             >
                               {t(step.detailKey)}
                             </motion.p>
@@ -329,14 +329,14 @@ export default function BrainProfileRevealPage() {
             {/* Progress bar */}
             <div className="max-w-lg mx-auto mt-8">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs text-gray-400 dark:text-gray-500">{t("progress")}</span>
+                <span className="text-xs text-[var(--aivo-text-muted)]">{t("progress")}</span>
                 <span className="text-xs font-medium text-[#7C3AED]">
                   {Math.round(((activeStep + 1) / XAI_STEPS.length) * 100)}%
                 </span>
               </div>
-              <div className="h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+              <div className="h-1.5 bg-[#F0E6FF] dark:bg-[#3D2D5C] rounded-full overflow-hidden">
                 <motion.div
-                  className="h-full bg-linear-to-r from-[#7C3AED] to-[#7C4DFF] rounded-full"
+                  className="h-full bg-linear-to-r from-[#7C3AED] to-[#A855F7] rounded-full"
                   initial={{ width: 0 }}
                   animate={{ width: `${((activeStep + 1) / XAI_STEPS.length) * 100}%` }}
                   transition={{ duration: 0.8, ease: "easeOut" }}
@@ -346,7 +346,7 @@ export default function BrainProfileRevealPage() {
 
             {/* Trust note */}
             <div className="max-w-lg mx-auto mt-6">
-              <div className="flex items-start gap-3 p-3 rounded-lg bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/30">
+              <div className="flex items-start gap-3 p-3 rounded-2xl bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/30">
                 <Shield className="text-blue-500 shrink-0 mt-0.5" size={16} />
                 <p className="text-xs text-blue-700 dark:text-blue-400 leading-relaxed">
                   {t("transparentAi")}
@@ -372,7 +372,7 @@ export default function BrainProfileRevealPage() {
             >
               <Sparkles className="text-white" size={48} />
             </motion.div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-2xl font-extrabold text-[var(--aivo-text)]">
               {t("profileReady")}
             </h1>
           </motion.div>
@@ -386,19 +386,19 @@ export default function BrainProfileRevealPage() {
             transition={{ duration: 0.5 }}
           >
             <div className="text-center mb-8">
-              <div className="w-20 h-20 rounded-full bg-linear-to-br from-[#7C3AED] to-[#7C4DFF] flex items-center justify-center mx-auto mb-4 shadow-lg shadow-[#7C3AED]/20">
+              <div className="w-20 h-20 rounded-full bg-linear-to-br from-[#7C3AED] to-[#A855F7] flex items-center justify-center mx-auto mb-4 shadow-lg shadow-[#7C3AED]/20">
                 <Brain className="text-white" size={40} />
               </div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              <h1 className="text-2xl font-extrabold text-[var(--aivo-text)]">
                 {t("childBrainProfile", { childName })}
               </h1>
-              <p className="mt-2 text-gray-500 dark:text-gray-400">
+              <p className="mt-2 text-[var(--aivo-text-secondary)]">
                 {t("brainProfileDiscovery", { childName })}
               </p>
             </div>
 
             {actionError && (
-              <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+              <div className="mb-4 p-3 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171] text-sm">
                 {actionError}
               </div>
             )}
@@ -407,7 +407,7 @@ export default function BrainProfileRevealPage() {
               <Card>
                 <CardBody>
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-semibold text-gray-900 dark:text-white">
+                    <h3 className="font-semibold text-[var(--aivo-text)]">
                       {t("functioningLevel")}
                     </h3>
                     <Badge>
@@ -421,10 +421,10 @@ export default function BrainProfileRevealPage() {
                       })()}
                     </Badge>
                   </div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                  <p className="text-sm text-[var(--aivo-text-secondary)]">
                     {t("learningStyleLabel", { style: profile.learningStyle })}
                   </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  <p className="text-sm text-[var(--aivo-text-secondary)] mt-1">
                     {t("communicationLabel", { style: profile.communicationStyle })}
                   </p>
                 </CardBody>
@@ -432,7 +432,7 @@ export default function BrainProfileRevealPage() {
 
               <Card>
                 <CardBody>
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
+                  <h3 className="font-semibold text-[var(--aivo-text)] mb-3">
                     {t("strengths")}
                   </h3>
                   <div className="flex flex-wrap gap-2">
@@ -450,7 +450,7 @@ export default function BrainProfileRevealPage() {
 
               <Card>
                 <CardBody>
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
+                  <h3 className="font-semibold text-[var(--aivo-text)] mb-3">
                     {t("growthAreas")}
                   </h3>
                   <div className="flex flex-wrap gap-2">
@@ -469,7 +469,7 @@ export default function BrainProfileRevealPage() {
               {profile.sensoryPreferences.length > 0 && (
                 <Card>
                   <CardBody>
-                    <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
+                    <h3 className="font-semibold text-[var(--aivo-text)] mb-3">
                       {t("sensoryPreferences")}
                     </h3>
                     <div className="flex flex-wrap gap-2">
@@ -490,14 +490,14 @@ export default function BrainProfileRevealPage() {
             {showInsightInput && (
               <Card className="mt-4">
                 <CardBody>
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
+                  <h3 className="font-semibold text-[var(--aivo-text)] mb-3">
                     {t("addYourInsights")}
                   </h3>
                   <textarea
                     value={insightText}
                     onChange={(e) => setInsightText(e.target.value)}
                     rows={4}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none resize-none"
+                    className="w-full px-4 py-3 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none resize-none"
                     placeholder={t("insightsPlaceholder")}
                   />
                   <div className="flex justify-end gap-2 mt-3">

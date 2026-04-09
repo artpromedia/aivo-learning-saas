@@ -107,10 +107,10 @@ export default function ChildDashboardPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={120} className="w-full rounded-xl" />
+        <Skeleton height={120} className="w-full rounded-2xl" />
         <div className="grid gap-4 sm:grid-cols-4">
           {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} height={100} className="w-full rounded-lg" />
+            <Skeleton key={i} height={100} className="w-full rounded-2xl" />
           ))}
         </div>
       </div>
@@ -141,15 +141,15 @@ export default function ChildDashboardPage() {
     <div>
       <Link
         href="/parent"
-        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-4"
+        className="inline-flex items-center gap-1 text-sm text-[var(--aivo-text-secondary)] hover:text-[var(--aivo-text)] dark:text-[var(--aivo-text-muted)] dark:hover:text-[#A89BB5] mb-4"
       >
         <ArrowLeft size={16} />
         {t("backToAllChildren")}
       </Link>
 
-      <PurpleGradientHeader className="rounded-xl mb-8">
+      <PurpleGradientHeader className="rounded-2xl mb-8">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center text-2xl font-bold">
+          <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center text-2xl font-extrabold">
             {learner?.avatarUrl ? (
               <img
                 src={learner.avatarUrl}
@@ -161,7 +161,7 @@ export default function ChildDashboardPage() {
             )}
           </div>
           <div>
-            <h1 className="text-2xl font-bold">{learner?.name}</h1>
+            <h1 className="text-2xl font-extrabold">{learner?.name}</h1>
             <p className="text-white/80 text-sm">
               {learner?.enrolledGrade ?? t("gradeNotSet")} &middot;{" "}
               {learner?.functioningLevel === "STANDARD"
@@ -183,37 +183,37 @@ export default function ChildDashboardPage() {
         <Card>
           <CardBody className="text-center">
             <Trophy className="mx-auto mb-2 text-[#7C3AED]" size={24} />
-            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+            <p className="text-2xl font-extrabold text-[var(--aivo-text)]">
               {xp?.totalXp ?? "--"}
             </p>
-            <p className="text-xs text-gray-500">Total XP</p>
+            <p className="text-xs text-[var(--aivo-text-secondary)]">Total XP</p>
           </CardBody>
         </Card>
         <Card>
           <CardBody className="text-center">
             <Flame className="mx-auto mb-2 text-orange-500" size={24} />
-            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+            <p className="text-2xl font-extrabold text-[var(--aivo-text)]">
               {streak?.currentStreak ?? "--"}
             </p>
-            <p className="text-xs text-gray-500">Day Streak</p>
+            <p className="text-xs text-[var(--aivo-text-secondary)]">Day Streak</p>
           </CardBody>
         </Card>
         <Card>
           <CardBody className="text-center">
             <TrendingUp className="mx-auto mb-2 text-[#38B2AC]" size={24} />
-            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+            <p className="text-2xl font-extrabold text-[var(--aivo-text)]">
               {progress?.averageAccuracy ?? "--"}%
             </p>
-            <p className="text-xs text-gray-500">Accuracy</p>
+            <p className="text-xs text-[var(--aivo-text-secondary)]">Accuracy</p>
           </CardBody>
         </Card>
         <Card>
           <CardBody className="text-center">
             <BookOpen className="mx-auto mb-2 text-blue-500" size={24} />
-            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+            <p className="text-2xl font-extrabold text-[var(--aivo-text)]">
               {progress?.sessionsThisWeek ?? "--"}
             </p>
-            <p className="text-xs text-gray-500">Sessions This Week</p>
+            <p className="text-xs text-[var(--aivo-text-secondary)]">Sessions This Week</p>
           </CardBody>
         </Card>
       </div>
@@ -227,10 +227,10 @@ export default function ChildDashboardPage() {
               onClick={learner ? handleViewLearnerDashboard : undefined}
               className={learner ? "cursor-pointer" : "opacity-50 cursor-not-allowed"}
             >
-              <Card className="hover:shadow-md transition-shadow h-full">
+              <Card className="hover:shadow-[var(--shadow-card)] transition-all h-full">
                 <CardBody className="flex flex-col items-center justify-center text-center py-6">
                   <div className={`mb-2 ${link.color}`}>{link.icon}</div>
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <span className="text-sm font-medium text-[var(--aivo-text)]">
                     {link.label}
                   </span>
                 </CardBody>
@@ -238,10 +238,10 @@ export default function ChildDashboardPage() {
             </div>
           ) : (
             <Link key={link.href} href={link.href}>
-              <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
+              <Card className="hover:shadow-[var(--shadow-card)] transition-all cursor-pointer h-full">
                 <CardBody className="flex flex-col items-center justify-center text-center py-6">
                   <div className={`mb-2 ${link.color}`}>{link.icon}</div>
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <span className="text-sm font-medium text-[var(--aivo-text)]">
                     {link.label}
                   </span>
                 </CardBody>
@@ -255,7 +255,7 @@ export default function ChildDashboardPage() {
       {progress?.recentSubjects && progress.recentSubjects.length > 0 && (
         <Card>
           <CardHeader>
-            <h3 className="font-semibold text-gray-900 dark:text-white">
+            <h3 className="font-semibold text-[var(--aivo-text)]">
               Subject Mastery
             </h3>
           </CardHeader>
@@ -263,16 +263,16 @@ export default function ChildDashboardPage() {
             {progress.recentSubjects.map((subject) => (
               <div key={subject.name}>
                 <div className="flex justify-between items-center mb-1">
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <span className="text-sm font-medium text-[var(--aivo-text)]">
                     {subject.name}
                   </span>
                   <span className="text-sm font-semibold text-[#7C3AED]">
                     {subject.mastery}%
                   </span>
                 </div>
-                <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                <div className="w-full h-2 bg-[#F0E6FF] dark:bg-[#3D2D5C] rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-[#7C3AED] to-[#7C4DFF] rounded-full transition-all duration-700"
+                    className="h-full bg-gradient-to-r from-[#7C3AED] to-[#A855F7] rounded-full transition-all duration-700"
                     style={{ width: `${subject.mastery}%` }}
                   />
                 </div>

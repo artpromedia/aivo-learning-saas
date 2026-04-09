@@ -108,8 +108,8 @@ export default function UploadIepPage() {
   if (success) {
     return (
       <div>
-        <PurpleGradientHeader className="rounded-xl mb-8">
-          <h1 className="text-2xl font-bold">{t("uploadIepTitle")}</h1>
+        <PurpleGradientHeader className="rounded-2xl mb-8">
+          <h1 className="text-2xl font-extrabold">{t("uploadIepTitle")}</h1>
         </PurpleGradientHeader>
 
         <Card className="max-w-lg mx-auto">
@@ -117,13 +117,13 @@ export default function UploadIepPage() {
             <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mx-auto mb-4">
               <CheckCircle className="text-green-600" size={32} />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            <h3 className="text-lg font-bold text-[var(--aivo-text)] mb-2">
               {t("iepUploadedTitle")}
             </h3>
-            <p className="text-gray-500 dark:text-gray-400 mb-6">
+            <p className="text-[var(--aivo-text-secondary)] mb-6">
               {t("iepUploadedDesc")}
             </p>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-[#A89BB5]">
               {t("redirecting")}
             </p>
           </CardBody>
@@ -134,7 +134,7 @@ export default function UploadIepPage() {
 
   return (
     <div>
-      <PurpleGradientHeader className="rounded-xl mb-8">
+      <PurpleGradientHeader className="rounded-2xl mb-8">
         <Link
           href={`/teacher/learners/${learnerId}`}
           className="inline-flex items-center gap-1 text-white/80 hover:text-white text-sm mb-3 transition-colors"
@@ -142,7 +142,7 @@ export default function UploadIepPage() {
           <ArrowLeft size={16} />
           {t("backToLearner")}
         </Link>
-        <h1 className="text-2xl font-bold">{t("uploadIepTitle")}</h1>
+        <h1 className="text-2xl font-extrabold">{t("uploadIepTitle")}</h1>
         <p className="mt-1 text-white/80">
           {t("uploadIepDesc")}
         </p>
@@ -151,7 +151,7 @@ export default function UploadIepPage() {
       <Card className="max-w-lg mx-auto">
         <CardBody>
           {error && (
-            <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+            <div className="mb-4 p-3 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171] text-sm">
               {error}
             </div>
           )}
@@ -163,11 +163,11 @@ export default function UploadIepPage() {
             onDragLeave={handleDragLeave}
             onClick={() => fileInputRef.current?.click()}
             className={`
-              border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors
+              border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-colors
               ${
                 dragging
                   ? "border-[#7C3AED] bg-[#7C3AED]/5"
-                  : "border-gray-300 dark:border-gray-600 hover:border-[#7C3AED] hover:bg-[#7C3AED]/5"
+                  : "border-[#E8DDF0] dark:border-[#3D2D5C] hover:border-[#7C3AED] hover:bg-[#7C3AED]/5"
               }
             `}
           >
@@ -184,23 +184,23 @@ export default function UploadIepPage() {
             <div className="w-12 h-12 rounded-full bg-[#7C3AED]/10 flex items-center justify-center mx-auto mb-3">
               <Upload className="text-[#7C3AED]" size={24} />
             </div>
-            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            <p className="text-sm font-medium text-[var(--aivo-text)]">
               {t("dragDropIep")}
             </p>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-[var(--aivo-text-secondary)] mt-1">
               {t("orClickToBrowse")}
             </p>
           </div>
 
           {/* Selected file */}
           {file && (
-            <div className="mt-4 flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <div className="mt-4 flex items-center gap-3 p-3 bg-[var(--aivo-bg)] rounded-2xl">
               <FileText size={20} className="text-[#7C3AED] shrink-0" />
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">
+                <p className="text-sm font-medium text-[var(--aivo-text)] dark:text-[#C4B5D0] truncate">
                   {file.name}
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-[var(--aivo-text-secondary)]">
                   {(file.size / 1024 / 1024).toFixed(2)} MB
                 </p>
               </div>
@@ -209,7 +209,7 @@ export default function UploadIepPage() {
                   e.stopPropagation();
                   removeFile();
                 }}
-                className="text-gray-400 hover:text-red-500 transition-colors"
+                className="text-[var(--aivo-text-muted)] hover:text-red-500 transition-colors"
               >
                 <X size={16} />
               </button>

@@ -186,7 +186,7 @@ export default function LearnerBrainViewPage() {
   if (loading) {
     return (
       <div>
-        <Skeleton height={120} className="w-full rounded-xl mb-8" />
+        <Skeleton height={120} className="w-full rounded-2xl mb-8" />
         <div className="grid gap-6 md:grid-cols-2 px-4">
           {[1, 2, 3, 4].map((i) => (
             <Card key={i}>
@@ -203,7 +203,7 @@ export default function LearnerBrainViewPage() {
   if (error && !brain) {
     return (
       <div className="p-6">
-        <div className="p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400">
+        <div className="p-4 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171]">
           {error}
         </div>
       </div>
@@ -214,7 +214,7 @@ export default function LearnerBrainViewPage() {
 
   return (
     <div>
-      <PurpleGradientHeader className="rounded-xl mb-8">
+      <PurpleGradientHeader className="rounded-2xl mb-8">
         <Link
           href="/teacher"
           className="inline-flex items-center gap-1 text-white/80 hover:text-white text-sm mb-3 transition-colors"
@@ -223,11 +223,11 @@ export default function LearnerBrainViewPage() {
           {t("backToClassrooms")}
         </Link>
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-white text-xl font-bold">
+          <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-white text-xl font-extrabold">
             {brain.name.charAt(0).toUpperCase()}
           </div>
           <div>
-            <h1 className="text-2xl font-bold">{brain.name}</h1>
+            <h1 className="text-2xl font-extrabold">{brain.name}</h1>
             <Badge variant={levelBadgeVariant(brain.functioningLevel)} className="mt-1">
               {levelLabel(brain.functioningLevel)}
             </Badge>
@@ -236,7 +236,7 @@ export default function LearnerBrainViewPage() {
       </PurpleGradientHeader>
 
       {error && (
-        <div className="mb-6 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400">
+        <div className="mb-6 p-4 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171]">
           {error}
         </div>
       )}
@@ -245,28 +245,28 @@ export default function LearnerBrainViewPage() {
         {/* Subject Mastery */}
         <Card>
           <CardHeader>
-            <h2 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+            <h2 className="font-semibold text-[var(--aivo-text)] flex items-center gap-2">
               <Brain size={18} className="text-[#7C3AED]" />
               {t("masteryBySubject")}
             </h2>
           </CardHeader>
           <CardBody className="space-y-4">
             {brain.subjects.length === 0 ? (
-              <p className="text-gray-500 text-sm">{t("noSubjectData")}</p>
+              <p className="text-[var(--aivo-text-secondary)] text-sm">{t("noSubjectData")}</p>
             ) : (
               brain.subjects.map((s) => (
                 <div key={s.subject}>
                   <div className="flex justify-between items-center mb-1">
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <span className="text-sm font-medium text-[var(--aivo-text)]">
                       {s.subject}
                     </span>
                     <span className="text-sm font-semibold text-[#7C3AED]">
                       {Math.round(s.masteryPct)}%
                     </span>
                   </div>
-                  <div className="w-full h-2.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                  <div className="w-full h-2.5 bg-[#F0E6FF] dark:bg-[#3D2D5C] rounded-full overflow-hidden">
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-[#7C3AED] to-[#7C4DFF] transition-all duration-500"
+                      className="h-full rounded-full bg-gradient-to-r from-[#7C3AED] to-[#A855F7] transition-all duration-500"
                       style={{ width: `${s.masteryPct}%` }}
                     />
                   </div>
@@ -279,14 +279,14 @@ export default function LearnerBrainViewPage() {
         {/* Accommodations */}
         <Card>
           <CardHeader>
-            <h2 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+            <h2 className="font-semibold text-[var(--aivo-text)] flex items-center gap-2">
               <ShieldCheck size={18} className="text-[#7C3AED]" />
               {t("accommodations")}
             </h2>
           </CardHeader>
           <CardBody>
             {brain.accommodations.length === 0 ? (
-              <p className="text-gray-500 text-sm">
+              <p className="text-[var(--aivo-text-secondary)] text-sm">
                 {t("noAccommodations")}
               </p>
             ) : (
@@ -294,13 +294,13 @@ export default function LearnerBrainViewPage() {
                 {brain.accommodations.map((acc) => (
                   <li
                     key={acc.id}
-                    className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300"
+                    className="flex items-start gap-2 text-sm text-[var(--aivo-text)]"
                   >
                     <span className="mt-1 w-1.5 h-1.5 rounded-full bg-[#7C3AED] shrink-0" />
                     <div>
                       <span className="font-medium">{acc.label}</span>
                       {acc.description && (
-                        <p className="text-gray-500 text-xs mt-0.5">
+                        <p className="text-[var(--aivo-text-secondary)] text-xs mt-0.5">
                           {acc.description}
                         </p>
                       )}
@@ -315,23 +315,23 @@ export default function LearnerBrainViewPage() {
         {/* IEP Goals */}
         <Card>
           <CardHeader>
-            <h2 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+            <h2 className="font-semibold text-[var(--aivo-text)] flex items-center gap-2">
               <Target size={18} className="text-[#7C3AED]" />
               {t("iepGoals")}
             </h2>
           </CardHeader>
           <CardBody className="space-y-5">
             {brain.iepGoals.length === 0 ? (
-              <p className="text-gray-500 text-sm">{t("noIepGoals")}</p>
+              <p className="text-[var(--aivo-text-secondary)] text-sm">{t("noIepGoals")}</p>
             ) : (
               brain.iepGoals.map((goal) => (
                 <div key={goal.id}>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                    <span className="text-sm font-medium text-[var(--aivo-text)] dark:text-[#C4B5D0]">
                       {goal.title}
                     </span>
                     {goal.targetDate && (
-                      <span className="text-xs text-gray-400">
+                      <span className="text-xs text-[#A89BB5]">
                         {t("target")} {formatDate(goal.targetDate)}
                       </span>
                     )}
@@ -353,26 +353,26 @@ export default function LearnerBrainViewPage() {
         {/* Recent Sessions */}
         <Card>
           <CardHeader>
-            <h2 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+            <h2 className="font-semibold text-[var(--aivo-text)] flex items-center gap-2">
               <Clock size={18} className="text-[#7C3AED]" />
               {t("recentSessions")}
             </h2>
           </CardHeader>
           <CardBody>
             {brain.recentSessions.length === 0 ? (
-              <p className="text-gray-500 text-sm">{t("noSessions")}</p>
+              <p className="text-[var(--aivo-text-secondary)] text-sm">{t("noSessions")}</p>
             ) : (
-              <ul className="divide-y divide-gray-100 dark:divide-gray-800">
+              <ul className="divide-y divide-[#F0E6FF] dark:divide-[#3D2D5C]">
                 {brain.recentSessions.map((session) => (
                   <li
                     key={session.id}
                     className="py-3 flex items-center justify-between"
                   >
                     <div>
-                      <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                      <span className="text-sm font-medium text-[var(--aivo-text)] dark:text-[#C4B5D0]">
                         {session.subject}
                       </span>
-                      <div className="text-xs text-gray-500 mt-0.5 flex items-center gap-2">
+                      <div className="text-xs text-[var(--aivo-text-secondary)] mt-0.5 flex items-center gap-2">
                         <span>{formatDate(session.date)}</span>
                         <span>{session.durationMin} min</span>
                       </div>
@@ -396,11 +396,11 @@ export default function LearnerBrainViewPage() {
       <Card className="mt-6">
         <CardBody className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
           <div className="flex-1">
-            <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+            <h3 className="font-semibold text-[var(--aivo-text)] flex items-center gap-2">
               <Upload size={16} className="text-[#7C3AED]" />
               {t("uploadIep")}
             </h3>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-[var(--aivo-text-secondary)] mt-1">
               {t("uploadIepHint")}
             </p>
           </div>
@@ -434,7 +434,7 @@ export default function LearnerBrainViewPage() {
       {/* Submit Insight */}
       <Card className="mt-6">
         <CardHeader>
-          <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+          <h3 className="font-semibold text-[var(--aivo-text)] flex items-center gap-2">
             <BookOpen size={16} className="text-[#7C3AED]" />
             {t("submitInsight")}
           </h3>
@@ -445,7 +445,7 @@ export default function LearnerBrainViewPage() {
             onChange={(e) => setInsightText(e.target.value)}
             placeholder={t("insightPlaceholder")}
             rows={3}
-            className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent resize-none"
+            className="w-full rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent resize-none"
           />
           <div className="flex items-center justify-between mt-3">
             {insightSuccess && (

@@ -64,15 +64,15 @@ export default function DistrictOverviewPage() {
 
   return (
     <div>
-      <PurpleGradientHeader className="rounded-xl mb-8">
-        <h1 className="text-2xl font-bold">{t("districtDashboard")}</h1>
+      <PurpleGradientHeader className="rounded-2xl mb-8">
+        <h1 className="text-2xl font-extrabold">{t("districtDashboard")}</h1>
         <p className="mt-1 text-white/80">
           {t("adminWelcomeBack", { name: user?.name?.split(" ")[0] ?? "Admin" })}
         </p>
       </PurpleGradientHeader>
 
       {error && (
-        <div className="mb-6 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400">
+        <div className="mb-6 p-4 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171]">
           {error}
         </div>
       )}
@@ -97,12 +97,12 @@ export default function DistrictOverviewPage() {
             {statCards.map((stat) => (
               <Card key={stat.label}>
                 <CardBody className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-lg bg-[#7C3AED]/10 flex items-center justify-center text-[#7C3AED]">
+                  <div className="w-12 h-12 rounded-2xl bg-[#7C3AED]/10 flex items-center justify-center text-[#7C3AED]">
                     {stat.icon}
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{stat.label}</p>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">{stat.value}</p>
+                    <p className="text-sm text-[var(--aivo-text-secondary)]">{stat.label}</p>
+                    <p className="text-2xl font-extrabold text-[var(--aivo-text)]">{stat.value}</p>
                   </div>
                 </CardBody>
               </Card>
@@ -112,7 +112,7 @@ export default function DistrictOverviewPage() {
           <div className="grid gap-6 lg:grid-cols-2">
             <Card>
               <CardBody>
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-4">
                   {t("functioningLevelDist")}
                 </h2>
                 <div className="space-y-4">
@@ -123,12 +123,12 @@ export default function DistrictOverviewPage() {
                   ].map((level) => (
                     <div key={level.label}>
                       <div className="flex items-center justify-between text-sm mb-1">
-                        <span className="text-gray-700 dark:text-gray-300">{level.label}</span>
-                        <span className="font-medium text-gray-900 dark:text-white">
+                        <span className="text-[var(--aivo-text)]">{level.label}</span>
+                        <span className="font-medium text-[var(--aivo-text)]">
                           {level.count} ({levelPercent(level.count)}%)
                         </span>
                       </div>
-                      <div className="w-full h-4 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                      <div className="w-full h-4 bg-[#F0E6FF] dark:bg-[#3D2D5C] rounded-full overflow-hidden">
                         <div
                           className="h-full rounded-full transition-all duration-500"
                           style={{
@@ -148,11 +148,11 @@ export default function DistrictOverviewPage() {
                 <div className="w-16 h-16 rounded-full bg-[#7C3AED]/10 flex items-center justify-center mb-4">
                   <Bot className="text-[#7C3AED]" size={32} />
                 </div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">{t("activeTutors")}</p>
-                <p className="text-4xl font-bold text-gray-900 dark:text-white mt-1">
+                <p className="text-sm text-[var(--aivo-text-secondary)]">{t("activeTutors")}</p>
+                <p className="text-4xl font-bold text-[var(--aivo-text)] mt-1">
                   {data.activeTutors}
                 </p>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                <p className="text-sm text-[var(--aivo-text-secondary)] mt-2">
                   {t("activeTutorsDesc")}
                 </p>
               </CardBody>

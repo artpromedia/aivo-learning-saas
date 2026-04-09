@@ -64,7 +64,7 @@ export function LocaleSwitcher() {
       value={currentLocale}
       onChange={handleChange}
       disabled={isPending}
-      className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 shadow-sm transition-colors hover:border-gray-400 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
+      className="rounded-md border border-[#E8DDF0] bg-white px-3 py-1.5 text-sm text-[var(--aivo-text)] shadow-sm transition-colors hover:border-[#7C3AED] focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 disabled:opacity-50 dark:border-[#3D2D5C] dark:bg-[#2A1E45] dark:text-[#C4B5D0]"
       aria-label="Select language"
     >
       {availableLocales.map((locale) => (

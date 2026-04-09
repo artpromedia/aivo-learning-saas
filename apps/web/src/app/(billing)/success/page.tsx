@@ -85,7 +85,7 @@ export default function PaymentSuccessPage() {
       <div className="min-h-screen flex items-center justify-center px-4">
         <div className="text-center">
           <Loader2 className="animate-spin text-[#7C3AED] mx-auto mb-4" size={40} />
-          <p className="text-gray-500 dark:text-gray-400">Verifying your payment...</p>
+          <p className="text-[var(--aivo-text-secondary)]">Verifying your payment...</p>
         </div>
       </div>
     );
@@ -98,10 +98,10 @@ export default function PaymentSuccessPage() {
           <div className="w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center mx-auto mb-4">
             <AlertCircle className="text-red-500" size={32} />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+          <h1 className="text-2xl font-extrabold text-[var(--aivo-text)] mb-2">
             Checkout Incomplete
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 mb-6">{verifyError}</p>
+          <p className="text-[var(--aivo-text-secondary)] mb-6">{verifyError}</p>
           <Button onClick={() => router.push("/checkout")} className="min-w-[200px]">
             Try Again
           </Button>
@@ -144,7 +144,7 @@ export default function PaymentSuccessPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="text-3xl font-bold text-gray-900 dark:text-white mb-3"
+            className="text-3xl font-bold text-[var(--aivo-text)] mb-3"
           >
             {t("paymentSuccessful")}
           </motion.h1>
@@ -153,7 +153,7 @@ export default function PaymentSuccessPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="text-lg text-gray-500 dark:text-gray-400 mb-2"
+            className="text-lg text-[var(--aivo-text-secondary)] mb-2"
           >
             {t("welcomeToPremium")}
           </motion.p>
@@ -173,7 +173,7 @@ export default function PaymentSuccessPage() {
                 ].map((feature) => (
                   <div
                     key={feature}
-                    className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400"
+                    className="flex items-center gap-2 text-sm text-[var(--aivo-text-secondary)]"
                   >
                     <CheckCircle
                       className="text-[#7C3AED] shrink-0"

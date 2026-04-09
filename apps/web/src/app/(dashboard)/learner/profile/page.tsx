@@ -97,7 +97,7 @@ export default function LearnerProfilePage() {
   if (!activeLearner) {
     return (
       <div className="text-center py-16">
-        <p className="text-gray-500 mb-4">{t("noLearnerSelected")}</p>
+        <p className="text-[var(--aivo-text-secondary)] mb-4">{t("noLearnerSelected")}</p>
         <Button variant="outline" onClick={() => router.push("/learner")}>
           {t("goHome")}
         </Button>
@@ -108,13 +108,13 @@ export default function LearnerProfilePage() {
   if (engLoading || loadingStats) {
     return (
       <div className="space-y-6">
-        <Skeleton height={200} className="w-full rounded-xl" />
+        <Skeleton height={200} className="w-full rounded-2xl" />
         <div className="grid grid-cols-2 gap-4">
           {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} height={100} className="w-full rounded-lg" />
+            <Skeleton key={i} height={100} className="w-full rounded-2xl" />
           ))}
         </div>
-        <Skeleton height={120} className="w-full rounded-lg" />
+        <Skeleton height={120} className="w-full rounded-2xl" />
       </div>
     );
   }
@@ -145,14 +145,14 @@ export default function LearnerProfilePage() {
     <div>
       <Link
         href="/learner"
-        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-4"
+        className="inline-flex items-center gap-1 text-sm text-[var(--aivo-text-secondary)] hover:text-[var(--aivo-text)] dark:text-[var(--aivo-text-muted)] dark:hover:text-[#A89BB5] mb-4"
       >
         <ArrowLeft size={16} />
         {t("backToHome")}
       </Link>
 
       {/* Profile Header */}
-      <PurpleGradientHeader className="rounded-xl mb-8">
+      <PurpleGradientHeader className="rounded-2xl mb-8">
         <div className="flex items-center gap-5">
           {/* Avatar */}
           <div className="relative group">
@@ -193,7 +193,7 @@ export default function LearnerProfilePage() {
           </div>
 
           <div className="flex-1">
-            <h1 className="text-2xl font-bold">{activeLearner.name}</h1>
+            <h1 className="text-2xl font-extrabold">{activeLearner.name}</h1>
             <p className="text-white/70 text-sm mt-0.5">
               {t("memberSince", { date: memberSince })}
             </p>
@@ -223,13 +223,13 @@ export default function LearnerProfilePage() {
       </PurpleGradientHeader>
 
       {error && (
-        <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+        <div className="mb-4 p-3 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171] text-sm">
           {error}
         </div>
       )}
 
       {/* Stats Grid */}
-      <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+      <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-4">
         {t("stats")}
       </h2>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
@@ -238,22 +238,22 @@ export default function LearnerProfilePage() {
             <div className="w-10 h-10 rounded-full bg-[#7C3AED]/10 flex items-center justify-center mx-auto mb-2">
               <Star className="text-[#7C3AED]" size={20} />
             </div>
-            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+            <p className="text-2xl font-extrabold text-[var(--aivo-text)]">
               {level?.level ?? 1}
             </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">{t("level")}</p>
+            <p className="text-xs text-[var(--aivo-text-secondary)]">{t("level")}</p>
           </CardBody>
         </Card>
 
         <Card>
           <CardBody className="text-center py-5">
-            <div className="w-10 h-10 rounded-full bg-[#7C4DFF]/10 flex items-center justify-center mx-auto mb-2">
-              <Zap className="text-[#7C4DFF]" size={20} />
+            <div className="w-10 h-10 rounded-full bg-[#7C3AED]/10 flex items-center justify-center mx-auto mb-2">
+              <Zap className="text-[#7C3AED]" size={20} />
             </div>
-            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+            <p className="text-2xl font-extrabold text-[var(--aivo-text)]">
               {xp?.totalXp ?? 0}
             </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
+            <p className="text-xs text-[var(--aivo-text-secondary)]">
               {t("totalXp")}
             </p>
           </CardBody>
@@ -261,13 +261,13 @@ export default function LearnerProfilePage() {
 
         <Card>
           <CardBody className="text-center py-5">
-            <div className="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-900/20 flex items-center justify-center mx-auto mb-2">
+            <div className="w-10 h-10 rounded-full bg-[#FFF7ED] dark:bg-[#FB923C]/10 flex items-center justify-center mx-auto mb-2">
               <Flame className="text-orange-500" size={20} />
             </div>
-            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+            <p className="text-2xl font-extrabold text-[var(--aivo-text)]">
               {streak?.currentStreak ?? 0}
             </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
+            <p className="text-xs text-[var(--aivo-text-secondary)]">
               {t("dayStreak")}
             </p>
           </CardBody>
@@ -275,58 +275,58 @@ export default function LearnerProfilePage() {
 
         <Card>
           <CardBody className="text-center py-5">
-            <div className="w-10 h-10 rounded-full bg-yellow-100 dark:bg-yellow-900/20 flex items-center justify-center mx-auto mb-2">
+            <div className="w-10 h-10 rounded-full bg-[#FEF3C7] dark:bg-[#FBBF24]/10 flex items-center justify-center mx-auto mb-2">
               <Medal className="text-yellow-500" size={20} />
             </div>
-            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+            <p className="text-2xl font-extrabold text-[var(--aivo-text)]">
               {badges.length}
             </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">{t("badgeCollection")}</p>
+            <p className="text-xs text-[var(--aivo-text-secondary)]">{t("badgeCollection")}</p>
           </CardBody>
         </Card>
       </div>
 
       {/* Detailed Stats */}
-      <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+      <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-4">
         {t("activity")}
       </h2>
       <Card className="mb-8">
         <CardBody>
           <div className="grid grid-cols-2 gap-y-4 gap-x-6">
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-500 dark:text-gray-400">
+              <span className="text-sm text-[var(--aivo-text-secondary)]">
                 {t("totalSessions")}
               </span>
-              <span className="text-sm font-semibold text-gray-900 dark:text-white">
+              <span className="text-sm font-semibold text-[var(--aivo-text)]">
                 {stats?.totalSessions ?? 0}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-500 dark:text-gray-400">
+              <span className="text-sm text-[var(--aivo-text-secondary)]">
                 {t("questsCompleted")}
               </span>
-              <span className="text-sm font-semibold text-gray-900 dark:text-white">
+              <span className="text-sm font-semibold text-[var(--aivo-text)]">
                 {stats?.questsCompleted ?? 0}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-500 dark:text-gray-400">
+              <span className="text-sm text-[var(--aivo-text-secondary)]">
                 {t("challengesWon")}
               </span>
-              <span className="text-sm font-semibold text-gray-900 dark:text-white">
+              <span className="text-sm font-semibold text-[var(--aivo-text)]">
                 {stats?.challengesWon ?? 0}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-500 dark:text-gray-400">
+              <span className="text-sm text-[var(--aivo-text-secondary)]">
                 {t("homeworkHelped")}
               </span>
-              <span className="text-sm font-semibold text-gray-900 dark:text-white">
+              <span className="text-sm font-semibold text-[var(--aivo-text)]">
                 {stats?.homeworkHelped ?? 0}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-500 dark:text-gray-400">
+              <span className="text-sm text-[var(--aivo-text-secondary)]">
                 {t("weeklyXp")}
               </span>
               <span className="text-sm font-semibold text-[#7C3AED]">
@@ -334,7 +334,7 @@ export default function LearnerProfilePage() {
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-500 dark:text-gray-400">
+              <span className="text-sm text-[var(--aivo-text-secondary)]">
                 {t("longestStreak")}
               </span>
               <span className="text-sm font-semibold text-orange-500">
@@ -347,7 +347,7 @@ export default function LearnerProfilePage() {
 
       {/* Recent Badges */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+        <h2 className="text-lg font-bold text-[var(--aivo-text)]">
           {t("recentBadges")}
         </h2>
         {badges.length > 0 && (
@@ -363,11 +363,11 @@ export default function LearnerProfilePage() {
       {badges.length === 0 ? (
         <Card>
           <CardBody className="text-center py-10">
-            <Trophy className="mx-auto mb-3 text-gray-300 dark:text-gray-600" size={40} />
-            <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-1">
+            <Trophy className="mx-auto mb-3 text-[#A89BB5] dark:text-[#7B6A94]" size={40} />
+            <h3 className="text-base font-semibold text-[var(--aivo-text)] mb-1">
               {t("noBadgesYet")}
             </h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-[var(--aivo-text-secondary)]">
               {t("earnFirstBadge")}
             </p>
           </CardBody>
@@ -375,7 +375,7 @@ export default function LearnerProfilePage() {
       ) : (
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4 mb-8">
           {badges.slice(0, 6).map((badge) => (
-            <Card key={badge.id} className="hover:shadow-md transition-shadow">
+            <Card key={badge.id} className="hover:shadow-[var(--shadow-card)] transition-all">
               <CardBody className="flex flex-col items-center text-center py-4 px-2">
                 <div className="w-12 h-12 rounded-full bg-[#7C3AED]/10 flex items-center justify-center mb-2 overflow-hidden">
                   {badge.iconUrl ? (
@@ -388,10 +388,10 @@ export default function LearnerProfilePage() {
                     <Trophy className="text-[#7C3AED]" size={20} />
                   )}
                 </div>
-                <p className="text-xs font-medium text-gray-900 dark:text-white truncate w-full">
+                <p className="text-xs font-medium text-[var(--aivo-text)] truncate w-full">
                   {badge.name}
                 </p>
-                <p className="text-[10px] text-gray-400 mt-0.5">
+                <p className="text-[10px] text-[var(--aivo-text-muted)] mt-0.5">
                   {new Date(badge.earnedAt).toLocaleDateString()}
                 </p>
               </CardBody>

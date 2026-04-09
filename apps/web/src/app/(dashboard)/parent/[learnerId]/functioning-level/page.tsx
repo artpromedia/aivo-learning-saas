@@ -145,7 +145,7 @@ export default function FunctioningLevelPage() {
     return (
       <div className="text-center py-16">
         <Loader2 className="mx-auto mb-4 text-[#7C3AED] animate-spin" size={48} />
-        <p className="text-gray-500 dark:text-gray-400">
+        <p className="text-[var(--aivo-text-secondary)]">
           {t("loadingFunctioningLevel")}
         </p>
       </div>
@@ -155,7 +155,7 @@ export default function FunctioningLevelPage() {
   if (error || !data) {
     return (
       <div className="text-center py-16">
-        <Brain className="mx-auto mb-4 text-gray-400" size={48} />
+        <Brain className="mx-auto mb-4 text-[#A89BB5]" size={48} />
         <p className="text-red-500 mb-4">
           {error instanceof Error ? error.message : t("failedToLoadFunctioningLevel")}
         </p>
@@ -177,17 +177,17 @@ export default function FunctioningLevelPage() {
     <div>
       <Link
         href={`/parent/${learnerId}/brain`}
-        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-4"
+        className="inline-flex items-center gap-1 text-sm text-[var(--aivo-text-secondary)] hover:text-[var(--aivo-text)] dark:text-[var(--aivo-text-muted)] dark:hover:text-[#A89BB5] mb-4"
       >
         <ArrowLeft size={16} />
         {t("backToBrainProfile")}
       </Link>
 
-      <PurpleGradientHeader className="rounded-xl mb-8">
+      <PurpleGradientHeader className="rounded-2xl mb-8">
         <div className="flex items-center gap-3">
           <Brain size={32} />
           <div>
-            <h1 className="text-2xl font-bold">{t("functioningLevel")}</h1>
+            <h1 className="text-2xl font-extrabold">{t("functioningLevel")}</h1>
             <p className="text-white/80 text-sm">
               {t("functioningLevelSubtitle")}
             </p>
@@ -199,7 +199,7 @@ export default function FunctioningLevelPage() {
         {/* Current level */}
         <Card>
           <CardHeader>
-            <h3 className="font-semibold text-gray-900 dark:text-white">
+            <h3 className="font-semibold text-[var(--aivo-text)]">
               {t("currentLevel")}
             </h3>
           </CardHeader>
@@ -209,7 +209,7 @@ export default function FunctioningLevelPage() {
                 {levelLabel(current)}
               </Badge>
             </div>
-            <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+            <p className="text-[var(--aivo-text-secondary)] dark:text-[#A89BB5] leading-relaxed">
               {meta.description}
             </p>
           </CardBody>
@@ -218,14 +218,14 @@ export default function FunctioningLevelPage() {
         {/* Active adaptations */}
         <Card>
           <CardHeader>
-            <h3 className="font-semibold text-gray-900 dark:text-white">
+            <h3 className="font-semibold text-[var(--aivo-text)]">
               {t("activeAdaptations")}
             </h3>
           </CardHeader>
           <CardBody>
             <ul className="space-y-2">
               {meta.adaptations.map((a) => (
-                <li key={a.text} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                <li key={a.text} className="flex items-center gap-2 text-sm text-[var(--aivo-text-secondary)]">
                   <span>{a.icon}</span>
                   {a.text}
                 </li>
@@ -238,18 +238,18 @@ export default function FunctioningLevelPage() {
         {data.history && data.history.length > 0 && (
           <Card>
             <CardHeader>
-              <h3 className="font-semibold text-gray-900 dark:text-white">
+              <h3 className="font-semibold text-[var(--aivo-text)]">
                 {t("levelHistory")}
               </h3>
             </CardHeader>
             <CardBody>
-              <ol className="relative border-l border-gray-200 dark:border-gray-700 space-y-4 ml-2">
+              <ol className="relative border-l border-[#E8DDF0] dark:border-[#3D2D5C] space-y-4 ml-2">
                 {data.history.map((entry, i) => {
                   const entryMeta = LEVEL_META[entry.level] ?? LEVEL_META.STANDARD;
                   return (
                     <li key={i} className="ml-4">
-                      <div className="absolute w-3 h-3 rounded-full -left-1.5 border border-white dark:border-gray-900 bg-[#7C3AED]" />
-                      <time className="mb-1 text-xs font-normal leading-none text-gray-400 dark:text-gray-500">
+                      <div className="absolute w-3 h-3 rounded-full -left-1.5 border border-white dark:border-[#2A1E45] bg-[#7C3AED]" />
+                      <time className="mb-1 text-xs font-normal leading-none text-[var(--aivo-text-muted)]">
                         {new Date(entry.setAt).toLocaleDateString(undefined, {
                           year: "numeric",
                           month: "short",
@@ -260,7 +260,7 @@ export default function FunctioningLevelPage() {
                         <Badge className={`text-xs px-2 py-0.5 ${entryMeta.badgeClass}`}>
                           {levelLabel(entry.level)}
                         </Badge>
-                        <span className="text-xs text-gray-500 dark:text-gray-400">
+                        <span className="text-xs text-[var(--aivo-text-secondary)]">
                           {t("via", { trigger: triggerLabel(entry.trigger) })}
                         </span>
                       </div>

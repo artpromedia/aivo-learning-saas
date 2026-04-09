@@ -101,7 +101,7 @@ export default function RecommendationsPage() {
     return (
       <div className="text-center py-16">
         <Loader2 className="mx-auto mb-4 text-[#7C3AED] animate-spin" size={48} />
-        <p className="text-gray-500 dark:text-gray-400">{t("loadingRecommendations")}</p>
+        <p className="text-[var(--aivo-text-secondary)]">{t("loadingRecommendations")}</p>
       </div>
     );
   }
@@ -121,17 +121,17 @@ export default function RecommendationsPage() {
     <div>
       <Link
         href={`/parent/${learnerId}`}
-        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-4"
+        className="inline-flex items-center gap-1 text-sm text-[var(--aivo-text-secondary)] hover:text-[var(--aivo-text)] dark:text-[var(--aivo-text-muted)] dark:hover:text-[#A89BB5] mb-4"
       >
         <ArrowLeft size={16} />
         {t("backToDashboard")}
       </Link>
 
-      <PurpleGradientHeader className="rounded-xl mb-8">
+      <PurpleGradientHeader className="rounded-2xl mb-8">
         <div className="flex items-center gap-3">
           <Lightbulb size={32} />
           <div>
-            <h1 className="text-2xl font-bold">{t("recommendationsTitle")}</h1>
+            <h1 className="text-2xl font-extrabold">{t("recommendationsTitle")}</h1>
             <p className="text-white/80 text-sm">
               {t("recommendationsSubtitle")}
             </p>
@@ -140,14 +140,14 @@ export default function RecommendationsPage() {
       </PurpleGradientHeader>
 
       {actionError && (
-        <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+        <div className="mb-4 p-3 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171] text-sm">
           {actionError}
         </div>
       )}
 
       {pendingRecs.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-4">
             {t("pendingReview", { count: pendingRecs.length })}
           </h2>
           <div className="space-y-4">
@@ -160,7 +160,7 @@ export default function RecommendationsPage() {
                     </span>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <h3 className="font-semibold text-gray-900 dark:text-white">
+                        <h3 className="font-semibold text-[var(--aivo-text)]">
                           {rec.title}
                         </h3>
                         <Badge variant={priorityVariant[rec.priority]}>
@@ -168,16 +168,16 @@ export default function RecommendationsPage() {
                         </Badge>
                         <Badge variant="secondary">{rec.type}</Badge>
                       </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                      <p className="text-sm text-[var(--aivo-text-secondary)] mb-2">
                         {rec.description}
                       </p>
-                      <div className="flex items-start gap-1.5 text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-lg p-2.5">
+                      <div className="flex items-start gap-1.5 text-xs text-[var(--aivo-text-secondary)] bg-[var(--aivo-bg)] rounded-2xl p-2.5">
                         <Info size={14} className="shrink-0 mt-0.5" />
                         <span>{rec.reasoning}</span>
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center justify-end gap-2 mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <div className="flex items-center justify-end gap-2 mt-4 pt-4 border-t border-[#E8DDF0] dark:border-[#3D2D5C]">
                     <Button
                       variant="ghost"
                       size="sm"
@@ -219,11 +219,11 @@ export default function RecommendationsPage() {
       {pendingRecs.length === 0 && (
         <Card className="mb-8">
           <CardBody className="text-center py-12">
-            <Lightbulb className="mx-auto mb-3 text-gray-400" size={40} />
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+            <Lightbulb className="mx-auto mb-3 text-[#A89BB5]" size={40} />
+            <h3 className="text-lg font-bold text-[var(--aivo-text)] mb-1">
               {t("allCaughtUpTitle")}
             </h3>
-            <p className="text-gray-500 dark:text-gray-400">
+            <p className="text-[var(--aivo-text-secondary)]">
               {t("noPendingRecommendations")}
             </p>
           </CardBody>
@@ -232,7 +232,7 @@ export default function RecommendationsPage() {
 
       {resolvedRecs.length > 0 && (
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-4">
             {t("history")}
           </h2>
           <div className="space-y-3">
@@ -241,7 +241,7 @@ export default function RecommendationsPage() {
                 <CardBody className="flex items-center gap-3">
                   <span className="text-lg">{typeIcon[rec.type] ?? "💡"}</span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300 truncate">
+                    <p className="text-sm font-medium text-[var(--aivo-text)] truncate">
                       {rec.title}
                     </p>
                   </div>
@@ -286,14 +286,14 @@ export default function RecommendationsPage() {
           </div>
         }
       >
-        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+        <p className="text-sm text-[var(--aivo-text-secondary)] mb-4">
           {t("adjustPrompt", { title: selectedRec?.title })}
         </p>
         <textarea
           value={adjustNotes}
           onChange={(e) => setAdjustNotes(e.target.value)}
           rows={4}
-          className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none resize-none"
+          className="w-full px-4 py-3 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none resize-none"
           placeholder="e.g., 'I'd prefer shorter sessions' or 'Focus more on reading comprehension'"
         />
       </Modal>

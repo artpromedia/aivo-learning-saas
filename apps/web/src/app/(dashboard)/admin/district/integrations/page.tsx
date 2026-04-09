@@ -76,7 +76,7 @@ export default function IntegrationsPage() {
       case "in_progress":
         return <RefreshCw size={16} className="text-yellow-500 animate-spin" />;
       default:
-        return <Clock size={16} className="text-gray-400" />;
+        return <Clock size={16} className="text-[#A89BB5]" />;
     }
   };
 
@@ -90,15 +90,15 @@ export default function IntegrationsPage() {
 
   return (
     <div>
-      <PurpleGradientHeader className="rounded-xl mb-8">
-        <h1 className="text-2xl font-bold">SIS Integrations</h1>
+      <PurpleGradientHeader className="rounded-2xl mb-8">
+        <h1 className="text-2xl font-extrabold">SIS Integrations</h1>
         <p className="mt-1 text-white/80">
           Manage your Student Information System sync settings.
         </p>
       </PurpleGradientHeader>
 
       {error && (
-        <div className="mb-6 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400">
+        <div className="mb-6 p-4 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171]">
           {error}
         </div>
       )}
@@ -128,12 +128,12 @@ export default function IntegrationsPage() {
             <Link href="/admin/district/integrations/lti">
               <Card className="hover:border-[#7C3AED] transition-colors cursor-pointer">
                 <CardBody className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#7C3AED]/10 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-2xl bg-[#7C3AED]/10 flex items-center justify-center">
                     <Key size={20} className="text-[#7C3AED]" />
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-white">LTI Configuration</p>
-                    <p className="text-xs text-gray-500">Manage LTI 1.3 platforms</p>
+                    <p className="font-medium text-[var(--aivo-text)]">LTI Configuration</p>
+                    <p className="text-xs text-[var(--aivo-text-secondary)]">Manage LTI 1.3 platforms</p>
                   </div>
                 </CardBody>
               </Card>
@@ -141,12 +141,12 @@ export default function IntegrationsPage() {
             <Link href="/admin/district/integrations/webhooks">
               <Card className="hover:border-[#7C3AED] transition-colors cursor-pointer">
                 <CardBody className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#7C3AED]/10 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-2xl bg-[#7C3AED]/10 flex items-center justify-center">
                     <Webhook size={20} className="text-[#7C3AED]" />
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-white">Outbound Webhooks</p>
-                    <p className="text-xs text-gray-500">Endpoints & delivery logs</p>
+                    <p className="font-medium text-[var(--aivo-text)]">Outbound Webhooks</p>
+                    <p className="text-xs text-[var(--aivo-text-secondary)]">Endpoints & delivery logs</p>
                   </div>
                 </CardBody>
               </Card>
@@ -154,12 +154,12 @@ export default function IntegrationsPage() {
             <Link href={`/admin/district/integrations/sync?id=${data.syncHistory[0]?.id ?? ""}`}>
               <Card className="hover:border-[#7C3AED] transition-colors cursor-pointer">
                 <CardBody className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#7C3AED]/10 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-2xl bg-[#7C3AED]/10 flex items-center justify-center">
                     <FileSearch size={20} className="text-[#7C3AED]" />
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-white">Sync Error Dashboard</p>
-                    <p className="text-xs text-gray-500">Drill into sync details</p>
+                    <p className="font-medium text-[var(--aivo-text)]">Sync Error Dashboard</p>
+                    <p className="text-xs text-[var(--aivo-text-secondary)]">Drill into sync details</p>
                   </div>
                 </CardBody>
               </Card>
@@ -169,12 +169,12 @@ export default function IntegrationsPage() {
           <Card>
             <CardBody>
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-lg bg-[#7C3AED]/10 flex items-center justify-center text-[#7C3AED] shrink-0">
+                <div className="w-12 h-12 rounded-2xl bg-[#7C3AED]/10 flex items-center justify-center text-[#7C3AED] shrink-0">
                   <Link2 size={24} />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-1">
-                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    <h2 className="text-lg font-bold text-[var(--aivo-text)]">
                       {data.provider === "clever"
                         ? "Clever"
                         : data.provider === "classlink"
@@ -188,12 +188,12 @@ export default function IntegrationsPage() {
                     )}
                   </div>
                   {data.lastSyncAt && (
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                    <p className="text-sm text-[var(--aivo-text-secondary)]">
                       Last synced: {formatDate(data.lastSyncAt)}
                     </p>
                   )}
                   {!data.lastSyncAt && data.connected && (
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                    <p className="text-sm text-[var(--aivo-text-secondary)]">
                       No syncs have been performed yet.
                     </p>
                   )}
@@ -208,7 +208,7 @@ export default function IntegrationsPage() {
                 </Button>
               </div>
               {syncMessage && (
-                <p className="mt-3 text-sm text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
+                <p className="mt-3 text-sm text-[var(--aivo-text-secondary)] bg-[var(--aivo-bg)] p-3 rounded-2xl">
                   {syncMessage}
                 </p>
               )}
@@ -217,11 +217,11 @@ export default function IntegrationsPage() {
 
           <Card>
             <CardBody>
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-4">
                 Sync History
               </h2>
               {data.syncHistory.length === 0 ? (
-                <p className="text-gray-500 dark:text-gray-400 text-sm py-4 text-center">
+                <p className="text-[var(--aivo-text-secondary)] text-sm py-4 text-center">
                   No sync history available.
                 </p>
               ) : (
@@ -230,12 +230,12 @@ export default function IntegrationsPage() {
                     <Link
                       key={entry.id}
                       href={`/admin/district/integrations/sync?id=${entry.id}`}
-                      className="flex items-center gap-4 p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-[#7C3AED] transition-colors"
+                      className="flex items-center gap-4 p-3 border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-2xl hover:border-[#7C3AED] transition-colors"
                     >
                       {statusIcon(entry.status)}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium text-gray-900 dark:text-white">
+                          <span className="text-sm font-medium text-[var(--aivo-text)]">
                             {formatDate(entry.triggeredAt)}
                           </span>
                           <Badge variant={statusVariant(entry.status)}>
@@ -243,7 +243,7 @@ export default function IntegrationsPage() {
                           </Badge>
                         </div>
                         {entry.recordsSynced !== undefined && (
-                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                          <p className="text-xs text-[var(--aivo-text-secondary)] mt-0.5">
                             {entry.recordsSynced} records synced
                           </p>
                         )}
@@ -252,7 +252,7 @@ export default function IntegrationsPage() {
                         )}
                       </div>
                       {entry.completedAt && (
-                        <span className="text-xs text-gray-400 shrink-0">
+                        <span className="text-xs text-[var(--aivo-text-muted)] shrink-0">
                           Completed: {formatDate(entry.completedAt)}
                         </span>
                       )}

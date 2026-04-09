@@ -95,7 +95,7 @@ function CheckoutContent() {
         <Skeleton height={40} width={300} className="mb-8 mx-auto" />
         <div className="grid gap-6 md:grid-cols-4">
           {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} height={400} className="w-full rounded-xl" />
+            <Skeleton key={i} height={400} className="w-full rounded-2xl" />
           ))}
         </div>
       </div>
@@ -106,7 +106,7 @@ function CheckoutContent() {
     <div className="max-w-5xl mx-auto py-12 px-4">
       <Link
         href="/parent"
-        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-6"
+        className="inline-flex items-center gap-1 text-sm text-[var(--aivo-text-secondary)] hover:text-[var(--aivo-text)] dark:text-[var(--aivo-text-muted)] dark:hover:text-[#A89BB5] mb-6"
       >
         <ArrowLeft size={16} />
         {t("backToDashboard")}
@@ -116,17 +116,17 @@ function CheckoutContent() {
         <div className="w-16 h-16 rounded-full bg-[#7C3AED]/10 flex items-center justify-center mx-auto mb-4">
           <CreditCard className="text-[#7C3AED]" size={32} />
         </div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+        <h1 className="text-3xl font-bold text-[var(--aivo-text)] mb-2">
           {t("chooseYourPlan")}
         </h1>
-        <p className="text-gray-500 dark:text-gray-400">
+        <p className="text-[var(--aivo-text-secondary)]">
           {t("choosePlanSubtitle")}
         </p>
       </div>
 
       {error && (
-        <div className="mb-6 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-center">
-          <p className="text-red-700 dark:text-red-400 text-sm mb-3">
+        <div className="mb-6 p-4 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-center">
+          <p className="text-[#991B1B] dark:text-[#F87171] text-sm mb-3">
             {error}
           </p>
           <Button
@@ -155,28 +155,28 @@ function CheckoutContent() {
             return (
               <Card
                 key={plan.id}
-                className="transition-all relative hover:shadow-md border-gray-200"
+                className="transition-all relative hover:shadow-[var(--shadow-card)] border-[#E8DDF0]"
               >
                 <CardBody className="text-center pt-8">
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
+                  <h3 className="text-lg font-bold text-[var(--aivo-text)] mb-1">
                     {plan.name}
                   </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                  <p className="text-sm text-[var(--aivo-text-secondary)] mb-4">
                     {plan.description}
                   </p>
                   <div className="mb-4">
-                    <span className="text-4xl font-bold text-gray-900 dark:text-white">
+                    <span className="text-4xl font-bold text-[var(--aivo-text)]">
                       {t("contactUs")}
                     </span>
                   </div>
-                  <p className="text-xs text-gray-500 mb-6">
+                  <p className="text-xs text-[var(--aivo-text-secondary)] mb-6">
                     {learnersLabel}
                   </p>
                   <ul className="space-y-2 text-left mb-6">
                     {plan.features.map((feature, i) => (
                       <li
                         key={i}
-                        className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-400"
+                        className="flex items-start gap-2 text-sm text-[var(--aivo-text-secondary)]"
                       >
                         <Check
                           className="text-[#7C3AED] shrink-0 mt-0.5"
@@ -190,7 +190,7 @@ function CheckoutContent() {
                     href="https://aivolearning.com/demo"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block w-full rounded-lg bg-gray-100 dark:bg-gray-800 px-4 py-2.5 text-center text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                    className="block w-full rounded-2xl bg-[var(--aivo-bg-alt,#FFF5EB)] px-4 py-2.5 text-center text-sm font-semibold text-[var(--aivo-text)] hover:bg-[#F0E6FF] dark:hover:bg-[#3D2D5C] transition-colors"
                   >
                     {t("contactSales")}
                   </a>
@@ -204,8 +204,8 @@ function CheckoutContent() {
               key={plan.id}
               className={`cursor-pointer transition-all relative ${
                 selectedPlan === plan.id
-                  ? "ring-2 ring-[#7C3AED] shadow-lg"
-                  : "hover:shadow-md"
+                  ? "ring-2 ring-[#7C3AED] shadow-[var(--shadow-playful)]"
+                  : "hover:shadow-[var(--shadow-card)]"
               } ${plan.recommended ? "border-[#7C3AED]" : ""}`}
               onClick={() => setSelectedPlan(plan.id)}
             >
@@ -218,10 +218,10 @@ function CheckoutContent() {
                 </div>
               )}
               <CardBody className="text-center pt-8">
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
+                <h3 className="text-lg font-bold text-[var(--aivo-text)] mb-1">
                   {plan.name}
                 </h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                <p className="text-sm text-[var(--aivo-text-secondary)] mb-4">
                   {plan.description}
                 </p>
                 {plan.trialDays > 0 && (
@@ -230,26 +230,26 @@ function CheckoutContent() {
                   </Badge>
                 )}
                 <div className="mb-4">
-                  <span className="text-4xl font-bold text-gray-900 dark:text-white">
+                  <span className="text-4xl font-bold text-[var(--aivo-text)]">
                     ${displayPrice}
                   </span>
-                  <span className="text-gray-500 dark:text-gray-400">
+                  <span className="text-[var(--aivo-text-secondary)]">
                     {t("perInterval", { interval: plan.interval })}
                   </span>
                   {plan.trialDays > 0 && (
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-[var(--aivo-text-secondary)] mt-1">
                       {t("afterTrial", { days: plan.trialDays })}
                     </p>
                   )}
                 </div>
-                <p className="text-xs text-gray-500 mb-6">
+                <p className="text-xs text-[var(--aivo-text-secondary)] mb-6">
                   {learnersLabel}
                 </p>
                 <ul className="space-y-2 text-left">
                   {plan.features.map((feature, i) => (
                     <li
                       key={i}
-                      className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-400"
+                      className="flex items-start gap-2 text-sm text-[var(--aivo-text-secondary)]"
                     >
                       <Check
                         className="text-[#7C3AED] shrink-0 mt-0.5"
@@ -280,11 +280,11 @@ function CheckoutContent() {
               : t("continueToPayment")}
         </Button>
         {selectedPlanData?.trialDays ? (
-          <p className="text-xs text-gray-500 mt-2">
+          <p className="text-xs text-[var(--aivo-text-secondary)] mt-2">
             {t("trialReassurance", { days: selectedPlanData.trialDays })}
           </p>
         ) : null}
-        <div className="flex items-center justify-center gap-2 mt-4 text-xs text-gray-400">
+        <div className="flex items-center justify-center gap-2 mt-4 text-xs text-[#A89BB5]">
           <Shield size={14} />
           <span>{t("securePayment")}</span>
         </div>

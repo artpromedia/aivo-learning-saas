@@ -32,11 +32,11 @@ export default function OnboardingLayout({
   const currentStep = getCurrentStep(pathname);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-      <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+    <div className="min-h-screen bg-bubbles" style={{ backgroundColor: "var(--aivo-bg)" }}>
+      <header className="px-6 py-4" style={{ backgroundColor: "var(--aivo-bg-card)", borderBottom: "1px solid var(--aivo-border)" }}>
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <AivoLogo size="sm" />
-          <span className="text-sm text-gray-500 dark:text-gray-400">
+          <span className="text-sm font-bold px-3 py-1 rounded-full" style={{ backgroundColor: "var(--aivo-purple-50)", color: "var(--aivo-purple-500)" }}>
             {t("stepProgress", { current: currentStep, total: ONBOARDING_STEP_KEYS.length })}
           </span>
         </div>

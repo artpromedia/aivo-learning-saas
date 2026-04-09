@@ -157,13 +157,13 @@ export default function ClassroomDetailPage() {
           </div>
         </>
       ) : error ? (
-        <div className="p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400">
+        <div className="p-4 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171]">
           {error}
         </div>
       ) : data ? (
         <>
-          <PurpleGradientHeader className="rounded-xl mb-8">
-            <h1 className="text-2xl font-bold">{data.name}</h1>
+          <PurpleGradientHeader className="rounded-2xl mb-8">
+            <h1 className="text-2xl font-extrabold">{data.name}</h1>
             <div className="flex flex-wrap items-center gap-4 mt-2 text-white/80">
               <span>Teacher: {data.teacherName}</span>
               <span>Grade Band: {data.gradeBand}</span>
@@ -174,7 +174,7 @@ export default function ClassroomDetailPage() {
           <div className="grid gap-6 lg:grid-cols-3 mb-8">
             <Card className="lg:col-span-1">
               <CardBody>
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-4">
                   Functioning Level Breakdown
                 </h2>
                 <div className="space-y-4">
@@ -185,12 +185,12 @@ export default function ClassroomDetailPage() {
                   ].map((level) => (
                     <div key={level.label}>
                       <div className="flex items-center justify-between text-sm mb-1">
-                        <span className="text-gray-700 dark:text-gray-300">{level.label}</span>
-                        <span className="font-medium text-gray-900 dark:text-white">
+                        <span className="text-[var(--aivo-text)]">{level.label}</span>
+                        <span className="font-medium text-[var(--aivo-text)]">
                           {level.count} ({levelPercent(level.count)}%)
                         </span>
                       </div>
-                      <div className="w-full h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                      <div className="w-full h-3 bg-[#F0E6FF] dark:bg-[#3D2D5C] rounded-full overflow-hidden">
                         <div
                           className="h-full rounded-full transition-all duration-500"
                           style={{
@@ -208,7 +208,7 @@ export default function ClassroomDetailPage() {
             <Card className="lg:col-span-2">
               <CardBody>
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  <h2 className="text-lg font-bold text-[var(--aivo-text)]">
                     Learner Roster
                   </h2>
                   <Button
@@ -224,14 +224,14 @@ export default function ClassroomDetailPage() {
                 </div>
 
                 {showAddLearner && (
-                  <div className="mb-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                  <div className="mb-4 p-4 border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-2xl">
                     <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
+                      <h3 className="text-sm font-semibold text-[var(--aivo-text)]">
                         Add a Learner
                       </h3>
                       <button
                         onClick={() => setShowAddLearner(false)}
-                        className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                        className="text-[#A89BB5] hover:text-[#7C3AED]"
                       >
                         <X size={16} />
                       </button>
@@ -243,13 +243,13 @@ export default function ClassroomDetailPage() {
                         onChange={(e) => setLearnerName(e.target.value)}
                         placeholder="Learner name"
                         required
-                        className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent"
+                        className="w-full px-3 py-2 text-sm border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-2xl bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] placeholder-[#A89BB5] focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent"
                       />
                       <div className="flex gap-3">
                         <select
                           value={learnerLevel}
                           onChange={(e) => setLearnerLevel(e.target.value)}
-                          className="flex-1 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent"
+                          className="flex-1 px-3 py-2 text-sm border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-2xl bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent"
                         >
                           <option value="level1">Level 1</option>
                           <option value="level2">Level 2</option>
@@ -261,7 +261,7 @@ export default function ClassroomDetailPage() {
                           onChange={(e) => setLearnerGrade(e.target.value)}
                           placeholder="Enrolled grade"
                           required
-                          className="flex-1 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent"
+                          className="flex-1 px-3 py-2 text-sm border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-2xl bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] placeholder-[#A89BB5] focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent"
                         />
                       </div>
                       <div className="flex justify-end gap-2">
@@ -289,7 +289,7 @@ export default function ClassroomDetailPage() {
                     <div className="w-12 h-12 rounded-full bg-[#7C3AED]/10 flex items-center justify-center mx-auto mb-3">
                       <Users className="text-[#7C3AED]" size={24} />
                     </div>
-                    <p className="text-gray-500 dark:text-gray-400">
+                    <p className="text-[var(--aivo-text-secondary)]">
                       No learners in this classroom yet.
                     </p>
                   </div>
@@ -297,17 +297,17 @@ export default function ClassroomDetailPage() {
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
-                        <tr className="border-b border-gray-200 dark:border-gray-700">
-                          <th className="text-left py-2 px-3 font-medium text-gray-500 dark:text-gray-400">
+                        <tr className="border-b border-[#E8DDF0] dark:border-[#3D2D5C]">
+                          <th className="text-left py-2 px-3 font-medium text-[var(--aivo-text-secondary)]">
                             Name
                           </th>
-                          <th className="text-left py-2 px-3 font-medium text-gray-500 dark:text-gray-400">
+                          <th className="text-left py-2 px-3 font-medium text-[var(--aivo-text-secondary)]">
                             Functioning Level
                           </th>
-                          <th className="text-left py-2 px-3 font-medium text-gray-500 dark:text-gray-400">
+                          <th className="text-left py-2 px-3 font-medium text-[var(--aivo-text-secondary)]">
                             Enrolled Grade
                           </th>
-                          <th className="text-right py-2 px-3 font-medium text-gray-500 dark:text-gray-400">
+                          <th className="text-right py-2 px-3 font-medium text-[var(--aivo-text-secondary)]">
                             Actions
                           </th>
                         </tr>
@@ -316,9 +316,9 @@ export default function ClassroomDetailPage() {
                         {data.learners.map((learner) => (
                           <tr
                             key={learner.id}
-                            className="border-b border-gray-100 dark:border-gray-800 last:border-0"
+                            className="border-b border-[#F0E6FF] dark:border-[#3D2D5C] last:border-0"
                           >
-                            <td className="py-3 px-3 text-gray-900 dark:text-white font-medium">
+                            <td className="py-3 px-3 text-[var(--aivo-text)] font-medium">
                               {learner.name}
                             </td>
                             <td className="py-3 px-3">
@@ -326,7 +326,7 @@ export default function ClassroomDetailPage() {
                                 {levelLabel(learner.functioningLevel)}
                               </Badge>
                             </td>
-                            <td className="py-3 px-3 text-gray-700 dark:text-gray-300">
+                            <td className="py-3 px-3 text-[var(--aivo-text)]">
                               {learner.enrolledGrade}
                             </td>
                             <td className="py-3 px-3 text-right">

@@ -158,15 +158,15 @@ export default function NamespaceEditorPage() {
       <div className="flex items-center gap-4">
         <Link
           href="/admin/translations"
-          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          className="p-2 rounded-2xl hover:bg-[#FFF5EB] dark:hover:bg-[#2A1E45] transition-colors"
         >
-          <ArrowLeft className="h-5 w-5 text-gray-500" />
+          <ArrowLeft className="h-5 w-5 text-[var(--aivo-text-secondary)]" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white capitalize">
+          <h1 className="text-2xl font-extrabold text-[var(--aivo-text)] capitalize">
             {namespace}
           </h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-[var(--aivo-text-secondary)]">
             {rows.length} translation keys
           </p>
         </div>
@@ -181,7 +181,7 @@ export default function NamespaceEditorPage() {
               key={locale.code}
               onClick={() => handleBulkTranslate(locale.code)}
               disabled={translating}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-purple-900/10 hover:border-purple-300 transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] text-sm font-medium text-[var(--aivo-text)] hover:bg-purple-50 dark:hover:bg-purple-900/10 hover:border-purple-300 transition-colors disabled:opacity-50"
             >
               <Wand2 className="h-3.5 w-3.5" />
               AI Translate → {locale.code.toUpperCase()}
@@ -190,30 +190,30 @@ export default function NamespaceEditorPage() {
       </div>
 
       {loading ? (
-        <div className="p-10 text-center text-gray-400">Loading translations...</div>
+        <div className="p-10 text-center text-[#A89BB5]">Loading translations...</div>
       ) : (
-        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="bg-white dark:bg-[#2A1E45] rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-gray-50 dark:bg-gray-800">
-                  <th className="px-4 py-3 text-left font-medium text-gray-600 dark:text-gray-400 sticky left-0 bg-gray-50 dark:bg-gray-800 min-w-[200px]">
+                <tr className="bg-[var(--aivo-bg)]">
+                  <th className="px-4 py-3 text-left font-medium text-[var(--aivo-text-secondary)] sticky left-0 bg-[var(--aivo-bg)] min-w-[200px]">
                     Key
                   </th>
                   {locales.map((locale) => (
                     <th
                       key={locale.code}
-                      className="px-4 py-3 text-left font-medium text-gray-600 dark:text-gray-400 min-w-[250px]"
+                      className="px-4 py-3 text-left font-medium text-[var(--aivo-text-secondary)] min-w-[250px]"
                     >
                       {locale.code.toUpperCase()} — {locale.name}
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+              <tbody className="divide-y divide-[#F0E6FF] dark:divide-[#3D2D5C]">
                 {rows.map((row) => (
-                  <tr key={row.key} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
-                    <td className="px-4 py-3 font-mono text-xs text-gray-600 dark:text-gray-400 sticky left-0 bg-white dark:bg-gray-900">
+                  <tr key={row.key} className="hover:bg-[var(--aivo-bg)] dark:hover:bg-[#2A1E45]/50">
+                    <td className="px-4 py-3 font-mono text-xs text-[var(--aivo-text-secondary)] sticky left-0 bg-white dark:bg-[#2A1E45]">
                       {row.key}
                     </td>
                     {locales.map((locale) => (
@@ -228,10 +228,10 @@ export default function NamespaceEditorPage() {
                         ) : (
                           <button
                             onClick={() => toggleEdit(row.key, locale.code)}
-                            className="text-left w-full text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded px-2 py-1 -mx-2 -my-1 transition-colors"
+                            className="text-left w-full text-[var(--aivo-text)] hover:bg-[#FFF5EB] dark:hover:bg-[#3D2D5C] rounded px-2 py-1 -mx-2 -my-1 transition-colors"
                           >
                             {row.values[locale.code] || (
-                              <span className="text-gray-300 dark:text-gray-600 italic">
+                              <span className="text-[#A89BB5] dark:text-[#7B6A94] italic">
                                 untranslated
                               </span>
                             )}
@@ -273,7 +273,7 @@ function EditableCell({
           if (e.key === "Enter") onSave(value);
           if (e.key === "Escape") onCancel();
         }}
-        className="flex-1 px-2 py-1 rounded border border-purple-300 dark:border-purple-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-purple-500 outline-none"
+        className="flex-1 px-2 py-1 rounded border border-purple-300 dark:border-purple-600 bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] text-sm focus:ring-2 focus:ring-purple-500 outline-none"
         autoFocus
         disabled={saving}
       />

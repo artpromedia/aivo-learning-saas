@@ -119,10 +119,10 @@ export default function AddChildPage() {
         <div className="w-16 h-16 rounded-full bg-[#7C3AED]/10 flex items-center justify-center mx-auto mb-4">
           <User className="text-[#7C3AED]" size={32} />
         </div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+        <h1 className="text-2xl font-extrabold text-[var(--aivo-text)]">
           {t("tellUsAboutChild")}
         </h1>
-        <p className="mt-2 text-gray-500 dark:text-gray-400">
+        <p className="mt-2 text-[var(--aivo-text-secondary)]">
           {t("tellUsAboutChildSubtitle")}
         </p>
       </div>
@@ -130,7 +130,7 @@ export default function AddChildPage() {
       <Card>
         <CardBody>
           {serverError && (
-            <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+            <div className="mb-4 p-3 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171] text-sm">
               {serverError}
             </div>
           )}
@@ -139,20 +139,20 @@ export default function AddChildPage() {
             <div>
               <label
                 htmlFor="name"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
+                className="block text-sm font-medium text-[var(--aivo-text)] mb-1.5"
               >
                 {t("childName")}
               </label>
               <div className="relative">
                 <User
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A89BB5]"
                   size={18}
                 />
                 <input
                   id="name"
                   type="text"
                   {...register("name")}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-shadow"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-shadow"
                   placeholder={t("firstName")}
                 />
               </div>
@@ -166,20 +166,20 @@ export default function AddChildPage() {
             <div>
               <label
                 htmlFor="dateOfBirth"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
+                className="block text-sm font-medium text-[var(--aivo-text)] mb-1.5"
               >
                 {t("dateOfBirth")}
               </label>
               <div className="relative">
                 <Calendar
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A89BB5]"
                   size={18}
                 />
                 <input
                   id="dateOfBirth"
                   type="date"
                   {...register("dateOfBirth")}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-shadow"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-shadow"
                 />
               </div>
               {errors.dateOfBirth && (
@@ -192,19 +192,19 @@ export default function AddChildPage() {
             <div>
               <label
                 htmlFor="enrolledGrade"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
+                className="block text-sm font-medium text-[var(--aivo-text)] mb-1.5"
               >
                 {t("enrolledGrade")}
               </label>
               <div className="relative">
                 <GraduationCap
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A89BB5]"
                   size={18}
                 />
                 <select
                   id="enrolledGrade"
                   {...register("enrolledGrade")}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-shadow appearance-none"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-shadow appearance-none"
                 >
                   <option value="">{t("selectGrade")}</option>
                   {GRADE_KEYS.map((key) => (
@@ -228,7 +228,7 @@ export default function AddChildPage() {
                 onChange={setChildLanguage}
                 label={t("childPreferredLanguage")}
               />
-              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              <p className="mt-1 text-xs text-[var(--aivo-text-secondary)]">
                 {t("childLanguageHint")}
               </p>
             </div>
@@ -237,16 +237,16 @@ export default function AddChildPage() {
             <div>
               <label
                 htmlFor="pin"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
+                className="block text-sm font-medium text-[var(--aivo-text)] mb-1.5"
               >
                 {t("createLearnerPin")}
               </label>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+              <p className="text-xs text-[var(--aivo-text-secondary)] mb-2">
                 {t("createLearnerPinDescription")}
               </p>
               <div className="relative">
                 <Lock
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A89BB5]"
                   size={18}
                 />
                 <input
@@ -256,7 +256,7 @@ export default function AddChildPage() {
                   maxLength={6}
                   pattern="[0-9]*"
                   {...register("pin")}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-shadow tracking-[0.5em] text-center text-lg"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-shadow tracking-[0.5em] text-center text-lg"
                   placeholder="••••"
                 />
               </div>
@@ -270,13 +270,13 @@ export default function AddChildPage() {
             <div>
               <label
                 htmlFor="confirmPin"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
+                className="block text-sm font-medium text-[var(--aivo-text)] mb-1.5"
               >
                 {t("confirmLearnerPin")}
               </label>
               <div className="relative">
                 <Lock
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A89BB5]"
                   size={18}
                 />
                 <input
@@ -286,7 +286,7 @@ export default function AddChildPage() {
                   maxLength={6}
                   pattern="[0-9]*"
                   {...register("confirmPin")}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-shadow tracking-[0.5em] text-center text-lg"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-shadow tracking-[0.5em] text-center text-lg"
                   placeholder="••••"
                 />
               </div>

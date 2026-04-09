@@ -66,19 +66,19 @@ export default function TeacherManagementPage() {
 
   return (
     <div>
-      <PurpleGradientHeader className="rounded-xl mb-8">
-        <h1 className="text-2xl font-bold">Teacher Management</h1>
+      <PurpleGradientHeader className="rounded-2xl mb-8">
+        <h1 className="text-2xl font-extrabold">Teacher Management</h1>
         <p className="mt-1 text-white/80">Manage teachers across your district.</p>
       </PurpleGradientHeader>
 
       {error && (
-        <div className="mb-6 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400">
+        <div className="mb-6 p-4 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171]">
           {error}
         </div>
       )}
 
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+        <h2 className="text-lg font-bold text-[var(--aivo-text)]">
           Teachers ({teachers.length})
         </h2>
         <Button
@@ -98,24 +98,24 @@ export default function TeacherManagementPage() {
         <Card className="mb-6">
           <CardBody>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold text-gray-900 dark:text-white">Invite a Teacher</h3>
+              <h3 className="font-semibold text-[var(--aivo-text)]">Invite a Teacher</h3>
               <button
                 onClick={() => setShowInvite(false)}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                className="text-[#A89BB5] hover:text-[#7C3AED]"
               >
                 <X size={18} />
               </button>
             </div>
             <form onSubmit={handleInvite} className="flex gap-3">
               <div className="flex-1 relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A89BB5]" size={16} />
                 <input
                   type="email"
                   value={inviteEmail}
                   onChange={(e) => setInviteEmail(e.target.value)}
                   placeholder="teacher@school.edu"
                   required
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-2 border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-2xl bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] placeholder-[#A89BB5] focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent"
                 />
               </div>
               <Button type="submit" loading={inviting}>
@@ -153,10 +153,10 @@ export default function TeacherManagementPage() {
             <div className="w-16 h-16 rounded-full bg-[#7C3AED]/10 flex items-center justify-center mx-auto mb-4">
               <Users className="text-[#7C3AED]" size={32} />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            <h3 className="text-lg font-bold text-[var(--aivo-text)] mb-2">
               No teachers yet
             </h3>
-            <p className="text-gray-500 dark:text-gray-400 mb-4">
+            <p className="text-[var(--aivo-text-secondary)] mb-4">
               Invite teachers to start managing classrooms.
             </p>
             <Button leftIcon={<UserPlus size={18} />} onClick={() => setShowInvite(true)}>
@@ -167,16 +167,16 @@ export default function TeacherManagementPage() {
       ) : (
         <div className="space-y-3">
           {teachers.map((teacher) => (
-            <Card key={teacher.id} className="hover:shadow-md transition-shadow">
+            <Card key={teacher.id} className="hover:shadow-[var(--shadow-card)] transition-all">
               <CardBody className="flex items-center gap-4">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#8B5CF6] flex items-center justify-center text-white font-bold shrink-0">
                   {teacher.name.charAt(0).toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-gray-900 dark:text-white truncate">
+                  <p className="font-medium text-[var(--aivo-text)] truncate">
                     {teacher.name}
                   </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                  <p className="text-sm text-[var(--aivo-text-secondary)] truncate">
                     {teacher.email}
                   </p>
                 </div>

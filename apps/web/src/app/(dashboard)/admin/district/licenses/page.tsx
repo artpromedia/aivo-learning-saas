@@ -82,21 +82,21 @@ export default function LicenseManagementPage() {
 
   return (
     <div>
-      <PurpleGradientHeader className="rounded-xl mb-8">
-        <h1 className="text-2xl font-bold">Tutor License Management</h1>
+      <PurpleGradientHeader className="rounded-2xl mb-8">
+        <h1 className="text-2xl font-extrabold">Tutor License Management</h1>
         <p className="mt-1 text-white/80">
           Manage and allocate AI tutor licenses across your district.
         </p>
       </PurpleGradientHeader>
 
       {error && (
-        <div className="mb-6 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400">
+        <div className="mb-6 p-4 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171]">
           {error}
         </div>
       )}
 
       {allocateSuccess && (
-        <div className="mb-6 p-4 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 flex items-center gap-2">
+        <div className="mb-6 p-4 rounded-2xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 flex items-center gap-2">
           <CheckCircle size={16} />
           {allocateSuccess}
         </div>
@@ -128,33 +128,33 @@ export default function LicenseManagementPage() {
           <div className="grid gap-4 sm:grid-cols-3">
             <Card>
               <CardBody className="text-center">
-                <div className="w-10 h-10 rounded-lg bg-[#7C3AED]/10 flex items-center justify-center text-[#7C3AED] mx-auto mb-2">
+                <div className="w-10 h-10 rounded-2xl bg-[#7C3AED]/10 flex items-center justify-center text-[#7C3AED] mx-auto mb-2">
                   <Key size={20} />
                 </div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Total Licenses</p>
-                <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                <p className="text-sm text-[var(--aivo-text-secondary)]">Total Licenses</p>
+                <p className="text-3xl font-bold text-[var(--aivo-text)]">
                   {data.pool.totalLicenses}
                 </p>
               </CardBody>
             </Card>
             <Card>
               <CardBody className="text-center">
-                <div className="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 mx-auto mb-2">
+                <div className="w-10 h-10 rounded-2xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 mx-auto mb-2">
                   <Users size={20} />
                 </div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Used</p>
-                <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                <p className="text-sm text-[var(--aivo-text-secondary)]">Used</p>
+                <p className="text-3xl font-bold text-[var(--aivo-text)]">
                   {data.pool.usedLicenses}
                 </p>
               </CardBody>
             </Card>
             <Card>
               <CardBody className="text-center">
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Usage</p>
-                <p className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                <p className="text-sm text-[var(--aivo-text-secondary)] mb-2">Usage</p>
+                <p className="text-3xl font-bold text-[var(--aivo-text)] mb-2">
                   {usagePercent}%
                 </p>
-                <div className="w-full h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                <div className="w-full h-3 bg-[#F0E6FF] dark:bg-[#3D2D5C] rounded-full overflow-hidden">
                   <div
                     className="h-full rounded-full transition-all duration-500"
                     style={{
@@ -163,7 +163,7 @@ export default function LicenseManagementPage() {
                     }}
                   />
                 </div>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                <p className="text-xs text-[var(--aivo-text-secondary)] mt-1">
                   {data.pool.availableLicenses} available
                 </p>
               </CardBody>
@@ -172,11 +172,11 @@ export default function LicenseManagementPage() {
 
           <Card>
             <CardBody>
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-4">
                 Bulk Allocate by Classroom
               </h2>
               {data.classrooms.length === 0 ? (
-                <p className="text-gray-500 dark:text-gray-400 text-sm text-center py-4">
+                <p className="text-[var(--aivo-text-secondary)] text-sm text-center py-4">
                   No classrooms available.
                 </p>
               ) : (
@@ -184,16 +184,16 @@ export default function LicenseManagementPage() {
                   {data.classrooms.map((classroom) => (
                     <div
                       key={classroom.id}
-                      className="flex items-center gap-4 p-3 border border-gray-200 dark:border-gray-700 rounded-lg"
+                      className="flex items-center gap-4 p-3 border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-2xl"
                     >
-                      <div className="w-8 h-8 rounded-lg bg-[#7C3AED]/10 flex items-center justify-center text-[#7C3AED] shrink-0">
+                      <div className="w-8 h-8 rounded-2xl bg-[#7C3AED]/10 flex items-center justify-center text-[#7C3AED] shrink-0">
                         <School size={16} />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                        <p className="text-sm font-medium text-[var(--aivo-text)] truncate">
                           {classroom.name}
                         </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                        <p className="text-xs text-[var(--aivo-text-secondary)]">
                           {classroom.learnerCount} learners
                         </p>
                       </div>
@@ -214,25 +214,25 @@ export default function LicenseManagementPage() {
 
           <Card>
             <CardBody>
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-4">
                 Learner Allocations
               </h2>
               {data.learners.length === 0 ? (
-                <p className="text-gray-500 dark:text-gray-400 text-sm text-center py-4">
+                <p className="text-[var(--aivo-text-secondary)] text-sm text-center py-4">
                   No learner allocations found.
                 </p>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-gray-200 dark:border-gray-700">
-                        <th className="text-left py-2 px-3 font-medium text-gray-500 dark:text-gray-400">
+                      <tr className="border-b border-[#E8DDF0] dark:border-[#3D2D5C]">
+                        <th className="text-left py-2 px-3 font-medium text-[var(--aivo-text-secondary)]">
                           Learner
                         </th>
-                        <th className="text-left py-2 px-3 font-medium text-gray-500 dark:text-gray-400">
+                        <th className="text-left py-2 px-3 font-medium text-[var(--aivo-text-secondary)]">
                           Classroom
                         </th>
-                        <th className="text-left py-2 px-3 font-medium text-gray-500 dark:text-gray-400">
+                        <th className="text-left py-2 px-3 font-medium text-[var(--aivo-text-secondary)]">
                           Allocated Tutors
                         </th>
                       </tr>
@@ -241,12 +241,12 @@ export default function LicenseManagementPage() {
                       {data.learners.map((learner) => (
                         <tr
                           key={learner.id}
-                          className="border-b border-gray-100 dark:border-gray-800 last:border-0"
+                          className="border-b border-[#F0E6FF] dark:border-[#3D2D5C] last:border-0"
                         >
-                          <td className="py-3 px-3 text-gray-900 dark:text-white font-medium">
+                          <td className="py-3 px-3 text-[var(--aivo-text)] font-medium">
                             {learner.name}
                           </td>
-                          <td className="py-3 px-3 text-gray-700 dark:text-gray-300">
+                          <td className="py-3 px-3 text-[var(--aivo-text)]">
                             {learner.classroomName}
                           </td>
                           <td className="py-3 px-3">
@@ -259,7 +259,7 @@ export default function LicenseManagementPage() {
                                 ))}
                               </div>
                             ) : (
-                              <span className="text-gray-400 text-xs">None</span>
+                              <span className="text-[var(--aivo-text-muted)] text-xs">None</span>
                             )}
                           </td>
                         </tr>

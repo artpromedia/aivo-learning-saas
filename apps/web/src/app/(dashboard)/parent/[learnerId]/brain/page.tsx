@@ -21,7 +21,7 @@ export default function BrainProfilePage() {
     return (
       <div className="text-center py-16">
         <Loader2 className="mx-auto mb-4 text-[#7C3AED] animate-spin" size={48} />
-        <p className="text-gray-500 dark:text-gray-400">{t("loadingBrainProfile")}</p>
+        <p className="text-[var(--aivo-text-secondary)]">{t("loadingBrainProfile")}</p>
       </div>
     );
   }
@@ -40,11 +40,11 @@ export default function BrainProfilePage() {
   if (!profile) {
     return (
       <div className="text-center py-16">
-        <Brain className="mx-auto mb-4 text-gray-400" size={48} />
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+        <Brain className="mx-auto mb-4 text-[#A89BB5]" size={48} />
+        <h2 className="text-xl font-extrabold text-[var(--aivo-text)] mb-2">
           {t("noBrainProfileYet")}
         </h2>
-        <p className="text-gray-500 dark:text-gray-400 mb-6">
+        <p className="text-[var(--aivo-text-secondary)] mb-6">
           {t("noBrainProfileDesc")}
         </p>
         <Link href={`/baseline-assessment?learnerId=${learnerId}`}>
@@ -68,17 +68,17 @@ export default function BrainProfilePage() {
     <div>
       <Link
         href={`/parent/${learnerId}`}
-        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-4"
+        className="inline-flex items-center gap-1 text-sm text-[var(--aivo-text-secondary)] hover:text-[var(--aivo-text)] dark:text-[var(--aivo-text-muted)] dark:hover:text-[#A89BB5] mb-4"
       >
         <ArrowLeft size={16} />
         {t("backToDashboard")}
       </Link>
 
-      <PurpleGradientHeader className="rounded-xl mb-8">
+      <PurpleGradientHeader className="rounded-2xl mb-8">
         <div className="flex items-center gap-3">
           <Brain size={32} />
           <div>
-            <h1 className="text-2xl font-bold">{t("brainProfile")}</h1>
+            <h1 className="text-2xl font-extrabold">{t("brainProfile")}</h1>
             <p className="text-white/80 text-sm">
               {t("aiGeneratedProfile")} &middot; {t("statusLabel")}:{" "}
               <span className="capitalize font-medium">{profile.status}</span>
@@ -91,7 +91,7 @@ export default function BrainProfilePage() {
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-gray-900 dark:text-white">
+              <h3 className="font-semibold text-[var(--aivo-text)]">
                 {t("overview")}
               </h3>
               <Badge>
@@ -101,16 +101,16 @@ export default function BrainProfilePage() {
           </CardHeader>
           <CardBody className="space-y-3">
             <div>
-              <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
+              <span className="text-sm font-medium text-[var(--aivo-text-secondary)]">
                 {t("learningStyle")}
               </span>
-              <p className="text-gray-900 dark:text-white">{profile.learningStyle}</p>
+              <p className="text-[var(--aivo-text)]">{profile.learningStyle}</p>
             </div>
             <div>
-              <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
+              <span className="text-sm font-medium text-[var(--aivo-text-secondary)]">
                 {t("communicationStyle")}
               </span>
-              <p className="text-gray-900 dark:text-white">
+              <p className="text-[var(--aivo-text)]">
                 {profile.communicationStyle}
               </p>
             </div>
@@ -119,7 +119,7 @@ export default function BrainProfilePage() {
 
         <Card>
           <CardHeader>
-            <h3 className="font-semibold text-gray-900 dark:text-white">
+            <h3 className="font-semibold text-[var(--aivo-text)]">
               {t("strengths")}
             </h3>
           </CardHeader>
@@ -139,7 +139,7 @@ export default function BrainProfilePage() {
 
         <Card>
           <CardHeader>
-            <h3 className="font-semibold text-gray-900 dark:text-white">
+            <h3 className="font-semibold text-[var(--aivo-text)]">
               {t("growthAreas")}
             </h3>
           </CardHeader>
@@ -160,7 +160,7 @@ export default function BrainProfilePage() {
         {profile.sensoryPreferences.length > 0 && (
           <Card>
             <CardHeader>
-              <h3 className="font-semibold text-gray-900 dark:text-white">
+              <h3 className="font-semibold text-[var(--aivo-text)]">
                 {t("sensoryPreferences")}
               </h3>
             </CardHeader>
@@ -179,7 +179,7 @@ export default function BrainProfilePage() {
           </Card>
         )}
 
-        <div className="text-xs text-gray-400 dark:text-gray-500 text-right">
+        <div className="text-xs text-[var(--aivo-text-muted)] text-right">
           {t("lastUpdated", { date: new Date(profile.updatedAt).toLocaleDateString() })}
         </div>
 

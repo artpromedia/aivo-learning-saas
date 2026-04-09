@@ -18,17 +18,18 @@ function AivoToaster({ position = "bottom-right" }: AivoToasterProps) {
       position={position}
       toastOptions={{
         style: {
-          borderRadius: "0.75rem",
-          fontFamily: "inherit",
+          borderRadius: "1rem",
+          fontFamily: "var(--font-body)",
+          fontWeight: 600,
         },
         classNames: {
-          toast: "border border-gray-200 dark:border-gray-700 shadow-lg",
-          title: "text-sm font-semibold",
-          description: "text-sm text-gray-600 dark:text-gray-400",
-          success: "!bg-green-50 !text-green-900 dark:!bg-green-900/30 dark:!text-green-300",
-          error: "!bg-red-50 !text-red-900 dark:!bg-red-900/30 dark:!text-red-300",
-          info: "!bg-[#7C3AED]/5 !text-[#7C3AED] dark:!bg-[#7C4DFF]/20 dark:!text-[#7C4DFF]",
-          warning: "!bg-yellow-50 !text-yellow-900 dark:!bg-yellow-900/30 dark:!text-yellow-300",
+          toast: "border border-[#E8DDF0] dark:border-[#3D2D5C] shadow-[var(--shadow-playful)]",
+          title: "text-sm font-bold",
+          description: "text-sm text-[#6B5B7B] dark:text-[#B8A5D0]",
+          success: "!bg-[#D1FAE5] !text-[#065F46] dark:!bg-[#065F46]/30 dark:!text-[#34D399]",
+          error: "!bg-[#FFE0E0] !text-[#991B1B] dark:!bg-[#991B1B]/30 dark:!text-[#F87171]",
+          info: "!bg-[#F0E6FF] !text-[#7C3AED] dark:!bg-[#3D2D5C] dark:!text-[#C9A6FF]",
+          warning: "!bg-[#FEF3C7] !text-[#92400E] dark:!bg-[#92400E]/30 dark:!text-[#FBBF24]",
         },
       }}
       richColors

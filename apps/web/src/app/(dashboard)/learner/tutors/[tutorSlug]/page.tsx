@@ -198,7 +198,7 @@ export default function TutorChatPage() {
   if (loading) {
     return (
       <div className="flex flex-col h-[calc(100vh-8rem)]">
-        <div className="flex items-center gap-3 pb-4 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center gap-3 pb-4 border-b border-[#E8DDF0] dark:border-[#3D2D5C]">
           <Skeleton width={40} height={40} rounded="full" />
           <div>
             <Skeleton height={18} width={120} className="mb-1" />
@@ -256,10 +256,10 @@ export default function TutorChatPage() {
   return (
     <div className="flex flex-col h-[calc(100vh-8rem)]">
       {/* Chat Header */}
-      <div className="flex items-center gap-3 pb-4 border-b border-gray-200 dark:border-gray-700 mb-4">
+      <div className="flex items-center gap-3 pb-4 border-b border-[#E8DDF0] dark:border-[#3D2D5C] mb-4">
         <Link
           href="/learner/tutors"
-          className="p-1 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          className="p-1 rounded-2xl text-[var(--aivo-text-muted)] hover:text-[var(--aivo-text-secondary)] hover:bg-[#FFF5EB] dark:hover:bg-[#2A1E45] transition-colors"
         >
           <ArrowLeft size={20} />
         </Link>
@@ -270,10 +270,10 @@ export default function TutorChatPage() {
             showOnlineIndicator
           />
         ) : (
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#7C4DFF] flex items-center justify-center shrink-0" />
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#A855F7] flex items-center justify-center shrink-0" />
         )}
         <div>
-          <h2 className="font-semibold text-gray-900 dark:text-white">
+          <h2 className="font-semibold text-[var(--aivo-text)]">
             {tutor?.name}
           </h2>
           <Badge variant="secondary" className="text-xs">
@@ -312,7 +312,7 @@ export default function TutorChatPage() {
                 ) : isKnownPersona(tutor!.slug) ? (
                   <TutorAvatar persona={tutor!.slug} size="sm" />
                 ) : (
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#7C4DFF]" />
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#A855F7]" />
                 )}
               </div>
 
@@ -322,7 +322,7 @@ export default function TutorChatPage() {
                   "px-4 py-3 rounded-2xl text-sm leading-relaxed",
                   msg.role === "user"
                     ? "bg-[#7C3AED] text-white rounded-br-sm"
-                    : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-bl-sm",
+                    : "bg-[var(--aivo-bg-alt,#FFF5EB)] text-[var(--aivo-text)] rounded-bl-sm",
                 )}
               >
                 {msg.content || (
@@ -347,7 +347,7 @@ export default function TutorChatPage() {
 
       {/* Chat Error */}
       {chatError && (
-        <div className="mb-2 p-2 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm text-center">
+        <div className="mb-2 p-2 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 text-red-600 dark:text-red-400 text-sm text-center">
           {chatError}
         </div>
       )}
@@ -363,7 +363,7 @@ export default function TutorChatPage() {
       )}
 
       {/* Input */}
-      <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+      <div className="pt-4 border-t border-[#E8DDF0] dark:border-[#3D2D5C]">
         <div className="flex items-center gap-2">
           <input
             ref={inputRef}
@@ -373,7 +373,7 @@ export default function TutorChatPage() {
             onKeyDown={handleKeyDown}
             placeholder={t("typeMessage")}
             disabled={isStreaming}
-            className="flex-1 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none disabled:opacity-50"
+            className="flex-1 px-4 py-3 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none disabled:opacity-50"
           />
 
           {/* Echo: mic button */}

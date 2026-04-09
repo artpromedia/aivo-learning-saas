@@ -181,7 +181,7 @@ export default function BaselineAssessmentPage() {
     return (
       <div className="text-center py-16">
         <Loader2 className="mx-auto mb-4 text-[#7C3AED] animate-spin" size={48} />
-        <p className="text-gray-500 dark:text-gray-400">
+        <p className="text-[var(--aivo-text-secondary)]">
           {t("preparingAssessment")}
         </p>
       </div>
@@ -192,16 +192,16 @@ export default function BaselineAssessmentPage() {
     return (
       <div className="text-center py-16">
         <div className="text-5xl mb-4" aria-hidden="true">🎉</div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+        <h1 className="text-2xl font-extrabold text-[var(--aivo-text)] mb-2">
           Assessment Complete!
         </h1>
-        <p className="text-gray-500 dark:text-gray-400 mb-8 max-w-md mx-auto">
+        <p className="text-[var(--aivo-text-secondary)] mb-8 max-w-md mx-auto">
           Great job{activeLearner?.name ? `, ${activeLearner.name}` : ""}! We&apos;ve gathered
           everything we need to build a personalized learning profile.
         </p>
 
         {error && (
-          <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+          <div className="mb-4 p-3 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171] text-sm">
             {error}
           </div>
         )}
@@ -257,10 +257,10 @@ export default function BaselineAssessmentPage() {
         <div className="w-16 h-16 rounded-full bg-[#7C3AED]/10 flex items-center justify-center mx-auto mb-4">
           <Brain className="text-[#7C3AED]" size={32} />
         </div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+        <h1 className="text-2xl font-extrabold text-[var(--aivo-text)]">
           {t("baselineAssessment")}
         </h1>
-        <p className="mt-2 text-gray-500 dark:text-gray-400">
+        <p className="mt-2 text-[var(--aivo-text-secondary)]">
           {t("baselineDescription", { name: activeLearner?.name ?? "" })}
         </p>
       </div>
@@ -268,7 +268,7 @@ export default function BaselineAssessmentPage() {
       <ProgressBar value={progress} max={100} className="mb-6" size="sm" />
 
       <div className="flex items-center justify-between mb-4">
-        <span className="text-sm text-gray-500 dark:text-gray-400">
+        <span className="text-sm text-[var(--aivo-text-secondary)]">
           {t("questionsAnswered", { count: questionsAnswered })}
         </span>
         {question && (
@@ -279,7 +279,7 @@ export default function BaselineAssessmentPage() {
       </div>
 
       {error && (
-        <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+        <div className="mb-4 p-3 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171] text-sm">
           {error}
         </div>
       )}
@@ -298,7 +298,7 @@ export default function BaselineAssessmentPage() {
         <Card>
           <CardBody>
             {question.imageUrl && (
-              <div className="mb-4 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
+              <div className="mb-4 rounded-2xl overflow-hidden bg-[var(--aivo-bg-alt,#FFF5EB)]">
                 <img
                   src={question.imageUrl}
                   alt="Question visual"
@@ -307,13 +307,13 @@ export default function BaselineAssessmentPage() {
               </div>
             )}
 
-            <p className="text-lg font-medium text-gray-900 dark:text-white mb-6">
+            <p className="text-lg font-medium text-[var(--aivo-text)] mb-6">
               {question.prompt}
             </p>
 
             {feedback && (
               <div
-                className={`mb-4 p-3 rounded-lg text-sm font-medium ${
+                className={`mb-4 p-3 rounded-2xl text-sm font-medium ${
                   feedback.correct
                     ? "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800"
                     : "bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400 border border-orange-200 dark:border-orange-800"
@@ -331,13 +331,13 @@ export default function BaselineAssessmentPage() {
                     type="button"
                     disabled={!!feedback}
                     onClick={() => setSelectedAnswer(option)}
-                    className={`w-full text-left p-4 rounded-lg border-2 transition-all ${
+                    className={`w-full text-left p-4 rounded-2xl border-2 transition-all ${
                       selectedAnswer === option
-                        ? "border-[#7C3AED] bg-[#7C3AED]/5 shadow-sm"
-                        : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
+                        ? "border-[#7C3AED] bg-[#7C3AED]/5 shadow-[var(--shadow-card)]"
+                        : "border-[#E8DDF0] dark:border-[#3D2D5C] hover:border-[#E8DDF0] dark:hover:border-[#3D2D5C]"
                     } ${feedback ? "opacity-75 cursor-not-allowed" : ""}`}
                   >
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <span className="text-sm font-medium text-[var(--aivo-text)]">
                       {option}
                     </span>
                   </button>
@@ -351,7 +351,7 @@ export default function BaselineAssessmentPage() {
                 value={selectedAnswer ?? ""}
                 onChange={(e) => setSelectedAnswer(e.target.value)}
                 disabled={!!feedback}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none text-lg"
+                className="w-full px-4 py-3 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none text-lg"
                 placeholder={t("typeAnswer")}
               />
             )}

@@ -115,10 +115,10 @@ export default function ManageSubscriptionPage() {
   if (loading) {
     return (
       <div className="max-w-3xl mx-auto py-8 px-4 space-y-6">
-        <Skeleton height={80} className="w-full rounded-xl" />
-        <Skeleton height={200} className="w-full rounded-lg" />
-        <Skeleton height={150} className="w-full rounded-lg" />
-        <Skeleton height={200} className="w-full rounded-lg" />
+        <Skeleton height={80} className="w-full rounded-2xl" />
+        <Skeleton height={200} className="w-full rounded-2xl" />
+        <Skeleton height={150} className="w-full rounded-2xl" />
+        <Skeleton height={200} className="w-full rounded-2xl" />
       </div>
     );
   }
@@ -143,17 +143,17 @@ export default function ManageSubscriptionPage() {
       <div className="max-w-3xl mx-auto py-8 px-4">
         <Link
           href="/parent"
-          className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-4"
+          className="inline-flex items-center gap-1 text-sm text-[var(--aivo-text-secondary)] hover:text-[var(--aivo-text)] dark:text-[var(--aivo-text-muted)] dark:hover:text-[#A89BB5] mb-4"
         >
           <ArrowLeft size={16} />
           {t("backToDashboard")}
         </Link>
         <div className="text-center py-16">
-          <CreditCard size={48} className="mx-auto mb-4 text-gray-300 dark:text-gray-600" />
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+          <CreditCard size={48} className="mx-auto mb-4 text-[#A89BB5] dark:text-[#7B6A94]" />
+          <h2 className="text-xl font-semibold text-[var(--aivo-text)] mb-2">
             {t("noActiveSubscription")}
           </h2>
-          <p className="text-gray-500 dark:text-gray-400 mb-6">
+          <p className="text-[var(--aivo-text-secondary)] mb-6">
             {t("choosePlanPrompt")}
           </p>
           <Link href="/checkout">
@@ -168,17 +168,17 @@ export default function ManageSubscriptionPage() {
     <div className="max-w-3xl mx-auto py-8 px-4">
       <Link
         href="/parent"
-        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-4"
+        className="inline-flex items-center gap-1 text-sm text-[var(--aivo-text-secondary)] hover:text-[var(--aivo-text)] dark:text-[var(--aivo-text-muted)] dark:hover:text-[#A89BB5] mb-4"
       >
         <ArrowLeft size={16} />
         {t("backToDashboard")}
       </Link>
 
-      <PurpleGradientHeader className="rounded-xl mb-8">
+      <PurpleGradientHeader className="rounded-2xl mb-8">
         <div className="flex items-center gap-3">
           <CreditCard size={32} />
           <div>
-            <h1 className="text-2xl font-bold">{t("subscriptionManagement")}</h1>
+            <h1 className="text-2xl font-extrabold">{t("subscriptionManagement")}</h1>
             <p className="text-white/80 text-sm">
               {t("managePlanSubtitle")}
             </p>
@@ -187,7 +187,7 @@ export default function ManageSubscriptionPage() {
       </PurpleGradientHeader>
 
       {error && (
-        <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+        <div className="mb-4 p-3 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171] text-sm">
           {error}
         </div>
       )}
@@ -198,7 +198,7 @@ export default function ManageSubscriptionPage() {
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                <h3 className="font-semibold text-[var(--aivo-text)] flex items-center gap-2">
                   <Package size={18} className="text-[#7C3AED]" />
                   {t("currentPlan")}
                 </h3>
@@ -210,23 +210,23 @@ export default function ManageSubscriptionPage() {
             <CardBody>
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h4 className="text-xl font-bold text-gray-900 dark:text-white">
+                  <h4 className="text-xl font-extrabold text-[var(--aivo-text)]">
                     {data.plan.name}
                   </h4>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-[var(--aivo-text-secondary)]">
                     {t("learnersCount", { count: data.plan.maxLearners })}
                   </p>
                 </div>
                 <div className="text-right">
-                  <span className="text-2xl font-bold text-gray-900 dark:text-white">
+                  <span className="text-2xl font-extrabold text-[var(--aivo-text)]">
                     ${(data.plan.price / 100).toFixed(2)}
                   </span>
-                  <span className="text-gray-500">
+                  <span className="text-[var(--aivo-text-secondary)]">
                     /{data.plan.interval}
                   </span>
                 </div>
               </div>
-              <p className="text-sm text-gray-500 mb-4">
+              <p className="text-sm text-[var(--aivo-text-secondary)] mb-4">
                 {data.cancelAtPeriodEnd
                   ? t("cancelsOn", { date: new Date(data.currentPeriodEnd).toLocaleDateString() })
                   : t("renewsOn", { date: new Date(data.currentPeriodEnd).toLocaleDateString() })}
@@ -254,7 +254,7 @@ export default function ManageSubscriptionPage() {
           {data.addOns.length > 0 && (
             <Card>
               <CardHeader>
-                <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                <h3 className="font-semibold text-[var(--aivo-text)] flex items-center gap-2">
                   <Plus size={18} className="text-[#7C3AED]" />
                   {t("addOns")}
                 </h3>
@@ -263,7 +263,7 @@ export default function ManageSubscriptionPage() {
                 {data.addOns.map((addon) => (
                   <div
                     key={addon.id}
-                    className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-800 last:border-0"
+                    className="flex items-center justify-between py-2 border-b border-[#F0E6FF] dark:border-[#3D2D5C] last:border-0"
                   >
                     <div className="flex items-center gap-2">
                       {addon.active ? (
@@ -272,13 +272,13 @@ export default function ManageSubscriptionPage() {
                           size={16}
                         />
                       ) : (
-                        <div className="w-4 h-4 rounded border border-gray-300 dark:border-gray-600 shrink-0" />
+                        <div className="w-4 h-4 rounded border border-[#E8DDF0] dark:border-[#3D2D5C] shrink-0" />
                       )}
-                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      <span className="text-sm font-medium text-[var(--aivo-text)]">
                         {addon.name}
                       </span>
                     </div>
-                    <span className="text-sm text-gray-500">
+                    <span className="text-sm text-[var(--aivo-text-secondary)]">
                       +${(addon.price / 100).toFixed(2)}/mo
                     </span>
                   </div>
@@ -290,7 +290,7 @@ export default function ManageSubscriptionPage() {
           {/* Payment Method */}
           <Card>
             <CardHeader>
-              <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+              <h3 className="font-semibold text-[var(--aivo-text)] flex items-center gap-2">
                 <CreditCard size={18} className="text-[#7C3AED]" />
                 {t("paymentMethod")}
               </h3>
@@ -299,14 +299,14 @@ export default function ManageSubscriptionPage() {
               {data.paymentMethod ? (
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-8 rounded bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-xs font-bold text-gray-600 dark:text-gray-400 uppercase">
+                    <div className="w-12 h-8 rounded bg-[var(--aivo-bg-alt,#FFF5EB)] flex items-center justify-center text-xs font-bold text-[var(--aivo-text-secondary)] uppercase">
                       {data.paymentMethod.brand}
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">
+                      <p className="text-sm font-medium text-[var(--aivo-text)]">
                         **** **** **** {data.paymentMethod.last4}
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-[var(--aivo-text-secondary)]">
                         {t("expires")} {data.paymentMethod.expMonth}/
                         {data.paymentMethod.expYear}
                       </p>
@@ -323,7 +323,7 @@ export default function ManageSubscriptionPage() {
                 </div>
               ) : (
                 <div className="text-center py-4">
-                  <p className="text-gray-500 dark:text-gray-400 mb-2">
+                  <p className="text-[var(--aivo-text-secondary)] mb-2">
                     {t("noPaymentMethod")}
                   </p>
                   <Button size="sm" onClick={handleManageBilling} loading={openingPortal}>
@@ -337,7 +337,7 @@ export default function ManageSubscriptionPage() {
           {/* Invoices */}
           <Card>
             <CardHeader>
-              <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+              <h3 className="font-semibold text-[var(--aivo-text)] flex items-center gap-2">
                 <Receipt size={18} className="text-[#7C3AED]" />
                 {t("invoices")}
               </h3>
@@ -348,13 +348,13 @@ export default function ManageSubscriptionPage() {
                   {data.invoices.map((invoice) => (
                     <div
                       key={invoice.id}
-                      className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-800 last:border-0"
+                      className="flex items-center justify-between py-2 border-b border-[#F0E6FF] dark:border-[#3D2D5C] last:border-0"
                     >
                       <div>
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                        <p className="text-sm font-medium text-[var(--aivo-text)]">
                           ${(invoice.amount / 100).toFixed(2)}
                         </p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-[var(--aivo-text-secondary)]">
                           {new Date(invoice.date).toLocaleDateString()}
                         </p>
                       </div>
@@ -375,7 +375,7 @@ export default function ManageSubscriptionPage() {
                             href={invoice.pdfUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-1 rounded text-gray-400 hover:text-[#7C3AED] transition-colors"
+                            className="p-1 rounded text-[var(--aivo-text-muted)] hover:text-[#7C3AED] transition-colors"
                           >
                             <ExternalLink size={14} />
                           </a>
@@ -385,7 +385,7 @@ export default function ManageSubscriptionPage() {
                   ))}
                 </div>
               ) : (
-                <p className="text-center text-gray-500 dark:text-gray-400 py-4">
+                <p className="text-center text-[var(--aivo-text-secondary)] py-4">
                   {t("noInvoices")}
                 </p>
               )}

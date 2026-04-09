@@ -134,7 +134,7 @@ export function EmotionCheckIn({ onComplete, learnerName }: EmotionCheckInProps)
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0 }}
-        className="text-2xl font-bold text-gray-800 text-center"
+        className="text-2xl font-extrabold text-[var(--aivo-text)] text-center"
       >
         {greeting}
       </motion.h2>
@@ -142,7 +142,7 @@ export function EmotionCheckIn({ onComplete, learnerName }: EmotionCheckInProps)
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.1 }}
-        className="text-sm text-gray-500 text-center mt-2"
+        className="text-sm text-[var(--aivo-text-secondary)] text-center mt-2"
       >
         There&apos;s no wrong answer &mdash; every feeling is welcome here{" "}
         <span aria-hidden="true">{"\u{1F331}"}</span>
@@ -179,13 +179,13 @@ export function EmotionCheckIn({ onComplete, learnerName }: EmotionCheckInProps)
               }}
               onClick={() => handleSelect(emotion.zone)}
               className={[
-                "w-24 h-28 sm:w-28 sm:h-32 rounded-xl border-2 flex flex-col items-center justify-center gap-2 cursor-pointer transition-shadow duration-200",
+                "w-24 h-28 sm:w-28 sm:h-32 rounded-2xl border-2 flex flex-col items-center justify-center gap-2 cursor-pointer transition-shadow duration-200",
                 emotion.bg,
                 emotion.border,
                 emotion.borderHover,
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
                 emotion.ring,
-                !selected && "hover:scale-105 hover:shadow-md",
+                !selected && "hover:scale-105 hover:shadow-[var(--shadow-card)]",
               ]
                 .filter(Boolean)
                 .join(" ")}

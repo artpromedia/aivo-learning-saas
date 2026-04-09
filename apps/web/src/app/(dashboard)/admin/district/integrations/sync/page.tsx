@@ -112,7 +112,7 @@ export default function SyncDetailsPage() {
       case "section":
         return <BookOpen size={16} className="text-purple-500" />;
       default:
-        return <User size={16} className="text-gray-400" />;
+        return <User size={16} className="text-[#A89BB5]" />;
     }
   };
 
@@ -134,7 +134,7 @@ export default function SyncDetailsPage() {
   if (!syncLogId) {
     return (
       <div className="text-center py-16">
-        <p className="text-gray-500">No sync log ID provided.</p>
+        <p className="text-[var(--aivo-text-secondary)]">No sync log ID provided.</p>
         <Link href="/admin/district/integrations" className="text-[#7C3AED] mt-2 inline-block">
           Back to Integrations
         </Link>
@@ -146,27 +146,27 @@ export default function SyncDetailsPage() {
     <div>
       <Link
         href="/admin/district/integrations"
-        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-4"
+        className="inline-flex items-center gap-1 text-sm text-[var(--aivo-text-secondary)] hover:text-[var(--aivo-text)] dark:text-[var(--aivo-text-muted)] dark:hover:text-[#A89BB5] mb-4"
       >
         <ArrowLeft size={16} />
         Back to Integrations
       </Link>
 
-      <PurpleGradientHeader className="rounded-xl mb-8">
-        <h1 className="text-2xl font-bold">Sync Details</h1>
+      <PurpleGradientHeader className="rounded-2xl mb-8">
+        <h1 className="text-2xl font-extrabold">Sync Details</h1>
         <p className="mt-1 text-white/80">Drill into sync results and resolve errors.</p>
       </PurpleGradientHeader>
 
       {error && (
-        <div className="mb-6 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400">
+        <div className="mb-6 p-4 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171]">
           {error}
         </div>
       )}
 
       {loading ? (
         <div className="space-y-4">
-          <Skeleton height={120} className="w-full rounded-lg" />
-          <Skeleton height={200} className="w-full rounded-lg" />
+          <Skeleton height={120} className="w-full rounded-2xl" />
+          <Skeleton height={200} className="w-full rounded-2xl" />
         </div>
       ) : syncLog ? (
         <div className="space-y-6">
@@ -175,21 +175,21 @@ export default function SyncDetailsPage() {
             <CardBody>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div>
-                  <p className="text-xs text-gray-500 uppercase tracking-wider">Type</p>
-                  <p className="text-lg font-semibold">{syncLog.syncType}</p>
+                  <p className="text-xs text-[var(--aivo-text-secondary)] uppercase tracking-wider">Type</p>
+                  <p className="text-lg font-bold">{syncLog.syncType}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 uppercase tracking-wider">Status</p>
+                  <p className="text-xs text-[var(--aivo-text-secondary)] uppercase tracking-wider">Status</p>
                   <Badge variant={syncLog.status === "COMPLETED" ? "success" : "error"}>
                     {syncLog.status}
                   </Badge>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 uppercase tracking-wider">Started</p>
+                  <p className="text-xs text-[var(--aivo-text-secondary)] uppercase tracking-wider">Started</p>
                   <p className="text-sm">{new Date(syncLog.startedAt).toLocaleString()}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 uppercase tracking-wider">Duration</p>
+                  <p className="text-xs text-[var(--aivo-text-secondary)] uppercase tracking-wider">Duration</p>
                   <p className="text-sm">
                     {syncLog.completedAt
                       ? `${Math.round((new Date(syncLog.completedAt).getTime() - new Date(syncLog.startedAt).getTime()) / 1000)}s`
@@ -198,30 +198,30 @@ export default function SyncDetailsPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 md:grid-cols-6 gap-3 mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="grid grid-cols-3 md:grid-cols-6 gap-3 mt-4 pt-4 border-t border-[#E8DDF0] dark:border-[#3D2D5C]">
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-green-600">{syncLog.studentsAdded}</p>
-                  <p className="text-xs text-gray-500">Students Added</p>
+                  <p className="text-2xl font-extrabold text-green-600">{syncLog.studentsAdded}</p>
+                  <p className="text-xs text-[var(--aivo-text-secondary)]">Students Added</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-blue-600">{syncLog.studentsUpdated}</p>
-                  <p className="text-xs text-gray-500">Students Updated</p>
+                  <p className="text-2xl font-extrabold text-blue-600">{syncLog.studentsUpdated}</p>
+                  <p className="text-xs text-[var(--aivo-text-secondary)]">Students Updated</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-amber-600">{syncLog.studentsDeleted}</p>
-                  <p className="text-xs text-gray-500">Students Deactivated</p>
+                  <p className="text-2xl font-extrabold text-[#D97706]">{syncLog.studentsDeleted}</p>
+                  <p className="text-xs text-[var(--aivo-text-secondary)]">Students Deactivated</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-green-600">{syncLog.teachersAdded}</p>
-                  <p className="text-xs text-gray-500">Teachers Added</p>
+                  <p className="text-2xl font-extrabold text-green-600">{syncLog.teachersAdded}</p>
+                  <p className="text-xs text-[var(--aivo-text-secondary)]">Teachers Added</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-purple-600">{syncLog.sectionsAdded}</p>
-                  <p className="text-xs text-gray-500">Sections</p>
+                  <p className="text-2xl font-extrabold text-purple-600">{syncLog.sectionsAdded}</p>
+                  <p className="text-xs text-[var(--aivo-text-secondary)]">Sections</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-red-600">{syncLog.errors?.length ?? 0}</p>
-                  <p className="text-xs text-gray-500">Errors</p>
+                  <p className="text-2xl font-extrabold text-red-600">{syncLog.errors?.length ?? 0}</p>
+                  <p className="text-xs text-[var(--aivo-text-secondary)]">Errors</p>
                 </div>
               </div>
             </CardBody>
@@ -232,7 +232,7 @@ export default function SyncDetailsPage() {
             <Card>
               <CardBody>
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-semibold text-red-600 dark:text-red-400 flex items-center gap-2">
+                  <h2 className="text-lg font-bold text-red-600 dark:text-red-400 flex items-center gap-2">
                     <AlertTriangle size={20} />
                     Sync Errors ({syncLog.errors.length})
                   </h2>
@@ -250,12 +250,12 @@ export default function SyncDetailsPage() {
                   {syncLog.errors.map((err, idx) => (
                     <div
                       key={idx}
-                      className="flex items-center justify-between p-3 border border-red-200 dark:border-red-800 rounded-lg bg-red-50/50 dark:bg-red-900/10"
+                      className="flex items-center justify-between p-3 border border-[#FECACA] dark:border-[#991B1B]/30 rounded-2xl bg-red-50/50 dark:bg-red-900/10"
                     >
                       <div className="flex items-center gap-3">
                         <XCircle size={16} className="text-red-500 shrink-0" />
                         <div>
-                          <p className="text-sm font-medium text-gray-900 dark:text-white">
+                          <p className="text-sm font-medium text-[var(--aivo-text)]">
                             {err.item}
                           </p>
                           <p className="text-xs text-red-600 dark:text-red-400">{err.error}</p>
@@ -272,21 +272,21 @@ export default function SyncDetailsPage() {
           {syncLog.details && syncLog.details.length > 0 && (
             <Card>
               <CardBody>
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-4">
                   Change Log ({syncLog.details.length})
                 </h2>
                 <div className="space-y-2">
                   {syncLog.details.map((detail) => (
                     <div
                       key={detail.id}
-                      className="flex items-center gap-4 p-3 border border-gray-200 dark:border-gray-700 rounded-lg"
+                      className="flex items-center gap-4 p-3 border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-2xl"
                     >
                       {entityIcon(detail.entityType)}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
                           <span className="text-sm font-medium">{detail.entityType}</span>
                           {actionBadge(detail.action)}
-                          <span className="text-xs text-gray-400">SIS: {detail.sisId}</span>
+                          <span className="text-xs text-[#A89BB5]">SIS: {detail.sisId}</span>
                         </div>
                         {detail.error && (
                           <p className="text-xs text-red-500 mt-1">{detail.error}</p>

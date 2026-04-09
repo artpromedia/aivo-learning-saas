@@ -66,10 +66,10 @@ export default function QuestsPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={80} className="w-full rounded-xl" />
+        <Skeleton height={80} className="w-full rounded-2xl" />
         <div className="space-y-6">
           {[1, 2, 3].map((i) => (
-            <Skeleton key={i} height={180} className="w-full rounded-xl" />
+            <Skeleton key={i} height={180} className="w-full rounded-2xl" />
           ))}
         </div>
       </div>
@@ -93,11 +93,11 @@ export default function QuestsPage() {
 
   return (
     <div>
-      <PurpleGradientHeader className="rounded-xl mb-8">
+      <PurpleGradientHeader className="rounded-2xl mb-8">
         <div className="flex items-center gap-3">
           <Compass size={32} />
           <div>
-            <h1 className="text-2xl font-bold">{t("questWorlds")}</h1>
+            <h1 className="text-2xl font-extrabold">{t("questWorlds")}</h1>
             <p className="text-white/80 text-sm">
               {t("questWorldsDescription")}
             </p>
@@ -108,11 +108,11 @@ export default function QuestsPage() {
       {worlds.length === 0 ? (
         <Card>
           <CardBody className="text-center py-12">
-            <Compass className="mx-auto mb-3 text-gray-400" size={48} />
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            <Compass className="mx-auto mb-3 text-[#A89BB5]" size={48} />
+            <h3 className="text-lg font-bold text-[var(--aivo-text)] mb-2">
               {t("noQuestsAvailable")}
             </h3>
-            <p className="text-gray-500 dark:text-gray-400">
+            <p className="text-[var(--aivo-text-secondary)]">
               {t("questsWillBeUnlocked")}
             </p>
           </CardBody>
@@ -137,10 +137,10 @@ export default function QuestsPage() {
                           <Lock className="text-white" size={28} />
                         </div>
                         <div className="flex-1">
-                          <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                          <h3 className="text-lg font-bold text-[var(--aivo-text)]">
                             {world.name}
                           </h3>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                          <p className="text-sm text-[var(--aivo-text-secondary)]">
                             {t("requiresLevel", { level: world.requiredLevel })}
                           </p>
                         </div>
@@ -150,7 +150,7 @@ export default function QuestsPage() {
                   </Card>
                 ) : (
                   <Link href={`/learner/quests/${world.slug}`}>
-                    <Card className="hover:shadow-lg transition-shadow cursor-pointer group overflow-hidden">
+                    <Card className="hover:shadow-[var(--shadow-hover)] transition-all cursor-pointer group overflow-hidden">
                       <div
                         className={`h-2 bg-gradient-to-r ${WORLD_GRADIENTS[idx % WORLD_GRADIENTS.length]}`}
                       />
@@ -171,15 +171,15 @@ export default function QuestsPage() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1">
-                              <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                              <h3 className="text-lg font-bold text-[var(--aivo-text)]">
                                 {world.name}
                               </h3>
                               <Badge>{world.theme}</Badge>
                             </div>
-                            <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
+                            <p className="text-sm text-[var(--aivo-text-secondary)] mb-3">
                               {world.description}
                             </p>
-                            <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+                            <div className="flex items-center justify-between text-xs text-[var(--aivo-text-secondary)] mb-1">
                               <span>
                                 {world.completedChapters}/{world.totalChapters}{" "}
                                 {t("chapters")}
@@ -189,7 +189,7 @@ export default function QuestsPage() {
                                 {world.xpReward} XP
                               </span>
                             </div>
-                            <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                            <div className="w-full h-2 bg-[#F0E6FF] dark:bg-[#3D2D5C] rounded-full overflow-hidden">
                               <div
                                 className={`h-full rounded-full bg-gradient-to-r ${WORLD_GRADIENTS[idx % WORLD_GRADIENTS.length]} transition-all duration-700`}
                                 style={{ width: `${progress}%` }}
@@ -197,7 +197,7 @@ export default function QuestsPage() {
                             </div>
                           </div>
                           <ChevronRight
-                            className="text-gray-400 group-hover:text-[#7C3AED] transition-colors shrink-0 mt-2"
+                            className="text-[var(--aivo-text-muted)] group-hover:text-[#7C3AED] transition-colors shrink-0 mt-2"
                             size={20}
                           />
                         </div>

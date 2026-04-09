@@ -57,10 +57,10 @@ export default function NotificationsPage() {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={80} className="w-full rounded-xl" />
+        <Skeleton height={80} className="w-full rounded-2xl" />
         <div className="space-y-3">
           {[1, 2, 3, 4, 5].map((i) => (
-            <Skeleton key={i} height={80} className="w-full rounded-lg" />
+            <Skeleton key={i} height={80} className="w-full rounded-2xl" />
           ))}
         </div>
       </div>
@@ -84,12 +84,12 @@ export default function NotificationsPage() {
 
   return (
     <div>
-      <PurpleGradientHeader className="rounded-xl mb-8">
+      <PurpleGradientHeader className="rounded-2xl mb-8">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Bell size={32} />
             <div>
-              <h1 className="text-2xl font-bold">{t("notifications")}</h1>
+              <h1 className="text-2xl font-extrabold">{t("notifications")}</h1>
               <p className="text-white/80 text-sm">
                 {unreadCount > 0
                   ? t("unreadNotifications", { count: unreadCount })
@@ -114,11 +114,11 @@ export default function NotificationsPage() {
       {notifications.length === 0 ? (
         <Card>
           <CardBody className="text-center py-12">
-            <Bell className="mx-auto mb-3 text-gray-400" size={48} />
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            <Bell className="mx-auto mb-3 text-[#A89BB5]" size={48} />
+            <h3 className="text-lg font-bold text-[var(--aivo-text)] mb-2">
               {t("noNotifications")}
             </h3>
-            <p className="text-gray-500 dark:text-gray-400">
+            <p className="text-[var(--aivo-text-secondary)]">
               {t("noNotificationsDescription")}
             </p>
           </CardBody>
@@ -143,8 +143,8 @@ export default function NotificationsPage() {
                       <h3
                         className={`text-sm font-medium ${
                           !notification.read
-                            ? "text-gray-900 dark:text-white"
-                            : "text-gray-600 dark:text-gray-400"
+                            ? "text-[var(--aivo-text)]"
+                            : "text-[var(--aivo-text-secondary)]"
                         }`}
                       >
                         {notification.title}
@@ -153,17 +153,17 @@ export default function NotificationsPage() {
                         <span className="w-2 h-2 rounded-full bg-[#7C3AED] shrink-0" />
                       )}
                     </div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                    <p className="text-sm text-[var(--aivo-text-secondary)]">
                       {notification.message}
                     </p>
-                    <p className="text-xs text-gray-400 mt-1">
+                    <p className="text-xs text-[var(--aivo-text-muted)] mt-1">
                       {new Date(notification.createdAt).toLocaleString(locale)}
                     </p>
                   </div>
                   {!notification.read && (
                     <button
                       onClick={() => markAsRead(notification.id)}
-                      className="p-1.5 rounded-lg text-gray-400 hover:text-[#7C3AED] hover:bg-[#7C3AED]/10 transition-colors shrink-0"
+                      className="p-1.5 rounded-2xl text-[var(--aivo-text-muted)] hover:text-[#7C3AED] hover:bg-[#7C3AED]/10 transition-colors shrink-0"
                       title="Mark as read"
                     >
                       <Check size={16} />

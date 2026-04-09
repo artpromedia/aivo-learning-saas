@@ -72,7 +72,7 @@ function BadgeUnlock({
           />
 
           <motion.div
-            className="relative z-10 flex flex-col items-center text-center max-w-sm w-full p-8 rounded-2xl bg-white dark:bg-gray-900 shadow-2xl border border-gray-200 dark:border-gray-700"
+            className="relative z-10 flex flex-col items-center text-center max-w-sm w-full p-8 rounded-2xl bg-white dark:bg-[#2A1E45] shadow-2xl border border-[#E8DDF0] dark:border-[#3D2D5C]"
             initial={{ scale: 0.5, opacity: 0, y: 30 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.8, opacity: 0, y: 20 }}
@@ -80,7 +80,7 @@ function BadgeUnlock({
           >
             <button
               onClick={onClose}
-              className="absolute top-3 right-3 p-1 rounded-md text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              className="absolute top-3 right-3 p-1 rounded-md text-[#A89BB5] hover:text-[#7C3AED] transition-colors"
               aria-label="Close"
             >
               <X size={18} />
@@ -92,7 +92,7 @@ function BadgeUnlock({
               transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
               className="mb-4"
             >
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#7C4DFF] flex items-center justify-center shadow-lg shadow-purple-500/30">
+              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#A855F7] flex items-center justify-center shadow-lg shadow-purple-500/30">
                 {badgeIcon || <Award size={44} className="text-white" />}
               </div>
             </motion.div>
@@ -110,7 +110,7 @@ function BadgeUnlock({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.45 }}
-              className="text-xl font-bold text-gray-900 dark:text-white mb-2"
+              className="text-xl font-extrabold text-[var(--aivo-text)] mb-2"
             >
               {badgeName}
             </motion.h2>
@@ -120,7 +120,7 @@ function BadgeUnlock({
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.55 }}
-                className="text-sm text-gray-600 dark:text-gray-400 mb-4"
+                className="text-sm text-[var(--aivo-text-secondary)] mb-4"
               >
                 {badgeDescription}
               </motion.p>
@@ -131,7 +131,7 @@ function BadgeUnlock({
               animate={{ opacity: 1 }}
               transition={{ delay: 0.65 }}
               onClick={onClose}
-              className="px-6 py-2.5 rounded-lg text-sm font-medium text-white bg-[#7C3AED] hover:bg-[#6B3FE8] transition-colors"
+              className="px-6 py-2.5 rounded-2xl text-sm font-medium text-white bg-[#7C3AED] hover:bg-[#6B3FE8] transition-colors"
             >
               Awesome!
             </motion.button>

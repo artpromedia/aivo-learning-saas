@@ -71,19 +71,19 @@ export default function ClassroomManagementPage() {
 
   return (
     <div>
-      <PurpleGradientHeader className="rounded-xl mb-8">
-        <h1 className="text-2xl font-bold">Classroom Management</h1>
+      <PurpleGradientHeader className="rounded-2xl mb-8">
+        <h1 className="text-2xl font-extrabold">Classroom Management</h1>
         <p className="mt-1 text-white/80">Create and manage classrooms in your district.</p>
       </PurpleGradientHeader>
 
       {error && (
-        <div className="mb-6 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400">
+        <div className="mb-6 p-4 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171]">
           {error}
         </div>
       )}
 
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+        <h2 className="text-lg font-bold text-[var(--aivo-text)]">
           Classrooms ({classrooms.length})
         </h2>
         <Button
@@ -102,17 +102,17 @@ export default function ClassroomManagementPage() {
         <Card className="mb-6">
           <CardBody>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold text-gray-900 dark:text-white">Create a Classroom</h3>
+              <h3 className="font-semibold text-[var(--aivo-text)]">Create a Classroom</h3>
               <button
                 onClick={() => setShowCreate(false)}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                className="text-[#A89BB5] hover:text-[#7C3AED]"
               >
                 <X size={18} />
               </button>
             </div>
             <form onSubmit={handleCreate} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--aivo-text)] mb-1">
                   Classroom Name
                 </label>
                 <input
@@ -121,17 +121,17 @@ export default function ClassroomManagementPage() {
                   onChange={(e) => setFormName(e.target.value)}
                   placeholder="e.g., Room 204 - Morning Group"
                   required
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent"
+                  className="w-full px-4 py-2 border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-2xl bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] placeholder-[#A89BB5] focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--aivo-text)] mb-1">
                   Grade Band
                 </label>
                 <select
                   value={formGradeBand}
                   onChange={(e) => setFormGradeBand(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent"
+                  className="w-full px-4 py-2 border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-2xl bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent"
                 >
                   {GRADE_BANDS.map((band) => (
                     <option key={band} value={band}>
@@ -177,10 +177,10 @@ export default function ClassroomManagementPage() {
             <div className="w-16 h-16 rounded-full bg-[#7C3AED]/10 flex items-center justify-center mx-auto mb-4">
               <School className="text-[#7C3AED]" size={32} />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            <h3 className="text-lg font-bold text-[var(--aivo-text)] mb-2">
               No classrooms yet
             </h3>
-            <p className="text-gray-500 dark:text-gray-400 mb-4">
+            <p className="text-[var(--aivo-text-secondary)] mb-4">
               Create your first classroom to organize learners and teachers.
             </p>
             <Button leftIcon={<Plus size={18} />} onClick={() => setShowCreate(true)}>
@@ -193,28 +193,28 @@ export default function ClassroomManagementPage() {
           {classrooms.map((classroom) => (
             <Card
               key={classroom.id}
-              className="hover:shadow-md transition-shadow cursor-pointer group"
+              className="hover:shadow-[var(--shadow-card)] transition-all cursor-pointer group"
               onClick={() => router.push(`/admin/district/classrooms/${classroom.id}`)}
             >
               <CardBody className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-lg bg-[#7C3AED]/10 flex items-center justify-center text-[#7C3AED] shrink-0">
+                <div className="w-10 h-10 rounded-2xl bg-[#7C3AED]/10 flex items-center justify-center text-[#7C3AED] shrink-0">
                   <School size={20} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-gray-900 dark:text-white truncate">
+                  <p className="font-medium text-[var(--aivo-text)] truncate">
                     {classroom.name}
                   </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                  <p className="text-sm text-[var(--aivo-text-secondary)] truncate">
                     {classroom.teacherName}
                   </p>
                 </div>
                 <Badge variant="secondary">{classroom.gradeBand}</Badge>
-                <div className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
+                <div className="flex items-center gap-1 text-sm text-[var(--aivo-text-secondary)]">
                   <Users size={14} />
                   <span>{classroom.learnerCount}</span>
                 </div>
                 <ChevronRight
-                  className="text-gray-400 group-hover:text-[#7C3AED] transition-colors shrink-0"
+                  className="text-[var(--aivo-text-muted)] group-hover:text-[#7C3AED] transition-colors shrink-0"
                   size={20}
                 />
               </CardBody>

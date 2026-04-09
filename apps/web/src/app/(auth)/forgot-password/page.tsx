@@ -46,96 +46,74 @@ export default function ForgotPasswordPage() {
       setSentEmail(data.email);
       setSent(true);
     } catch (err) {
-      // Don't reveal whether email exists, always show success
       setSentEmail(data.email);
       setSent(true);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 px-4">
+    <div className="min-h-screen flex items-center justify-center px-4 bg-bubbles" style={{ backgroundColor: "var(--aivo-bg)" }}>
       <div className="w-full max-w-md">
         <div className="flex flex-col items-center mb-8">
           <AivoLogo size="lg" />
         </div>
 
-        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-8">
+        <div className="rounded-3xl shadow-[var(--shadow-playful)] p-8" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
           {!sent ? (
             <>
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+              <h1 className="text-xl font-extrabold mb-2" style={{ color: "var(--aivo-text)", fontFamily: "var(--font-display)" }}>
                 {t("forgotYourPassword")}
               </h1>
-              <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm">
+              <p className="mb-6 text-sm font-medium" style={{ color: "var(--aivo-text-secondary)" }}>
                 {t("forgotPasswordSubtitle")}
               </p>
 
               {serverError && (
-                <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+                <div className="mb-4 p-3 rounded-2xl text-sm font-medium" style={{ backgroundColor: "#FFE0E0", color: "#991B1B", border: "1px solid #FECACA" }}>
                   {serverError}
                 </div>
               )}
 
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                 <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
-                  >
+                  <label htmlFor="email" className="block text-sm font-bold mb-2" style={{ color: "var(--aivo-text)" }}>
                     {t("emailAddress")}
                   </label>
                   <div className="relative">
-                    <Mail
-                      className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                      size={18}
-                    />
+                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2" size={18} style={{ color: "var(--aivo-text-muted)" }} />
                     <input
-                      id="email"
-                      type="email"
-                      autoComplete="email"
-                      {...register("email")}
-                      className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-shadow"
+                      id="email" type="email" autoComplete="email" {...register("email")}
+                      className="w-full pl-11 pr-4 py-3 rounded-2xl border-2 font-medium transition-all"
+                      style={{ borderColor: "var(--aivo-border)", backgroundColor: "var(--aivo-bg)", color: "var(--aivo-text)" }}
                       placeholder="parent@example.com"
                     />
                   </div>
-                  {errors.email && (
-                    <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                      {errors.email.message}
-                    </p>
-                  )}
+                  {errors.email && <p className="mt-1.5 text-sm font-medium" style={{ color: "var(--aivo-error)" }}>{errors.email.message}</p>}
                 </div>
 
-                <Button
-                  type="submit"
-                  loading={isSubmitting}
-                  className="w-full"
-                  size="lg"
-                >
+                <Button type="submit" loading={isSubmitting} className="w-full" size="lg">
                   {t("sendResetLink")}
                 </Button>
               </form>
             </>
           ) : (
             <div className="text-center">
-              <CheckCircle
-                className="mx-auto mb-4 text-green-500"
-                size={48}
-              />
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: "var(--aivo-mint-light)" }}>
+                <CheckCircle size={32} style={{ color: "var(--aivo-mint)" }} />
+              </div>
+              <h1 className="text-xl font-extrabold mb-2" style={{ color: "var(--aivo-text)", fontFamily: "var(--font-display)" }}>
                 {t("checkYourEmail")}
               </h1>
-              <p className="text-gray-500 dark:text-gray-400 mb-2 text-sm">
+              <p className="text-sm font-medium mb-2" style={{ color: "var(--aivo-text-secondary)" }}>
                 {t("resetEmailSentDescription", { email: sentEmail })}
               </p>
-              <p className="text-xs text-gray-400 dark:text-gray-500 mb-6">
+              <p className="text-xs mb-6" style={{ color: "var(--aivo-text-muted)" }}>
                 {t("checkSpamFolder")}
               </p>
             </div>
           )}
 
-          <Link
-            href="/login"
-            className="mt-6 flex items-center justify-center gap-2 text-sm text-[#7C3AED] hover:text-[#6B3FE8] font-medium"
-          >
+          <Link href="/login" className="mt-6 flex items-center justify-center gap-2 text-sm font-bold" style={{ color: "var(--aivo-purple-500)" }}>
             <ArrowLeft size={16} />
             {t("backToSignIn")}
           </Link>

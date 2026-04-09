@@ -133,11 +133,11 @@ export default function HomeworkPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={80} className="w-full rounded-xl" />
-        <Skeleton height={180} className="w-full rounded-lg" />
+        <Skeleton height={80} className="w-full rounded-2xl" />
+        <Skeleton height={180} className="w-full rounded-2xl" />
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <Skeleton key={i} height={80} className="w-full rounded-lg" />
+            <Skeleton key={i} height={80} className="w-full rounded-2xl" />
           ))}
         </div>
       </div>
@@ -146,11 +146,11 @@ export default function HomeworkPage() {
 
   return (
     <div>
-      <PurpleGradientHeader className="rounded-xl mb-8">
+      <PurpleGradientHeader className="rounded-2xl mb-8">
         <div className="flex items-center gap-3">
           <BookOpen size={32} />
           <div>
-            <h1 className="text-2xl font-bold">{t("homework")}</h1>
+            <h1 className="text-2xl font-extrabold">{t("homework")}</h1>
             <p className="text-white/80 text-sm">
               {t("homeworkSubtitle")}
             </p>
@@ -159,26 +159,26 @@ export default function HomeworkPage() {
       </PurpleGradientHeader>
 
       {error && (
-        <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+        <div className="mb-4 p-3 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171] text-sm">
           {error}
         </div>
       )}
 
       {/* Locked State */}
       {lockedInfo && (
-        <Card className="mb-6 border-2 border-amber-300 dark:border-amber-600">
+        <Card className="mb-6 border-2 border-[#FBBF24] dark:border-[#FBBF24]/50">
           <CardBody className="flex items-center gap-4 py-6">
-            <div className="w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center shrink-0">
-              <Lock className="text-amber-600" size={24} />
+            <div className="w-12 h-12 rounded-full bg-[#FEF3C7] dark:bg-[#92400E]/30 flex items-center justify-center shrink-0">
+              <Lock className="text-[#D97706]" size={24} />
             </div>
             <div className="flex-1">
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+              <h3 className="font-semibold text-[var(--aivo-text)] mb-1">
                 {t("tutorSubscriptionRequired")}
               </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-[var(--aivo-text-secondary)]">
                 {t("subscribeToUnlockHomework")}
               </p>
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-xs text-[var(--aivo-text-muted)] mt-1">
                 Required: {lockedInfo.requiredSku?.replace("ADDON_TUTOR_", "").replace("_", " ")}
               </p>
             </div>
@@ -202,10 +202,10 @@ export default function HomeworkPage() {
             onDragLeave={() => setIsDragging(false)}
             onDrop={onDrop}
             onClick={() => fileInputRef.current?.click()}
-            className={`border-2 border-dashed rounded-xl p-10 text-center cursor-pointer transition-colors ${
+            className={`border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer transition-colors ${
               isDragging
                 ? "border-[#7C3AED] bg-[#7C3AED]/5"
-                : "border-gray-300 dark:border-gray-600 hover:border-[#7C3AED] hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                : "border-[#E8DDF0] dark:border-[#3D2D5C] hover:border-[#7C3AED] hover:bg-[var(--aivo-bg)] dark:hover:bg-[#2A1E45]/50"
             }`}
           >
             {uploading ? (
@@ -214,23 +214,23 @@ export default function HomeworkPage() {
                   className="text-[#7C3AED] animate-spin mb-3"
                   size={32}
                 />
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-[var(--aivo-text-secondary)]">
                   Processing homework...
                 </p>
-                <p className="text-xs text-gray-400 mt-1">
+                <p className="text-xs text-[var(--aivo-text-muted)] mt-1">
                   Extracting text, detecting subject, and adapting problems
                 </p>
               </div>
             ) : (
               <>
                 <Upload
-                  className={`mx-auto mb-3 ${isDragging ? "text-[#7C3AED]" : "text-gray-400"}`}
+                  className={`mx-auto mb-3 ${isDragging ? "text-[#7C3AED]" : "text-[#A89BB5]"}`}
                   size={36}
                 />
-                <p className="text-base font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <p className="text-base font-medium text-[var(--aivo-text)] mb-1">
                   {t("dragDropHomework")}
                 </p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
+                <p className="text-sm text-[var(--aivo-text-secondary)]">
                   {t("clickToBrowse")}
                 </p>
               </>
@@ -252,7 +252,7 @@ export default function HomeworkPage() {
       {/* Active Assignments */}
       {activeAssignments.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-4">
             {t("inProgressCount", { count: activeAssignments.length })}
           </h2>
           <div className="space-y-3">
@@ -261,18 +261,18 @@ export default function HomeworkPage() {
                 key={assignment.id}
                 href={`/learner/homework/${assignment.id}`}
               >
-                <Card className="hover:shadow-md transition-shadow cursor-pointer group">
+                <Card className="hover:shadow-[var(--shadow-card)] transition-all cursor-pointer group">
                   <CardBody className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-[#7C3AED]/10 flex items-center justify-center shrink-0">
+                    <div className="w-10 h-10 rounded-2xl bg-[#7C3AED]/10 flex items-center justify-center shrink-0">
                       <FileText className="text-[#7C3AED]" size={20} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-medium text-gray-900 dark:text-white truncate">
+                      <h3 className="font-medium text-[var(--aivo-text)] truncate">
                         {assignment.subject.charAt(0).toUpperCase() +
                           assignment.subject.slice(1)}{" "}
                         Homework
                       </h3>
-                      <div className="flex items-center gap-2 text-xs text-gray-500">
+                      <div className="flex items-center gap-2 text-xs text-[var(--aivo-text-secondary)]">
                         <Badge variant="secondary">
                           {assignment.subject}
                         </Badge>
@@ -298,7 +298,7 @@ export default function HomeworkPage() {
                         : "Ready"}
                     </Badge>
                     <ChevronRight
-                      className="text-gray-400 group-hover:text-[#7C3AED] transition-colors shrink-0"
+                      className="text-[var(--aivo-text-muted)] group-hover:text-[#7C3AED] transition-colors shrink-0"
                       size={18}
                     />
                   </CardBody>
@@ -312,7 +312,7 @@ export default function HomeworkPage() {
       {/* Completed Assignments */}
       {completedAssignments.length > 0 && (
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-4">
             {t("completedCount", { count: completedAssignments.length })}
           </h2>
           <div className="space-y-3">
@@ -321,18 +321,18 @@ export default function HomeworkPage() {
                 key={assignment.id}
                 href={`/learner/homework/${assignment.id}`}
               >
-                <Card className="hover:shadow-md transition-shadow cursor-pointer opacity-75">
+                <Card className="hover:shadow-[var(--shadow-card)] transition-all cursor-pointer opacity-75">
                   <CardBody className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center shrink-0">
-                      <FileText className="text-gray-400" size={20} />
+                    <div className="w-10 h-10 rounded-2xl bg-[var(--aivo-bg-alt,#FFF5EB)] flex items-center justify-center shrink-0">
+                      <FileText className="text-[#A89BB5]" size={20} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-medium text-gray-900 dark:text-white truncate">
+                      <h3 className="font-medium text-[var(--aivo-text)] truncate">
                         {assignment.subject.charAt(0).toUpperCase() +
                           assignment.subject.slice(1)}{" "}
                         Homework
                       </h3>
-                      <div className="flex items-center gap-2 text-xs text-gray-500">
+                      <div className="flex items-center gap-2 text-xs text-[var(--aivo-text-secondary)]">
                         <Badge variant="secondary">
                           {assignment.subject}
                         </Badge>
@@ -356,11 +356,11 @@ export default function HomeworkPage() {
       {assignments.length === 0 && !lockedInfo && (
         <Card>
           <CardBody className="text-center py-12">
-            <BookOpen className="mx-auto mb-3 text-gray-400" size={48} />
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            <BookOpen className="mx-auto mb-3 text-[#A89BB5]" size={48} />
+            <h3 className="text-lg font-bold text-[var(--aivo-text)] mb-2">
               {t("noActiveHomework")}
             </h3>
-            <p className="text-gray-500 dark:text-gray-400">
+            <p className="text-[var(--aivo-text-secondary)]">
               {t("uploadFirstHomework")}
             </p>
           </CardBody>

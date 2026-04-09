@@ -130,7 +130,7 @@ export default function ParentAssessmentPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-100 gap-4">
         <Loader2 className="animate-spin text-[#7C3AED]" size={40} />
-        <p className="text-gray-500 dark:text-gray-400">{t("loadingAssessment") ?? "Loading assessment..."}</p>
+        <p className="text-[var(--aivo-text-secondary)]">{t("loadingAssessment") ?? "Loading assessment..."}</p>
       </div>
     );
   }
@@ -143,16 +143,16 @@ export default function ParentAssessmentPage() {
         <div className="w-16 h-16 rounded-full bg-[#7C3AED]/10 flex items-center justify-center mx-auto mb-4">
           <ClipboardList className="text-[#7C3AED]" size={32} />
         </div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+        <h1 className="text-2xl font-extrabold text-[var(--aivo-text)]">
           {t("parentAssessment")}
         </h1>
-        <p className="mt-2 text-gray-500 dark:text-gray-400">
+        <p className="mt-2 text-[var(--aivo-text-secondary)]">
           {t("parentAssessmentSubtitle")}
         </p>
       </div>
 
       {/* Step indicators */}
-      <div className="flex items-center justify-between mb-2 text-xs text-gray-500 dark:text-gray-400">
+      <div className="flex items-center justify-between mb-2 text-xs text-[var(--aivo-text-secondary)]">
         <span>{category.label}</span>
         <span>{currentStep + 1} / {categories.length}</span>
       </div>
@@ -166,12 +166,12 @@ export default function ParentAssessmentPage() {
 
       <Card>
         <CardBody>
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+          <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-1">
             {category.label}
           </h2>
 
           {error && (
-            <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+            <div className="mb-4 p-3 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171] text-sm">
               {error}
             </div>
           )}
@@ -190,7 +190,7 @@ export default function ParentAssessmentPage() {
             ))}
           </div>
 
-          <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-between mt-8 pt-6 border-t border-[#E8DDF0] dark:border-[#3D2D5C]">
             <Button
               variant="ghost"
               onClick={() => {
@@ -237,14 +237,14 @@ function QuestionRenderer({
 }: QuestionRendererProps) {
   return (
     <div>
-      <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+      <p className="text-sm font-medium text-[var(--aivo-text)] mb-1">
         {q.questionText}
         {!q.required && (
-          <span className="ml-1 text-gray-400 dark:text-gray-500 font-normal">(optional)</span>
+          <span className="ml-1 text-[var(--aivo-text-muted)] font-normal">(optional)</span>
         )}
       </p>
       {q.helpText && (
-        <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">{q.helpText}</p>
+        <p className="text-xs text-[var(--aivo-text-muted)] mb-3">{q.helpText}</p>
       )}
 
       {/* Multiple Choice / Yes-No */}
@@ -253,10 +253,10 @@ function QuestionRenderer({
           {q.options.map((option) => (
             <label
               key={option}
-              className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+              className={`flex items-center gap-3 p-3 rounded-2xl border cursor-pointer transition-colors ${
                 value === option
                   ? "border-[#7C3AED] bg-[#7C3AED]/5"
-                  : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
+                  : "border-[#E8DDF0] dark:border-[#3D2D5C] hover:border-[#E8DDF0] dark:hover:border-[#3D2D5C]"
               }`}
             >
               <input
@@ -271,14 +271,14 @@ function QuestionRenderer({
                 className={`w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center ${
                   value === option
                     ? "border-[#7C3AED]"
-                    : "border-gray-300 dark:border-gray-600"
+                    : "border-[#E8DDF0] dark:border-[#3D2D5C]"
                 }`}
               >
                 {value === option && (
                   <div className="w-2 h-2 rounded-full bg-[#7C3AED]" />
                 )}
               </div>
-              <span className="text-sm text-gray-700 dark:text-gray-300">{option}</span>
+              <span className="text-sm text-[var(--aivo-text)]">{option}</span>
             </label>
           ))}
         </div>
@@ -297,7 +297,7 @@ function QuestionRenderer({
                 className={`px-4 py-2 rounded-full text-sm font-medium border transition-colors ${
                   selected
                     ? "bg-[#7C3AED] text-white border-[#7C3AED]"
-                    : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:border-[#7C3AED]"
+                    : "bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] border-[#E8DDF0] dark:border-[#3D2D5C] hover:border-[#7C3AED]"
                 }`}
               >
                 {option}
@@ -310,7 +310,7 @@ function QuestionRenderer({
       {/* Rating Scale */}
       {q.questionType === "rating_scale" && (
         <div className="flex items-center gap-4">
-          <span className="text-xs text-gray-400 min-w-15 text-right">
+          <span className="text-xs text-[var(--aivo-text-muted)] min-w-15 text-right">
             {q.scaleLabels?.min ?? "Low"}
           </span>
           <div className="flex gap-2 flex-1 justify-center">
@@ -324,7 +324,7 @@ function QuestionRenderer({
                   className={`w-10 h-10 rounded-full font-semibold text-sm transition-colors ${
                     value === val
                       ? "bg-[#7C3AED] text-white"
-                      : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
+                      : "bg-[var(--aivo-bg-alt,#FFF5EB)] text-[var(--aivo-text-secondary)] hover:bg-[#F0E6FF] dark:hover:bg-[#3D2D5C]"
                   }`}
                 >
                   {val}
@@ -332,7 +332,7 @@ function QuestionRenderer({
               );
             })}
           </div>
-          <span className="text-xs text-gray-400 min-w-15">
+          <span className="text-xs text-[var(--aivo-text-muted)] min-w-15">
             {q.scaleLabels?.max ?? "High"}
           </span>
         </div>
@@ -345,7 +345,7 @@ function QuestionRenderer({
           onChange={(e) => onTextChange(e.target.value)}
           placeholder="Type your answer here..."
           rows={3}
-          className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-3 text-sm text-gray-700 dark:text-gray-300 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent resize-none"
+          className="w-full rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] p-3 text-sm text-[var(--aivo-text)] placeholder-[#A89BB5] focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent resize-none"
         />
       )}
     </div>

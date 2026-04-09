@@ -77,11 +77,11 @@ export default function GradebookPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={80} className="w-full rounded-xl" />
-        <Skeleton height={300} className="w-full rounded-lg" />
+        <Skeleton height={80} className="w-full rounded-2xl" />
+        <Skeleton height={300} className="w-full rounded-2xl" />
         <div className="grid gap-4 sm:grid-cols-2">
           {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} height={100} className="w-full rounded-lg" />
+            <Skeleton key={i} height={100} className="w-full rounded-2xl" />
           ))}
         </div>
       </div>
@@ -124,17 +124,17 @@ export default function GradebookPage() {
     <div>
       <Link
         href={`/parent/${learnerId}`}
-        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-4"
+        className="inline-flex items-center gap-1 text-sm text-[var(--aivo-text-secondary)] hover:text-[var(--aivo-text)] dark:text-[var(--aivo-text-muted)] dark:hover:text-[#A89BB5] mb-4"
       >
         <ArrowLeft size={16} />
         {t("backToDashboard")}
       </Link>
 
-      <PurpleGradientHeader className="rounded-xl mb-8">
+      <PurpleGradientHeader className="rounded-2xl mb-8">
         <div className="flex items-center gap-3">
           <GraduationCap size={32} />
           <div>
-            <h1 className="text-2xl font-bold">{t("gradebook")}</h1>
+            <h1 className="text-2xl font-extrabold">{t("gradebook")}</h1>
             <p className="text-white/80 text-sm">
               {t("subjectProgress")}
             </p>
@@ -148,7 +148,7 @@ export default function GradebookPage() {
             <p className="text-3xl font-bold text-[#7C3AED]">
               {data?.overallMastery ?? 0}%
             </p>
-            <p className="text-xs text-gray-500 mt-1">{t("overallMastery")}</p>
+            <p className="text-xs text-[var(--aivo-text-secondary)] mt-1">{t("overallMastery")}</p>
           </CardBody>
         </Card>
         <Card>
@@ -156,7 +156,7 @@ export default function GradebookPage() {
             <p className="text-3xl font-bold text-[#38B2AC]">
               {data?.totalSessions ?? 0}
             </p>
-            <p className="text-xs text-gray-500 mt-1">{t("totalSessions")}</p>
+            <p className="text-xs text-[var(--aivo-text-secondary)] mt-1">{t("totalSessions")}</p>
           </CardBody>
         </Card>
       </div>
@@ -167,7 +167,7 @@ export default function GradebookPage() {
           className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
             selectedSubject === null
               ? "bg-[#7C3AED] text-white"
-              : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
+              : "bg-[var(--aivo-bg-alt,#FFF5EB)] text-[var(--aivo-text-secondary)] hover:bg-[#F0E6FF] dark:hover:bg-[#3D2D5C]"
           }`}
         >
           {t("allSubjects")}
@@ -179,7 +179,7 @@ export default function GradebookPage() {
             className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
               selectedSubject === s.subject
                 ? "bg-[#7C3AED] text-white"
-                : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
+                : "bg-[var(--aivo-bg-alt,#FFF5EB)] text-[var(--aivo-text-secondary)] hover:bg-[#F0E6FF] dark:hover:bg-[#3D2D5C]"
             }`}
           >
             {s.subject}
@@ -189,7 +189,7 @@ export default function GradebookPage() {
 
       <Card className="mb-8">
         <CardHeader>
-          <h3 className="font-semibold text-gray-900 dark:text-white">
+          <h3 className="font-semibold text-[var(--aivo-text)]">
             {t("masteryOverTime")}
           </h3>
         </CardHeader>
@@ -230,14 +230,14 @@ export default function GradebookPage() {
               </LineChart>
             </ResponsiveContainer>
           ) : (
-            <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+            <div className="text-center py-12 text-[var(--aivo-text-secondary)]">
               {t("noMasteryDataYet")}
             </div>
           )}
         </CardBody>
       </Card>
 
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+      <h3 className="text-lg font-bold text-[var(--aivo-text)] mb-4">
         {t("subjectBreakdown")}
       </h3>
       <div className="grid gap-4 sm:grid-cols-2">
@@ -253,7 +253,7 @@ export default function GradebookPage() {
                         SUBJECT_COLORS[idx % SUBJECT_COLORS.length],
                     }}
                   />
-                  <h4 className="font-medium text-gray-900 dark:text-white">
+                  <h4 className="font-medium text-[var(--aivo-text)]">
                     {subject.subject}
                   </h4>
                 </div>
@@ -274,12 +274,12 @@ export default function GradebookPage() {
                 </Badge>
               </div>
               <div className="flex items-end gap-2">
-                <span className="text-2xl font-bold text-gray-900 dark:text-white">
+                <span className="text-2xl font-extrabold text-[var(--aivo-text)]">
                   {subject.currentMastery}%
                 </span>
-                <span className="text-sm text-gray-500 mb-0.5">{t("mastery")}</span>
+                <span className="text-sm text-[var(--aivo-text-secondary)] mb-0.5">{t("mastery")}</span>
               </div>
-              <div className="mt-2 w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+              <div className="mt-2 w-full h-2 bg-[#F0E6FF] dark:bg-[#3D2D5C] rounded-full overflow-hidden">
                 <div
                   className="h-full rounded-full transition-all duration-700"
                   style={{

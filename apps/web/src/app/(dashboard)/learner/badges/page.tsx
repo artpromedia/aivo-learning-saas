@@ -27,10 +27,10 @@ export default function BadgesPage() {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={80} className="w-full rounded-xl" />
+        <Skeleton height={80} className="w-full rounded-2xl" />
         <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-            <Skeleton key={i} height={180} className="w-full rounded-lg" />
+            <Skeleton key={i} height={180} className="w-full rounded-2xl" />
           ))}
         </div>
       </div>
@@ -56,12 +56,12 @@ export default function BadgesPage() {
 
   return (
     <div>
-      <PurpleGradientHeader className="rounded-xl mb-8">
+      <PurpleGradientHeader className="rounded-2xl mb-8">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Trophy size={32} />
             <div>
-              <h1 className="text-2xl font-bold">{t("badgeCollection")}</h1>
+              <h1 className="text-2xl font-extrabold">{t("badgeCollection")}</h1>
               <p className="text-white/80 text-sm">
                 {t("badgesEarned", { count: badges.length })}
               </p>
@@ -73,11 +73,11 @@ export default function BadgesPage() {
       {badges.length === 0 ? (
         <Card>
           <CardBody className="text-center py-12">
-            <Trophy className="mx-auto mb-3 text-gray-400" size={48} />
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            <Trophy className="mx-auto mb-3 text-[#A89BB5]" size={48} />
+            <h3 className="text-lg font-bold text-[var(--aivo-text)] mb-2">
               {t("noBadgesYet")}
             </h3>
-            <p className="text-gray-500 dark:text-gray-400">
+            <p className="text-[var(--aivo-text-secondary)]">
               {t("earnBadgesDescription")}
             </p>
           </CardBody>
@@ -90,17 +90,17 @@ export default function BadgesPage() {
             );
             return (
               <div key={category}>
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 capitalize">
+                <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-4 capitalize">
                   {category} ({categoryBadges.length})
                 </h2>
                 <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
                   {categoryBadges.map((badge) => (
                     <Card
                       key={badge.id}
-                      className="hover:shadow-md transition-shadow"
+                      className="hover:shadow-[var(--shadow-card)] transition-all"
                     >
                       <CardBody className="text-center py-6">
-                        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#7C4DFF] flex items-center justify-center mx-auto mb-3 shadow-lg shadow-[#7C3AED]/20 overflow-hidden">
+                        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#A855F7] flex items-center justify-center mx-auto mb-3 shadow-lg shadow-[#7C3AED]/20 overflow-hidden">
                           {badge.iconUrl ? (
                             <img
                               src={badge.iconUrl}
@@ -111,10 +111,10 @@ export default function BadgesPage() {
                             <Trophy className="text-white" size={24} />
                           )}
                         </div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white text-sm mb-1">
+                        <h3 className="font-semibold text-[var(--aivo-text)] text-sm mb-1">
                           {badge.name}
                         </h3>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 line-clamp-2">
+                        <p className="text-xs text-[var(--aivo-text-secondary)] mb-2 line-clamp-2">
                           {badge.description}
                         </p>
                         <p className="text-xs text-[#7C3AED] font-medium">

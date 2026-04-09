@@ -89,10 +89,10 @@ export default function ChallengesPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={80} className="w-full rounded-xl" />
+        <Skeleton height={80} className="w-full rounded-2xl" />
         <div className="grid gap-4 sm:grid-cols-2">
           {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} height={180} className="w-full rounded-lg" />
+            <Skeleton key={i} height={180} className="w-full rounded-2xl" />
           ))}
         </div>
       </div>
@@ -120,11 +120,11 @@ export default function ChallengesPage() {
 
   return (
     <div>
-      <PurpleGradientHeader className="rounded-xl mb-8">
+      <PurpleGradientHeader className="rounded-2xl mb-8">
         <div className="flex items-center gap-3">
           <Swords size={32} />
           <div>
-            <h1 className="text-2xl font-bold">{t("challenges")}</h1>
+            <h1 className="text-2xl font-extrabold">{t("challenges")}</h1>
             <p className="text-white/80 text-sm">
               {t("challengesDescription")}
             </p>
@@ -135,11 +135,11 @@ export default function ChallengesPage() {
       {challenges.length === 0 ? (
         <Card>
           <CardBody className="text-center py-12">
-            <Swords className="mx-auto mb-3 text-gray-400" size={48} />
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            <Swords className="mx-auto mb-3 text-[#A89BB5]" size={48} />
+            <h3 className="text-lg font-bold text-[var(--aivo-text)] mb-2">
               No challenges available
             </h3>
-            <p className="text-gray-500 dark:text-gray-400">
+            <p className="text-[var(--aivo-text-secondary)]">
               Check back soon for new multiplayer challenges.
             </p>
           </CardBody>
@@ -148,7 +148,7 @@ export default function ChallengesPage() {
         <>
           {activeChallenges.length > 0 && (
             <div className="mb-8">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-4">
                 Active Challenges
               </h2>
               <div className="grid gap-4 sm:grid-cols-2">
@@ -156,12 +156,12 @@ export default function ChallengesPage() {
                   <Card key={c.id} className="border-[#7C3AED] border-2">
                     <CardBody>
                       <div className="flex items-center gap-2 mb-2 flex-wrap">
-                        <h3 className="font-semibold text-gray-900 dark:text-white">
+                        <h3 className="font-semibold text-[var(--aivo-text)]">
                           {c.title}
                         </h3>
                         <Badge variant="warning">In Progress</Badge>
                       </div>
-                      <div className="flex items-center gap-3 text-xs text-gray-500 mb-3">
+                      <div className="flex items-center gap-3 text-xs text-[var(--aivo-text-secondary)] mb-3">
                         <span className="flex items-center gap-1">
                           <Users size={12} />
                           {c.participants}/{c.maxParticipants}
@@ -186,23 +186,23 @@ export default function ChallengesPage() {
 
           {openChallenges.length > 0 && (
             <div className="mb-8">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-4">
                 Open Challenges ({openChallenges.length})
               </h2>
               <div className="grid gap-4 sm:grid-cols-2">
                 {openChallenges.map((c) => (
-                  <Card key={c.id} className="hover:shadow-md transition-shadow">
+                  <Card key={c.id} className="hover:shadow-[var(--shadow-card)] transition-all">
                     <CardBody>
                       <div className="flex items-center gap-2 mb-2 flex-wrap">
-                        <h3 className="font-semibold text-gray-900 dark:text-white">
+                        <h3 className="font-semibold text-[var(--aivo-text)]">
                           {c.title}
                         </h3>
                         <Badge variant="secondary">{typeLabels[c.type]}</Badge>
                       </div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
+                      <p className="text-sm text-[var(--aivo-text-secondary)] mb-3">
                         {c.subject}
                       </p>
-                      <div className="flex items-center gap-3 text-xs text-gray-500 mb-4">
+                      <div className="flex items-center gap-3 text-xs text-[var(--aivo-text-secondary)] mb-4">
                         <span className="flex items-center gap-1">
                           <Users size={12} />
                           {c.participants}/{c.maxParticipants}
@@ -236,7 +236,7 @@ export default function ChallengesPage() {
 
           {completedChallenges.length > 0 && (
             <div>
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-4">
                 Completed
               </h2>
               <div className="grid gap-4 sm:grid-cols-2">
@@ -245,10 +245,10 @@ export default function ChallengesPage() {
                     <CardBody className="flex items-center gap-3">
                       <Trophy className="text-yellow-500 shrink-0" size={20} />
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-medium text-gray-900 dark:text-white truncate">
+                        <h3 className="font-medium text-[var(--aivo-text)] truncate">
                           {c.title}
                         </h3>
-                        <span className="text-xs text-gray-500">{c.subject}</span>
+                        <span className="text-xs text-[var(--aivo-text-secondary)]">{c.subject}</span>
                       </div>
                       <Badge variant="success">+{c.xpReward} XP</Badge>
                     </CardBody>

@@ -75,7 +75,7 @@ function CelebrationAnimation({
             <div className="w-16 h-16 rounded-full bg-[#7C3AED]/10 flex items-center justify-center mb-3">
               <IconComponent size={28} style={{ color: iconColor }} />
             </div>
-            <p className="text-lg font-bold text-gray-900 dark:text-white">
+            <p className="text-lg font-bold text-[var(--aivo-text)] ">
               {message}
             </p>
           </motion.div>
@@ -138,7 +138,7 @@ function CelebrationAnimation({
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="text-xl font-bold text-gray-900 dark:text-white"
+            className="text-xl font-bold text-[var(--aivo-text)] "
           >
             {message}
           </motion.p>

@@ -105,10 +105,10 @@ export default function ShopPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={80} className="w-full rounded-xl" />
+        <Skeleton height={80} className="w-full rounded-2xl" />
         <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-            <Skeleton key={i} height={200} className="w-full rounded-lg" />
+            <Skeleton key={i} height={200} className="w-full rounded-2xl" />
           ))}
         </div>
       </div>
@@ -132,12 +132,12 @@ export default function ShopPage() {
 
   return (
     <div>
-      <PurpleGradientHeader className="rounded-xl mb-8">
+      <PurpleGradientHeader className="rounded-2xl mb-8">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <ShoppingBag size={32} />
             <div>
-              <h1 className="text-2xl font-bold">{t("avatarShop")}</h1>
+              <h1 className="text-2xl font-extrabold">{t("avatarShop")}</h1>
               <p className="text-white/80 text-sm">
                 {t("shopSubtitle")}
               </p>
@@ -152,7 +152,7 @@ export default function ShopPage() {
       </PurpleGradientHeader>
 
       {error && (
-        <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+        <div className="mb-4 p-3 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171] text-sm">
           {error}
         </div>
       )}
@@ -164,7 +164,7 @@ export default function ShopPage() {
           className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
             selectedCategory === null
               ? "bg-[#7C3AED] text-white"
-              : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
+              : "bg-[var(--aivo-bg-alt,#FFF5EB)] text-[var(--aivo-text-secondary)] hover:bg-[#F0E6FF] dark:hover:bg-[#3D2D5C]"
           }`}
         >
           All
@@ -176,7 +176,7 @@ export default function ShopPage() {
             className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
               selectedCategory === cat
                 ? "bg-[#7C3AED] text-white"
-                : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
+                : "bg-[var(--aivo-bg-alt,#FFF5EB)] text-[var(--aivo-text-secondary)] hover:bg-[#F0E6FF] dark:hover:bg-[#3D2D5C]"
             }`}
           >
             {t(cat === "outfit" ? "outfits" : cat === "accessory" ? "accessories" : cat === "background" ? "backgrounds" : cat === "effect" ? "effects" : cat)}
@@ -189,12 +189,12 @@ export default function ShopPage() {
         {filteredItems.map((item) => (
           <Card
             key={item.id}
-            className={`hover:shadow-md transition-shadow cursor-pointer ${
+            className={`hover:shadow-[var(--shadow-card)] transition-all cursor-pointer ${
               item.owned ? "ring-2 ring-green-400" : ""
             }`}
             onClick={() => !item.owned && setSelectedItem(item)}
           >
-            <div className="aspect-square bg-gray-100 dark:bg-gray-800 rounded-t-lg overflow-hidden relative">
+            <div className="aspect-square bg-[var(--aivo-bg-alt,#FFF5EB)] rounded-t-lg overflow-hidden relative">
               <img
                 src={item.imageUrl}
                 alt={item.name}
@@ -208,7 +208,7 @@ export default function ShopPage() {
             </div>
             <CardBody className="p-3">
               <div className="flex items-center gap-1 mb-1">
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                <h3 className="text-sm font-semibold text-[var(--aivo-text)] truncate">
                   {item.name}
                 </h3>
               </div>
@@ -241,8 +241,8 @@ export default function ShopPage() {
       {filteredItems.length === 0 && (
         <Card>
           <CardBody className="text-center py-12">
-            <ShoppingBag className="mx-auto mb-3 text-gray-400" size={48} />
-            <p className="text-gray-500 dark:text-gray-400">
+            <ShoppingBag className="mx-auto mb-3 text-[#A89BB5]" size={48} />
+            <p className="text-[var(--aivo-text-secondary)]">
               No items in this category.
             </p>
           </CardBody>
@@ -271,17 +271,17 @@ export default function ShopPage() {
       >
         {selectedItem && (
           <div className="text-center">
-            <div className="w-32 h-32 mx-auto mb-4 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
+            <div className="w-32 h-32 mx-auto mb-4 rounded-2xl overflow-hidden bg-[var(--aivo-bg-alt,#FFF5EB)]">
               <img
                 src={selectedItem.imageUrl}
                 alt={selectedItem.name}
                 className="w-full h-full object-cover"
               />
             </div>
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
+            <h3 className="text-lg font-bold text-[var(--aivo-text)] mb-1">
               {selectedItem.name}
             </h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
+            <p className="text-sm text-[var(--aivo-text-secondary)] mb-3">
               {selectedItem.description}
             </p>
             <div className="flex items-center justify-center gap-2">
