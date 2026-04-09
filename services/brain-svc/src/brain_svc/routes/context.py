@@ -2,41 +2,17 @@
 
 from __future__ import annotations
 
-import json
 from typing import Any
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
 from brain_svc.db import get_session
+from brain_svc.middleware.auth import require_auth
 from brain_svc.services.brain_state import get_brain_state
+from brain_svc.utils.json_coerce import ensure_dict, ensure_list
 
-
-def _ensure_dict(val: Any, default: Any = None) -> Any:
-    if default is None:
-        default = {}
-    if val is None:
-        return default
-    if isinstance(val, str):
-        try:
-            return json.loads(val)
-        except (json.JSONDecodeError, ValueError):
-            return default
-    return val
-
-
-def _ensure_list(val: Any) -> list:
-    if val is None:
-        return []
-    if isinstance(val, str):
-        try:
-            parsed = json.loads(val)
-            return parsed if isinstance(parsed, list) else []
-        except (json.JSONDecodeError, ValueError):
-            return []
-    return val if isinstance(val, list) else []
-
-router = APIRouter(prefix="/api/brain", tags=["context"])
+router = APIRouter(prefix="/brain", tags=["context"])
 
 
 class BrainContextResponse(BaseModel):
@@ -63,35 +39,40 @@ def _extract_mastery_gaps(
 ) -> list[dict[str, Any]]:
     gaps: list[dict[str, Any]] = []
     for subject, skills in mastery_levels.items():
+        if not isinstance(skills, dict):
+            continue
         for skill, level in skills.items():
-            if level < threshold:
+            if isinstance(level, (int, float)) and level < threshold:
                 gaps.append({"subject": subject, "skill": skill, "level": level})
     gaps.sort(key=lambda g: g["level"])
     return gaps
 
 
 @router.get("/{learner_id}/context", response_model=BrainContextResponse)
-async def get_brain_context(learner_id: str):
+async def get_brain_context(
+    learner_id: str,
+    _claims: dict = Depends(require_auth),
+):
     async with get_session() as session:
         bs = await get_brain_state(session, learner_id)
         if not bs:
             raise HTTPException(status_code=404, detail="Brain state not found")
 
-        state = _ensure_dict(bs.state)
-        flp = _ensure_dict(bs.functioning_level_profile)
-        iep = _ensure_dict(bs.iep_profile)
+        state = ensure_dict(bs.state)
+        flp = ensure_dict(bs.functioning_level_profile)
+        iep = ensure_dict(bs.iep_profile)
 
-        mastery_levels = state.get("mastery_levels", {})
+        mastery_levels = ensure_dict(state.get("mastery_levels"))
         gaps = _extract_mastery_gaps(mastery_levels)
 
-        active_tutors = _ensure_list(bs.active_tutors)
+        active_tutors = ensure_list(bs.active_tutors)
 
         return BrainContextResponse(
             learnerId=str(bs.learner_id),
             enrolledGrade=state.get("enrolled_grade"),
             functioningLevel=flp.get("level", "level2"),
             communicationMode=state.get("communication_style", "verbal"),
-            deliveryLevels=_ensure_dict(bs.delivery_levels),
+            deliveryLevels=ensure_dict(bs.delivery_levels),
             accommodations=state.get("active_accommodations", []),
             masteryLevels=mastery_levels,
             masteryGaps=gaps,

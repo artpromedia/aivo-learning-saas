@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from brain_svc.db import get_session
 from brain_svc.middleware.auth import require_auth
+from brain_svc.utils.json_coerce import ensure_dict, ensure_list
 from brain_svc.services.brain_state import (
     delete_brain_state,
     get_brain_state,
@@ -50,11 +51,11 @@ def _to_response(bs) -> BrainStateResponse:
         learner_id=str(bs.learner_id),
         main_brain_version=bs.main_brain_version,
         seed_version=bs.seed_version,
-        state=bs.state or {},
-        functioning_level_profile=bs.functioning_level_profile,
-        iep_profile=bs.iep_profile,
-        active_tutors=bs.active_tutors,
-        delivery_levels=bs.delivery_levels,
+        state=ensure_dict(bs.state),
+        functioning_level_profile=ensure_dict(bs.functioning_level_profile, default=None),
+        iep_profile=ensure_dict(bs.iep_profile, default=None),
+        active_tutors=ensure_list(bs.active_tutors),
+        delivery_levels=ensure_dict(bs.delivery_levels, default=None),
         preferred_modality=bs.preferred_modality,
         attention_span_minutes=bs.attention_span_minutes,
         cognitive_load=bs.cognitive_load,

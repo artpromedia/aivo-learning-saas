@@ -11,6 +11,7 @@ from brain_svc.db import get_session
 from brain_svc.middleware.auth import require_auth
 from brain_svc.services.accommodation import diff_accommodations, resolve_accommodations
 from brain_svc.services.brain_state import get_brain_state, update_brain_state
+from brain_svc.utils.json_coerce import ensure_dict
 
 router = APIRouter(prefix="/accommodations", tags=["accommodations"])
 
@@ -44,10 +45,10 @@ async def apply_accommodations(
             raise HTTPException(status_code=404, detail="Brain state not found")
 
         new_accommodations = resolve_accommodations(body.sources)
-        current = (bs.state or {}).get("active_accommodations", [])
+        current = ensure_dict(bs.state).get("active_accommodations", [])
         diff = diff_accommodations(current, new_accommodations)
 
-        state = dict(bs.state or {})
+        state = dict(ensure_dict(bs.state))
         state["active_accommodations"] = new_accommodations
         await update_brain_state(session, bs, {"state": state})
 
@@ -65,5 +66,5 @@ async def get_learner_accommodations(
             raise HTTPException(status_code=404, detail="Brain state not found")
         return {
             "learner_id": learner_id,
-            "accommodations": (bs.state or {}).get("active_accommodations", []),
+            "accommodations": ensure_dict(bs.state).get("active_accommodations", []),
         }
