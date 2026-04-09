@@ -629,7 +629,13 @@
     "lowVerbalLabel": "Low Verbal",
     "nonVerbalLabel": "Non-Verbal",
     "preSymbolicLabel": "Pre-Symbolic",
-    "retry": "Retry"
+    "retry": "Retry",
+    "adaptations": "Learning Adaptations",
+    "confidenceScore": "AI Confidence",
+    "modelVersion": "Model Version",
+    "profileSummary": "Profile Summary",
+    "howAivoLearns": "How AIVO Learns",
+    "howAivoLearnsDesc": "AIVO continuously adapts to find the best learning approach for your child."
   },
   "tutor": {
     "startSession": "Start Session",
