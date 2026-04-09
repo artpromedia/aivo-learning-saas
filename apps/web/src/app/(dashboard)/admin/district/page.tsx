@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
+import { PageWrapper, StatCard, ExpandableCard, AnimatedCard } from "@/components/ui/PageDesign";
 import { useAuthStore } from "@/stores/auth.store";
 import { apiFetch } from "@/lib/api";
 
@@ -43,16 +44,7 @@ export default function DistrictOverviewPage() {
     fetchOverview();
   }, []);
 
-  const statCards = data
-    ? [
-        { label: t("totalLearners"), value: data.totalLearners, icon: <Users size={24} /> },
-        { label: t("activeBrains"), value: data.activeBrains, icon: <Brain size={24} /> },
-        { label: t("avgMastery"), value: `${data.avgMasteryPercent}%`, icon: <Target size={24} /> },
-        { label: t("iepCoverage"), value: `${data.iepCoveragePercent}%`, icon: <FileText size={24} /> },
-      ]
-    : [];
-
-  const totalLevels = data
+  const totalLevels = data?.functioningLevelDistribution
     ? data.functioningLevelDistribution.level1 +
       data.functioningLevelDistribution.level2 +
       data.functioningLevelDistribution.level3
@@ -63,12 +55,19 @@ export default function DistrictOverviewPage() {
   }
 
   return (
-    <div>
+    <PageWrapper>
       <PurpleGradientHeader className="rounded-2xl mb-8">
-        <h1 className="text-2xl font-extrabold">{t("districtDashboard")}</h1>
-        <p className="mt-1 text-white/80">
-          {t("adminWelcomeBack", { name: user?.name?.split(" ")[0] ?? "Admin" })}
-        </p>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
+            <Brain size={22} />
+          </div>
+          <div>
+            <h1 className="text-2xl font-extrabold">{t("districtDashboard")}</h1>
+            <p className="mt-0.5 text-white/80 text-sm">
+              {t("adminWelcomeBack", { name: user?.name?.split(" ")[0] ?? "Admin" })}
+            </p>
+          </div>
+        </div>
       </PurpleGradientHeader>
 
       {error && (
@@ -93,73 +92,69 @@ export default function DistrictOverviewPage() {
         </div>
       ) : data ? (
         <>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-            {statCards.map((stat) => (
-              <Card key={stat.label}>
-                <CardBody className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-[#7C3AED]/10 flex items-center justify-center text-[#7C3AED]">
-                    {stat.icon}
-                  </div>
-                  <div>
-                    <p className="text-sm text-[var(--aivo-text-secondary)]">{stat.label}</p>
-                    <p className="text-2xl font-extrabold text-[var(--aivo-text)]">{stat.value}</p>
-                  </div>
-                </CardBody>
-              </Card>
-            ))}
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+            <StatCard icon={<Users size={18} />} label={t("totalLearners")} value={data.totalLearners ?? 0} color="#7C3AED" delay={100} />
+            <StatCard icon={<Brain size={18} />} label={t("activeBrains")} value={data.activeBrains ?? 0} color="#A855F7" delay={200} />
+            <StatCard icon={<Target size={18} />} label={t("avgMastery")} value={`${data.avgMasteryPercent ?? 0}%`} color="#10B981" delay={300} />
+            <StatCard icon={<FileText size={18} />} label={t("iepCoverage")} value={`${data.iepCoveragePercent ?? 0}%`} color="#3B82F6" delay={400} />
           </div>
 
           <div className="grid gap-6 lg:grid-cols-2">
-            <Card>
-              <CardBody>
-                <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-4">
-                  {t("functioningLevelDist")}
-                </h2>
-                <div className="space-y-4">
-                  {[
-                    { label: t("level1"), count: data.functioningLevelDistribution.level1, color: "#7C3AED" },
-                    { label: t("level2"), count: data.functioningLevelDistribution.level2, color: "#8B5CF6" },
-                    { label: t("level3"), count: data.functioningLevelDistribution.level3, color: "#A78BFA" },
-                  ].map((level) => (
-                    <div key={level.label}>
-                      <div className="flex items-center justify-between text-sm mb-1">
-                        <span className="text-[var(--aivo-text)]">{level.label}</span>
-                        <span className="font-medium text-[var(--aivo-text)]">
-                          {level.count} ({levelPercent(level.count)}%)
-                        </span>
-                      </div>
-                      <div className="w-full h-4 bg-[#F0E6FF] dark:bg-[#3D2D5C] rounded-full overflow-hidden">
-                        <div
-                          className="h-full rounded-full transition-all duration-500"
-                          style={{
-                            width: `${levelPercent(level.count)}%`,
-                            backgroundColor: level.color,
-                          }}
-                        />
-                      </div>
+            <ExpandableCard
+              icon={<Target size={16} />}
+              title={t("functioningLevelDist")}
+              subtitle="Distribution of learners across functioning levels"
+              gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
+              delay={500}
+              infoText="This chart shows how learners are distributed across the three functioning levels in your district."
+            >
+              <div className="space-y-4">
+                {[
+                  { label: t("level1"), count: data.functioningLevelDistribution?.level1 ?? 0, color: "#7C3AED" },
+                  { label: t("level2"), count: data.functioningLevelDistribution?.level2 ?? 0, color: "#8B5CF6" },
+                  { label: t("level3"), count: data.functioningLevelDistribution?.level3 ?? 0, color: "#A78BFA" },
+                ].map((level) => (
+                  <div key={level.label}>
+                    <div className="flex items-center justify-between text-sm mb-1">
+                      <span style={{ color: "var(--aivo-text)" }}>{level.label}</span>
+                      <span className="font-medium" style={{ color: "var(--aivo-text)" }}>
+                        {level.count} ({levelPercent(level.count)}%)
+                      </span>
                     </div>
-                  ))}
-                </div>
-              </CardBody>
-            </Card>
+                    <div className="w-full h-4 bg-[#F0E6FF] dark:bg-[#3D2D5C] rounded-full overflow-hidden">
+                      <div
+                        className="h-full rounded-full"
+                        style={{
+                          width: `${levelPercent(level.count)}%`,
+                          backgroundColor: level.color,
+                          animation: "aivo-bar-grow 0.8s ease-out forwards",
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </ExpandableCard>
 
-            <Card>
-              <CardBody className="flex flex-col items-center justify-center text-center py-8">
-                <div className="w-16 h-16 rounded-full bg-[#7C3AED]/10 flex items-center justify-center mb-4">
-                  <Bot className="text-[#7C3AED]" size={32} />
-                </div>
-                <p className="text-sm text-[var(--aivo-text-secondary)]">{t("activeTutors")}</p>
-                <p className="text-4xl font-bold text-[var(--aivo-text)] mt-1">
-                  {data.activeTutors}
-                </p>
-                <p className="text-sm text-[var(--aivo-text-secondary)] mt-2">
-                  {t("activeTutorsDesc")}
-                </p>
-              </CardBody>
-            </Card>
+            <AnimatedCard delay={600}>
+              <Card className="h-full">
+                <CardBody className="flex flex-col items-center justify-center text-center py-8">
+                  <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4 text-white" style={{ background: "linear-gradient(135deg, #7C3AED, #A855F7)" }}>
+                    <Bot size={32} />
+                  </div>
+                  <p className="text-sm" style={{ color: "var(--aivo-text-secondary)" }}>{t("activeTutors")}</p>
+                  <p className="text-4xl font-bold mt-1" style={{ color: "var(--aivo-text)" }}>
+                    {data.activeTutors}
+                  </p>
+                  <p className="text-sm mt-2" style={{ color: "var(--aivo-text-secondary)" }}>
+                    {t("activeTutorsDesc")}
+                  </p>
+                </CardBody>
+              </Card>
+            </AnimatedCard>
           </div>
         </>
       ) : null}
-    </div>
+    </PageWrapper>
   );
 }

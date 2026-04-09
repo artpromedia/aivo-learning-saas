@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
+import { PageWrapper, BackLink, StatCard, ExpandableCard, AnimatedCard } from "@/components/ui/PageDesign";
 import { apiFetch } from "@/lib/api";
 
 interface LicensePool {
@@ -74,19 +75,28 @@ export default function LicenseManagementPage() {
     }
   }
 
-  const usagePercent = data
+  const usagePercent = data?.pool
     ? data.pool.totalLicenses > 0
       ? Math.round((data.pool.usedLicenses / data.pool.totalLicenses) * 100)
       : 0
     : 0;
 
   return (
-    <div>
+    <PageWrapper>
+      <BackLink href="/admin/district">Back to District</BackLink>
+
       <PurpleGradientHeader className="rounded-2xl mb-8">
-        <h1 className="text-2xl font-extrabold">Tutor License Management</h1>
-        <p className="mt-1 text-white/80">
-          Manage and allocate AI tutor licenses across your district.
-        </p>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
+            <Key size={22} />
+          </div>
+          <div>
+            <h1 className="text-2xl font-extrabold">Tutor License Management</h1>
+            <p className="mt-0.5 text-white/80 text-sm">
+              Manage and allocate AI tutor licenses across your district
+            </p>
+          </div>
+        </div>
       </PurpleGradientHeader>
 
       {error && (
@@ -114,164 +124,123 @@ export default function LicenseManagementPage() {
               </Card>
             ))}
           </div>
-          <Card>
-            <CardBody className="space-y-3">
-              <Skeleton height={20} className="w-40" />
-              {[1, 2, 3, 4].map((i) => (
-                <Skeleton key={i} height={48} className="w-full" rounded="lg" />
-              ))}
-            </CardBody>
-          </Card>
         </div>
       ) : data ? (
         <div className="space-y-6">
-          <div className="grid gap-4 sm:grid-cols-3">
-            <Card>
-              <CardBody className="text-center">
-                <div className="w-10 h-10 rounded-2xl bg-[#7C3AED]/10 flex items-center justify-center text-[#7C3AED] mx-auto mb-2">
-                  <Key size={20} />
-                </div>
-                <p className="text-sm text-[var(--aivo-text-secondary)]">Total Licenses</p>
-                <p className="text-3xl font-bold text-[var(--aivo-text)]">
-                  {data.pool.totalLicenses}
-                </p>
-              </CardBody>
-            </Card>
-            <Card>
-              <CardBody className="text-center">
-                <div className="w-10 h-10 rounded-2xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 mx-auto mb-2">
-                  <Users size={20} />
-                </div>
-                <p className="text-sm text-[var(--aivo-text-secondary)]">Used</p>
-                <p className="text-3xl font-bold text-[var(--aivo-text)]">
-                  {data.pool.usedLicenses}
-                </p>
-              </CardBody>
-            </Card>
-            <Card>
-              <CardBody className="text-center">
-                <p className="text-sm text-[var(--aivo-text-secondary)] mb-2">Usage</p>
-                <p className="text-3xl font-bold text-[var(--aivo-text)] mb-2">
-                  {usagePercent}%
-                </p>
-                <div className="w-full h-3 bg-[#F0E6FF] dark:bg-[#3D2D5C] rounded-full overflow-hidden">
-                  <div
-                    className="h-full rounded-full transition-all duration-500"
-                    style={{
-                      width: `${usagePercent}%`,
-                      backgroundColor: usagePercent > 90 ? "#EF4444" : "#7C3AED",
-                    }}
-                  />
-                </div>
-                <p className="text-xs text-[var(--aivo-text-secondary)] mt-1">
-                  {data.pool.availableLicenses} available
-                </p>
-              </CardBody>
-            </Card>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <StatCard icon={<Key size={18} />} label="Total Licenses" value={data.pool?.totalLicenses ?? 0} color="#7C3AED" delay={100} />
+            <StatCard icon={<Users size={18} />} label="Used" value={data.pool?.usedLicenses ?? 0} color="#10B981" delay={200} />
+            <AnimatedCard delay={300}>
+              <Card>
+                <CardBody className="text-center py-4">
+                  <p className="text-sm mb-2" style={{ color: "var(--aivo-text-secondary)" }}>Usage</p>
+                  <p className="text-3xl font-bold mb-2" style={{ color: "var(--aivo-text)" }}>{usagePercent}%</p>
+                  <div className="w-full h-3 bg-[#F0E6FF] dark:bg-[#3D2D5C] rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full"
+                      style={{
+                        width: `${usagePercent}%`,
+                        backgroundColor: usagePercent > 90 ? "#EF4444" : "#7C3AED",
+                        animation: "aivo-bar-grow 0.8s ease-out forwards",
+                      }}
+                    />
+                  </div>
+                  <p className="text-xs mt-1" style={{ color: "var(--aivo-text-secondary)" }}>
+                    {data.pool?.availableLicenses ?? 0} available
+                  </p>
+                </CardBody>
+              </Card>
+            </AnimatedCard>
           </div>
 
-          <Card>
-            <CardBody>
-              <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-4">
-                Bulk Allocate by Classroom
-              </h2>
-              {data.classrooms.length === 0 ? (
-                <p className="text-[var(--aivo-text-secondary)] text-sm text-center py-4">
-                  No classrooms available.
-                </p>
-              ) : (
-                <div className="space-y-3">
-                  {data.classrooms.map((classroom) => (
-                    <div
-                      key={classroom.id}
-                      className="flex items-center gap-4 p-3 border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-2xl"
-                    >
-                      <div className="w-8 h-8 rounded-2xl bg-[#7C3AED]/10 flex items-center justify-center text-[#7C3AED] shrink-0">
-                        <School size={16} />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-[var(--aivo-text)] truncate">
-                          {classroom.name}
-                        </p>
-                        <p className="text-xs text-[var(--aivo-text-secondary)]">
-                          {classroom.learnerCount} learners
-                        </p>
-                      </div>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        loading={allocating === classroom.id}
-                        onClick={() => handleBulkAllocate(classroom.id, classroom.name)}
-                      >
-                        Allocate Licenses
-                      </Button>
+          <ExpandableCard
+            icon={<School size={16} />}
+            title="Bulk Allocate by Classroom"
+            subtitle="Assign licenses to entire classrooms at once"
+            gradient="linear-gradient(135deg, #3B82F6, #2563EB)"
+            delay={400}
+            infoText="Bulk allocation assigns AI tutor licenses to all learners in a classroom at once."
+          >
+            {!data.classrooms || data.classrooms.length === 0 ? (
+              <p className="text-sm text-center py-4" style={{ color: "var(--aivo-text-secondary)" }}>
+                No classrooms available.
+              </p>
+            ) : (
+              <div className="space-y-3">
+                {(data.classrooms ?? []).map((classroom) => (
+                  <div
+                    key={classroom.id}
+                    className="flex items-center gap-4 p-3 border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-2xl"
+                  >
+                    <div className="w-8 h-8 rounded-2xl flex items-center justify-center text-white shrink-0" style={{ background: "linear-gradient(135deg, #3B82F6, #2563EB)" }}>
+                      <School size={16} />
                     </div>
-                  ))}
-                </div>
-              )}
-            </CardBody>
-          </Card>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate" style={{ color: "var(--aivo-text)" }}>{classroom.name}</p>
+                      <p className="text-xs" style={{ color: "var(--aivo-text-secondary)" }}>{classroom.learnerCount} learners</p>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      loading={allocating === classroom.id}
+                      onClick={() => handleBulkAllocate(classroom.id, classroom.name)}
+                    >
+                      Allocate Licenses
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </ExpandableCard>
 
-          <Card>
-            <CardBody>
-              <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-4">
-                Learner Allocations
-              </h2>
-              {data.learners.length === 0 ? (
-                <p className="text-[var(--aivo-text-secondary)] text-sm text-center py-4">
-                  No learner allocations found.
-                </p>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b border-[#E8DDF0] dark:border-[#3D2D5C]">
-                        <th className="text-left py-2 px-3 font-medium text-[var(--aivo-text-secondary)]">
-                          Learner
-                        </th>
-                        <th className="text-left py-2 px-3 font-medium text-[var(--aivo-text-secondary)]">
-                          Classroom
-                        </th>
-                        <th className="text-left py-2 px-3 font-medium text-[var(--aivo-text-secondary)]">
-                          Allocated Tutors
-                        </th>
+          <ExpandableCard
+            icon={<Users size={16} />}
+            title="Learner Allocations"
+            subtitle="View which tutors are assigned to each learner"
+            gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
+            delay={500}
+            defaultExpanded={false}
+            infoText="This table shows each learner and the AI tutors that have been allocated to them."
+          >
+            {!data.learners || data.learners.length === 0 ? (
+              <p className="text-sm text-center py-4" style={{ color: "var(--aivo-text-secondary)" }}>
+                No learner allocations found.
+              </p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-[#E8DDF0] dark:border-[#3D2D5C]">
+                      <th className="text-left py-2 px-3 font-medium" style={{ color: "var(--aivo-text-secondary)" }}>Learner</th>
+                      <th className="text-left py-2 px-3 font-medium" style={{ color: "var(--aivo-text-secondary)" }}>Classroom</th>
+                      <th className="text-left py-2 px-3 font-medium" style={{ color: "var(--aivo-text-secondary)" }}>Allocated Tutors</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(data.learners ?? []).map((learner) => (
+                      <tr key={learner.id} className="border-b border-[#F0E6FF] dark:border-[#3D2D5C] last:border-0">
+                        <td className="py-3 px-3 font-medium" style={{ color: "var(--aivo-text)" }}>{learner.name}</td>
+                        <td className="py-3 px-3" style={{ color: "var(--aivo-text)" }}>{learner.classroomName}</td>
+                        <td className="py-3 px-3">
+                          {learner.allocatedTutors.length > 0 ? (
+                            <div className="flex flex-wrap gap-1">
+                              {learner.allocatedTutors.map((tutor) => (
+                                <Badge key={tutor} variant="default">{tutor}</Badge>
+                              ))}
+                            </div>
+                          ) : (
+                            <span className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>None</span>
+                          )}
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {data.learners.map((learner) => (
-                        <tr
-                          key={learner.id}
-                          className="border-b border-[#F0E6FF] dark:border-[#3D2D5C] last:border-0"
-                        >
-                          <td className="py-3 px-3 text-[var(--aivo-text)] font-medium">
-                            {learner.name}
-                          </td>
-                          <td className="py-3 px-3 text-[var(--aivo-text)]">
-                            {learner.classroomName}
-                          </td>
-                          <td className="py-3 px-3">
-                            {learner.allocatedTutors.length > 0 ? (
-                              <div className="flex flex-wrap gap-1">
-                                {learner.allocatedTutors.map((tutor) => (
-                                  <Badge key={tutor} variant="default">
-                                    {tutor}
-                                  </Badge>
-                                ))}
-                              </div>
-                            ) : (
-                              <span className="text-[var(--aivo-text-muted)] text-xs">None</span>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </CardBody>
-          </Card>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </ExpandableCard>
         </div>
       ) : null}
-    </div>
+    </PageWrapper>
   );
 }

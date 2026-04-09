@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
+import { PageWrapper, BackLink, EmptyState, AnimatedCard } from "@/components/ui/PageDesign";
 import { apiFetch } from "@/lib/api";
 
 interface Teacher {
@@ -29,7 +30,7 @@ export default function TeacherManagementPage() {
   const fetchTeachers = useCallback(async () => {
     try {
       const data = await apiFetch<Teacher[]>("/api/admin/teachers");
-      setTeachers(data);
+      setTeachers(data ?? []);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load teachers");
     } finally {
@@ -65,10 +66,19 @@ export default function TeacherManagementPage() {
   }
 
   return (
-    <div>
+    <PageWrapper>
+      <BackLink href="/admin/district">Back to District</BackLink>
+
       <PurpleGradientHeader className="rounded-2xl mb-8">
-        <h1 className="text-2xl font-extrabold">Teacher Management</h1>
-        <p className="mt-1 text-white/80">Manage teachers across your district.</p>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
+            <Users size={22} />
+          </div>
+          <div>
+            <h1 className="text-2xl font-extrabold">Teacher Management</h1>
+            <p className="mt-0.5 text-white/80 text-sm">Manage teachers across your district</p>
+          </div>
+        </div>
       </PurpleGradientHeader>
 
       {error && (
@@ -78,7 +88,7 @@ export default function TeacherManagementPage() {
       )}
 
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-bold text-[var(--aivo-text)]">
+        <h2 className="text-lg font-bold" style={{ color: "var(--aivo-text)" }}>
           Teachers ({teachers.length})
         </h2>
         <Button
@@ -95,41 +105,34 @@ export default function TeacherManagementPage() {
       </div>
 
       {showInvite && (
-        <Card className="mb-6">
-          <CardBody>
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold text-[var(--aivo-text)]">Invite a Teacher</h3>
-              <button
-                onClick={() => setShowInvite(false)}
-                className="text-[#A89BB5] hover:text-[#7C3AED]"
-              >
-                <X size={18} />
-              </button>
-            </div>
-            <form onSubmit={handleInvite} className="flex gap-3">
-              <div className="flex-1 relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A89BB5]" size={16} />
-                <input
-                  type="email"
-                  value={inviteEmail}
-                  onChange={(e) => setInviteEmail(e.target.value)}
-                  placeholder="teacher@school.edu"
-                  required
-                  className="w-full pl-10 pr-4 py-2 border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-2xl bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] placeholder-[#A89BB5] focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent"
-                />
+        <AnimatedCard delay={0}>
+          <Card className="mb-6">
+            <CardBody>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-semibold" style={{ color: "var(--aivo-text)" }}>Invite a Teacher</h3>
+                <button onClick={() => setShowInvite(false)} className="text-[#A89BB5] hover:text-[#7C3AED]">
+                  <X size={18} />
+                </button>
               </div>
-              <Button type="submit" loading={inviting}>
-                Send Invite
-              </Button>
-            </form>
-            {inviteError && (
-              <p className="mt-2 text-sm text-red-600 dark:text-red-400">{inviteError}</p>
-            )}
-            {inviteSuccess && (
-              <p className="mt-2 text-sm text-green-600 dark:text-green-400">{inviteSuccess}</p>
-            )}
-          </CardBody>
-        </Card>
+              <form onSubmit={handleInvite} className="flex gap-3">
+                <div className="flex-1 relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A89BB5]" size={16} />
+                  <input
+                    type="email"
+                    value={inviteEmail}
+                    onChange={(e) => setInviteEmail(e.target.value)}
+                    placeholder="teacher@school.edu"
+                    required
+                    className="w-full pl-10 pr-4 py-2 border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-2xl bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] placeholder-[#A89BB5] focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent"
+                  />
+                </div>
+                <Button type="submit" loading={inviting}>Send Invite</Button>
+              </form>
+              {inviteError && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{inviteError}</p>}
+              {inviteSuccess && <p className="mt-2 text-sm text-green-600 dark:text-green-400">{inviteSuccess}</p>}
+            </CardBody>
+          </Card>
+        </AnimatedCard>
       )}
 
       {loading ? (
@@ -148,48 +151,37 @@ export default function TeacherManagementPage() {
           ))}
         </div>
       ) : teachers.length === 0 ? (
-        <Card>
-          <CardBody className="text-center py-12">
-            <div className="w-16 h-16 rounded-full bg-[#7C3AED]/10 flex items-center justify-center mx-auto mb-4">
-              <Users className="text-[#7C3AED]" size={32} />
-            </div>
-            <h3 className="text-lg font-bold text-[var(--aivo-text)] mb-2">
-              No teachers yet
-            </h3>
-            <p className="text-[var(--aivo-text-secondary)] mb-4">
-              Invite teachers to start managing classrooms.
-            </p>
-            <Button leftIcon={<UserPlus size={18} />} onClick={() => setShowInvite(true)}>
-              Invite First Teacher
-            </Button>
-          </CardBody>
-        </Card>
+        <EmptyState
+          icon={<Users size={32} />}
+          title="No teachers yet"
+          description="Invite teachers to start managing classrooms."
+          delay={200}
+          action={<Button leftIcon={<UserPlus size={16} />} onClick={() => setShowInvite(true)}>Invite First Teacher</Button>}
+        />
       ) : (
         <div className="space-y-3">
-          {teachers.map((teacher) => (
-            <Card key={teacher.id} className="hover:shadow-[var(--shadow-card)] transition-all">
-              <CardBody className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#8B5CF6] flex items-center justify-center text-white font-bold shrink-0">
-                  {teacher.name.charAt(0).toUpperCase()}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium text-[var(--aivo-text)] truncate">
-                    {teacher.name}
-                  </p>
-                  <p className="text-sm text-[var(--aivo-text-secondary)] truncate">
-                    {teacher.email}
-                  </p>
-                </div>
-                {teacher.classroom ? (
-                  <Badge variant="default">{teacher.classroom}</Badge>
-                ) : (
-                  <Badge variant="secondary">Unassigned</Badge>
-                )}
-              </CardBody>
-            </Card>
+          {teachers.map((teacher, idx) => (
+            <AnimatedCard key={teacher.id} delay={200 + idx * 60}>
+              <Card className="hover:shadow-[var(--shadow-card)] transition-all hover:scale-[1.01]">
+                <CardBody className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold shrink-0" style={{ background: "linear-gradient(135deg, #7C3AED, #8B5CF6)" }}>
+                    {teacher.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium truncate" style={{ color: "var(--aivo-text)" }}>{teacher.name}</p>
+                    <p className="text-sm truncate" style={{ color: "var(--aivo-text-secondary)" }}>{teacher.email}</p>
+                  </div>
+                  {teacher.classroom ? (
+                    <Badge variant="default">{teacher.classroom}</Badge>
+                  ) : (
+                    <Badge variant="secondary">Unassigned</Badge>
+                  )}
+                </CardBody>
+              </Card>
+            </AnimatedCard>
           ))}
         </div>
       )}
-    </div>
+    </PageWrapper>
   );
 }

@@ -2,12 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import {
-  ShoppingBag,
-  Loader2,
-  RefreshCw,
-  Sparkles,
-  Coins,
-  Check,
+  ShoppingBag, RefreshCw, Coins, Check,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Card, CardBody } from "@/components/ui/Card";
@@ -16,6 +11,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Modal } from "@/components/ui/Modal";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
+import { PageWrapper, BackLink, EmptyState, AnimatedCard } from "@/components/ui/PageDesign";
 import { apiFetch } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
 import { useLearnerStore } from "@/stores/learner.store";
@@ -33,21 +29,7 @@ interface ShopItem {
   equipped: boolean;
 }
 
-// Category labels will be resolved via t() in the component
-
-const RARITY_COLORS: Record<string, string> = {
-  common: "secondary",
-  rare: "default",
-  epic: "warning",
-  legendary: "error",
-};
-
-const RARITY_KEYS: Record<string, string> = {
-  common: "common",
-  rare: "rare",
-  epic: "epic",
-  legendary: "legendary",
-};
+const RARITY_COLORS: Record<string, string> = { common: "secondary", rare: "default", epic: "warning", legendary: "error" };
 
 export default function ShopPage() {
   const t = useTranslations("dashboard");
@@ -72,7 +54,6 @@ export default function ShopPage() {
         setLoading(false);
       }
     }
-
     fetchItems();
   }, []);
 
@@ -80,15 +61,8 @@ export default function ShopPage() {
     if (!selectedItem) return;
     setPurchasing(true);
     try {
-      await apiFetch(API_ROUTES.SHOP.PURCHASE, {
-        method: "POST",
-        body: JSON.stringify({ itemId: selectedItem.id }),
-      });
-      setItems((prev) =>
-        prev.map((i) =>
-          i.id === selectedItem.id ? { ...i, owned: true } : i,
-        ),
-      );
+      await apiFetch(API_ROUTES.SHOP.PURCHASE, { method: "POST", body: JSON.stringify({ itemId: selectedItem.id }) });
+      setItems((prev) => prev.map((i) => i.id === selectedItem.id ? { ...i, owned: true } : i));
       setSelectedItem(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : t("purchaseFailed"));
@@ -98,9 +72,7 @@ export default function ShopPage() {
   };
 
   const categories = Array.from(new Set(items.map((i) => i.category)));
-  const filteredItems = selectedCategory
-    ? items.filter((i) => i.category === selectedCategory)
-    : items;
+  const filteredItems = selectedCategory ? items.filter((i) => i.category === selectedCategory) : items;
 
   if (loading) {
     return (
@@ -119,28 +91,24 @@ export default function ShopPage() {
     return (
       <div className="text-center py-16">
         <p className="text-red-500 mb-4">{error}</p>
-        <Button
-          variant="outline"
-          onClick={() => window.location.reload()}
-          leftIcon={<RefreshCw size={16} />}
-        >
-          Retry
-        </Button>
+        <Button variant="outline" onClick={() => window.location.reload()} leftIcon={<RefreshCw size={16} />}>Retry</Button>
       </div>
     );
   }
 
   return (
-    <div>
+    <PageWrapper>
+      <BackLink href="/learner">{t("backToHome", { defaultValue: "Back to Home" })}</BackLink>
+
       <PurpleGradientHeader className="rounded-2xl mb-8">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <ShoppingBag size={32} />
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
+              <ShoppingBag size={22} />
+            </div>
             <div>
               <h1 className="text-2xl font-extrabold">{t("avatarShop")}</h1>
-              <p className="text-white/80 text-sm">
-                {t("shopSubtitle")}
-              </p>
+              <p className="text-white/80 text-sm">Customize your avatar with awesome items!</p>
             </div>
           </div>
           <div className="flex items-center gap-2 bg-white/20 rounded-full px-4 py-2">
@@ -152,118 +120,89 @@ export default function ShopPage() {
       </PurpleGradientHeader>
 
       {error && (
-        <div className="mb-4 p-3 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171] text-sm">
-          {error}
-        </div>
+        <div className="mb-4 p-3 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171] text-sm">{error}</div>
       )}
 
-      {/* Category Filter */}
-      <div className="flex flex-wrap gap-2 mb-6">
-        <button
-          onClick={() => setSelectedCategory(null)}
-          className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-            selectedCategory === null
-              ? "bg-[#7C3AED] text-white"
-              : "bg-[var(--aivo-bg-alt,#FFF5EB)] text-[var(--aivo-text-secondary)] hover:bg-[#F0E6FF] dark:hover:bg-[#3D2D5C]"
-          }`}
-        >
-          All
-        </button>
-        {categories.map((cat) => (
+      <AnimatedCard delay={100}>
+        <div className="flex flex-wrap gap-2 mb-6">
           <button
-            key={cat}
-            onClick={() => setSelectedCategory(cat)}
+            onClick={() => setSelectedCategory(null)}
             className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-              selectedCategory === cat
+              selectedCategory === null
                 ? "bg-[#7C3AED] text-white"
                 : "bg-[var(--aivo-bg-alt,#FFF5EB)] text-[var(--aivo-text-secondary)] hover:bg-[#F0E6FF] dark:hover:bg-[#3D2D5C]"
             }`}
           >
-            {t(cat === "outfit" ? "outfits" : cat === "accessory" ? "accessories" : cat === "background" ? "backgrounds" : cat === "effect" ? "effects" : cat)}
+            All
           </button>
-        ))}
-      </div>
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                selectedCategory === cat
+                  ? "bg-[#7C3AED] text-white"
+                  : "bg-[var(--aivo-bg-alt,#FFF5EB)] text-[var(--aivo-text-secondary)] hover:bg-[#F0E6FF] dark:hover:bg-[#3D2D5C]"
+              }`}
+            >
+              {t(cat === "outfit" ? "outfits" : cat === "accessory" ? "accessories" : cat === "background" ? "backgrounds" : cat === "effect" ? "effects" : cat)}
+            </button>
+          ))}
+        </div>
+      </AnimatedCard>
 
-      {/* Items Grid */}
       <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
-        {filteredItems.map((item) => (
-          <Card
-            key={item.id}
-            className={`hover:shadow-[var(--shadow-card)] transition-all cursor-pointer ${
-              item.owned ? "ring-2 ring-green-400" : ""
-            }`}
-            onClick={() => !item.owned && setSelectedItem(item)}
-          >
-            <div className="aspect-square bg-[var(--aivo-bg-alt,#FFF5EB)] rounded-t-lg overflow-hidden relative">
-              <img
-                src={item.imageUrl}
-                alt={item.name}
-                className="w-full h-full object-cover"
-              />
-              {item.owned && (
-                <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
-                  <Check className="text-white" size={14} />
-                </div>
-              )}
-            </div>
-            <CardBody className="p-3">
-              <div className="flex items-center gap-1 mb-1">
-                <h3 className="text-sm font-semibold text-[var(--aivo-text)] truncate">
-                  {item.name}
-                </h3>
-              </div>
-              <div className="flex items-center justify-between">
-                <Badge
-                  variant={
-                    RARITY_COLORS[item.rarity] as
-                      | "secondary"
-                      | "default"
-                      | "warning"
-                      | "error"
-                  }
-                >
-                  {item.rarity}
-                </Badge>
-                {item.owned ? (
-                  <span className="text-xs font-medium text-green-600">Owned</span>
-                ) : (
-                  <span className="text-xs font-bold text-[#7C3AED] flex items-center gap-1">
-                    <Coins size={12} />
-                    {item.price}
-                  </span>
+        {filteredItems.map((item, idx) => (
+          <AnimatedCard key={item.id} delay={200 + idx * 50}>
+            <Card
+              className={`hover:shadow-[var(--shadow-card)] transition-all cursor-pointer hover:scale-[1.03] ${
+                item.owned ? "ring-2 ring-green-400" : ""
+              }`}
+              onClick={() => !item.owned && setSelectedItem(item)}
+            >
+              <div className="aspect-square rounded-t-lg overflow-hidden relative" style={{ backgroundColor: "var(--aivo-bg-alt, #FFF5EB)" }}>
+                <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
+                {item.owned && (
+                  <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
+                    <Check className="text-white" size={14} />
+                  </div>
                 )}
               </div>
-            </CardBody>
-          </Card>
+              <CardBody className="p-3">
+                <h3 className="text-sm font-bold truncate mb-1" style={{ color: "var(--aivo-text)" }}>{item.name}</h3>
+                <div className="flex items-center justify-between">
+                  <Badge variant={RARITY_COLORS[item.rarity] as "secondary" | "default" | "warning" | "error"}>{item.rarity}</Badge>
+                  {item.owned ? (
+                    <span className="text-xs font-medium text-green-600">Owned</span>
+                  ) : (
+                    <span className="text-xs font-bold flex items-center gap-1" style={{ color: "#7C3AED" }}>
+                      <Coins size={12} /> {item.price}
+                    </span>
+                  )}
+                </div>
+              </CardBody>
+            </Card>
+          </AnimatedCard>
         ))}
       </div>
 
       {filteredItems.length === 0 && (
-        <Card>
-          <CardBody className="text-center py-12">
-            <ShoppingBag className="mx-auto mb-3 text-[#A89BB5]" size={48} />
-            <p className="text-[var(--aivo-text-secondary)]">
-              No items in this category.
-            </p>
-          </CardBody>
-        </Card>
+        <EmptyState
+          icon={<ShoppingBag size={32} />}
+          title="No items in this category"
+          description="Try selecting a different category."
+          delay={200}
+        />
       )}
 
-      {/* Purchase Modal */}
       <Modal
         open={!!selectedItem}
         onClose={() => setSelectedItem(null)}
         title="Purchase Item"
         footer={
           <div className="flex justify-end gap-2">
-            <Button variant="ghost" onClick={() => setSelectedItem(null)}>
-              Cancel
-            </Button>
-            <Button
-              onClick={handlePurchase}
-              loading={purchasing}
-              disabled={(xp?.totalXp ?? 0) < (selectedItem?.price ?? 0)}
-            >
+            <Button variant="ghost" onClick={() => setSelectedItem(null)}>Cancel</Button>
+            <Button onClick={handlePurchase} loading={purchasing} disabled={(xp?.totalXp ?? 0) < (selectedItem?.price ?? 0)}>
               Buy for {selectedItem?.price} XP
             </Button>
           </div>
@@ -271,34 +210,15 @@ export default function ShopPage() {
       >
         {selectedItem && (
           <div className="text-center">
-            <div className="w-32 h-32 mx-auto mb-4 rounded-2xl overflow-hidden bg-[var(--aivo-bg-alt,#FFF5EB)]">
-              <img
-                src={selectedItem.imageUrl}
-                alt={selectedItem.name}
-                className="w-full h-full object-cover"
-              />
+            <div className="w-32 h-32 mx-auto mb-4 rounded-2xl overflow-hidden" style={{ backgroundColor: "var(--aivo-bg-alt, #FFF5EB)" }}>
+              <img src={selectedItem.imageUrl} alt={selectedItem.name} className="w-full h-full object-cover" />
             </div>
-            <h3 className="text-lg font-bold text-[var(--aivo-text)] mb-1">
-              {selectedItem.name}
-            </h3>
-            <p className="text-sm text-[var(--aivo-text-secondary)] mb-3">
-              {selectedItem.description}
-            </p>
+            <h3 className="text-lg font-bold mb-1" style={{ color: "var(--aivo-text)" }}>{selectedItem.name}</h3>
+            <p className="text-sm mb-3" style={{ color: "var(--aivo-text-secondary)" }}>{selectedItem.description}</p>
             <div className="flex items-center justify-center gap-2">
-              <Badge
-                variant={
-                  RARITY_COLORS[selectedItem.rarity] as
-                    | "secondary"
-                    | "default"
-                    | "warning"
-                    | "error"
-                }
-              >
-                {selectedItem.rarity}
-              </Badge>
-              <span className="font-bold text-[#7C3AED] flex items-center gap-1">
-                <Coins size={14} />
-                {selectedItem.price} XP
+              <Badge variant={RARITY_COLORS[selectedItem.rarity] as "secondary" | "default" | "warning" | "error"}>{selectedItem.rarity}</Badge>
+              <span className="font-bold flex items-center gap-1" style={{ color: "#7C3AED" }}>
+                <Coins size={14} /> {selectedItem.price} XP
               </span>
             </div>
             {(xp?.totalXp ?? 0) < selectedItem.price && (
@@ -309,6 +229,6 @@ export default function ShopPage() {
           </div>
         )}
       </Modal>
-    </div>
+    </PageWrapper>
   );
 }

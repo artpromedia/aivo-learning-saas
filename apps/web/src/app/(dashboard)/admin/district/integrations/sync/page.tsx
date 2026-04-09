@@ -4,20 +4,14 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
-  ArrowLeft,
-  RefreshCw,
-  CheckCircle,
-  XCircle,
-  AlertTriangle,
-  User,
-  GraduationCap,
-  BookOpen,
+  RefreshCw, CheckCircle, XCircle, AlertTriangle, User, GraduationCap, BookOpen,
 } from "lucide-react";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
+import { PageWrapper, BackLink, ExpandableCard, StatCard, AnimatedCard } from "@/components/ui/PageDesign";
 import { apiFetch } from "@/lib/api";
 
 interface SyncLogDetail {
@@ -60,9 +54,7 @@ export default function SyncDetailsPage() {
   const fetchDetails = useCallback(async () => {
     if (!syncLogId) return;
     try {
-      const result = await apiFetch<SyncLogFull>(
-        `/api/integrations/sync-logs/${syncLogId}`,
-      );
+      const result = await apiFetch<SyncLogFull>(`/api/integrations/sync-logs/${syncLogId}`);
       setSyncLog(result);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load sync details");
@@ -71,16 +63,12 @@ export default function SyncDetailsPage() {
     }
   }, [syncLogId]);
 
-  useEffect(() => {
-    fetchDetails();
-  }, [fetchDetails]);
+  useEffect(() => { fetchDetails(); }, [fetchDetails]);
 
   async function handleRetryItem(detailId: string) {
     setRetrying(detailId);
     try {
-      await apiFetch(`/api/integrations/sync-logs/${syncLogId}/retry/${detailId}`, {
-        method: "POST",
-      });
+      await apiFetch(`/api/integrations/sync-logs/${syncLogId}/retry/${detailId}`, { method: "POST" });
       await fetchDetails();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Retry failed");
@@ -92,9 +80,7 @@ export default function SyncDetailsPage() {
   async function handleRetryAllFailed() {
     setRetrying("all");
     try {
-      await apiFetch(`/api/integrations/sync-logs/${syncLogId}/retry-all`, {
-        method: "POST",
-      });
+      await apiFetch(`/api/integrations/sync-logs/${syncLogId}/retry-all`, { method: "POST" });
       await fetchDetails();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Retry all failed");
@@ -105,56 +91,50 @@ export default function SyncDetailsPage() {
 
   const entityIcon = (type: string) => {
     switch (type) {
-      case "student":
-        return <GraduationCap size={16} className="text-blue-500" />;
-      case "teacher":
-        return <User size={16} className="text-green-500" />;
-      case "section":
-        return <BookOpen size={16} className="text-purple-500" />;
-      default:
-        return <User size={16} className="text-[#A89BB5]" />;
+      case "student": return <GraduationCap size={16} className="text-blue-500" />;
+      case "teacher": return <User size={16} className="text-green-500" />;
+      case "section": return <BookOpen size={16} className="text-purple-500" />;
+      default: return <User size={16} className="text-[#A89BB5]" />;
     }
   };
 
   const actionBadge = (action: string) => {
     switch (action) {
-      case "ADDED":
-        return <Badge variant="success">Added</Badge>;
-      case "UPDATED":
-        return <Badge variant="warning">Updated</Badge>;
-      case "DEACTIVATED":
-        return <Badge variant="secondary">Deactivated</Badge>;
-      case "ERROR":
-        return <Badge variant="error">Error</Badge>;
-      default:
-        return <Badge>{action}</Badge>;
+      case "ADDED": return <Badge variant="success">Added</Badge>;
+      case "UPDATED": return <Badge variant="warning">Updated</Badge>;
+      case "DEACTIVATED": return <Badge variant="secondary">Deactivated</Badge>;
+      case "ERROR": return <Badge variant="error">Error</Badge>;
+      default: return <Badge>{action}</Badge>;
     }
   };
 
   if (!syncLogId) {
     return (
-      <div className="text-center py-16">
-        <p className="text-[var(--aivo-text-secondary)]">No sync log ID provided.</p>
-        <Link href="/admin/district/integrations" className="text-[#7C3AED] mt-2 inline-block">
-          Back to Integrations
-        </Link>
-      </div>
+      <PageWrapper>
+        <div className="text-center py-16">
+          <p style={{ color: "var(--aivo-text-secondary)" }}>No sync log ID provided.</p>
+          <Link href="/admin/district/integrations" className="text-[#7C3AED] mt-2 inline-block">
+            Back to Integrations
+          </Link>
+        </div>
+      </PageWrapper>
     );
   }
 
   return (
-    <div>
-      <Link
-        href="/admin/district/integrations"
-        className="inline-flex items-center gap-1 text-sm text-[var(--aivo-text-secondary)] hover:text-[var(--aivo-text)] dark:text-[var(--aivo-text-muted)] dark:hover:text-[#A89BB5] mb-4"
-      >
-        <ArrowLeft size={16} />
-        Back to Integrations
-      </Link>
+    <PageWrapper>
+      <BackLink href="/admin/district/integrations">Back to Integrations</BackLink>
 
       <PurpleGradientHeader className="rounded-2xl mb-8">
-        <h1 className="text-2xl font-extrabold">Sync Details</h1>
-        <p className="mt-1 text-white/80">Drill into sync results and resolve errors.</p>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
+            <RefreshCw size={22} />
+          </div>
+          <div>
+            <h1 className="text-2xl font-extrabold">Sync Details</h1>
+            <p className="mt-0.5 text-white/80 text-sm">Drill into sync results and resolve errors</p>
+          </div>
+        </div>
       </PurpleGradientHeader>
 
       {error && (
@@ -170,147 +150,131 @@ export default function SyncDetailsPage() {
         </div>
       ) : syncLog ? (
         <div className="space-y-6">
-          {/* Summary */}
-          <Card>
-            <CardBody>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div>
-                  <p className="text-xs text-[var(--aivo-text-secondary)] uppercase tracking-wider">Type</p>
-                  <p className="text-lg font-bold">{syncLog.syncType}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-[var(--aivo-text-secondary)] uppercase tracking-wider">Status</p>
-                  <Badge variant={syncLog.status === "COMPLETED" ? "success" : "error"}>
-                    {syncLog.status}
-                  </Badge>
-                </div>
-                <div>
-                  <p className="text-xs text-[var(--aivo-text-secondary)] uppercase tracking-wider">Started</p>
-                  <p className="text-sm">{new Date(syncLog.startedAt).toLocaleString()}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-[var(--aivo-text-secondary)] uppercase tracking-wider">Duration</p>
-                  <p className="text-sm">
-                    {syncLog.completedAt
-                      ? `${Math.round((new Date(syncLog.completedAt).getTime() - new Date(syncLog.startedAt).getTime()) / 1000)}s`
-                      : "In progress"}
-                  </p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 md:grid-cols-6 gap-3 mt-4 pt-4 border-t border-[#E8DDF0] dark:border-[#3D2D5C]">
-                <div className="text-center">
-                  <p className="text-2xl font-extrabold text-green-600">{syncLog.studentsAdded}</p>
-                  <p className="text-xs text-[var(--aivo-text-secondary)]">Students Added</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-2xl font-extrabold text-blue-600">{syncLog.studentsUpdated}</p>
-                  <p className="text-xs text-[var(--aivo-text-secondary)]">Students Updated</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-2xl font-extrabold text-[#D97706]">{syncLog.studentsDeleted}</p>
-                  <p className="text-xs text-[var(--aivo-text-secondary)]">Students Deactivated</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-2xl font-extrabold text-green-600">{syncLog.teachersAdded}</p>
-                  <p className="text-xs text-[var(--aivo-text-secondary)]">Teachers Added</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-2xl font-extrabold text-purple-600">{syncLog.sectionsAdded}</p>
-                  <p className="text-xs text-[var(--aivo-text-secondary)]">Sections</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-2xl font-extrabold text-red-600">{syncLog.errors?.length ?? 0}</p>
-                  <p className="text-xs text-[var(--aivo-text-secondary)]">Errors</p>
-                </div>
-              </div>
-            </CardBody>
-          </Card>
-
-          {/* Errors */}
-          {syncLog.errors && syncLog.errors.length > 0 && (
+          <AnimatedCard delay={100}>
             <Card>
               <CardBody>
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-bold text-red-600 dark:text-red-400 flex items-center gap-2">
-                    <AlertTriangle size={20} />
-                    Sync Errors ({syncLog.errors.length})
-                  </h2>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    leftIcon={<RefreshCw size={14} />}
-                    loading={retrying === "all"}
-                    onClick={handleRetryAllFailed}
-                  >
-                    Retry All Failed
-                  </Button>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div>
+                    <p className="text-xs uppercase tracking-wider" style={{ color: "var(--aivo-text-secondary)" }}>Type</p>
+                    <p className="text-lg font-bold" style={{ color: "var(--aivo-text)" }}>{syncLog.syncType}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-wider" style={{ color: "var(--aivo-text-secondary)" }}>Status</p>
+                    <Badge variant={syncLog.status === "COMPLETED" ? "success" : "error"}>{syncLog.status}</Badge>
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-wider" style={{ color: "var(--aivo-text-secondary)" }}>Started</p>
+                    <p className="text-sm" style={{ color: "var(--aivo-text)" }}>{new Date(syncLog.startedAt).toLocaleString()}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-wider" style={{ color: "var(--aivo-text-secondary)" }}>Duration</p>
+                    <p className="text-sm" style={{ color: "var(--aivo-text)" }}>
+                      {syncLog.completedAt
+                        ? `${Math.round((new Date(syncLog.completedAt).getTime() - new Date(syncLog.startedAt).getTime()) / 1000)}s`
+                        : "In progress"}
+                    </p>
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  {syncLog.errors.map((err, idx) => (
-                    <div
-                      key={idx}
-                      className="flex items-center justify-between p-3 border border-[#FECACA] dark:border-[#991B1B]/30 rounded-2xl bg-red-50/50 dark:bg-red-900/10"
-                    >
-                      <div className="flex items-center gap-3">
-                        <XCircle size={16} className="text-red-500 shrink-0" />
-                        <div>
-                          <p className="text-sm font-medium text-[var(--aivo-text)]">
-                            {err.item}
-                          </p>
-                          <p className="text-xs text-red-600 dark:text-red-400">{err.error}</p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+
+                <div className="grid grid-cols-3 md:grid-cols-6 gap-3 mt-4 pt-4 border-t border-[#E8DDF0] dark:border-[#3D2D5C]">
+                  <div className="text-center">
+                    <p className="text-2xl font-extrabold text-green-600">{syncLog.studentsAdded}</p>
+                    <p className="text-xs" style={{ color: "var(--aivo-text-secondary)" }}>Students Added</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-2xl font-extrabold text-blue-600">{syncLog.studentsUpdated}</p>
+                    <p className="text-xs" style={{ color: "var(--aivo-text-secondary)" }}>Students Updated</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-2xl font-extrabold text-[#D97706]">{syncLog.studentsDeleted}</p>
+                    <p className="text-xs" style={{ color: "var(--aivo-text-secondary)" }}>Students Deactivated</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-2xl font-extrabold text-green-600">{syncLog.teachersAdded}</p>
+                    <p className="text-xs" style={{ color: "var(--aivo-text-secondary)" }}>Teachers Added</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-2xl font-extrabold text-purple-600">{syncLog.sectionsAdded}</p>
+                    <p className="text-xs" style={{ color: "var(--aivo-text-secondary)" }}>Sections</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-2xl font-extrabold text-red-600">{syncLog.errors?.length ?? 0}</p>
+                    <p className="text-xs" style={{ color: "var(--aivo-text-secondary)" }}>Errors</p>
+                  </div>
                 </div>
               </CardBody>
             </Card>
+          </AnimatedCard>
+
+          {syncLog.errors && syncLog.errors.length > 0 && (
+            <ExpandableCard
+              icon={<AlertTriangle size={16} />}
+              title={`Sync Errors (${syncLog.errors.length})`}
+              subtitle="Issues that occurred during sync"
+              gradient="linear-gradient(135deg, #EF4444, #DC2626)"
+              delay={200}
+              infoText="These errors occurred during the sync process. You can retry individual items or retry all failed items at once."
+            >
+              <div className="flex justify-end mb-4">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  leftIcon={<RefreshCw size={14} />}
+                  loading={retrying === "all"}
+                  onClick={handleRetryAllFailed}
+                >
+                  Retry All Failed
+                </Button>
+              </div>
+              <div className="space-y-2">
+                {syncLog.errors.map((err, idx) => (
+                  <div key={idx} className="flex items-center justify-between p-3 border border-[#FECACA] dark:border-[#991B1B]/30 rounded-2xl bg-red-50/50 dark:bg-red-900/10">
+                    <div className="flex items-center gap-3">
+                      <XCircle size={16} className="text-red-500 shrink-0" />
+                      <div>
+                        <p className="text-sm font-medium" style={{ color: "var(--aivo-text)" }}>{err.item}</p>
+                        <p className="text-xs text-red-600 dark:text-red-400">{err.error}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </ExpandableCard>
           )}
 
-          {/* Detailed Changes */}
           {syncLog.details && syncLog.details.length > 0 && (
-            <Card>
-              <CardBody>
-                <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-4">
-                  Change Log ({syncLog.details.length})
-                </h2>
-                <div className="space-y-2">
-                  {syncLog.details.map((detail) => (
-                    <div
-                      key={detail.id}
-                      className="flex items-center gap-4 p-3 border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-2xl"
-                    >
-                      {entityIcon(detail.entityType)}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium">{detail.entityType}</span>
-                          {actionBadge(detail.action)}
-                          <span className="text-xs text-[#A89BB5]">SIS: {detail.sisId}</span>
-                        </div>
-                        {detail.error && (
-                          <p className="text-xs text-red-500 mt-1">{detail.error}</p>
-                        )}
+            <ExpandableCard
+              icon={<BookOpen size={16} />}
+              title={`Change Log (${syncLog.details.length})`}
+              subtitle="Detailed record of all sync changes"
+              gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
+              delay={300}
+              defaultExpanded={false}
+            >
+              <div className="space-y-2">
+                {syncLog.details.map((detail) => (
+                  <div key={detail.id} className="flex items-center gap-4 p-3 border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-2xl">
+                    {entityIcon(detail.entityType)}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium" style={{ color: "var(--aivo-text)" }}>{detail.entityType}</span>
+                        {actionBadge(detail.action)}
+                        <span className="text-xs text-[#A89BB5]">SIS: {detail.sisId}</span>
                       </div>
-                      {detail.action === "ERROR" && (
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          leftIcon={<RefreshCw size={12} />}
-                          loading={retrying === detail.id}
-                          onClick={() => handleRetryItem(detail.id)}
-                        >
-                          Retry
-                        </Button>
-                      )}
+                      {detail.error && <p className="text-xs text-red-500 mt-1">{detail.error}</p>}
                     </div>
-                  ))}
-                </div>
-              </CardBody>
-            </Card>
+                    {detail.action === "ERROR" && (
+                      <Button size="sm" variant="ghost" leftIcon={<RefreshCw size={12} />} loading={retrying === detail.id} onClick={() => handleRetryItem(detail.id)}>
+                        Retry
+                      </Button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </ExpandableCard>
           )}
         </div>
       ) : null}
-    </div>
+    </PageWrapper>
   );
 }

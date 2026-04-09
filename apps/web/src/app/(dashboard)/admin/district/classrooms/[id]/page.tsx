@@ -2,13 +2,13 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
-import { ArrowLeft, UserPlus, Trash2, Users, X } from "lucide-react";
-import Link from "next/link";
+import { UserPlus, Trash2, Users, X, School, Target } from "lucide-react";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
+import { PageWrapper, BackLink, ExpandableCard, EmptyState, AnimatedCard } from "@/components/ui/PageDesign";
 import { apiFetch } from "@/lib/api";
 
 interface Learner {
@@ -105,7 +105,7 @@ export default function ClassroomDetailPage() {
     }
   }
 
-  const totalLevels = data
+  const totalLevels = data?.functioningLevelBreakdown
     ? data.functioningLevelBreakdown.level1 +
       data.functioningLevelBreakdown.level2 +
       data.functioningLevelBreakdown.level3
@@ -134,25 +134,17 @@ export default function ClassroomDetailPage() {
   };
 
   return (
-    <div>
-      <div className="mb-4">
-        <Link
-          href="/admin/district/classrooms"
-          className="inline-flex items-center gap-1 text-sm text-[#7C3AED] hover:underline"
-        >
-          <ArrowLeft size={16} />
-          Back to Classrooms
-        </Link>
-      </div>
+    <PageWrapper>
+      <BackLink href="/admin/district/classrooms">Back to Classrooms</BackLink>
 
       {loading ? (
         <>
           <div className="mb-8">
-            <Skeleton height={120} className="w-full" rounded="lg" />
+            <Skeleton height={120} className="w-full rounded-2xl" />
           </div>
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
-              <Skeleton key={i} height={56} className="w-full" rounded="lg" />
+              <Skeleton key={i} height={56} className="w-full rounded-2xl" />
             ))}
           </div>
         </>
@@ -163,54 +155,66 @@ export default function ClassroomDetailPage() {
       ) : data ? (
         <>
           <PurpleGradientHeader className="rounded-2xl mb-8">
-            <h1 className="text-2xl font-extrabold">{data.name}</h1>
-            <div className="flex flex-wrap items-center gap-4 mt-2 text-white/80">
-              <span>Teacher: {data.teacherName}</span>
-              <span>Grade Band: {data.gradeBand}</span>
-              <span>{data.learners.length} Learners</span>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
+                <School size={22} />
+              </div>
+              <div>
+                <h1 className="text-2xl font-extrabold">{data.name}</h1>
+                <div className="flex flex-wrap items-center gap-4 mt-1 text-white/80 text-sm">
+                  <span>Teacher: {data.teacherName}</span>
+                  <span>Grade Band: {data.gradeBand}</span>
+                  <span>{data.learners.length} Learners</span>
+                </div>
+              </div>
             </div>
           </PurpleGradientHeader>
 
           <div className="grid gap-6 lg:grid-cols-3 mb-8">
-            <Card className="lg:col-span-1">
-              <CardBody>
-                <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-4">
-                  Functioning Level Breakdown
-                </h2>
-                <div className="space-y-4">
-                  {[
-                    { label: "Level 1", count: data.functioningLevelBreakdown.level1, color: "#7C3AED" },
-                    { label: "Level 2", count: data.functioningLevelBreakdown.level2, color: "#8B5CF6" },
-                    { label: "Level 3", count: data.functioningLevelBreakdown.level3, color: "#A78BFA" },
-                  ].map((level) => (
-                    <div key={level.label}>
-                      <div className="flex items-center justify-between text-sm mb-1">
-                        <span className="text-[var(--aivo-text)]">{level.label}</span>
-                        <span className="font-medium text-[var(--aivo-text)]">
-                          {level.count} ({levelPercent(level.count)}%)
-                        </span>
-                      </div>
-                      <div className="w-full h-3 bg-[#F0E6FF] dark:bg-[#3D2D5C] rounded-full overflow-hidden">
-                        <div
-                          className="h-full rounded-full transition-all duration-500"
-                          style={{
-                            width: `${levelPercent(level.count)}%`,
-                            backgroundColor: level.color,
-                          }}
-                        />
-                      </div>
+            <ExpandableCard
+              icon={<Target size={16} />}
+              title="Functioning Level Breakdown"
+              subtitle="Distribution across levels"
+              gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
+              delay={100}
+            >
+              <div className="space-y-4">
+                {[
+                  { label: "Level 1", count: data.functioningLevelBreakdown?.level1 ?? 0, color: "#7C3AED" },
+                  { label: "Level 2", count: data.functioningLevelBreakdown?.level2 ?? 0, color: "#8B5CF6" },
+                  { label: "Level 3", count: data.functioningLevelBreakdown?.level3 ?? 0, color: "#A78BFA" },
+                ].map((level) => (
+                  <div key={level.label}>
+                    <div className="flex items-center justify-between text-sm mb-1">
+                      <span style={{ color: "var(--aivo-text)" }}>{level.label}</span>
+                      <span className="font-medium" style={{ color: "var(--aivo-text)" }}>
+                        {level.count} ({levelPercent(level.count)}%)
+                      </span>
                     </div>
-                  ))}
-                </div>
-              </CardBody>
-            </Card>
+                    <div className="w-full h-3 bg-[#F0E6FF] dark:bg-[#3D2D5C] rounded-full overflow-hidden">
+                      <div
+                        className="h-full rounded-full"
+                        style={{
+                          width: `${levelPercent(level.count)}%`,
+                          backgroundColor: level.color,
+                          animation: "aivo-bar-grow 0.8s ease-out forwards",
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </ExpandableCard>
 
-            <Card className="lg:col-span-2">
-              <CardBody>
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-bold text-[var(--aivo-text)]">
-                    Learner Roster
-                  </h2>
+            <div className="lg:col-span-2">
+              <ExpandableCard
+                icon={<Users size={16} />}
+                title="Learner Roster"
+                subtitle={`${data.learners.length} learners enrolled`}
+                gradient="linear-gradient(135deg, #3B82F6, #2563EB)"
+                delay={200}
+              >
+                <div className="flex justify-end mb-4">
                   <Button
                     size="sm"
                     leftIcon={<UserPlus size={16} />}
@@ -226,13 +230,8 @@ export default function ClassroomDetailPage() {
                 {showAddLearner && (
                   <div className="mb-4 p-4 border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-2xl">
                     <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-sm font-semibold text-[var(--aivo-text)]">
-                        Add a Learner
-                      </h3>
-                      <button
-                        onClick={() => setShowAddLearner(false)}
-                        className="text-[#A89BB5] hover:text-[#7C3AED]"
-                      >
+                      <h3 className="text-sm font-semibold" style={{ color: "var(--aivo-text)" }}>Add a Learner</h3>
+                      <button onClick={() => setShowAddLearner(false)} className="text-[#A89BB5] hover:text-[#7C3AED]">
                         <X size={16} />
                       </button>
                     </div>
@@ -265,70 +264,42 @@ export default function ClassroomDetailPage() {
                         />
                       </div>
                       <div className="flex justify-end gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          type="button"
-                          onClick={() => setShowAddLearner(false)}
-                        >
-                          Cancel
-                        </Button>
-                        <Button type="submit" size="sm" loading={adding}>
-                          Add
-                        </Button>
+                        <Button variant="ghost" size="sm" type="button" onClick={() => setShowAddLearner(false)}>Cancel</Button>
+                        <Button type="submit" size="sm" loading={adding}>Add</Button>
                       </div>
-                      {addError && (
-                        <p className="text-sm text-red-600 dark:text-red-400">{addError}</p>
-                      )}
+                      {addError && <p className="text-sm text-red-600 dark:text-red-400">{addError}</p>}
                     </form>
                   </div>
                 )}
 
                 {data.learners.length === 0 ? (
                   <div className="text-center py-8">
-                    <div className="w-12 h-12 rounded-full bg-[#7C3AED]/10 flex items-center justify-center mx-auto mb-3">
-                      <Users className="text-[#7C3AED]" size={24} />
+                    <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3" style={{ backgroundColor: "var(--aivo-purple-50)", color: "var(--aivo-purple-500)" }}>
+                      <Users size={24} />
                     </div>
-                    <p className="text-[var(--aivo-text-secondary)]">
-                      No learners in this classroom yet.
-                    </p>
+                    <p style={{ color: "var(--aivo-text-secondary)" }}>No learners in this classroom yet.</p>
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="border-b border-[#E8DDF0] dark:border-[#3D2D5C]">
-                          <th className="text-left py-2 px-3 font-medium text-[var(--aivo-text-secondary)]">
-                            Name
-                          </th>
-                          <th className="text-left py-2 px-3 font-medium text-[var(--aivo-text-secondary)]">
-                            Functioning Level
-                          </th>
-                          <th className="text-left py-2 px-3 font-medium text-[var(--aivo-text-secondary)]">
-                            Enrolled Grade
-                          </th>
-                          <th className="text-right py-2 px-3 font-medium text-[var(--aivo-text-secondary)]">
-                            Actions
-                          </th>
+                          <th className="text-left py-2 px-3 font-medium" style={{ color: "var(--aivo-text-secondary)" }}>Name</th>
+                          <th className="text-left py-2 px-3 font-medium" style={{ color: "var(--aivo-text-secondary)" }}>Functioning Level</th>
+                          <th className="text-left py-2 px-3 font-medium" style={{ color: "var(--aivo-text-secondary)" }}>Enrolled Grade</th>
+                          <th className="text-right py-2 px-3 font-medium" style={{ color: "var(--aivo-text-secondary)" }}>Actions</th>
                         </tr>
                       </thead>
                       <tbody>
                         {data.learners.map((learner) => (
-                          <tr
-                            key={learner.id}
-                            className="border-b border-[#F0E6FF] dark:border-[#3D2D5C] last:border-0"
-                          >
-                            <td className="py-3 px-3 text-[var(--aivo-text)] font-medium">
-                              {learner.name}
-                            </td>
+                          <tr key={learner.id} className="border-b border-[#F0E6FF] dark:border-[#3D2D5C] last:border-0">
+                            <td className="py-3 px-3 font-medium" style={{ color: "var(--aivo-text)" }}>{learner.name}</td>
                             <td className="py-3 px-3">
                               <Badge variant={levelVariant(learner.functioningLevel)}>
                                 {levelLabel(learner.functioningLevel)}
                               </Badge>
                             </td>
-                            <td className="py-3 px-3 text-[var(--aivo-text)]">
-                              {learner.enrolledGrade}
-                            </td>
+                            <td className="py-3 px-3" style={{ color: "var(--aivo-text)" }}>{learner.enrolledGrade}</td>
                             <td className="py-3 px-3 text-right">
                               <Button
                                 variant="destructive"
@@ -346,11 +317,11 @@ export default function ClassroomDetailPage() {
                     </table>
                   </div>
                 )}
-              </CardBody>
-            </Card>
+              </ExpandableCard>
+            </div>
           </div>
         </>
       ) : null}
-    </div>
+    </PageWrapper>
   );
 }

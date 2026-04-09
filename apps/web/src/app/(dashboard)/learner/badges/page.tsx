@@ -1,22 +1,22 @@
 "use client";
 
 import React from "react";
-import { Trophy, Loader2, RefreshCw } from "lucide-react";
+import { Trophy, RefreshCw } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
-import { useEngagement, type BadgeData } from "@/hooks/useEngagement";
+import { PageWrapper, BackLink, ExpandableCard, EmptyState, AnimatedCard } from "@/components/ui/PageDesign";
+import { useEngagement } from "@/hooks/useEngagement";
 import { useLearnerStore } from "@/stores/learner.store";
 
-const CATEGORY_ICONS: Record<string, string> = {
-  streak: "fire",
-  mastery: "star",
-  social: "users",
-  exploration: "compass",
-  achievement: "trophy",
+const CATEGORY_GRADIENTS: Record<string, string> = {
+  streak: "linear-gradient(135deg, #FB923C, #F97316)",
+  mastery: "linear-gradient(135deg, #FBBF24, #F59E0B)",
+  social: "linear-gradient(135deg, #2DD4BF, #14B8A6)",
+  exploration: "linear-gradient(135deg, #3B82F6, #2563EB)",
+  achievement: "linear-gradient(135deg, #7C3AED, #A855F7)",
 };
 
 export default function BadgesPage() {
@@ -41,11 +41,7 @@ export default function BadgesPage() {
     return (
       <div className="text-center py-16">
         <p className="text-red-500 mb-4">{error.message}</p>
-        <Button
-          variant="outline"
-          onClick={() => window.location.reload()}
-          leftIcon={<RefreshCw size={16} />}
-        >
+        <Button variant="outline" onClick={() => window.location.reload()} leftIcon={<RefreshCw size={16} />}>
           Retry
         </Button>
       </div>
@@ -55,81 +51,72 @@ export default function BadgesPage() {
   const categories = Array.from(new Set(badges.map((b) => b.category)));
 
   return (
-    <div>
+    <PageWrapper>
+      <BackLink href="/learner">{t("backToHome", { defaultValue: "Back to Home" })}</BackLink>
+
       <PurpleGradientHeader className="rounded-2xl mb-8">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Trophy size={32} />
-            <div>
-              <h1 className="text-2xl font-extrabold">{t("badgeCollection")}</h1>
-              <p className="text-white/80 text-sm">
-                {t("badgesEarned", { count: badges.length })}
-              </p>
-            </div>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
+            <Trophy size={22} />
+          </div>
+          <div>
+            <h1 className="text-2xl font-extrabold">{t("badgeCollection")}</h1>
+            <p className="text-white/80 text-sm">
+              {t("badgesEarned", { count: badges.length })}
+            </p>
           </div>
         </div>
       </PurpleGradientHeader>
 
       {badges.length === 0 ? (
-        <Card>
-          <CardBody className="text-center py-12">
-            <Trophy className="mx-auto mb-3 text-[#A89BB5]" size={48} />
-            <h3 className="text-lg font-bold text-[var(--aivo-text)] mb-2">
-              {t("noBadgesYet")}
-            </h3>
-            <p className="text-[var(--aivo-text-secondary)]">
-              {t("earnBadgesDescription")}
-            </p>
-          </CardBody>
-        </Card>
+        <EmptyState
+          icon={<Trophy size={32} />}
+          title={t("noBadgesYet")}
+          description={t("earnBadgesDescription")}
+          delay={200}
+        />
       ) : (
-        <div className="space-y-8">
-          {categories.map((category) => {
-            const categoryBadges = badges.filter(
-              (b) => b.category === category,
-            );
+        <div className="space-y-6">
+          {categories.map((category, catIdx) => {
+            const categoryBadges = badges.filter((b) => b.category === category);
+            const gradient = CATEGORY_GRADIENTS[category] ?? CATEGORY_GRADIENTS.achievement;
+
             return (
-              <div key={category}>
-                <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-4 capitalize">
-                  {category} ({categoryBadges.length})
-                </h2>
+              <ExpandableCard
+                key={category}
+                icon={<Trophy size={16} />}
+                title={`${category.charAt(0).toUpperCase() + category.slice(1)} Badges`}
+                subtitle={`${categoryBadges.length} badge${categoryBadges.length !== 1 ? "s" : ""} earned`}
+                gradient={gradient}
+                delay={200 + catIdx * 100}
+              >
                 <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
-                  {categoryBadges.map((badge) => (
-                    <Card
-                      key={badge.id}
-                      className="hover:shadow-[var(--shadow-card)] transition-all"
-                    >
-                      <CardBody className="text-center py-6">
-                        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#A855F7] flex items-center justify-center mx-auto mb-3 shadow-lg shadow-[#7C3AED]/20 overflow-hidden">
-                          {badge.iconUrl ? (
-                            <img
-                              src={badge.iconUrl}
-                              alt={badge.name}
-                              className="w-10 h-10"
-                            />
-                          ) : (
-                            <Trophy className="text-white" size={24} />
-                          )}
-                        </div>
-                        <h3 className="font-semibold text-[var(--aivo-text)] text-sm mb-1">
-                          {badge.name}
-                        </h3>
-                        <p className="text-xs text-[var(--aivo-text-secondary)] mb-2 line-clamp-2">
-                          {badge.description}
-                        </p>
-                        <p className="text-xs text-[#7C3AED] font-medium">
-                          Earned{" "}
-                          {new Date(badge.earnedAt).toLocaleDateString()}
-                        </p>
-                      </CardBody>
-                    </Card>
+                  {categoryBadges.map((badge, idx) => (
+                    <AnimatedCard key={badge.id} delay={300 + catIdx * 100 + idx * 60}>
+                      <Card className="hover:shadow-[var(--shadow-card)] transition-all hover:scale-[1.03]">
+                        <CardBody className="text-center py-5">
+                          <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg shadow-[#7C3AED]/20 overflow-hidden text-white" style={{ background: gradient }}>
+                            {badge.iconUrl ? (
+                              <img src={badge.iconUrl} alt={badge.name} className="w-9 h-9" />
+                            ) : (
+                              <Trophy size={22} />
+                            )}
+                          </div>
+                          <h3 className="font-bold text-sm mb-0.5" style={{ color: "var(--aivo-text)" }}>{badge.name}</h3>
+                          <p className="text-xs line-clamp-2 mb-1.5" style={{ color: "var(--aivo-text-secondary)" }}>{badge.description}</p>
+                          <p className="text-xs font-medium" style={{ color: "#7C3AED" }}>
+                            Earned {new Date(badge.earnedAt).toLocaleDateString()}
+                          </p>
+                        </CardBody>
+                      </Card>
+                    </AnimatedCard>
                   ))}
                 </div>
-              </div>
+              </ExpandableCard>
             );
           })}
         </div>
       )}
-    </div>
+    </PageWrapper>
   );
 }

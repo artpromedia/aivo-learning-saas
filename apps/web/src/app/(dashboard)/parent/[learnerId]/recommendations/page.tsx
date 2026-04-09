@@ -2,22 +2,15 @@
 
 import React, { useState } from "react";
 import { useParams } from "next/navigation";
-import Link from "next/link";
 import {
-  Lightbulb,
-  ArrowLeft,
-  Check,
-  X,
-  SlidersHorizontal,
-  Loader2,
-  RefreshCw,
-  Info,
+  Lightbulb, Check, X, SlidersHorizontal, Loader2, RefreshCw, Info, Clock,
 } from "lucide-react";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Modal } from "@/components/ui/Modal";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
+import { PageWrapper, BackLink, ExpandableCard, StatCard, EmptyState, AnimatedCard } from "@/components/ui/PageDesign";
 import { useTranslations } from "next-intl";
 import { useRecommendations, type Recommendation } from "@/hooks/useRecommendations";
 
@@ -28,10 +21,10 @@ const priorityVariant: Record<string, "error" | "warning" | "default"> = {
 };
 
 const typeIcon: Record<string, string> = {
-  curriculum: "📚",
-  tutor: "🤖",
-  accommodation: "🎯",
-  activity: "🎮",
+  curriculum: "\u{1F4DA}",
+  tutor: "\u{1F916}",
+  accommodation: "\u{1F3AF}",
+  activity: "\u{1F3AE}",
 };
 
 export default function RecommendationsPage() {
@@ -40,15 +33,8 @@ export default function RecommendationsPage() {
   const t = useTranslations("dashboard");
   const tc = useTranslations("common");
   const {
-    recommendations,
-    isLoading,
-    error,
-    approve,
-    decline,
-    adjust,
-    isApproving,
-    isDeclining,
-    isAdjusting,
+    recommendations, isLoading, error, approve, decline, adjust,
+    isApproving, isDeclining, isAdjusting,
   } = useRecommendations(learnerId);
 
   const [selectedRec, setSelectedRec] = useState<Recommendation | null>(null);
@@ -60,25 +46,17 @@ export default function RecommendationsPage() {
   const handleApprove = async (recId: string) => {
     setActionError(null);
     setProcessingId(recId);
-    try {
-      await approve(recId);
-    } catch (err) {
-      setActionError(err instanceof Error ? err.message : t("failedToApprove"));
-    } finally {
-      setProcessingId(null);
-    }
+    try { await approve(recId); }
+    catch (err) { setActionError(err instanceof Error ? err.message : t("failedToApprove")); }
+    finally { setProcessingId(null); }
   };
 
   const handleDecline = async (recId: string) => {
     setActionError(null);
     setProcessingId(recId);
-    try {
-      await decline(recId);
-    } catch (err) {
-      setActionError(err instanceof Error ? err.message : t("failedToDecline"));
-    } finally {
-      setProcessingId(null);
-    }
+    try { await decline(recId); }
+    catch (err) { setActionError(err instanceof Error ? err.message : t("failedToDecline")); }
+    finally { setProcessingId(null); }
   };
 
   const handleAdjust = async () => {
@@ -89,9 +67,7 @@ export default function RecommendationsPage() {
       setShowAdjustModal(false);
       setAdjustNotes("");
       setSelectedRec(null);
-    } catch (err) {
-      setActionError(err instanceof Error ? err.message : t("failedToAdjust"));
-    }
+    } catch (err) { setActionError(err instanceof Error ? err.message : t("failedToAdjust")); }
   };
 
   const pendingRecs = recommendations.filter((r) => r.status === "pending");
@@ -101,7 +77,7 @@ export default function RecommendationsPage() {
     return (
       <div className="text-center py-16">
         <Loader2 className="mx-auto mb-4 text-[#7C3AED] animate-spin" size={48} />
-        <p className="text-[var(--aivo-text-secondary)]">{t("loadingRecommendations")}</p>
+        <p style={{ color: "var(--aivo-text-secondary)" }}>{t("loadingRecommendations")}</p>
       </div>
     );
   }
@@ -118,26 +94,25 @@ export default function RecommendationsPage() {
   }
 
   return (
-    <div>
-      <Link
-        href={`/parent/${learnerId}`}
-        className="inline-flex items-center gap-1 text-sm text-[var(--aivo-text-secondary)] hover:text-[var(--aivo-text)] dark:text-[var(--aivo-text-muted)] dark:hover:text-[#A89BB5] mb-4"
-      >
-        <ArrowLeft size={16} />
-        {t("backToDashboard")}
-      </Link>
+    <PageWrapper>
+      <BackLink href={`/parent/${learnerId}`}>{t("backToDashboard")}</BackLink>
 
       <PurpleGradientHeader className="rounded-2xl mb-8">
         <div className="flex items-center gap-3">
-          <Lightbulb size={32} />
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
+            <Lightbulb size={22} />
+          </div>
           <div>
             <h1 className="text-2xl font-extrabold">{t("recommendationsTitle")}</h1>
-            <p className="text-white/80 text-sm">
-              {t("recommendationsSubtitle")}
-            </p>
+            <p className="text-white/80 text-sm">AIVO&apos;s personalized suggestions to help your child learn better</p>
           </div>
         </div>
       </PurpleGradientHeader>
+
+      <div className="grid gap-3 grid-cols-2 mb-8">
+        <StatCard icon={<Clock size={18} />} label="Pending Review" value={pendingRecs.length} color="#F59E0B" delay={100} />
+        <StatCard icon={<Check size={18} />} label="Resolved" value={resolvedRecs.length} color="#10B981" delay={200} />
+      </div>
 
       {actionError && (
         <div className="mb-4 p-3 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171] text-sm">
@@ -145,148 +120,90 @@ export default function RecommendationsPage() {
         </div>
       )}
 
-      {pendingRecs.length > 0 && (
-        <div className="mb-8">
-          <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-4">
-            {t("pendingReview", { count: pendingRecs.length })}
-          </h2>
+      {pendingRecs.length > 0 ? (
+        <ExpandableCard
+          icon={<Lightbulb size={16} />}
+          title={t("pendingReview", { count: pendingRecs.length })}
+          subtitle="Review and approve AI suggestions for your child"
+          gradient="linear-gradient(135deg, #F59E0B, #D97706)"
+          delay={300}
+          infoText="AIVO analyzes your child's learning patterns and suggests improvements. You can approve, decline, or adjust each recommendation. Your approval is always required before any changes take effect."
+        >
           <div className="space-y-4">
-            {pendingRecs.map((rec) => (
-              <Card key={rec.id}>
-                <CardBody>
+            {pendingRecs.map((rec, idx) => (
+              <AnimatedCard key={rec.id} delay={400 + idx * 80}>
+                <div className="p-4 rounded-2xl" style={{ backgroundColor: "var(--aivo-bg)", border: "1px solid var(--aivo-border)" }}>
                   <div className="flex items-start gap-4">
-                    <span className="text-2xl mt-0.5">
-                      {typeIcon[rec.type] ?? "💡"}
-                    </span>
+                    <span className="text-2xl mt-0.5">{typeIcon[rec.type] ?? "\u{1F4A1}"}</span>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <h3 className="font-semibold text-[var(--aivo-text)]">
-                          {rec.title}
-                        </h3>
-                        <Badge variant={priorityVariant[rec.priority]}>
-                          {t("priority", { level: rec.priority })}
-                        </Badge>
+                        <h3 className="font-bold" style={{ color: "var(--aivo-text)" }}>{rec.title}</h3>
+                        <Badge variant={priorityVariant[rec.priority]}>{t("priority", { level: rec.priority })}</Badge>
                         <Badge variant="secondary">{rec.type}</Badge>
                       </div>
-                      <p className="text-sm text-[var(--aivo-text-secondary)] mb-2">
-                        {rec.description}
-                      </p>
-                      <div className="flex items-start gap-1.5 text-xs text-[var(--aivo-text-secondary)] bg-[var(--aivo-bg)] rounded-2xl p-2.5">
-                        <Info size={14} className="shrink-0 mt-0.5" />
+                      <p className="text-sm mb-2" style={{ color: "var(--aivo-text-secondary)" }}>{rec.description}</p>
+                      <div className="flex items-start gap-1.5 text-xs p-2.5 rounded-xl" style={{ color: "var(--aivo-text-secondary)", backgroundColor: "var(--aivo-purple-50)" }}>
+                        <Info size={14} className="shrink-0 mt-0.5" style={{ color: "#7C3AED" }} />
                         <span>{rec.reasoning}</span>
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center justify-end gap-2 mt-4 pt-4 border-t border-[#E8DDF0] dark:border-[#3D2D5C]">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDecline(rec.id)}
-                      loading={processingId === rec.id && isDeclining}
-                      disabled={processingId === rec.id}
-                      leftIcon={<X size={16} />}
-                    >
-                      {t("decline")}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setSelectedRec(rec);
-                        setShowAdjustModal(true);
-                      }}
-                      leftIcon={<SlidersHorizontal size={16} />}
-                    >
-                      {t("adjust")}
-                    </Button>
-                    <Button
-                      size="sm"
-                      onClick={() => handleApprove(rec.id)}
-                      loading={processingId === rec.id && isApproving}
-                      disabled={processingId === rec.id}
-                      leftIcon={<Check size={16} />}
-                    >
-                      {t("approve")}
-                    </Button>
+                  <div className="flex items-center justify-end gap-2 mt-4 pt-3 border-t" style={{ borderColor: "var(--aivo-border)" }}>
+                    <Button variant="ghost" size="sm" onClick={() => handleDecline(rec.id)} loading={processingId === rec.id && isDeclining} disabled={processingId === rec.id} leftIcon={<X size={16} />}>{t("decline")}</Button>
+                    <Button variant="outline" size="sm" onClick={() => { setSelectedRec(rec); setShowAdjustModal(true); }} leftIcon={<SlidersHorizontal size={16} />}>{t("adjust")}</Button>
+                    <Button size="sm" onClick={() => handleApprove(rec.id)} loading={processingId === rec.id && isApproving} disabled={processingId === rec.id} leftIcon={<Check size={16} />}>{t("approve")}</Button>
                   </div>
-                </CardBody>
-              </Card>
+                </div>
+              </AnimatedCard>
             ))}
           </div>
-        </div>
-      )}
-
-      {pendingRecs.length === 0 && (
-        <Card className="mb-8">
-          <CardBody className="text-center py-12">
-            <Lightbulb className="mx-auto mb-3 text-[#A89BB5]" size={40} />
-            <h3 className="text-lg font-bold text-[var(--aivo-text)] mb-1">
-              {t("allCaughtUpTitle")}
-            </h3>
-            <p className="text-[var(--aivo-text-secondary)]">
-              {t("noPendingRecommendations")}
-            </p>
-          </CardBody>
-        </Card>
+        </ExpandableCard>
+      ) : (
+        <EmptyState
+          icon={<Lightbulb size={32} />}
+          title={t("allCaughtUpTitle")}
+          description={t("noPendingRecommendations")}
+          delay={300}
+        />
       )}
 
       {resolvedRecs.length > 0 && (
-        <div>
-          <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-4">
-            {t("history")}
-          </h2>
-          <div className="space-y-3">
-            {resolvedRecs.map((rec) => (
-              <Card key={rec.id} className="opacity-75">
-                <CardBody className="flex items-center gap-3">
-                  <span className="text-lg">{typeIcon[rec.type] ?? "💡"}</span>
+        <div className="mt-6">
+          <ExpandableCard
+            icon={<Check size={16} />}
+            title={t("history")}
+            subtitle="Previously reviewed recommendations"
+            gradient="linear-gradient(135deg, #10B981, #059669)"
+            delay={500}
+            defaultExpanded={false}
+          >
+            <div className="space-y-3">
+              {resolvedRecs.map((rec) => (
+                <div key={rec.id} className="flex items-center gap-3 p-3 rounded-xl opacity-75" style={{ backgroundColor: "var(--aivo-bg)", border: "1px solid var(--aivo-border)" }}>
+                  <span className="text-lg">{typeIcon[rec.type] ?? "\u{1F4A1}"}</span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-[var(--aivo-text)] truncate">
-                      {rec.title}
-                    </p>
+                    <p className="text-sm font-medium truncate" style={{ color: "var(--aivo-text)" }}>{rec.title}</p>
                   </div>
-                  <Badge
-                    variant={
-                      rec.status === "approved"
-                        ? "success"
-                        : rec.status === "declined"
-                          ? "error"
-                          : "warning"
-                    }
-                  >
-                    {rec.status}
-                  </Badge>
-                </CardBody>
-              </Card>
-            ))}
-          </div>
+                  <Badge variant={rec.status === "approved" ? "success" : rec.status === "declined" ? "error" : "warning"}>{rec.status}</Badge>
+                </div>
+              ))}
+            </div>
+          </ExpandableCard>
         </div>
       )}
 
       <Modal
         open={showAdjustModal}
-        onClose={() => {
-          setShowAdjustModal(false);
-          setSelectedRec(null);
-          setAdjustNotes("");
-        }}
+        onClose={() => { setShowAdjustModal(false); setSelectedRec(null); setAdjustNotes(""); }}
         title={t("adjustRecommendation")}
         footer={
           <div className="flex justify-end gap-2">
-            <Button variant="ghost" onClick={() => setShowAdjustModal(false)}>
-              {tc("cancel")}
-            </Button>
-            <Button
-              onClick={handleAdjust}
-              loading={isAdjusting}
-              disabled={!adjustNotes.trim()}
-            >
-              {t("submitAdjustment")}
-            </Button>
+            <Button variant="ghost" onClick={() => setShowAdjustModal(false)}>{tc("cancel")}</Button>
+            <Button onClick={handleAdjust} loading={isAdjusting} disabled={!adjustNotes.trim()}>{t("submitAdjustment")}</Button>
           </div>
         }
       >
-        <p className="text-sm text-[var(--aivo-text-secondary)] mb-4">
+        <p className="text-sm mb-4" style={{ color: "var(--aivo-text-secondary)" }}>
           {t("adjustPrompt", { title: selectedRec?.title })}
         </p>
         <textarea
@@ -297,6 +214,6 @@ export default function RecommendationsPage() {
           placeholder="e.g., 'I'd prefer shorter sessions' or 'Focus more on reading comprehension'"
         />
       </Modal>
-    </div>
+    </PageWrapper>
   );
 }

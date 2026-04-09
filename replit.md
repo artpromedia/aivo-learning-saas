@@ -82,6 +82,36 @@ The frontend uses a warm, playful, colorful design system built for neurodiverse
 - Main content: `lg:ml-72` with sticky top bar
 - All pages use warm `--aivo-bg` background
 
+### Shared Design System Components (`apps/web/src/components/ui/PageDesign.tsx`)
+All dashboard pages use these shared design primitives for consistency:
+- **PageWrapper** — Wraps all pages in a consistent container with proper spacing
+- **BackLink** — Purple pill-style breadcrumb navigation (e.g., "← Back to District")
+- **ExpandableCard** — Collapsible sections with gradient headers, icon, subtitle, info tooltip
+- **StatCard** — Colored stat tiles with icon circles and animated entrance
+- **AnimatedCard** — Wrapper for staggered `aivo-slide-up` entrance animations
+- **EmptyState** — Centered empty-state display with icon, title, description, optional action
+- **SectionHeader** — Section headings with divider line
+- **InfoModal** — Info tooltip modals
+
+### Page Design Pattern (Brain Profile Philosophy)
+Every dashboard page follows this consistent pattern:
+1. `<PageWrapper>` wrapper
+2. `<BackLink>` breadcrumb pill (sub-pages)
+3. `<PurpleGradientHeader>` with icon box (white/20 bg, rounded-xl) and subtitle
+4. `<StatCard>` grid row for key metrics
+5. `<ExpandableCard>` sections with `infoText`, gradient headers, and collapsible content
+6. `<AnimatedCard>` wrappers for list items with staggered delays
+7. `<EmptyState>` for zero-data cases
+
+### CSS Keyframe Animations (globals.css)
+- `aivo-slide-up` — Slide-up entrance with fade
+- `aivo-pop-in` — Pop-in scale entrance
+- `aivo-fade-in` — Simple fade entrance
+- `aivo-float` — Gentle floating effect
+- `aivo-shimmer` — Loading shimmer
+- `aivo-bar-grow` — Progress bar growth
+- `aivo-modal-in` — Modal entrance
+
 ### Design Patterns
 - **Input fields**: `rounded-2xl border-2` with `--aivo-border`, `--aivo-bg`, `--aivo-text`
 - **Error states**: `#FFE0E0` bg, `#991B1B` text, `#FECACA` border

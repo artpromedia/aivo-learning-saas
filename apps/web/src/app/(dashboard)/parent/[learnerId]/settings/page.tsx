@@ -19,6 +19,7 @@ import {
   AlertTriangle,
   CheckCircle,
   Clock,
+  Globe,
 } from "lucide-react";
 import { Card, CardBody, CardHeader } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -26,6 +27,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Modal } from "@/components/ui/Modal";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
+import { PageWrapper, BackLink, ExpandableCard, AnimatedCard } from "@/components/ui/PageDesign";
 import { apiFetch } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
 import { LanguageSelect } from "@/components/ui/LanguageSelect";
@@ -342,22 +344,18 @@ export default function LearnerSettingsPage() {
   }
 
   return (
-    <div>
-      <Link
-        href={`/parent/${learnerId}`}
-        className="inline-flex items-center gap-1 text-sm text-[var(--aivo-text-secondary)] hover:text-[var(--aivo-text)] dark:text-[var(--aivo-text-muted)] dark:hover:text-[#A89BB5] mb-4"
-      >
-        <ArrowLeft size={16} />
-        {td("backToDashboard")}
-      </Link>
+    <PageWrapper>
+      <BackLink href={`/parent/${learnerId}`}>{td("backToDashboard")}</BackLink>
 
       <PurpleGradientHeader className="rounded-2xl mb-8">
         <div className="flex items-center gap-3">
-          <Settings size={32} />
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
+            <Settings size={22} />
+          </div>
           <div>
             <h1 className="text-2xl font-extrabold">{t("title")}</h1>
             <p className="text-white/80 text-sm">
-              {t("subtitle")}
+              Manage privacy, data, and preferences for your child&apos;s account
             </p>
           </div>
         </div>
@@ -413,15 +411,14 @@ export default function LearnerSettingsPage() {
 
       {settings && (
         <div className="space-y-6">
-          {/* Privacy Settings */}
-          <Card>
-            <CardHeader>
-              <h3 className="font-semibold text-[var(--aivo-text)] flex items-center gap-2">
-                <Shield size={18} className="text-[#7C3AED]" />
-                Privacy Settings
-              </h3>
-            </CardHeader>
-            <CardBody className="space-y-5">
+          <ExpandableCard
+            icon={<Shield size={16} />}
+            title="Privacy Settings"
+            subtitle="Control how your child's data is shared and stored"
+            gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
+            delay={100}
+            infoText="Privacy settings control who can see your child's learning data and how long it's stored. 'Standard' mode shares analytics with your collaboration team, while 'Strict' minimizes data sharing."
+          >
               <div>
                 <label className="block text-sm font-medium text-[var(--aivo-text)] mb-1">
                   Privacy Level
@@ -509,25 +506,24 @@ export default function LearnerSettingsPage() {
                   <option value={36}>36 months</option>
                 </select>
               </div>
-            </CardBody>
-          </Card>
 
-          <Button onClick={handleSave} loading={saving} leftIcon={<Save size={16} />}>
-            Save Settings
-          </Button>
 
-          {/* Learner PIN */}
+            <Button onClick={handleSave} loading={saving} leftIcon={<Save size={16} />} className="mt-4">
+              Save Settings
+            </Button>
+          </ExpandableCard>
+
           <PinSection learnerId={learnerId} hasPinSet={hasPinSet} />
 
-          {/* Language Preferences */}
-          <Card>
-            <CardHeader>
-              <h3 className="font-semibold text-[var(--aivo-text)] flex items-center gap-2">
-                <Settings size={18} className="text-[#7C3AED]" />
-                Language Preferences
-              </h3>
-            </CardHeader>
-            <CardBody className="space-y-4">
+          <ExpandableCard
+            icon={<Globe size={16} />}
+            title="Language Preferences"
+            subtitle="Change the language used across the app"
+            gradient="linear-gradient(135deg, #3B82F6, #2563EB)"
+            delay={200}
+            infoText="Change the display language for the entire AIVO interface. The page will reload to apply the new language."
+          >
+            <div className="space-y-4">
               <LanguageSelect
                 value={parentLanguage}
                 onChange={handleLanguageChange}
@@ -537,42 +533,39 @@ export default function LearnerSettingsPage() {
               <p className="text-xs text-[var(--aivo-text-secondary)]">
                 Changing the language will reload the page to apply the new locale across the entire app.
               </p>
-            </CardBody>
-          </Card>
+            </div>
+          </ExpandableCard>
 
-          {/* Data Export */}
-          <Card>
-            <CardHeader>
-              <h3 className="font-semibold text-[var(--aivo-text)] flex items-center gap-2">
-                <Download size={18} className="text-[#7C3AED]" />
-                Data Export
-              </h3>
-            </CardHeader>
-            <CardBody>
-              <p className="text-sm text-[var(--aivo-text-secondary)] mb-4">
-                Download all learner data including progress, brain profile,
-                session history, and IEP information.
-              </p>
-              <Button
-                variant="outline"
-                onClick={handleExport}
-                loading={exporting}
-                leftIcon={<Download size={16} />}
-              >
-                Export All Data
-              </Button>
-            </CardBody>
-          </Card>
+          <ExpandableCard
+            icon={<Download size={16} />}
+            title="Data Export"
+            subtitle="Download your child's learning data"
+            gradient="linear-gradient(135deg, #2DD4BF, #14B8A6)"
+            delay={300}
+            infoText="Export all of your child's learning data as a JSON file. This includes progress, brain profile, session history, and IEP information."
+          >
+            <p className="text-sm text-[var(--aivo-text-secondary)] mb-4">
+              Download all learner data including progress, brain profile,
+              session history, and IEP information.
+            </p>
+            <Button
+              variant="outline"
+              onClick={handleExport}
+              loading={exporting}
+              leftIcon={<Download size={16} />}
+            >
+              Export All Data
+            </Button>
+          </ExpandableCard>
 
-          {/* Export Brain Data */}
-          <Card>
-            <CardHeader>
-              <h3 className="font-semibold text-[var(--aivo-text)] flex items-center gap-2">
-                <Brain size={18} className="text-[#7C3AED]" />
-                Export Brain Data
-              </h3>
-            </CardHeader>
-            <CardBody>
+          <ExpandableCard
+            icon={<Brain size={16} />}
+            title="Export Brain Data"
+            subtitle="Download neural adaptation data and AI model weights"
+            gradient="linear-gradient(135deg, #8B5CF6, #6D28D9)"
+            delay={400}
+            infoText="This exports a complete copy of your child's brain profile data, including neural adaptations, learning patterns, and AI model weights. The file is generated in the background and a download link appears when ready."
+          >
               <p className="text-sm text-[var(--aivo-text-secondary)] mb-4">
                 Export a complete copy of this learner&apos;s brain profile data, including
                 neural adaptations, learning patterns, and AI model weights. The export
@@ -656,19 +649,18 @@ export default function LearnerSettingsPage() {
                   </Button>
                 </div>
               )}
-            </CardBody>
-          </Card>
+          </ExpandableCard>
 
-          {/* Export History */}
           {exportHistory.length > 0 && (
-            <Card>
-              <CardHeader>
-                <h3 className="font-semibold text-[var(--aivo-text)] flex items-center gap-2">
-                  <Clock size={18} className="text-[#7C3AED]" />
-                  Export History
-                </h3>
-              </CardHeader>
-              <CardBody>
+            <ExpandableCard
+              icon={<Clock size={16} />}
+              title="Export History"
+              subtitle="Previous data exports and download links"
+              gradient="linear-gradient(135deg, #6B7280, #4B5563)"
+              delay={500}
+              defaultExpanded={false}
+              infoText="View your previous data exports. Download links expire after 72 hours."
+            >
                 <div className="space-y-3">
                   {exportHistory.map((entry) => (
                     <div
@@ -715,42 +707,35 @@ export default function LearnerSettingsPage() {
                     </div>
                   ))}
                 </div>
-              </CardBody>
-            </Card>
+            </ExpandableCard>
           )}
 
-          {/* Danger Zone */}
-          <Card className="border-red-200 dark:border-red-800">
-            <CardHeader>
-              <h3 className="font-semibold text-red-600 dark:text-red-400 flex items-center gap-2">
-                <Trash2 size={18} />
-                Danger Zone
-              </h3>
-            </CardHeader>
-            <CardBody>
-              <p className="text-sm text-[var(--aivo-text-secondary)] mb-4">
-                Permanently delete this learner profile and all associated data.
-                This action cannot be undone.
-              </p>
-              <Button
-                variant="destructive"
-                onClick={() => setShowDeleteModal(true)}
-                leftIcon={<Trash2 size={16} />}
-              >
-                Delete Learner Account
-              </Button>
-            </CardBody>
-          </Card>
+          <ExpandableCard
+            icon={<Trash2 size={16} />}
+            title="Danger Zone"
+            subtitle="Permanent actions that cannot be undone"
+            gradient="linear-gradient(135deg, #EF4444, #DC2626)"
+            delay={600}
+            defaultExpanded={false}
+            infoText="These actions permanently delete data. Please make sure you've exported any data you want to keep before proceeding."
+          >
+            <div className="space-y-6">
+              <div className="p-4 rounded-2xl" style={{ backgroundColor: "var(--aivo-bg)", border: "1px solid var(--aivo-border)" }}>
+                <h4 className="font-bold text-red-600 dark:text-red-400 mb-2">Delete Learner Account</h4>
+                <p className="text-sm text-[var(--aivo-text-secondary)] mb-4">
+                  Permanently delete this learner profile and all associated data.
+                  This action cannot be undone.
+                </p>
+                <Button
+                  variant="destructive"
+                  onClick={() => setShowDeleteModal(true)}
+                  leftIcon={<Trash2 size={16} />}
+                >
+                  Delete Learner Account
+                </Button>
+              </div>
 
-          {/* Delete All Data */}
-          <Card className="border-2 border-red-300 dark:border-red-700">
-            <CardHeader className="bg-red-50 dark:bg-red-900/10">
-              <h3 className="font-semibold text-red-600 dark:text-red-400 flex items-center gap-2">
-                <AlertTriangle size={18} />
-                Delete All Data
-              </h3>
-            </CardHeader>
-            <CardBody>
+              <div className="p-4 rounded-2xl border-2 border-red-300 dark:border-red-700">
               <p className="text-sm text-[var(--aivo-text-secondary)] mb-3">
                 Permanently delete <strong>ALL</strong> data for {learnerName || "this learner"}. This action cannot be undone.
               </p>
@@ -776,8 +761,9 @@ export default function LearnerSettingsPage() {
               >
                 Delete All Data for {learnerName || "Learner"}
               </Button>
-            </CardBody>
-          </Card>
+              </div>
+            </div>
+          </ExpandableCard>
         </div>
       )}
 
@@ -896,6 +882,6 @@ export default function LearnerSettingsPage() {
           </div>
         </div>
       </Modal>
-    </div>
+    </PageWrapper>
   );
 }

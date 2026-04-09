@@ -2,12 +2,13 @@
 
 import React, { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Swords, Loader2, RefreshCw, Users, Clock, Trophy, Zap } from "lucide-react";
+import { Swords, RefreshCw, Users, Clock, Trophy, Zap } from "lucide-react";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
+import { PageWrapper, BackLink, ExpandableCard, EmptyState, AnimatedCard } from "@/components/ui/PageDesign";
 import { apiFetch } from "@/lib/api";
 import { useLearnerStore } from "@/stores/learner.store";
 
@@ -35,12 +36,9 @@ export default function ChallengesPage() {
 
   useEffect(() => {
     if (!activeLearner?.id) return;
-
     async function fetchChallenges() {
       try {
-        const data = await apiFetch<Challenge[]>(
-          `/api/learners/${activeLearner!.id}/challenges`,
-        );
+        const data = await apiFetch<Challenge[]>(`/api/learners/${activeLearner!.id}/challenges`);
         setChallenges(data);
       } catch (err) {
         setError(err instanceof Error ? err.message : t("failedToLoadChallenges"));
@@ -48,7 +46,6 @@ export default function ChallengesPage() {
         setLoading(false);
       }
     }
-
     fetchChallenges();
   }, [activeLearner]);
 
@@ -56,16 +53,9 @@ export default function ChallengesPage() {
     if (!activeLearner?.id) return;
     setJoiningId(challengeId);
     try {
-      await apiFetch(
-        `/api/learners/${activeLearner.id}/challenges/${challengeId}/join`,
-        { method: "POST" },
-      );
+      await apiFetch(`/api/learners/${activeLearner.id}/challenges/${challengeId}/join`, { method: "POST" });
       setChallenges((prev) =>
-        prev.map((c) =>
-          c.id === challengeId
-            ? { ...c, status: "in_progress" as const, participants: c.participants + 1 }
-            : c,
-        ),
+        prev.map((c) => c.id === challengeId ? { ...c, status: "in_progress" as const, participants: c.participants + 1 } : c)
       );
     } catch (err) {
       setError(err instanceof Error ? err.message : t("failedToJoinChallenge"));
@@ -74,27 +64,14 @@ export default function ChallengesPage() {
     }
   };
 
-  const typeLabels: Record<string, string> = {
-    "1v1": t("oneVsOne"),
-    team: t("teamBattle"),
-    global: t("global"),
-  };
-
-  const difficultyVariant: Record<string, "success" | "warning" | "error"> = {
-    easy: "success",
-    medium: "warning",
-    hard: "error",
-  };
+  const typeLabels: Record<string, string> = { "1v1": t("oneVsOne"), team: t("teamBattle"), global: t("global") };
+  const difficultyVariant: Record<string, "success" | "warning" | "error"> = { easy: "success", medium: "warning", hard: "error" };
 
   if (loading) {
     return (
       <div className="space-y-6">
         <Skeleton height={80} className="w-full rounded-2xl" />
-        <div className="grid gap-4 sm:grid-cols-2">
-          {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} height={180} className="w-full rounded-2xl" />
-          ))}
-        </div>
+        <div className="grid gap-4 sm:grid-cols-2">{[1, 2, 3, 4].map((i) => (<Skeleton key={i} height={180} className="w-full rounded-2xl" />))}</div>
       </div>
     );
   }
@@ -103,13 +80,7 @@ export default function ChallengesPage() {
     return (
       <div className="text-center py-16">
         <p className="text-red-500 mb-4">{error}</p>
-        <Button
-          variant="outline"
-          onClick={() => window.location.reload()}
-          leftIcon={<RefreshCw size={16} />}
-        >
-          Retry
-        </Button>
+        <Button variant="outline" onClick={() => window.location.reload()} leftIcon={<RefreshCw size={16} />}>Retry</Button>
       </div>
     );
   }
@@ -119,146 +90,117 @@ export default function ChallengesPage() {
   const completedChallenges = challenges.filter((c) => c.status === "completed");
 
   return (
-    <div>
+    <PageWrapper>
+      <BackLink href="/learner">{t("backToHome", { defaultValue: "Back to Home" })}</BackLink>
+
       <PurpleGradientHeader className="rounded-2xl mb-8">
         <div className="flex items-center gap-3">
-          <Swords size={32} />
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
+            <Swords size={22} />
+          </div>
           <div>
             <h1 className="text-2xl font-extrabold">{t("challenges")}</h1>
-            <p className="text-white/80 text-sm">
-              {t("challengesDescription")}
-            </p>
+            <p className="text-white/80 text-sm">Compete with friends and earn bonus XP!</p>
           </div>
         </div>
       </PurpleGradientHeader>
 
       {challenges.length === 0 ? (
-        <Card>
-          <CardBody className="text-center py-12">
-            <Swords className="mx-auto mb-3 text-[#A89BB5]" size={48} />
-            <h3 className="text-lg font-bold text-[var(--aivo-text)] mb-2">
-              No challenges available
-            </h3>
-            <p className="text-[var(--aivo-text-secondary)]">
-              Check back soon for new multiplayer challenges.
-            </p>
-          </CardBody>
-        </Card>
+        <EmptyState
+          icon={<Swords size={32} />}
+          title="No challenges available"
+          description="Check back soon for new multiplayer challenges."
+          delay={200}
+        />
       ) : (
         <>
           {activeChallenges.length > 0 && (
-            <div className="mb-8">
-              <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-4">
-                Active Challenges
-              </h2>
+            <ExpandableCard
+              icon={<Swords size={16} />}
+              title="Active Challenges"
+              subtitle="Challenges you're currently competing in"
+              gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
+              delay={200}
+            >
               <div className="grid gap-4 sm:grid-cols-2">
                 {activeChallenges.map((c) => (
-                  <Card key={c.id} className="border-[#7C3AED] border-2">
-                    <CardBody>
-                      <div className="flex items-center gap-2 mb-2 flex-wrap">
-                        <h3 className="font-semibold text-[var(--aivo-text)]">
-                          {c.title}
-                        </h3>
-                        <Badge variant="warning">In Progress</Badge>
-                      </div>
-                      <div className="flex items-center gap-3 text-xs text-[var(--aivo-text-secondary)] mb-3">
-                        <span className="flex items-center gap-1">
-                          <Users size={12} />
-                          {c.participants}/{c.maxParticipants}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Clock size={12} />
-                          {c.duration}min
-                        </span>
-                        <Badge variant={difficultyVariant[c.difficulty]}>
-                          {c.difficulty}
-                        </Badge>
-                      </div>
-                      <Button size="sm" className="w-full">
-                        Continue
-                      </Button>
-                    </CardBody>
-                  </Card>
+                  <div key={c.id} className="p-4 rounded-2xl border-2" style={{ borderColor: "#7C3AED", backgroundColor: "var(--aivo-bg)" }}>
+                    <div className="flex items-center gap-2 mb-2 flex-wrap">
+                      <h3 className="font-bold" style={{ color: "var(--aivo-text)" }}>{c.title}</h3>
+                      <Badge variant="warning">In Progress</Badge>
+                    </div>
+                    <div className="flex items-center gap-3 text-xs mb-3" style={{ color: "var(--aivo-text-secondary)" }}>
+                      <span className="flex items-center gap-1"><Users size={12} /> {c.participants}/{c.maxParticipants}</span>
+                      <span className="flex items-center gap-1"><Clock size={12} /> {c.duration}min</span>
+                      <Badge variant={difficultyVariant[c.difficulty]}>{c.difficulty}</Badge>
+                    </div>
+                    <Button size="sm" className="w-full">Continue</Button>
+                  </div>
                 ))}
               </div>
-            </div>
+            </ExpandableCard>
           )}
 
           {openChallenges.length > 0 && (
-            <div className="mb-8">
-              <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-4">
-                Open Challenges ({openChallenges.length})
-              </h2>
-              <div className="grid gap-4 sm:grid-cols-2">
-                {openChallenges.map((c) => (
-                  <Card key={c.id} className="hover:shadow-[var(--shadow-card)] transition-all">
-                    <CardBody>
-                      <div className="flex items-center gap-2 mb-2 flex-wrap">
-                        <h3 className="font-semibold text-[var(--aivo-text)]">
-                          {c.title}
-                        </h3>
-                        <Badge variant="secondary">{typeLabels[c.type]}</Badge>
+            <div className={activeChallenges.length > 0 ? "mt-6" : ""}>
+              <ExpandableCard
+                icon={<Zap size={16} />}
+                title={`Open Challenges (${openChallenges.length})`}
+                subtitle="Join a challenge and compete!"
+                gradient="linear-gradient(135deg, #2DD4BF, #14B8A6)"
+                delay={300}
+              >
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {openChallenges.map((c, idx) => (
+                    <AnimatedCard key={c.id} delay={400 + idx * 80}>
+                      <div className="p-4 rounded-2xl" style={{ backgroundColor: "var(--aivo-bg)", border: "1px solid var(--aivo-border)" }}>
+                        <div className="flex items-center gap-2 mb-2 flex-wrap">
+                          <h3 className="font-bold" style={{ color: "var(--aivo-text)" }}>{c.title}</h3>
+                          <Badge variant="secondary">{typeLabels[c.type]}</Badge>
+                        </div>
+                        <p className="text-sm mb-3" style={{ color: "var(--aivo-text-secondary)" }}>{c.subject}</p>
+                        <div className="flex items-center gap-3 text-xs mb-4" style={{ color: "var(--aivo-text-secondary)" }}>
+                          <span className="flex items-center gap-1"><Users size={12} /> {c.participants}/{c.maxParticipants}</span>
+                          <span className="flex items-center gap-1"><Clock size={12} /> {c.duration}min</span>
+                          <span className="flex items-center gap-1" style={{ color: "#7C3AED" }}><Zap size={12} /> +{c.xpReward} XP</span>
+                          <Badge variant={difficultyVariant[c.difficulty]}>{c.difficulty}</Badge>
+                        </div>
+                        <Button size="sm" className="w-full" loading={joiningId === c.id} onClick={() => handleJoin(c.id)}>Join Challenge</Button>
                       </div>
-                      <p className="text-sm text-[var(--aivo-text-secondary)] mb-3">
-                        {c.subject}
-                      </p>
-                      <div className="flex items-center gap-3 text-xs text-[var(--aivo-text-secondary)] mb-4">
-                        <span className="flex items-center gap-1">
-                          <Users size={12} />
-                          {c.participants}/{c.maxParticipants}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Clock size={12} />
-                          {c.duration}min
-                        </span>
-                        <span className="flex items-center gap-1 text-[#7C3AED]">
-                          <Zap size={12} />
-                          +{c.xpReward} XP
-                        </span>
-                        <Badge variant={difficultyVariant[c.difficulty]}>
-                          {c.difficulty}
-                        </Badge>
-                      </div>
-                      <Button
-                        size="sm"
-                        className="w-full"
-                        loading={joiningId === c.id}
-                        onClick={() => handleJoin(c.id)}
-                      >
-                        Join Challenge
-                      </Button>
-                    </CardBody>
-                  </Card>
-                ))}
-              </div>
+                    </AnimatedCard>
+                  ))}
+                </div>
+              </ExpandableCard>
             </div>
           )}
 
           {completedChallenges.length > 0 && (
-            <div>
-              <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-4">
-                Completed
-              </h2>
-              <div className="grid gap-4 sm:grid-cols-2">
-                {completedChallenges.map((c) => (
-                  <Card key={c.id} className="opacity-75">
-                    <CardBody className="flex items-center gap-3">
+            <div className="mt-6">
+              <ExpandableCard
+                icon={<Trophy size={16} />}
+                title="Completed"
+                subtitle="Your finished challenges"
+                gradient="linear-gradient(135deg, #FBBF24, #F59E0B)"
+                delay={400}
+                defaultExpanded={false}
+              >
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {completedChallenges.map((c) => (
+                    <div key={c.id} className="flex items-center gap-3 p-3 rounded-xl opacity-75" style={{ backgroundColor: "var(--aivo-bg)", border: "1px solid var(--aivo-border)" }}>
                       <Trophy className="text-yellow-500 shrink-0" size={20} />
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-medium text-[var(--aivo-text)] truncate">
-                          {c.title}
-                        </h3>
-                        <span className="text-xs text-[var(--aivo-text-secondary)]">{c.subject}</span>
+                        <h3 className="font-medium truncate" style={{ color: "var(--aivo-text)" }}>{c.title}</h3>
+                        <span className="text-xs" style={{ color: "var(--aivo-text-secondary)" }}>{c.subject}</span>
                       </div>
                       <Badge variant="success">+{c.xpReward} XP</Badge>
-                    </CardBody>
-                  </Card>
-                ))}
-              </div>
+                    </div>
+                  ))}
+                </div>
+              </ExpandableCard>
             </div>
           )}
         </>
       )}
-    </div>
+    </PageWrapper>
   );
 }
