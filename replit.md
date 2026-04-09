@@ -187,6 +187,23 @@ Key files:
 - `apps/web/src/stores/auth.store.ts` — `hydrateTestUser()` function
 - `apps/web/src/app/api/test-login/route.ts` — Server-side test login route
 
+## Internationalization (i18n)
+
+The platform uses **next-intl** for all UI text across every role dashboard.
+
+- **Messages file**: `apps/web/src/i18n/fallback-messages.json` (~1,928 keys)
+- **18 namespaces**: common, auth, onboarding, dashboard, assessment, brain, tutor, homework, gamification, settings, errors, email, billing, teacher, learner, platformAdmin, districtAdmin, caregiver
+- **Pattern**: All dashboard pages use `useTranslations("<namespace>")` with keys for every visible string (titles, subtitles, stat labels, tooltips, empty states, section headers, etc.)
+- **Namespace mapping by role**:
+  - Platform Admin → `platformAdmin` (121 keys)
+  - District Admin → `districtAdmin` (196 keys)
+  - Teacher → `teacher` (266 keys) + `dashboard`, `settings`
+  - Parent → `dashboard` (430 keys) + `settings`
+  - Caregiver → `caregiver` (87 keys)
+  - Learner → `learner`, `brain`, `gamification`, `settings`, `dashboard`
+- **Adding new keys**: Add to the appropriate namespace in `fallback-messages.json`, then use `t("keyName")` in the component
+- **Shared layout**: The dashboard layout (`apps/web/src/app/(dashboard)/layout.tsx`) uses `dashboard` namespace for sidebar nav labels
+
 ## Notes
 
 - The web app requires the `@aivo/brand` package to be built before starting

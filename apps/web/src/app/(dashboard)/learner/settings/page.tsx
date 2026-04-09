@@ -56,7 +56,7 @@ export default function LearnerSettingsPage() {
           </div>
           <div>
             <h1 className="text-2xl font-extrabold">{t("settings")}</h1>
-            <p className="text-white/80 text-sm">Update your profile and preferences</p>
+            <p className="text-white/80 text-sm">{t("settingsSubtitle")}</p>
           </div>
         </div>
       </PurpleGradientHeader>
@@ -65,10 +65,10 @@ export default function LearnerSettingsPage() {
         <ExpandableCard
           icon={<User size={16} />}
           title={t("account")}
-          subtitle="Manage your display name and profile"
+          subtitle={t("accountSubtitle")}
           gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
           delay={100}
-          infoText="Change your display name that appears throughout the app. Your email is managed by your parent or guardian."
+          infoText={t("accountInfoText")}
         >
           <div className="space-y-4">
             <div>
@@ -104,10 +104,10 @@ export default function LearnerSettingsPage() {
         <ExpandableCard
           icon={<Shield size={16} />}
           title={t("learnerPin")}
-          subtitle="Manage your security PIN"
+          subtitle={t("pinSubtitle")}
           gradient="linear-gradient(135deg, #3B82F6, #2563EB)"
           delay={200}
-          infoText="Your learner PIN adds an extra layer of security. Ask your parent or guardian if you need to change it."
+          infoText={t("pinInfoText")}
         >
           <p className="text-sm" style={{ color: "var(--aivo-text-secondary)" }}>
             {t("pinDescription")}

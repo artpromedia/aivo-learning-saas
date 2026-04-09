@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { UserPlus, Trash2, Users, X, School, Target } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -32,6 +33,7 @@ interface ClassroomDetail {
 }
 
 export default function ClassroomDetailPage() {
+  const t = useTranslations("districtAdmin");
   const params = useParams();
   const classroomId = params.id as string;
 
@@ -53,7 +55,7 @@ export default function ClassroomDetailPage() {
       );
       setData(res);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load classroom");
+      setError(err instanceof Error ? err.message : t("failedToLoadClassroom"));
     } finally {
       setLoading(false);
     }
@@ -85,7 +87,7 @@ export default function ClassroomDetailPage() {
       setShowAddLearner(false);
       await fetchClassroom();
     } catch (err) {
-      setAddError(err instanceof Error ? err.message : "Failed to add learner");
+      setAddError(err instanceof Error ? err.message : t("failedToAddLearner"));
     } finally {
       setAdding(false);
     }
@@ -99,7 +101,7 @@ export default function ClassroomDetailPage() {
       });
       await fetchClassroom();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to remove learner");
+      setError(err instanceof Error ? err.message : t("failedToRemoveLearner"));
     } finally {
       setRemovingId(null);
     }
@@ -117,9 +119,9 @@ export default function ClassroomDetailPage() {
 
   const levelLabel = (fl: string) => {
     switch (fl) {
-      case "level1": return "Level 1";
-      case "level2": return "Level 2";
-      case "level3": return "Level 3";
+      case "level1": return t("level1");
+      case "level2": return t("level2");
+      case "level3": return t("level3");
       default: return fl;
     }
   };
@@ -135,7 +137,7 @@ export default function ClassroomDetailPage() {
 
   return (
     <PageWrapper>
-      <BackLink href="/admin/district/classrooms">Back to Classrooms</BackLink>
+      <BackLink href="/admin/district/classrooms">{t("backToClassrooms")}</BackLink>
 
       {loading ? (
         <>
@@ -162,9 +164,9 @@ export default function ClassroomDetailPage() {
               <div>
                 <h1 className="text-2xl font-extrabold">{data.name}</h1>
                 <div className="flex flex-wrap items-center gap-4 mt-1 text-white/80 text-sm">
-                  <span>Teacher: {data.teacherName}</span>
-                  <span>Grade Band: {data.gradeBand}</span>
-                  <span>{data.learners.length} Learners</span>
+                  <span>{t("teacherLabel", { name: data.teacherName })}</span>
+                  <span>{t("gradeBandValue", { band: data.gradeBand })}</span>
+                  <span>{t("learnersCount", { count: data.learners.length })}</span>
                 </div>
               </div>
             </div>
@@ -173,16 +175,16 @@ export default function ClassroomDetailPage() {
           <div className="grid gap-6 lg:grid-cols-3 mb-8">
             <ExpandableCard
               icon={<Target size={16} />}
-              title="Functioning Level Breakdown"
-              subtitle="Distribution across levels"
+              title={t("functioningLevelBreakdown")}
+              subtitle={t("distributionAcrossLevels")}
               gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
               delay={100}
             >
               <div className="space-y-4">
                 {[
-                  { label: "Level 1", count: data.functioningLevelBreakdown?.level1 ?? 0, color: "#7C3AED" },
-                  { label: "Level 2", count: data.functioningLevelBreakdown?.level2 ?? 0, color: "#8B5CF6" },
-                  { label: "Level 3", count: data.functioningLevelBreakdown?.level3 ?? 0, color: "#A78BFA" },
+                  { label: t("level1"), count: data.functioningLevelBreakdown?.level1 ?? 0, color: "#7C3AED" },
+                  { label: t("level2"), count: data.functioningLevelBreakdown?.level2 ?? 0, color: "#8B5CF6" },
+                  { label: t("level3"), count: data.functioningLevelBreakdown?.level3 ?? 0, color: "#A78BFA" },
                 ].map((level) => (
                   <div key={level.label}>
                     <div className="flex items-center justify-between text-sm mb-1">
@@ -209,8 +211,8 @@ export default function ClassroomDetailPage() {
             <div className="lg:col-span-2">
               <ExpandableCard
                 icon={<Users size={16} />}
-                title="Learner Roster"
-                subtitle={`${data.learners.length} learners enrolled`}
+                title={t("learnerRoster")}
+                subtitle={t("learnersEnrolled", { count: data.learners.length })}
                 gradient="linear-gradient(135deg, #3B82F6, #2563EB)"
                 delay={200}
               >
@@ -223,14 +225,14 @@ export default function ClassroomDetailPage() {
                       setAddError(null);
                     }}
                   >
-                    Add Learner
+                    {t("addLearner")}
                   </Button>
                 </div>
 
                 {showAddLearner && (
                   <div className="mb-4 p-4 border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-3xl">
                     <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-sm font-semibold" style={{ color: "var(--aivo-text)" }}>Add a Learner</h3>
+                      <h3 className="text-sm font-semibold" style={{ color: "var(--aivo-text)" }}>{t("addALearner")}</h3>
                       <button onClick={() => setShowAddLearner(false)} className="text-[#A89BB5] hover:text-[#7C3AED]">
                         <X size={16} />
                       </button>
@@ -240,7 +242,7 @@ export default function ClassroomDetailPage() {
                         type="text"
                         value={learnerName}
                         onChange={(e) => setLearnerName(e.target.value)}
-                        placeholder="Learner name"
+                        placeholder={t("learnerNamePlaceholder")}
                         required
                         className="w-full px-3 py-2 text-sm border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-3xl bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] placeholder-[#A89BB5] focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent"
                       />
@@ -250,22 +252,22 @@ export default function ClassroomDetailPage() {
                           onChange={(e) => setLearnerLevel(e.target.value)}
                           className="flex-1 px-3 py-2 text-sm border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-3xl bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent"
                         >
-                          <option value="level1">Level 1</option>
-                          <option value="level2">Level 2</option>
-                          <option value="level3">Level 3</option>
+                          <option value="level1">{t("level1")}</option>
+                          <option value="level2">{t("level2")}</option>
+                          <option value="level3">{t("level3")}</option>
                         </select>
                         <input
                           type="text"
                           value={learnerGrade}
                           onChange={(e) => setLearnerGrade(e.target.value)}
-                          placeholder="Enrolled grade"
+                          placeholder={t("enrolledGradePlaceholder")}
                           required
                           className="flex-1 px-3 py-2 text-sm border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-3xl bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] placeholder-[#A89BB5] focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent"
                         />
                       </div>
                       <div className="flex justify-end gap-2">
-                        <Button variant="ghost" size="sm" type="button" onClick={() => setShowAddLearner(false)}>Cancel</Button>
-                        <Button type="submit" size="sm" loading={adding}>Add</Button>
+                        <Button variant="ghost" size="sm" type="button" onClick={() => setShowAddLearner(false)}>{t("cancel")}</Button>
+                        <Button type="submit" size="sm" loading={adding}>{t("add")}</Button>
                       </div>
                       {addError && <p className="text-sm text-red-600 dark:text-red-400">{addError}</p>}
                     </form>
@@ -277,17 +279,17 @@ export default function ClassroomDetailPage() {
                     <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3" style={{ backgroundColor: "var(--aivo-purple-50)", color: "var(--aivo-purple-500)" }}>
                       <Users size={24} />
                     </div>
-                    <p style={{ color: "var(--aivo-text-secondary)" }}>No learners in this classroom yet.</p>
+                    <p style={{ color: "var(--aivo-text-secondary)" }}>{t("noLearnersInClassroom")}</p>
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="border-b border-[#E8DDF0] dark:border-[#3D2D5C]">
-                          <th className="text-left py-2 px-3 font-medium" style={{ color: "var(--aivo-text-secondary)" }}>Name</th>
-                          <th className="text-left py-2 px-3 font-medium" style={{ color: "var(--aivo-text-secondary)" }}>Functioning Level</th>
-                          <th className="text-left py-2 px-3 font-medium" style={{ color: "var(--aivo-text-secondary)" }}>Enrolled Grade</th>
-                          <th className="text-right py-2 px-3 font-medium" style={{ color: "var(--aivo-text-secondary)" }}>Actions</th>
+                          <th className="text-left py-2 px-3 font-medium" style={{ color: "var(--aivo-text-secondary)" }}>{t("nameHeader")}</th>
+                          <th className="text-left py-2 px-3 font-medium" style={{ color: "var(--aivo-text-secondary)" }}>{t("functioningLevelHeader")}</th>
+                          <th className="text-left py-2 px-3 font-medium" style={{ color: "var(--aivo-text-secondary)" }}>{t("enrolledGradeHeader")}</th>
+                          <th className="text-right py-2 px-3 font-medium" style={{ color: "var(--aivo-text-secondary)" }}>{t("actionsHeader")}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -308,7 +310,7 @@ export default function ClassroomDetailPage() {
                                 leftIcon={<Trash2 size={14} />}
                                 onClick={() => handleRemoveLearner(learner.id)}
                               >
-                                Remove
+                                {t("remove")}
                               </Button>
                             </td>
                           </tr>

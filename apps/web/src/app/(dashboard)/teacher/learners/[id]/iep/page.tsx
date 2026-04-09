@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Target } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { Badge } from "@/components/ui/Badge";
@@ -20,6 +21,7 @@ interface IepGoal {
 }
 
 export default function TeacherLearnerIepPage() {
+  const t = useTranslations("teacher");
   const params = useParams();
   const learnerId = params.id as string;
   const [goals, setGoals] = useState<IepGoal[]>([]);
@@ -63,7 +65,7 @@ export default function TeacherLearnerIepPage() {
 
   return (
     <PageWrapper>
-      <BackLink href={`/teacher/learners/${learnerId}`}>Back to Learner Hub</BackLink>
+      <BackLink href={`/teacher/learners/${learnerId}`}>{t("backToLearnerHub")}</BackLink>
 
       <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
@@ -71,28 +73,28 @@ export default function TeacherLearnerIepPage() {
             <Target size={22} />
           </div>
           <div>
-            <h1 className="text-2xl font-extrabold">IEP Goals</h1>
-            <p className="text-white/80 text-sm">Individualized Education Program progress tracking</p>
+            <h1 className="text-2xl font-extrabold">{t("iepGoalsTitle")}</h1>
+            <p className="text-white/80 text-sm">{t("iepGoalsSubtitle")}</p>
           </div>
         </div>
       </PurpleGradientHeader>
 
       <div className="grid gap-3 grid-cols-3 mb-8">
-        <StatCard icon={<Target size={18} />} label="Total Goals" value={goals.length} color="#3B82F6" delay={100} />
-        <StatCard icon={<Target size={18} />} label="Avg Progress" value={`${avgProgress}%`} color="#7C3AED" delay={200} />
-        <StatCard icon={<Target size={18} />} label="Met" value={metGoals} color="#10B981" delay={300} />
+        <StatCard icon={<Target size={18} />} label={t("totalGoals")} value={goals.length} color="#3B82F6" delay={100} />
+        <StatCard icon={<Target size={18} />} label={t("avgProgress")} value={`${avgProgress}%`} color="#7C3AED" delay={200} />
+        <StatCard icon={<Target size={18} />} label={t("metLabel")} value={metGoals} color="#10B981" delay={300} />
       </div>
 
       <ExpandableCard
         icon={<Target size={16} />}
-        title="All IEP Goals"
-        subtitle="Track progress toward individualized education goals"
+        title={t("allIepGoals")}
+        subtitle={t("allIepGoalsSubtitle")}
         gradient="linear-gradient(135deg, #3B82F6, #2563EB)"
         delay={400}
-        infoText="IEP goals are set collaboratively by the care team. AIVO tracks progress through session performance data and adaptive assessments."
+        infoText={t("allIepGoalsInfo")}
       >
         {goals.length === 0 ? (
-          <p className="text-sm" style={{ color: "var(--aivo-text-muted)" }}>No IEP goals have been set yet.</p>
+          <p className="text-sm" style={{ color: "var(--aivo-text-muted)" }}>{t("noIepGoalsSet")}</p>
         ) : (
           <div className="space-y-5">
             {goals.map((goal, idx) => (
@@ -101,18 +103,18 @@ export default function TeacherLearnerIepPage() {
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="text-sm font-bold" style={{ color: "var(--aivo-text)" }}>{goal.title}</h3>
                     {goal.progressPct >= 100 ? (
-                      <Badge variant="success">Met</Badge>
+                      <Badge variant="success">{t("metBadge")}</Badge>
                     ) : goal.progressPct >= 60 ? (
-                      <Badge variant="default">On Track</Badge>
+                      <Badge variant="default">{t("onTrack")}</Badge>
                     ) : (
-                      <Badge variant="warning">Needs Focus</Badge>
+                      <Badge variant="warning">{t("needsFocus")}</Badge>
                     )}
                   </div>
                   <ProgressBar value={goal.progressPct} size="sm" showLabel={false} />
                   <div className="flex items-center justify-between mt-2">
                     <span className="text-xs font-semibold text-[#7C3AED]">{Math.round(goal.progressPct)}%</span>
                     {goal.targetDate && (
-                      <span className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>Target: {formatDate(goal.targetDate)}</span>
+                      <span className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>{t("targetDate", { date: formatDate(goal.targetDate) })}</span>
                     )}
                   </div>
                 </div>

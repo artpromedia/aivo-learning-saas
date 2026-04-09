@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { GraduationCap, TrendingUp } from "lucide-react";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
@@ -10,6 +11,7 @@ import { apiFetch } from "@/lib/api";
 interface SubjectMastery { name: string; mastery: number; }
 
 export default function CaregiverGradebookPage() {
+  const t = useTranslations("caregiver");
   const [subjects, setSubjects] = useState<SubjectMastery[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -45,27 +47,27 @@ export default function CaregiverGradebookPage() {
 
   return (
     <PageWrapper>
-      <BackLink href="/caregiver">Back to Dashboard</BackLink>
+      <BackLink href="/caregiver">{t("backToDashboard")}</BackLink>
 
       <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20"><GraduationCap size={22} /></div>
           <div>
-            <h1 className="text-2xl font-extrabold">Gradebook</h1>
-            <p className="text-white/80 text-sm">Subject-by-subject mastery breakdown</p>
+            <h1 className="text-2xl font-extrabold">{t("gradebookTitle")}</h1>
+            <p className="text-white/80 text-sm">{t("gradebookSubtitle")}</p>
           </div>
         </div>
       </PurpleGradientHeader>
 
       <div className="grid gap-3 grid-cols-3 mb-8">
-        <StatCard icon={<GraduationCap size={18} />} label="Avg Mastery" value={`${avgMastery}%`} color="#7C3AED" delay={100} />
-        <StatCard icon={<TrendingUp size={18} />} label="Subjects" value={subjects.length} color="#3B82F6" delay={200} />
-        <StatCard icon={<TrendingUp size={18} />} label="Strong (75%+)" value={subjects.filter((s) => s.mastery >= 75).length} color="#10B981" delay={300} />
+        <StatCard icon={<GraduationCap size={18} />} label={t("statAvgMastery")} value={`${avgMastery}%`} color="#7C3AED" delay={100} />
+        <StatCard icon={<TrendingUp size={18} />} label={t("statSubjects")} value={subjects.length} color="#3B82F6" delay={200} />
+        <StatCard icon={<TrendingUp size={18} />} label={t("statStrong")} value={subjects.filter((s) => s.mastery >= 75).length} color="#10B981" delay={300} />
       </div>
 
-      <ExpandableCard icon={<GraduationCap size={16} />} title="Subject Mastery" subtitle="Detailed mastery breakdown" gradient="linear-gradient(135deg, #2DD4BF, #14B8A6)" delay={400} infoText="Mastery is calculated from adaptive assessments, practice sessions, and homework performance.">
+      <ExpandableCard icon={<GraduationCap size={16} />} title={t("subjectMastery")} subtitle={t("gradebookDetailedSubtitle")} gradient="linear-gradient(135deg, #2DD4BF, #14B8A6)" delay={400} infoText={t("gradebookMasteryInfo")}>
         {subjects.length === 0 ? (
-          <p className="text-sm" style={{ color: "var(--aivo-text-muted)" }}>No subject data available yet.</p>
+          <p className="text-sm" style={{ color: "var(--aivo-text-muted)" }}>{t("noSubjectsYet")}</p>
         ) : (
           <div className="space-y-5">
             {subjects.map((subject) => (

@@ -96,7 +96,7 @@ export function PinGate({ learnerId, learnerName, onSuccess }: PinGateProps) {
                 onChange={(e) => handleChange(i, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(i, e)}
                 className="w-14 h-14 text-center text-2xl font-extrabold rounded-2xl border-2 border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:border-[#7C3AED] focus:ring-2 focus:ring-[#7C3AED]/30 outline-none transition-all"
-                aria-label={`PIN digit ${i + 1}`}
+                aria-label={t("pinDigit", { number: i + 1 })}
               />
             ))}
           </div>

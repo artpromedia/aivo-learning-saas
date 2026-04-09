@@ -561,7 +561,7 @@ export default function TutorChatPage() {
                 <button
                   onClick={() => removeAttachment(att.id)}
                   className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/80"
-                  aria-label="Remove attachment"
+                  aria-label={t("removeAttachment")}
                 >
                   <X size={12} />
                 </button>
@@ -584,7 +584,7 @@ export default function TutorChatPage() {
             onClick={() => fileInputRef.current?.click()}
             disabled={isStreaming || attachments.length >= MAX_ATTACHMENTS}
             className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors text-[var(--aivo-text-muted)] hover:text-[#7C3AED] hover:bg-[var(--aivo-purple-50,#F0E6FF)] disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-[var(--aivo-text-muted)]"
-            aria-label="Attach file or image"
+            aria-label={t("attachFileOrImage")}
           >
             <Paperclip size={20} />
           </button>
@@ -603,7 +603,7 @@ export default function TutorChatPage() {
           {isEcho && (
             <button
               onClick={() => setShowRecorder((v) => !v)}
-              aria-label="Open speech practice recorder"
+              aria-label={t("openSpeechRecorder")}
               className={cn(
                 "w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-400 focus-visible:ring-offset-2",
                 showMicPulse

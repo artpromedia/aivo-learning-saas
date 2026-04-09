@@ -52,7 +52,7 @@ export default function LearnerTutorsPage() {
       setTutors(mapped);
       setError(null);
     } catch (err) {
-      if (showLoading) setError(err instanceof Error ? err.message : "Failed to load tutors");
+      if (showLoading) setError(err instanceof Error ? err.message : t("failedToLoadTutors"));
     } finally {
       if (showLoading) setLoading(false);
     }
@@ -97,7 +97,7 @@ export default function LearnerTutorsPage() {
           </div>
           <div>
             <h1 className="text-2xl font-extrabold">{t("myTutors")}</h1>
-            <p className="text-white/80 text-sm">Your AI learning companions</p>
+            <p className="text-white/80 text-sm">{t("tutorsSubtitle")}</p>
           </div>
         </div>
       </PurpleGradientHeader>
@@ -123,7 +123,7 @@ export default function LearnerTutorsPage() {
                       {tutor.activatedAt && (
                         <div className="flex items-center gap-1 mt-1 text-xs" style={{ color: "var(--aivo-text-muted)" }}>
                           <Clock size={12} />
-                          Since: {new Date(tutor.activatedAt).toLocaleDateString()}
+                          {t("activeSince", { date: new Date(tutor.activatedAt).toLocaleDateString() })}
                         </div>
                       )}
                     </div>

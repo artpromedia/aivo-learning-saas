@@ -63,7 +63,7 @@ export default function LearnSessionPage() {
         setQuestion(data.question);
         setTotalQuestions(data.totalQuestions);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load session");
+        setError(err instanceof Error ? err.message : t("failedToLoadSession"));
       } finally {
         setLoading(false);
       }
@@ -106,7 +106,7 @@ export default function LearnSessionPage() {
         }
       }, 1500);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to submit answer");
+      setError(err instanceof Error ? err.message : t("failedToSubmitAnswer"));
     }
   };
 
@@ -118,7 +118,7 @@ export default function LearnSessionPage() {
       );
       setSummary(result);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to complete session");
+      setError(err instanceof Error ? err.message : t("failedToCompleteSession"));
     }
   };
 
@@ -234,7 +234,7 @@ export default function LearnSessionPage() {
               <div className="mb-4 rounded-3xl overflow-hidden bg-[var(--aivo-bg-alt,#FFF5EB)]">
                 <img
                   src={question.imageUrl}
-                  alt="Question visual"
+                  alt={t("questionVisual")}
                   className="w-full h-48 object-contain"
                 />
               </div>

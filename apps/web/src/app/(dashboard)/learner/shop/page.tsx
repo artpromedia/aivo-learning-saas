@@ -115,7 +115,7 @@ export default function ShopPage() {
     return (
       <div className="text-center py-16">
         <p className="text-red-500 mb-4">{error}</p>
-        <Button variant="outline" onClick={() => window.location.reload()} leftIcon={<RefreshCw size={16} />}>Retry</Button>
+        <Button variant="outline" onClick={() => window.location.reload()} leftIcon={<RefreshCw size={16} />}>{t("retry")}</Button>
       </div>
     );
   }
@@ -132,7 +132,7 @@ export default function ShopPage() {
             </div>
             <div>
               <h1 className="text-2xl font-extrabold">{t("avatarShop")}</h1>
-              <p className="text-white/80 text-sm">Customize your avatar with awesome items!</p>
+              <p className="text-white/80 text-sm">{t("shopCustomizeDescription")}</p>
             </div>
           </div>
           <div className="flex items-center gap-2 bg-white/20 rounded-full px-4 py-2">
@@ -157,7 +157,7 @@ export default function ShopPage() {
                 : "bg-[var(--aivo-bg-alt,#FFF5EB)] text-[var(--aivo-text-secondary)] hover:bg-[#F0E6FF] dark:hover:bg-[#3D2D5C]"
             }`}
           >
-            All
+            {t("shopAll")}
           </button>
           {categories.map((cat) => (
             <button
@@ -197,7 +197,7 @@ export default function ShopPage() {
                 <div className="flex items-center justify-between">
                   <Badge variant={RARITY_COLORS[item.rarity] as "secondary" | "default" | "warning" | "error"}>{item.rarity}</Badge>
                   {item.owned ? (
-                    <span className="text-xs font-medium text-green-600">Owned</span>
+                    <span className="text-xs font-medium text-green-600">{t("shopOwned")}</span>
                   ) : (
                     <span className="text-xs font-bold flex items-center gap-1" style={{ color: "#7C3AED" }}>
                       <Coins size={12} /> {item.price}
@@ -213,8 +213,8 @@ export default function ShopPage() {
       {filteredItems.length === 0 && (
         <EmptyState
           icon={<ShoppingBag size={32} />}
-          title="No items in this category"
-          description="Try selecting a different category."
+          title={t("shopNoItems")}
+          description={t("shopTryCategory")}
           delay={200}
         />
       )}
@@ -222,12 +222,12 @@ export default function ShopPage() {
       <Modal
         open={!!selectedItem}
         onClose={() => setSelectedItem(null)}
-        title="Purchase Item"
+        title={t("shopPurchaseItem")}
         footer={
           <div className="flex justify-end gap-2">
-            <Button variant="ghost" onClick={() => setSelectedItem(null)}>Cancel</Button>
+            <Button variant="ghost" onClick={() => setSelectedItem(null)}>{t("shopCancel")}</Button>
             <Button onClick={handlePurchase} loading={purchasing} disabled={(xp?.totalXp ?? 0) < (selectedItem?.price ?? 0)}>
-              Buy for {selectedItem?.price} XP
+              {t("shopBuyFor", { price: selectedItem?.price ?? 0 })}
             </Button>
           </div>
         }
@@ -247,7 +247,7 @@ export default function ShopPage() {
             </div>
             {(xp?.totalXp ?? 0) < selectedItem.price && (
               <p className="mt-3 text-sm text-red-500">
-                Not enough XP. You need {selectedItem.price - (xp?.totalXp ?? 0)} more XP.
+                {t("shopNotEnoughXp", { needed: selectedItem.price - (xp?.totalXp ?? 0) })}
               </p>
             )}
           </div>

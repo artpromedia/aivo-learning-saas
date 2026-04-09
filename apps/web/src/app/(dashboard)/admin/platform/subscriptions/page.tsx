@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { CreditCard, TrendingUp, DollarSign, Users, AlertTriangle, CheckCircle, Clock } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
 import { PageWrapper, BackLink, StatCard, ExpandableCard, AnimatedCard } from "@/components/ui/PageDesign";
 import { Badge } from "@/components/ui/Badge";
@@ -31,6 +32,7 @@ interface SubsOverview {
 export default function SubscriptionsPage() {
   const [data, setData] = useState<SubsOverview | null>(null);
   const [loading, setLoading] = useState(true);
+  const t = useTranslations("platformAdmin");
 
   useEffect(() => {
     async function fetchData() {
@@ -67,7 +69,7 @@ export default function SubscriptionsPage() {
 
   return (
     <PageWrapper>
-      <BackLink href="/admin/platform">Back to Dashboard</BackLink>
+      <BackLink href="/admin/platform">{t("backToDashboard")}</BackLink>
 
       <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
@@ -75,17 +77,17 @@ export default function SubscriptionsPage() {
             <CreditCard size={22} />
           </div>
           <div>
-            <h1 className="text-2xl font-extrabold">Subscriptions</h1>
-            <p className="text-white/80 text-sm">Revenue and subscription management</p>
+            <h1 className="text-2xl font-extrabold">{t("subscriptionsTitle")}</h1>
+            <p className="text-white/80 text-sm">{t("subscriptionsSubtitle")}</p>
           </div>
         </div>
       </PurpleGradientHeader>
 
       <div className="grid gap-3 grid-cols-2 lg:grid-cols-4 mb-8">
-        <StatCard icon={<DollarSign size={18} />} label="Monthly Revenue" value={`$${(data.totalMrr / 100).toLocaleString()}`} color="#10B981" delay={100} />
-        <StatCard icon={<TrendingUp size={18} />} label="Annual Revenue" value={`$${(data.totalArr / 100).toLocaleString()}`} color="#7C3AED" delay={200} />
-        <StatCard icon={<CheckCircle size={18} />} label="Active" value={data.activeCount} color="#3B82F6" delay={300} />
-        <StatCard icon={<AlertTriangle size={18} />} label="Churn Rate" value={`${data.churnRate}%`} color="#EF4444" delay={400} />
+        <StatCard icon={<DollarSign size={18} />} label={t("statMonthlyRevenue")} value={`$${(data.totalMrr / 100).toLocaleString()}`} color="#10B981" delay={100} />
+        <StatCard icon={<TrendingUp size={18} />} label={t("statAnnualRevenue")} value={`$${(data.totalArr / 100).toLocaleString()}`} color="#7C3AED" delay={200} />
+        <StatCard icon={<CheckCircle size={18} />} label={t("statActive")} value={data.activeCount} color="#3B82F6" delay={300} />
+        <StatCard icon={<AlertTriangle size={18} />} label={t("statChurnRate")} value={`${data.churnRate}%`} color="#EF4444" delay={400} />
       </div>
 
       <div className="grid gap-3 grid-cols-3 mb-8">
@@ -95,7 +97,7 @@ export default function SubscriptionsPage() {
               <CheckCircle size={22} />
             </div>
             <p className="text-lg font-extrabold" style={{ color: "var(--aivo-text)", fontFamily: "var(--font-display)" }}>{data.activeCount}</p>
-            <p className="text-xs mt-0.5" style={{ color: "var(--aivo-text-muted)" }}>Active</p>
+            <p className="text-xs mt-0.5" style={{ color: "var(--aivo-text-muted)" }}>{t("statActive")}</p>
           </div>
         </AnimatedCard>
         <AnimatedCard delay={600}>
@@ -104,7 +106,7 @@ export default function SubscriptionsPage() {
               <Clock size={22} />
             </div>
             <p className="text-lg font-extrabold" style={{ color: "var(--aivo-text)", fontFamily: "var(--font-display)" }}>{data.trialCount}</p>
-            <p className="text-xs mt-0.5" style={{ color: "var(--aivo-text-muted)" }}>Trials</p>
+            <p className="text-xs mt-0.5" style={{ color: "var(--aivo-text-muted)" }}>{t("statTrials")}</p>
           </div>
         </AnimatedCard>
         <AnimatedCard delay={700}>
@@ -113,15 +115,15 @@ export default function SubscriptionsPage() {
               <AlertTriangle size={22} />
             </div>
             <p className="text-lg font-extrabold" style={{ color: "var(--aivo-text)", fontFamily: "var(--font-display)" }}>{data.pastDueCount}</p>
-            <p className="text-xs mt-0.5" style={{ color: "var(--aivo-text-muted)" }}>Past Due</p>
+            <p className="text-xs mt-0.5" style={{ color: "var(--aivo-text-muted)" }}>{t("statPastDue")}</p>
           </div>
         </AnimatedCard>
       </div>
 
       <ExpandableCard
         icon={<CreditCard size={16} />}
-        title={`All Subscriptions (${data.subscriptions.length})`}
-        subtitle="District and individual plan subscriptions"
+        title={t("allSubscriptionsCount", { count: data.subscriptions.length })}
+        subtitle={t("allSubscriptionsSubtitle")}
         gradient="linear-gradient(135deg, #F59E0B, #D97706)"
         delay={800}
       >
@@ -137,10 +139,10 @@ export default function SubscriptionsPage() {
                     <h3 className="font-bold text-sm truncate" style={{ color: "var(--aivo-text)" }}>{sub.district}</h3>
                     <Badge variant={statusBadge[sub.status] as "success" | "warning" | "error" | "secondary" ?? "default"}>{sub.status.replace("_", " ")}</Badge>
                   </div>
-                  <p className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>{sub.plan} &middot; {sub.learners} learners &middot; Renews {new Date(sub.renewsAt).toLocaleDateString()}</p>
+                  <p className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>{sub.plan} &middot; {t("learnersCount", { count: sub.learners })} &middot; {t("subscriptionRenews", { date: new Date(sub.renewsAt).toLocaleDateString() })}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-bold" style={{ color: "#10B981" }}>${(sub.mrr / 100).toLocaleString()}/mo</p>
+                  <p className="text-sm font-bold" style={{ color: "#10B981" }}>{t("subscriptionMrrValue", { value: (sub.mrr / 100).toLocaleString() })}</p>
                 </div>
               </div>
             </AnimatedCard>

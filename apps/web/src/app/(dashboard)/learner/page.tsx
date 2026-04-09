@@ -141,7 +141,7 @@ export default function LearnerHomePage() {
           <div className="relative">
             <div className="text-3xl mb-1" style={{ animation: "aivo-float 3s ease-in-out infinite 1s" }}>🪙</div>
             <div className="text-white font-extrabold text-xl">680</div>
-            <div className="text-white/70 text-xs font-bold uppercase tracking-wider">Coins</div>
+            <div className="text-white/70 text-xs font-bold uppercase tracking-wider">{t("coins")}</div>
           </div>
         </div>
       </div>
@@ -156,12 +156,12 @@ export default function LearnerHomePage() {
                 </div>
                 <div>
                   <span className="font-bold text-sm" style={{ color: "var(--aivo-text)" }}>{level.title}</span>
-                  <span className="text-xs ml-2" style={{ color: "var(--aivo-text-muted)" }}>Level {level.level}</span>
+                  <span className="text-xs ml-2" style={{ color: "var(--aivo-text-muted)" }}>{t("levelNumber", { level: level.level })}</span>
                 </div>
               </div>
               <div className="flex items-center gap-1 text-xs font-bold" style={{ color: "#7C3AED" }}>
                 <TrendingUp size={14} />
-                {level.currentXp}/{level.requiredXp} XP
+                {t("xpProgress", { current: level.currentXp, required: level.requiredXp })}
               </div>
             </div>
             <div className="w-full h-3 rounded-full overflow-hidden" style={{ backgroundColor: "var(--aivo-purple-50)" }}>
@@ -176,7 +176,7 @@ export default function LearnerHomePage() {
               </div>
             </div>
             <p className="text-xs mt-1.5 font-medium" style={{ color: "var(--aivo-text-muted)" }}>
-              {(level.requiredXp - level.currentXp)} XP to Level {level.level + 1}
+              {t("xpToNextLevel", { xp: level.requiredXp - level.currentXp, level: level.level + 1 })}
             </p>
           </div>
         </AnimatedCard>
@@ -216,15 +216,15 @@ export default function LearnerHomePage() {
             </div>
             <div className="flex-1 min-w-0">
               <h3 className="font-extrabold text-sm" style={{ color: "var(--aivo-text)" }}>
-                Daily Challenge Available!
+                {t("dailyChallengeAvailable")}
               </h3>
               <p className="text-xs" style={{ color: "var(--aivo-text-secondary)" }}>
-                Speed Math Challenge — Win 100 XP bonus!
+                {t("dailyChallengeDescription")}
               </p>
             </div>
             <div className="flex items-center gap-1 text-xs font-bold px-3 py-1.5 rounded-full text-white shrink-0" style={{ background: "linear-gradient(135deg, #7C3AED, #A855F7)" }}>
               <Zap size={12} />
-              Go!
+              {t("go")}
             </div>
           </div>
         </Link>
@@ -233,10 +233,10 @@ export default function LearnerHomePage() {
       <ExpandableCard
         icon={<Sparkles size={16} />}
         title={t("todaysLearningPath")}
-        subtitle="Your personalized activities for today"
+        subtitle={t("learningPathSubtitle")}
         gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
         delay={500}
-        infoText="AIVO picks the best activities for you based on what you've been learning. Complete them to earn XP and keep your streak going!"
+        infoText={t("learningPathInfoText")}
       >
         {error && (
           <div className="mb-4 p-4 rounded-2xl text-sm font-medium" style={{ backgroundColor: "#FFE0E0", color: "#991B1B", border: "1px solid #FECACA" }}>
@@ -293,7 +293,7 @@ export default function LearnerHomePage() {
                         <div className="flex items-center gap-3 text-xs font-semibold mb-1.5" style={{ color: "var(--aivo-text-muted)" }}>
                           <span className="flex items-center gap-1">
                             <Clock size={11} />
-                            {activity.estimatedMinutes} min
+                            {t("minutesShort", { count: activity.estimatedMinutes })}
                           </span>
                           <span className="capitalize flex items-center gap-1">
                             <Target size={11} />
@@ -301,7 +301,7 @@ export default function LearnerHomePage() {
                           </span>
                           <span className="flex items-center gap-1 font-bold" style={{ color: "#7C3AED" }}>
                             <Star size={11} />
-                            +{activity.estimatedMinutes * 3} XP
+                            {t("plusXp", { amount: activity.estimatedMinutes * 3 })}
                           </span>
                         </div>
                         {activity.progress > 0 && (
@@ -325,13 +325,13 @@ export default function LearnerHomePage() {
           <div className="absolute -right-4 -top-4 w-24 h-24 opacity-10 rounded-full" style={{ background: "linear-gradient(135deg, #FBBF24, #F59E0B)" }} />
           <h3 className="font-extrabold text-base mb-3 flex items-center gap-2" style={{ color: "var(--aivo-text)" }}>
             <Gift size={18} style={{ color: "#FBBF24" }} />
-            Recent Achievements
+            {t("recentAchievements")}
           </h3>
           <div className="flex gap-3 overflow-x-auto pb-1">
             {[
-              { emoji: "🔥", name: "Week Warrior", desc: "7-day streak!" },
-              { emoji: "🧮", name: "Math Whiz", desc: "5 perfect scores" },
-              { emoji: "🦋", name: "Social Butterfly", desc: "3 tutors used" },
+              { emoji: "🔥", name: t("achievementWeekWarrior"), desc: t("achievementWeekWarriorDesc") },
+              { emoji: "🧮", name: t("achievementMathWhiz"), desc: t("achievementMathWhizDesc") },
+              { emoji: "🦋", name: t("achievementSocialButterfly"), desc: t("achievementSocialButterflyDesc") },
             ].map((badge, idx) => (
               <div key={idx} className="flex-shrink-0 w-24 text-center p-3 rounded-xl border" style={{ borderColor: "var(--aivo-border)", animation: `aivo-pop-in 0.5s ease-out ${0.8 + idx * 0.15}s both` }}>
                 <div className="text-2xl mb-1">{badge.emoji}</div>
@@ -341,7 +341,7 @@ export default function LearnerHomePage() {
             ))}
             <Link href="/learner/badges" className="flex-shrink-0 w-24 text-center p-3 rounded-xl border flex flex-col items-center justify-center group hover:scale-[1.05] transition-all" style={{ borderColor: "var(--aivo-border)", borderStyle: "dashed" }}>
               <ChevronRight size={20} style={{ color: "var(--aivo-text-muted)" }} />
-              <div className="text-xs font-bold mt-1" style={{ color: "var(--aivo-text-muted)" }}>See All</div>
+              <div className="text-xs font-bold mt-1" style={{ color: "var(--aivo-text-muted)" }}>{t("seeAll")}</div>
             </Link>
           </div>
         </div>

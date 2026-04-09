@@ -4,6 +4,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import {
   Plus, CheckCircle, XCircle, Clock, RefreshCw, Trash2, Send, Webhook,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -46,6 +47,7 @@ const AVAILABLE_EVENT_TYPES = [
 ];
 
 export default function WebhooksPage() {
+  const t = useTranslations("districtAdmin");
   const [endpoints, setEndpoints] = useState<WebhookEndpoint[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -61,7 +63,7 @@ export default function WebhooksPage() {
       const result = await apiFetch<WebhookEndpoint[]>("/api/integrations/webhooks");
       setEndpoints(result ?? []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load webhooks");
+      setError(err instanceof Error ? err.message : t("failedToLoadWebhooks"));
     } finally {
       setLoading(false);
     }
@@ -77,7 +79,7 @@ export default function WebhooksPage() {
       setForm({ url: "", eventTypes: [], description: "" });
       await fetchEndpoints();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create webhook");
+      setError(err instanceof Error ? err.message : t("failedToCreateWebhook"));
     } finally {
       setCreating(false);
     }
@@ -89,7 +91,7 @@ export default function WebhooksPage() {
       await fetchEndpoints();
       if (selectedEndpoint === id) setSelectedEndpoint(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete webhook");
+      setError(err instanceof Error ? err.message : t("failedToDeleteWebhook"));
     }
   }
 
@@ -98,7 +100,7 @@ export default function WebhooksPage() {
       await apiFetch(`/api/integrations/webhooks/${id}/test`, { method: "POST" });
       if (selectedEndpoint === id) await fetchDeliveries(id);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Test failed");
+      setError(err instanceof Error ? err.message : t("testFailed"));
     }
   }
 
@@ -109,7 +111,7 @@ export default function WebhooksPage() {
       setDeliveries(result.items ?? []);
       setSelectedEndpoint(endpointId);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load deliveries");
+      setError(err instanceof Error ? err.message : t("failedToLoadDeliveries"));
     } finally {
       setLoadingDeliveries(false);
     }
@@ -126,16 +128,16 @@ export default function WebhooksPage() {
 
   const deliveryStatusBadge = (status: string) => {
     switch (status) {
-      case "DELIVERED": return <Badge variant="success">Delivered</Badge>;
-      case "FAILED": return <Badge variant="error">Failed</Badge>;
-      case "RETRYING": return <Badge variant="warning">Retrying</Badge>;
-      default: return <Badge variant="secondary">Pending</Badge>;
+      case "DELIVERED": return <Badge variant="success">{t("delivered")}</Badge>;
+      case "FAILED": return <Badge variant="error">{t("failed")}</Badge>;
+      case "RETRYING": return <Badge variant="warning">{t("retrying")}</Badge>;
+      default: return <Badge variant="secondary">{t("pending")}</Badge>;
     }
   };
 
   return (
     <PageWrapper>
-      <BackLink href="/admin/district/integrations">Back to Integrations</BackLink>
+      <BackLink href="/admin/district/integrations">{t("backToIntegrations")}</BackLink>
 
       <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
@@ -143,8 +145,8 @@ export default function WebhooksPage() {
             <Webhook size={22} />
           </div>
           <div>
-            <h1 className="text-2xl font-extrabold">Outbound Webhooks</h1>
-            <p className="mt-0.5 text-white/80 text-sm">Manage webhook endpoints and view delivery logs</p>
+            <h1 className="text-2xl font-extrabold">{t("webhooksTitle")}</h1>
+            <p className="mt-0.5 text-white/80 text-sm">{t("webhooksSubtitle")}</p>
           </div>
         </div>
       </PurpleGradientHeader>
@@ -156,7 +158,7 @@ export default function WebhooksPage() {
       )}
 
       <div className="mb-6">
-        <Button leftIcon={<Plus size={16} />} onClick={() => setShowCreateModal(true)}>Register Endpoint</Button>
+        <Button leftIcon={<Plus size={16} />} onClick={() => setShowCreateModal(true)}>{t("registerEndpoint")}</Button>
       </div>
 
       {loading ? (
@@ -166,8 +168,8 @@ export default function WebhooksPage() {
       ) : endpoints.length === 0 ? (
         <EmptyState
           icon={<Webhook size={32} />}
-          title="No webhook endpoints registered"
-          description="Register an endpoint to receive event notifications."
+          title={t("noWebhookEndpoints")}
+          description={t("noWebhookEndpointsDescription")}
           delay={200}
         />
       ) : (
@@ -181,7 +183,7 @@ export default function WebhooksPage() {
                       <div className="flex items-center gap-2 mb-1">
                         <p className="text-sm font-mono" style={{ color: "var(--aivo-text)" }}>{endpoint.url}</p>
                         <Badge variant={endpoint.enabled ? "success" : "secondary"}>
-                          {endpoint.enabled ? "Active" : "Disabled"}
+                          {endpoint.enabled ? t("active") : t("disabled")}
                         </Badge>
                       </div>
                       {endpoint.description && (
@@ -207,15 +209,15 @@ export default function WebhooksPage() {
         <div className="mt-6">
           <ExpandableCard
             icon={<Clock size={16} />}
-            title="Recent Deliveries"
-            subtitle="Delivery log for the selected endpoint"
+            title={t("recentDeliveries")}
+            subtitle={t("recentDeliveriesSubtitle")}
             gradient="linear-gradient(135deg, #6B7280, #4B5563)"
             delay={400}
           >
             {loadingDeliveries ? (
               <Skeleton height={100} className="w-full rounded-3xl" />
             ) : deliveries.length === 0 ? (
-              <p className="text-sm py-4 text-center" style={{ color: "var(--aivo-text-secondary)" }}>No deliveries yet.</p>
+              <p className="text-sm py-4 text-center" style={{ color: "var(--aivo-text-secondary)" }}>{t("noDeliveriesYet")}</p>
             ) : (
               <div className="space-y-2">
                 {deliveries.map((d) => (
@@ -225,9 +227,9 @@ export default function WebhooksPage() {
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-mono">{d.eventType}</span>
                         {deliveryStatusBadge(d.status)}
-                        {d.httpStatus && <span className="text-xs text-[#A89BB5]">HTTP {d.httpStatus}</span>}
+                        {d.httpStatus && <span className="text-xs text-[#A89BB5]">{t("httpStatus", { status: d.httpStatus })}</span>}
                       </div>
-                      <p className="text-xs text-[#A89BB5]">{new Date(d.createdAt).toLocaleString()} — {d.attempts} attempt(s)</p>
+                      <p className="text-xs text-[#A89BB5]">{new Date(d.createdAt).toLocaleString()} — {t("attempts", { count: d.attempts })}</p>
                     </div>
                   </div>
                 ))}
@@ -240,27 +242,27 @@ export default function WebhooksPage() {
       <Modal
         open={showCreateModal}
         onClose={() => !creating && setShowCreateModal(false)}
-        title="Register Webhook Endpoint"
+        title={t("registerWebhookModal")}
         footer={
           <div className="flex justify-end gap-2">
-            <Button variant="ghost" onClick={() => setShowCreateModal(false)} disabled={creating}>Cancel</Button>
-            <Button onClick={handleCreate} loading={creating} disabled={!form.url || form.eventTypes.length === 0}>Register</Button>
+            <Button variant="ghost" onClick={() => setShowCreateModal(false)} disabled={creating}>{t("cancel")}</Button>
+            <Button onClick={handleCreate} loading={creating} disabled={!form.url || form.eventTypes.length === 0}>{t("register")}</Button>
           </div>
         }
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>Endpoint URL</label>
-            <input value={form.url} onChange={(e) => setForm({ ...form, url: e.target.value })} placeholder="https://your-server.com/webhooks/aivo"
+            <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>{t("endpointUrlLabel")}</label>
+            <input value={form.url} onChange={(e) => setForm({ ...form, url: e.target.value })} placeholder={t("endpointUrlPlaceholder")}
               className="w-full px-4 py-2.5 rounded-3xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none text-sm" />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>Description (optional)</label>
-            <input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="e.g., District data warehouse"
+            <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>{t("descriptionOptionalLabel")}</label>
+            <input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder={t("descriptionPlaceholder")}
               className="w-full px-4 py-2.5 rounded-3xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none text-sm" />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2" style={{ color: "var(--aivo-text)" }}>Event Types</label>
+            <label className="block text-sm font-medium mb-2" style={{ color: "var(--aivo-text)" }}>{t("eventTypesLabel")}</label>
             <div className="space-y-2">
               {AVAILABLE_EVENT_TYPES.map((et) => (
                 <label key={et} className="flex items-center gap-2 cursor-pointer">

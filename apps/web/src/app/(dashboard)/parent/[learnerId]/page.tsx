@@ -85,7 +85,7 @@ export default function ChildDashboardPage() {
         setLearner(learnerRes.learner);
         setProgress(progressData);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load data");
+        setError(err instanceof Error ? err.message : t("failedToLoadData"));
       } finally {
         setLoading(false);
       }
@@ -112,7 +112,7 @@ export default function ChildDashboardPage() {
       <div className="text-center py-16">
         <p className="text-red-500 mb-4">{error}</p>
         <Button variant="outline" onClick={() => window.location.reload()}>
-          Retry
+          {t("retry")}
         </Button>
       </div>
     );
@@ -130,14 +130,14 @@ export default function ChildDashboardPage() {
   };
 
   const quickLinks = [
-    { href: `/parent/${learnerId}/brain`, label: t("brainProfile"), icon: <Brain size={20} />, gradient: "linear-gradient(135deg, #7C3AED, #A855F7)", description: "AI learning insights" },
-    { href: `/parent/${learnerId}/functioning-level`, label: t("functioningLevel", { defaultValue: "Functioning Level" }), icon: <Activity size={20} />, gradient: "linear-gradient(135deg, #8B5CF6, #6D28D9)", description: "Support level" },
-    { href: `/parent/${learnerId}/recommendations`, label: t("recommendations"), icon: <Lightbulb size={20} />, gradient: "linear-gradient(135deg, #F59E0B, #D97706)", description: "AI suggestions" },
-    { href: `/parent/${learnerId}/gradebook`, label: t("gradebook"), icon: <GraduationCap size={20} />, gradient: "linear-gradient(135deg, #2DD4BF, #14B8A6)", description: "Subject mastery" },
-    { href: `/parent/${learnerId}/iep`, label: "IEP Goals", icon: <FileText size={20} />, gradient: "linear-gradient(135deg, #3B82F6, #2563EB)", description: "Goals & documents" },
-    { href: `/parent/${learnerId}/tutors`, label: t("tutors"), icon: <Bot size={20} />, gradient: "linear-gradient(135deg, #38BDF8, #0EA5E9)", description: "AI tutors" },
-    { href: `/parent/${learnerId}/collaboration`, label: "Team", icon: <Users size={20} />, gradient: "linear-gradient(135deg, #10B981, #059669)", description: "Care team" },
-    { href: `/parent/${learnerId}/settings`, label: "Settings", icon: <Settings size={20} />, gradient: "linear-gradient(135deg, #6B7280, #4B5563)", description: "Privacy & data" },
+    { href: `/parent/${learnerId}/brain`, label: t("brainProfile"), icon: <Brain size={20} />, gradient: "linear-gradient(135deg, #7C3AED, #A855F7)", description: t("aiLearningInsights") },
+    { href: `/parent/${learnerId}/functioning-level`, label: t("functioningLevel", { defaultValue: "Functioning Level" }), icon: <Activity size={20} />, gradient: "linear-gradient(135deg, #8B5CF6, #6D28D9)", description: t("supportLevel") },
+    { href: `/parent/${learnerId}/recommendations`, label: t("recommendations"), icon: <Lightbulb size={20} />, gradient: "linear-gradient(135deg, #F59E0B, #D97706)", description: t("aiSuggestions") },
+    { href: `/parent/${learnerId}/gradebook`, label: t("gradebook"), icon: <GraduationCap size={20} />, gradient: "linear-gradient(135deg, #2DD4BF, #14B8A6)", description: t("subjectMastery") },
+    { href: `/parent/${learnerId}/iep`, label: t("iepGoals"), icon: <FileText size={20} />, gradient: "linear-gradient(135deg, #3B82F6, #2563EB)", description: t("goalsAndDocuments") },
+    { href: `/parent/${learnerId}/tutors`, label: t("tutors"), icon: <Bot size={20} />, gradient: "linear-gradient(135deg, #38BDF8, #0EA5E9)", description: t("aiTutorsShort") },
+    { href: `/parent/${learnerId}/collaboration`, label: t("team"), icon: <Users size={20} />, gradient: "linear-gradient(135deg, #10B981, #059669)", description: t("careTeam") },
+    { href: `/parent/${learnerId}/settings`, label: t("settings"), icon: <Settings size={20} />, gradient: "linear-gradient(135deg, #6B7280, #4B5563)", description: t("privacyAndData") },
   ];
 
   return (
@@ -158,25 +158,25 @@ export default function ChildDashboardPage() {
             <p className="text-white/80 text-sm">
               {learner?.enrolledGrade ?? t("gradeNotSet")} &middot; {levelLabel(learner?.functioningLevel ?? "STANDARD")}
             </p>
-            <p className="text-white/60 text-xs mt-0.5">Your child&apos;s learning hub — everything in one place</p>
+            <p className="text-white/60 text-xs mt-0.5">{t("childLearningHub")}</p>
           </div>
         </div>
       </PurpleGradientHeader>
 
       <div className="grid gap-3 grid-cols-2 lg:grid-cols-4 mb-8">
-        <StatCard icon={<Trophy size={18} />} label="Total XP" value={xp?.totalXp ?? "--"} color="#7C3AED" delay={100} />
-        <StatCard icon={<Flame size={18} />} label="Day Streak" value={streak?.currentStreak ?? "--"} color="#FB923C" delay={200} />
-        <StatCard icon={<TrendingUp size={18} />} label="Accuracy" value={`${progress?.averageAccuracy ?? "--"}%`} color="#2DD4BF" delay={300} />
-        <StatCard icon={<BookOpen size={18} />} label="Sessions This Week" value={progress?.sessionsThisWeek ?? "--"} color="#3B82F6" delay={400} />
+        <StatCard icon={<Trophy size={18} />} label={t("totalXp")} value={xp?.totalXp ?? "--"} color="#7C3AED" delay={100} />
+        <StatCard icon={<Flame size={18} />} label={t("dayStreak")} value={streak?.currentStreak ?? "--"} color="#FB923C" delay={200} />
+        <StatCard icon={<TrendingUp size={18} />} label={t("accuracy")} value={`${progress?.averageAccuracy ?? "--"}%`} color="#2DD4BF" delay={300} />
+        <StatCard icon={<BookOpen size={18} />} label={t("sessionsThisWeek")} value={progress?.sessionsThisWeek ?? "--"} color="#3B82F6" delay={400} />
       </div>
 
       <ExpandableCard
         icon={<Brain size={16} />}
-        title="Quick Navigation"
-        subtitle="Jump to any section of your child's dashboard"
+        title={t("quickNavigation")}
+        subtitle={t("quickNavigationSubtitle")}
         gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
         delay={500}
-        infoText="These shortcuts take you to different areas of your child's learning profile. Each section shows different aspects of how AIVO is helping your child learn."
+        infoText={t("quickNavigationInfo")}
       >
         <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
           {quickLinks.map((link, idx) =>
@@ -215,7 +215,7 @@ export default function ChildDashboardPage() {
               <Home size={20} />
             </div>
             <span className="text-sm font-bold block" style={{ color: "var(--aivo-text)" }}>{t("learnerDashboard", { defaultValue: "Learner View" })}</span>
-            <span className="text-[10px]" style={{ color: "var(--aivo-text-muted)" }}>See as learner</span>
+            <span className="text-[10px]" style={{ color: "var(--aivo-text-muted)" }}>{t("seeAsLearner")}</span>
           </div>
         </div>
       </ExpandableCard>
@@ -224,13 +224,13 @@ export default function ChildDashboardPage() {
         <div className="mt-6">
           <ExpandableCard
             icon={<GraduationCap size={16} />}
-            title="Subject Mastery"
-            subtitle="How your child is progressing in each subject"
+            title={t("subjectMastery")}
+            subtitle={t("subjectMasterySubtitle")}
             gradient="linear-gradient(135deg, #2DD4BF, #14B8A6)"
             delay={600}
-            infoText="This shows how well your child has mastered each subject. Higher percentages mean stronger understanding. AIVO adjusts difficulty based on these scores."
+            infoText={t("subjectMasteryInfo")}
             linkHref={`/parent/${learnerId}/gradebook`}
-            linkLabel="View full gradebook"
+            linkLabel={t("viewFullGradebook")}
           >
             <div className="space-y-4">
               {progress.recentSubjects.map((subject) => (

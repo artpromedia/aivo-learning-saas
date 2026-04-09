@@ -98,7 +98,7 @@ export default function QuestsPage() {
           </div>
           <div>
             <h1 className="text-2xl font-extrabold">{t("questWorlds")}</h1>
-            <p className="text-white/80 text-sm">Explore worlds and complete quests to earn XP!</p>
+            <p className="text-white/80 text-sm">{t("questWorldsSubtitle")}</p>
           </div>
         </div>
       </PurpleGradientHeader>

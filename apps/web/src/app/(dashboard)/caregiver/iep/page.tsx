@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Target } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -17,6 +18,7 @@ interface IepGoal {
 }
 
 export default function CaregiverIepPage() {
+  const t = useTranslations("caregiver");
   const [goals, setGoals] = useState<IepGoal[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -52,27 +54,27 @@ export default function CaregiverIepPage() {
 
   return (
     <PageWrapper>
-      <BackLink href="/caregiver">Back to Dashboard</BackLink>
+      <BackLink href="/caregiver">{t("backToDashboard")}</BackLink>
 
       <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20"><Target size={22} /></div>
           <div>
-            <h1 className="text-2xl font-extrabold">IEP Goals</h1>
-            <p className="text-white/80 text-sm">Individualized Education Program progress</p>
+            <h1 className="text-2xl font-extrabold">{t("iepTitle")}</h1>
+            <p className="text-white/80 text-sm">{t("iepSubtitle")}</p>
           </div>
         </div>
       </PurpleGradientHeader>
 
       <div className="grid gap-3 grid-cols-3 mb-8">
-        <StatCard icon={<Target size={18} />} label="Goals" value={goals.length} color="#3B82F6" delay={100} />
-        <StatCard icon={<Target size={18} />} label="Avg Progress" value={`${avgProgress}%`} color="#7C3AED" delay={200} />
-        <StatCard icon={<Target size={18} />} label="Met" value={goals.filter((g) => g.progressPct >= 100).length} color="#10B981" delay={300} />
+        <StatCard icon={<Target size={18} />} label={t("statGoals")} value={goals.length} color="#3B82F6" delay={100} />
+        <StatCard icon={<Target size={18} />} label={t("statAvgProgress")} value={`${avgProgress}%`} color="#7C3AED" delay={200} />
+        <StatCard icon={<Target size={18} />} label={t("statMet")} value={goals.filter((g) => g.progressPct >= 100).length} color="#10B981" delay={300} />
       </div>
 
-      <ExpandableCard icon={<Target size={16} />} title="All IEP Goals" subtitle="Track progress toward education goals" gradient="linear-gradient(135deg, #3B82F6, #2563EB)" delay={400} infoText="IEP goals are set by the care team. AIVO tracks progress through assessments and learning sessions.">
+      <ExpandableCard icon={<Target size={16} />} title={t("allIepGoalsTitle")} subtitle={t("allIepGoalsSubtitle")} gradient="linear-gradient(135deg, #3B82F6, #2563EB)" delay={400} infoText={t("allIepGoalsInfo")}>
         {goals.length === 0 ? (
-          <p className="text-sm" style={{ color: "var(--aivo-text-muted)" }}>No IEP goals set yet.</p>
+          <p className="text-sm" style={{ color: "var(--aivo-text-muted)" }}>{t("noGoalsYet")}</p>
         ) : (
           <div className="space-y-5">
             {goals.map((goal, idx) => (
@@ -80,12 +82,12 @@ export default function CaregiverIepPage() {
                 <div className="p-4 rounded-xl" style={{ backgroundColor: "var(--aivo-bg)", border: "1px solid var(--aivo-border)" }}>
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="text-sm font-bold" style={{ color: "var(--aivo-text)" }}>{goal.title}</h3>
-                    {goal.progressPct >= 100 ? <Badge variant="success">Met</Badge> : goal.progressPct >= 60 ? <Badge variant="default">On Track</Badge> : <Badge variant="warning">Needs Focus</Badge>}
+                    {goal.progressPct >= 100 ? <Badge variant="success">{t("badgeMet")}</Badge> : goal.progressPct >= 60 ? <Badge variant="default">{t("badgeOnTrack")}</Badge> : <Badge variant="warning">{t("badgeNeedsFocus")}</Badge>}
                   </div>
                   <ProgressBar value={goal.progressPct} size="sm" showLabel={false} />
                   <div className="flex items-center justify-between mt-2">
                     <span className="text-xs font-semibold text-[#7C3AED]">{Math.round(goal.progressPct)}%</span>
-                    {goal.targetDate && <span className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>Target: {formatDate(goal.targetDate)}</span>}
+                    {goal.targetDate && <span className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>{t("targetLabel", { date: formatDate(goal.targetDate) })}</span>}
                   </div>
                 </div>
               </AnimatedCard>

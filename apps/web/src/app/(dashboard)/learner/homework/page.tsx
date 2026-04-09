@@ -53,7 +53,7 @@ export default function HomeworkPage() {
         );
         setAssignments(data.assignments);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load homework");
+        setError(err instanceof Error ? err.message : t("failedToLoadHomework"));
       } finally {
         setLoading(false);
       }
@@ -93,11 +93,11 @@ export default function HomeworkPage() {
         const res = await fetch(`${apiBase}/api/tutors/homework/upload`, { method: "POST", credentials: "include", body: formData });
         const data: UploadResponse = await res.json();
         if (data.locked) { setLockedInfo({ locked: true, requiredSku: data.requiredSku ?? "" }); return; }
-        if (!res.ok) throw new Error("Upload failed");
+        if (!res.ok) throw new Error(t("uploadFailed"));
         if (data.assignment) setAssignments((prev) => [data.assignment!, ...prev]);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Upload failed");
+      setError(err instanceof Error ? err.message : t("errorUploadFailed"));
     } finally {
       setUploading(false);
     }
@@ -134,7 +134,7 @@ export default function HomeworkPage() {
           </div>
           <div>
             <h1 className="text-2xl font-extrabold">{t("homework")}</h1>
-            <p className="text-white/80 text-sm">Upload homework and get AI-adapted practice problems</p>
+            <p className="text-white/80 text-sm">{t("homeworkSubtitle")}</p>
           </div>
         </div>
       </PurpleGradientHeader>
@@ -155,7 +155,7 @@ export default function HomeworkPage() {
                 <p className="text-sm" style={{ color: "var(--aivo-text-secondary)" }}>{t("subscribeToUnlockHomework")}</p>
               </div>
               <Link href="/learner/tutors">
-                <Button size="sm" leftIcon={<Sparkles size={16} />}>Subscribe</Button>
+                <Button size="sm" leftIcon={<Sparkles size={16} />}>{t("homeworkSubscribe")}</Button>
               </Link>
             </CardBody>
           </Card>
@@ -179,8 +179,8 @@ export default function HomeworkPage() {
               {uploading ? (
                 <div className="flex flex-col items-center">
                   <Loader2 className="text-[#7C3AED] animate-spin mb-3" size={32} />
-                  <p className="text-sm" style={{ color: "var(--aivo-text-secondary)" }}>Processing homework...</p>
-                  <p className="text-xs mt-1" style={{ color: "var(--aivo-text-muted)" }}>Extracting text, detecting subject, and adapting problems</p>
+                  <p className="text-sm" style={{ color: "var(--aivo-text-secondary)" }}>{t("homeworkProcessing")}</p>
+                  <p className="text-xs mt-1" style={{ color: "var(--aivo-text-muted)" }}>{t("homeworkProcessingDetails")}</p>
                 </div>
               ) : (
                 <>
@@ -199,7 +199,7 @@ export default function HomeworkPage() {
         <ExpandableCard
           icon={<FileText size={16} />}
           title={t("inProgressCount", { count: activeAssignments.length })}
-          subtitle="Assignments you're currently working on"
+          subtitle={t("homeworkInProgressSubtitle")}
           gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
           delay={300}
         >
@@ -213,16 +213,16 @@ export default function HomeworkPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-medium truncate" style={{ color: "var(--aivo-text)" }}>
-                      {assignment.subject.charAt(0).toUpperCase() + assignment.subject.slice(1)} Homework
+                      {assignment.subject.charAt(0).toUpperCase() + assignment.subject.slice(1)} {t("homework")}
                     </h3>
                     <div className="flex items-center gap-2 text-xs" style={{ color: "var(--aivo-text-secondary)" }}>
                       <Badge variant="secondary">{assignment.subject}</Badge>
                       <Badge variant="secondary">{assignment.homeworkMode}</Badge>
-                      <span>{(assignment.adaptedProblems as unknown[])?.length ?? 0} problems</span>
+                      <span>{t("homeworkProblemsCount", { count: (assignment.adaptedProblems as unknown[])?.length ?? 0 })}</span>
                     </div>
                   </div>
                   <Badge variant={assignment.status === "IN_PROGRESS" ? "warning" : "default"}>
-                    {assignment.status === "IN_PROGRESS" ? "Active" : "Ready"}
+                    {assignment.status === "IN_PROGRESS" ? t("homeworkActive") : t("homeworkReady")}
                   </Badge>
                   <ChevronRight className="transition-all group-hover:translate-x-1 shrink-0" size={18} style={{ color: "var(--aivo-text-muted)" }} />
                 </div>
@@ -237,7 +237,7 @@ export default function HomeworkPage() {
           <ExpandableCard
             icon={<BookOpen size={16} />}
             title={t("completedCount", { count: completedAssignments.length })}
-            subtitle="Your completed assignments"
+            subtitle={t("homeworkCompletedSubtitle")}
             gradient="linear-gradient(135deg, #10B981, #059669)"
             delay={400}
             defaultExpanded={false}
@@ -252,14 +252,14 @@ export default function HomeworkPage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="font-medium truncate" style={{ color: "var(--aivo-text)" }}>
-                        {assignment.subject.charAt(0).toUpperCase() + assignment.subject.slice(1)} Homework
+                        {assignment.subject.charAt(0).toUpperCase() + assignment.subject.slice(1)} {t("homework")}
                       </h3>
                       <div className="flex items-center gap-2 text-xs" style={{ color: "var(--aivo-text-secondary)" }}>
                         <Badge variant="secondary">{assignment.subject}</Badge>
                         <span className="flex items-center gap-1"><Clock size={12} /> {new Date(assignment.createdAt).toLocaleDateString()}</span>
                       </div>
                     </div>
-                    <Badge variant="success">Done</Badge>
+                    <Badge variant="success">{t("homeworkDone")}</Badge>
                   </div>
                 </Link>
               ))}

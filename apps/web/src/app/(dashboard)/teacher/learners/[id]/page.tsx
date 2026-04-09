@@ -174,16 +174,16 @@ export default function LearnerHubPage() {
 
   const levelLabel = (level: string) => {
     const labels: Record<string, string> = {
-      level1: "Needs Support",
-      level2: "Progressing",
-      level3: "On Track",
-      Supported: "Supported",
-      Standard: "Standard",
-      SUPPORTED: "Supported",
-      STANDARD: "Standard",
-      LOW_VERBAL: "Low Verbal",
-      NON_VERBAL: "Non-Verbal",
-      PRE_SYMBOLIC: "Pre-Symbolic",
+      level1: t("levelNeedsSupport"),
+      level2: t("levelProgressing"),
+      level3: t("levelOnTrack"),
+      Supported: t("levelSupported"),
+      Standard: t("levelStandard"),
+      SUPPORTED: t("levelSupported"),
+      STANDARD: t("levelStandard"),
+      LOW_VERBAL: t("levelLowVerbal"),
+      NON_VERBAL: t("levelNonVerbal"),
+      PRE_SYMBOLIC: t("levelPreSymbolic"),
     };
     return labels[level] ?? level;
   };
@@ -226,45 +226,45 @@ export default function LearnerHubPage() {
   const quickLinks = [
     {
       href: `/teacher/learners/${learnerId}/brain`,
-      label: "Brain Profile",
+      label: t("brainProfileLink"),
       icon: <Brain size={20} />,
       gradient: "linear-gradient(135deg, #7C3AED, #A855F7)",
-      description: "AI learning insights",
+      description: t("brainProfileLinkDesc"),
     },
     {
       href: `/teacher/learners/${learnerId}/accommodations`,
-      label: "Accommodations",
+      label: t("accommodationsLink"),
       icon: <ShieldCheck size={20} />,
       gradient: "linear-gradient(135deg, #8B5CF6, #6D28D9)",
-      description: "Support & adaptations",
+      description: t("accommodationsLinkDesc"),
     },
     {
       href: `/teacher/learners/${learnerId}/iep`,
-      label: "IEP Goals",
+      label: t("iepGoalsLink"),
       icon: <Target size={20} />,
       gradient: "linear-gradient(135deg, #3B82F6, #2563EB)",
-      description: "Goals & progress",
+      description: t("iepGoalsLinkDesc"),
     },
     {
       href: `/teacher/learners/${learnerId}/gradebook`,
-      label: "Gradebook",
+      label: t("gradebookLink"),
       icon: <GraduationCap size={20} />,
       gradient: "linear-gradient(135deg, #2DD4BF, #14B8A6)",
-      description: "Subject mastery",
+      description: t("gradebookLinkDesc"),
     },
     {
       href: `/teacher/learners/${learnerId}/sessions`,
-      label: "Sessions",
+      label: t("sessionsLink"),
       icon: <Clock size={20} />,
       gradient: "linear-gradient(135deg, #F59E0B, #D97706)",
-      description: "Activity history",
+      description: t("sessionsLinkDesc"),
     },
     {
       href: `/teacher/learners/${learnerId}/family`,
-      label: "Family",
+      label: t("familyLink"),
       icon: <Users size={20} />,
       gradient: "linear-gradient(135deg, #F472B6, #EC4899)",
-      description: "Parents & guardians",
+      description: t("familyLinkDesc"),
     },
   ];
 
@@ -283,7 +283,7 @@ export default function LearnerHubPage() {
               {levelLabel(brain.functioningLevel)}
             </p>
             <p className="text-white/60 text-xs mt-0.5">
-              Learner hub — everything about this student in one place
+              {t("learnerHubSubtitle")}
             </p>
           </div>
         </div>
@@ -292,28 +292,28 @@ export default function LearnerHubPage() {
       <div className="grid gap-3 grid-cols-2 lg:grid-cols-4 mb-8">
         <StatCard
           icon={<TrendingUp size={18} />}
-          label="Avg Mastery"
+          label={t("avgMasteryLabel")}
           value={`${avgMastery}%`}
           color="#7C3AED"
           delay={100}
         />
         <StatCard
           icon={<BookOpen size={18} />}
-          label="Recent Sessions"
+          label={t("recentSessionsLabel")}
           value={totalSessions}
           color="#3B82F6"
           delay={200}
         />
         <StatCard
           icon={<ShieldCheck size={18} />}
-          label="Accommodations"
+          label={t("accommodationsLabel")}
           value={brain.accommodations.length}
           color="#10B981"
           delay={300}
         />
         <StatCard
           icon={<Target size={18} />}
-          label="IEP Goals"
+          label={t("iepGoalsLabel")}
           value={brain.iepGoals.length}
           color="#F59E0B"
           delay={400}
@@ -322,11 +322,11 @@ export default function LearnerHubPage() {
 
       <ExpandableCard
         icon={<Brain size={16} />}
-        title="Quick Navigation"
-        subtitle="Jump to any section of this learner's profile"
+        title={t("quickNavigationTitle")}
+        subtitle={t("quickNavigationSubtitle")}
         gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
         delay={500}
-        infoText="These shortcuts let you explore different aspects of the learner's AIVO profile. Each section provides insights into how the platform is adapting to their needs."
+        infoText={t("quickNavigationInfo")}
       >
         <div className="grid gap-3 grid-cols-2 lg:grid-cols-3">
           {quickLinks.map((link) => (
@@ -366,13 +366,13 @@ export default function LearnerHubPage() {
         <div className="mt-6">
           <ExpandableCard
             icon={<GraduationCap size={16} />}
-            title="Subject Mastery"
-            subtitle="How this learner is progressing in each subject"
+            title={t("subjectMasteryTitle")}
+            subtitle={t("subjectMasterySubtitle")}
             gradient="linear-gradient(135deg, #2DD4BF, #14B8A6)"
             delay={600}
-            infoText="Subject mastery scores show how well the learner has demonstrated understanding. AIVO continuously adapts content difficulty based on these scores."
+            infoText={t("subjectMasteryInfo")}
             linkHref={`/teacher/learners/${learnerId}/gradebook`}
-            linkLabel="View full gradebook"
+            linkLabel={t("viewFullGradebook")}
           >
             <div className="space-y-4">
               {brain.subjects.map((subject) => (
@@ -407,23 +407,23 @@ export default function LearnerHubPage() {
       <div className="mt-6">
         <ExpandableCard
           icon={<Send size={16} />}
-          title="Submit Insight"
-          subtitle="Share your observations about this learner"
+          title={t("submitInsightTitle")}
+          subtitle={t("submitInsightSubtitle")}
           gradient="linear-gradient(135deg, #F59E0B, #D97706)"
           delay={700}
-          infoText="Your observations help AIVO fine-tune its approach for this learner. Notes about classroom behavior, social interactions, or learning breakthroughs are all valuable."
+          infoText={t("submitInsightInfo")}
         >
           <textarea
             value={insightText}
             onChange={(e) => setInsightText(e.target.value)}
-            placeholder="Share observations about this learner's progress, behavior, or learning patterns..."
+            placeholder={t("insightPlaceholder")}
             rows={3}
             className="w-full rounded-3xl border border-[#E8DDF0] bg-white text-[var(--aivo-text)] px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent resize-none"
           />
           <div className="flex items-center justify-between mt-3">
             {insightSuccess && (
               <span className="text-sm text-green-600 font-medium">
-                Insight submitted successfully!
+                {t("insightSubmittedMsg")}
               </span>
             )}
             {!insightSuccess && <span />}
@@ -434,7 +434,7 @@ export default function LearnerHubPage() {
               leftIcon={<Send size={14} />}
               onClick={handleSubmitInsight}
             >
-              Submit
+              {t("submit")}
             </Button>
           </div>
         </ExpandableCard>
@@ -443,11 +443,11 @@ export default function LearnerHubPage() {
       <div className="mt-6">
         <ExpandableCard
           icon={<Upload size={16} />}
-          title="Quick Upload IEP"
-          subtitle="Upload IEP documents for this learner"
+          title={t("quickUploadIepTitle")}
+          subtitle={t("quickUploadIepSubtitle")}
           gradient="linear-gradient(135deg, #6B7280, #4B5563)"
           delay={800}
-          infoText="Upload IEP documents to help AIVO better understand this learner's needs. Accepted formats: PDF, Word documents."
+          infoText={t("quickUploadIepInfo")}
         >
           <div className="flex items-center gap-4">
             <input
@@ -465,11 +465,11 @@ export default function LearnerHubPage() {
               leftIcon={<Upload size={14} />}
               onClick={() => iepFileRef.current?.click()}
             >
-              Choose File
+              {t("chooseFile")}
             </Button>
             {iepSuccess && (
               <span className="text-sm text-green-600 font-medium">
-                IEP uploaded successfully!
+                {t("iepUploadedSuccess")}
               </span>
             )}
           </div>

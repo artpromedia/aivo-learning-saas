@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Building2, Users, TrendingUp, BookOpen, CreditCard, Calendar, MapPin, Mail, Phone } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
 import { PageWrapper, BackLink, StatCard, ExpandableCard, AnimatedCard } from "@/components/ui/PageDesign";
 import { Badge } from "@/components/ui/Badge";
@@ -35,6 +36,7 @@ export default function DistrictDetailPage() {
   const districtId = params.id as string;
   const [data, setData] = useState<DistrictDetail | null>(null);
   const [loading, setLoading] = useState(true);
+  const t = useTranslations("platformAdmin");
 
   useEffect(() => {
     async function fetchData() {
@@ -65,7 +67,7 @@ export default function DistrictDetailPage() {
 
   return (
     <PageWrapper>
-      <BackLink href="/admin/platform/districts">Back to Districts</BackLink>
+      <BackLink href="/admin/platform/districts">{t("backToDistricts")}</BackLink>
 
       <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-4">
@@ -83,30 +85,30 @@ export default function DistrictDetailPage() {
       </PurpleGradientHeader>
 
       <div className="grid gap-3 grid-cols-2 lg:grid-cols-4 mb-8">
-        <StatCard icon={<Users size={18} />} label="Learners" value={data.learnerCount} color="#7C3AED" delay={100} />
-        <StatCard icon={<Users size={18} />} label="Teachers" value={data.teacherCount} color="#3B82F6" delay={200} />
-        <StatCard icon={<BookOpen size={18} />} label="Classrooms" value={data.classroomCount} color="#2DD4BF" delay={300} />
-        <StatCard icon={<TrendingUp size={18} />} label="Avg Mastery" value={`${data.avgMastery}%`} color="#10B981" delay={400} />
+        <StatCard icon={<Users size={18} />} label={t("districtDetailLearners")} value={data.learnerCount} color="#7C3AED" delay={100} />
+        <StatCard icon={<Users size={18} />} label={t("districtDetailTeachers")} value={data.teacherCount} color="#3B82F6" delay={200} />
+        <StatCard icon={<BookOpen size={18} />} label={t("districtDetailClassrooms")} value={data.classroomCount} color="#2DD4BF" delay={300} />
+        <StatCard icon={<TrendingUp size={18} />} label={t("statAvgMastery")} value={`${data.avgMastery}%`} color="#10B981" delay={400} />
       </div>
 
       <ExpandableCard
         icon={<Mail size={16} />}
-        title="Contact Information"
-        subtitle="District administrator details"
+        title={t("districtContactTitle")}
+        subtitle={t("districtContactSubtitle")}
         gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
         delay={500}
       >
         <div className="grid gap-4 sm:grid-cols-3">
           <div className="rounded-xl p-3" style={{ backgroundColor: "var(--aivo-bg)" }}>
-            <p className="text-xs font-bold mb-1" style={{ color: "var(--aivo-text-muted)" }}>Contact Name</p>
+            <p className="text-xs font-bold mb-1" style={{ color: "var(--aivo-text-muted)" }}>{t("districtContactName")}</p>
             <p className="text-sm font-bold" style={{ color: "var(--aivo-text)" }}>{data.contactName}</p>
           </div>
           <div className="rounded-xl p-3" style={{ backgroundColor: "var(--aivo-bg)" }}>
-            <p className="text-xs font-bold mb-1" style={{ color: "var(--aivo-text-muted)" }}>Email</p>
+            <p className="text-xs font-bold mb-1" style={{ color: "var(--aivo-text-muted)" }}>{t("districtContactEmail")}</p>
             <p className="text-sm font-bold" style={{ color: "var(--aivo-text)" }}>{data.contactEmail}</p>
           </div>
           <div className="rounded-xl p-3" style={{ backgroundColor: "var(--aivo-bg)" }}>
-            <p className="text-xs font-bold mb-1" style={{ color: "var(--aivo-text-muted)" }}>Phone</p>
+            <p className="text-xs font-bold mb-1" style={{ color: "var(--aivo-text-muted)" }}>{t("districtContactPhone")}</p>
             <p className="text-sm font-bold" style={{ color: "var(--aivo-text)" }}>{data.contactPhone}</p>
           </div>
         </div>
@@ -115,14 +117,14 @@ export default function DistrictDetailPage() {
       <div className="mt-6">
         <ExpandableCard
           icon={<CreditCard size={16} />}
-          title="License Usage"
-          subtitle={`${data.licensesUsed} of ${data.licensesTotal} licenses used`}
+          title={t("licenseUsageTitle")}
+          subtitle={t("licenseUsageSubtitle", { used: data.licensesUsed, total: data.licensesTotal })}
           gradient="linear-gradient(135deg, #F59E0B, #D97706)"
           delay={600}
         >
           <div className="mb-2 flex justify-between text-sm">
-            <span style={{ color: "var(--aivo-text)" }}>{data.licensesUsed} used</span>
-            <span style={{ color: "var(--aivo-text-muted)" }}>{data.licensesTotal} total</span>
+            <span style={{ color: "var(--aivo-text)" }}>{t("licensesUsedLabel", { count: data.licensesUsed })}</span>
+            <span style={{ color: "var(--aivo-text-muted)" }}>{t("licensesTotalLabel", { count: data.licensesTotal })}</span>
           </div>
           <ProgressBar value={Math.round((data.licensesUsed / data.licensesTotal) * 100)} />
         </ExpandableCard>
@@ -131,8 +133,8 @@ export default function DistrictDetailPage() {
       <div className="mt-6">
         <ExpandableCard
           icon={<Users size={16} />}
-          title={`Top Teachers (${data.topTeachers.length})`}
-          subtitle="Highest-performing teachers in this district"
+          title={t("topTeachersCount", { count: data.topTeachers.length })}
+          subtitle={t("topTeachersSubtitle")}
           gradient="linear-gradient(135deg, #2DD4BF, #14B8A6)"
           delay={700}
         >
@@ -145,7 +147,7 @@ export default function DistrictDetailPage() {
                   </div>
                   <div className="flex-1">
                     <h3 className="font-bold text-sm" style={{ color: "var(--aivo-text)" }}>{teacher.name}</h3>
-                    <p className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>{teacher.learners} learners</p>
+                    <p className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>{t("learnersCount", { count: teacher.learners })}</p>
                   </div>
                   <span className="text-sm font-bold" style={{ color: "#7C3AED" }}>{teacher.mastery}%</span>
                 </div>

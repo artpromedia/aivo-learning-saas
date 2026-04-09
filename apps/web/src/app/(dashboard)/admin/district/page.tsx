@@ -25,6 +25,7 @@ interface DistrictOverview {
 
 export default function DistrictOverviewPage() {
   const t = useTranslations("dashboard");
+  const td = useTranslations("districtAdmin");
   const { user } = useAuthStore();
   const [data, setData] = useState<DistrictOverview | null>(null);
   const [loading, setLoading] = useState(true);
@@ -103,10 +104,10 @@ export default function DistrictOverviewPage() {
             <ExpandableCard
               icon={<Target size={16} />}
               title={t("functioningLevelDist")}
-              subtitle="Distribution of learners across functioning levels"
+              subtitle={td("functioningLevelDistSubtitle")}
               gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
               delay={500}
-              infoText="This chart shows how learners are distributed across the three functioning levels in your district."
+              infoText={td("functioningLevelDistInfo")}
             >
               <div className="space-y-4">
                 {[

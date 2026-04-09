@@ -78,7 +78,7 @@ export default function CollaborationPage() {
     const effectiveRole = roleOverride ?? inviteRole;
 
     if (effectiveRole === "caregiver" && !canInviteCaregivers) {
-      setError(`You can only invite up to ${MAX_CAREGIVERS} caregivers per child. Remove an existing caregiver first.`);
+      setError(t("caregiverLimitError", { max: MAX_CAREGIVERS }));
       return;
     }
 
@@ -169,15 +169,15 @@ export default function CollaborationPage() {
           </div>
           <div>
             <h1 className="text-2xl font-extrabold">{t("collaborationTeam")}</h1>
-            <p className="text-white/80 text-sm">Invite teachers, therapists, and caregivers to share your child&apos;s learning progress</p>
+            <p className="text-white/80 text-sm">{t("collaborationHeaderSubtitle")}</p>
           </div>
         </div>
       </PurpleGradientHeader>
 
       <div className="grid gap-3 grid-cols-3 mb-8">
-        <StatCard icon={<Users size={18} />} label="Team Members" value={members.length} color="#7C3AED" delay={100} />
-        <StatCard icon={<Mail size={18} />} label="Pending" value={members.filter((m) => m.status === "pending").length} color="#F59E0B" delay={200} />
-        <StatCard icon={<Heart size={18} />} label={`Caregivers (${caregiverCount}/${MAX_CAREGIVERS})`} value={caregiverCount} color="#F472B6" delay={300} />
+        <StatCard icon={<Users size={18} />} label={t("teamMembers")} value={members.length} color="#7C3AED" delay={100} />
+        <StatCard icon={<Mail size={18} />} label={t("pendingLabel")} value={members.filter((m) => m.status === "pending").length} color="#F59E0B" delay={200} />
+        <StatCard icon={<Heart size={18} />} label={t("caregiversCount", { count: caregiverCount, max: MAX_CAREGIVERS })} value={caregiverCount} color="#F472B6" delay={300} />
       </div>
 
       {error && (
@@ -189,34 +189,34 @@ export default function CollaborationPage() {
 
       <ExpandableCard
         icon={<UserPlus size={16} />}
-        title="Invite Caregiver"
-        subtitle={`Add a caregiver to your child's profile (${caregiverCount}/${MAX_CAREGIVERS} slots used)`}
+        title={t("inviteCaregiver")}
+        subtitle={t("inviteCaregiverSubtitle", { count: caregiverCount, max: MAX_CAREGIVERS })}
         gradient="linear-gradient(135deg, #F472B6, #EC4899)"
         delay={300}
-        infoText={`You can invite up to ${MAX_CAREGIVERS} caregivers (like grandparents, aunts, uncles, or family friends) to view your child's learning progress. Caregivers get view-only access — they can see progress but cannot change settings.`}
+        infoText={t("inviteCaregiverInfo", { max: MAX_CAREGIVERS })}
       >
         {!canInviteCaregivers ? (
           <div className="p-4 rounded-xl text-center" style={{ backgroundColor: "#FEF3C7", border: "1px solid #FDE68A" }}>
             <AlertCircle size={24} className="mx-auto mb-2 text-[#D97706]" />
-            <p className="text-sm font-bold text-[#92400E]">Caregiver limit reached</p>
-            <p className="text-xs text-[#92400E] mt-1">You&apos;ve invited the maximum of {MAX_CAREGIVERS} caregivers. Remove an existing caregiver to invite a new one.</p>
+            <p className="text-sm font-bold text-[#92400E]">{t("caregiverLimitReached")}</p>
+            <p className="text-xs text-[#92400E] mt-1">{t("caregiverLimitDesc", { max: MAX_CAREGIVERS })}</p>
           </div>
         ) : (
           <form onSubmit={(e) => handleInvite(e, "caregiver")} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>Email Address</label>
-              <input type="email" value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} className="w-full px-4 py-2.5 rounded-3xl border border-[#E8DDF0] bg-white text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none" placeholder="caregiver@email.com" required />
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>{t("emailAddress")}</label>
+              <input type="email" value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} className="w-full px-4 py-2.5 rounded-3xl border border-[#E8DDF0] bg-white text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none" placeholder={t("caregiverEmailPlaceholder")} required />
             </div>
             <div className="flex items-center gap-3">
-              <Button type="submit" loading={inviting} leftIcon={<Mail size={16} />}>Send Invitation</Button>
+              <Button type="submit" loading={inviting} leftIcon={<Mail size={16} />}>{t("sendInvitation")}</Button>
               <Button type="button" variant="outline" size="sm" onClick={handleCopyInviteLink} leftIcon={copiedLink ? <CheckCircle size={14} /> : <Copy size={14} />}>
-                {copiedLink ? "Copied!" : "Copy Link"}
+                {copiedLink ? t("copied") : t("copyLink")}
               </Button>
             </div>
             {inviteSuccess && (
               <div className="p-3 rounded-xl bg-[#D1FAE5] border border-[#A7F3D0] text-[#065F46] text-sm flex items-center gap-2">
                 <CheckCircle size={16} />
-                Invitation sent! They&apos;ll receive an email to join as a caregiver.
+                {t("inviteSentCaregiver")}
               </div>
             )}
           </form>
@@ -227,21 +227,21 @@ export default function CollaborationPage() {
         <div className="mt-6">
           <ExpandableCard
             icon={<UserPlus size={16} />}
-            title="Invite Teacher"
-            subtitle="Connect your child's teacher to share learning insights"
+            title={t("inviteTeacher")}
+            subtitle={t("inviteTeacherSubtitle")}
             gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
             delay={400}
-            infoText="Since you manage this subscription, you can invite your child's teacher to view their AIVO learning data. Teachers get access to brain profile insights, accommodations, and progress reports."
+            infoText={t("inviteTeacherInfo")}
           >
             <div className="p-3 rounded-xl mb-4" style={{ backgroundColor: "rgba(124,58,237,0.06)", border: "1px solid rgba(124,58,237,0.12)" }}>
               <p className="text-xs" style={{ color: "var(--aivo-text-secondary)" }}>
-                <strong>Parent-managed account</strong> — You control who has access. Teachers you invite can view learning data but cannot change settings or manage the subscription.
+                <strong>{t("parentManagedAccount")}</strong> — {t("parentManagedAccountDesc")}
               </p>
             </div>
             <form onSubmit={(e) => handleInvite(e, inviteRole)} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>Teacher&apos;s email address</label>
-                <input type="email" value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} className="w-full px-4 py-2.5 rounded-3xl border border-[#E8DDF0] bg-white text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none" placeholder="teacher@school.edu" required />
+                <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>{t("teacherEmailLabel")}</label>
+                <input type="email" value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} className="w-full px-4 py-2.5 rounded-3xl border border-[#E8DDF0] bg-white text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none" placeholder={t("teacherEmailPlaceholder")} required />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>{t("role")}</label>
@@ -254,7 +254,7 @@ export default function CollaborationPage() {
               {inviteSuccess && (
                 <div className="p-3 rounded-xl bg-[#D1FAE5] border border-[#A7F3D0] text-[#065F46] text-sm flex items-center gap-2">
                   <CheckCircle size={16} />
-                  Invitation sent! The teacher will receive an email to join.
+                  {t("inviteSentTeacher")}
                 </div>
               )}
             </form>
@@ -266,15 +266,15 @@ export default function CollaborationPage() {
         <div className="mt-6">
           <ExpandableCard
             icon={<Users size={16} />}
-            title="School Team"
-            subtitle="Your child's teacher manages this subscription"
+            title={t("schoolTeam")}
+            subtitle={t("schoolTeamSubtitle")}
             gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
             delay={400}
-            infoText="This account was set up through your child's school district. The teacher manages class access and can invite parents to view learning data."
+            infoText={t("schoolTeamInfo")}
           >
             <div className="p-3 rounded-xl" style={{ backgroundColor: "rgba(124,58,237,0.06)", border: "1px solid rgba(124,58,237,0.12)" }}>
               <p className="text-xs" style={{ color: "var(--aivo-text-secondary)" }}>
-                <strong>District-managed account</strong> — Your child&apos;s teacher set up this AIVO account through the school. You have full view access to your child&apos;s learning data.
+                <strong>{t("districtManagedAccount")}</strong> — {t("districtManagedAccountDesc")}
               </p>
             </div>
           </ExpandableCard>
@@ -285,10 +285,10 @@ export default function CollaborationPage() {
         <ExpandableCard
           icon={<Users size={16} />}
           title={t("currentMembers", { count: members.length })}
-          subtitle="People who can view your child's learning data"
+          subtitle={t("currentMembersSubtitle")}
           gradient="linear-gradient(135deg, #10B981, #059669)"
           delay={500}
-          infoText="Active members can see learning data. Pending members haven't accepted their invitation yet. You can remove anyone at any time."
+          infoText={t("currentMembersInfo")}
         >
           {members.length > 0 ? (
             <div className="space-y-3">

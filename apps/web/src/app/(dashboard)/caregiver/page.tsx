@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import {
   Brain,
   GraduationCap,
@@ -40,6 +41,7 @@ interface CaregiverChild {
 
 export default function CaregiverDashboardPage() {
   const { user } = useAuthStore();
+  const t = useTranslations("caregiver");
   const [child, setChild] = useState<CaregiverChild | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -74,8 +76,8 @@ export default function CaregiverDashboardPage() {
 
   const levelLabel = (fl: string) => {
     const labels: Record<string, string> = {
-      STANDARD: "Standard", SUPPORTED: "Supported", LOW_VERBAL: "Low Verbal",
-      NON_VERBAL: "Non-Verbal", PRE_SYMBOLIC: "Pre-Symbolic",
+      STANDARD: t("levelStandard"), SUPPORTED: t("levelSupported"), LOW_VERBAL: t("levelLowVerbal"),
+      NON_VERBAL: t("levelNonVerbal"), PRE_SYMBOLIC: t("levelPreSymbolic"),
     };
     return labels[fl] ?? fl;
   };
@@ -94,11 +96,11 @@ export default function CaregiverDashboardPage() {
   if (!child) return null;
 
   const quickLinks = [
-    { href: `/caregiver/brain`, label: "Brain Profile", icon: <Brain size={20} />, gradient: "linear-gradient(135deg, #7C3AED, #A855F7)", description: "AI learning insights" },
-    { href: `/caregiver/accommodations`, label: "Accommodations", icon: <ShieldCheck size={20} />, gradient: "linear-gradient(135deg, #8B5CF6, #6D28D9)", description: "Support strategies" },
-    { href: `/caregiver/iep`, label: "IEP Goals", icon: <Target size={20} />, gradient: "linear-gradient(135deg, #3B82F6, #2563EB)", description: "Goals & progress" },
-    { href: `/caregiver/gradebook`, label: "Gradebook", icon: <GraduationCap size={20} />, gradient: "linear-gradient(135deg, #2DD4BF, #14B8A6)", description: "Subject mastery" },
-    { href: `/caregiver/sessions`, label: "Sessions", icon: <Clock size={20} />, gradient: "linear-gradient(135deg, #F59E0B, #D97706)", description: "Activity history" },
+    { href: `/caregiver/brain`, label: t("linkBrainProfile"), icon: <Brain size={20} />, gradient: "linear-gradient(135deg, #7C3AED, #A855F7)", description: t("linkBrainProfileDesc") },
+    { href: `/caregiver/accommodations`, label: t("linkAccommodations"), icon: <ShieldCheck size={20} />, gradient: "linear-gradient(135deg, #8B5CF6, #6D28D9)", description: t("linkAccommodationsDesc") },
+    { href: `/caregiver/iep`, label: t("linkIepGoals"), icon: <Target size={20} />, gradient: "linear-gradient(135deg, #3B82F6, #2563EB)", description: t("linkIepGoalsDesc") },
+    { href: `/caregiver/gradebook`, label: t("linkGradebook"), icon: <GraduationCap size={20} />, gradient: "linear-gradient(135deg, #2DD4BF, #14B8A6)", description: t("linkGradebookDesc") },
+    { href: `/caregiver/sessions`, label: t("linkSessions"), icon: <Clock size={20} />, gradient: "linear-gradient(135deg, #F59E0B, #D97706)", description: t("linkSessionsDesc") },
   ];
 
   return (
@@ -109,9 +111,9 @@ export default function CaregiverDashboardPage() {
             <Heart size={28} />
           </div>
           <div>
-            <h1 className="text-2xl font-extrabold">Welcome, {user?.name?.split(" ")[0] ?? "Caregiver"}</h1>
+            <h1 className="text-2xl font-extrabold">{t("welcomeName", { name: user?.name?.split(" ")[0] ?? t("defaultCaregiver") })}</h1>
             <p className="text-white/80 text-sm">
-              You&apos;re viewing {child.name}&apos;s learning profile
+              {t("viewingProfile", { name: child.name })}
             </p>
             <p className="text-white/60 text-xs mt-0.5">
               {child.grade ?? ""} &middot; {levelLabel(child.functioningLevel)}
@@ -121,19 +123,19 @@ export default function CaregiverDashboardPage() {
       </PurpleGradientHeader>
 
       <div className="grid gap-3 grid-cols-2 lg:grid-cols-4 mb-8">
-        <StatCard icon={<TrendingUp size={18} />} label="Avg Mastery" value={`${child.mastery}%`} color="#7C3AED" delay={100} />
-        <StatCard icon={<BookOpen size={18} />} label="Recent Sessions" value={child.recentSessionCount} color="#3B82F6" delay={200} />
-        <StatCard icon={<ShieldCheck size={18} />} label="Accommodations" value={child.accommodationCount} color="#10B981" delay={300} />
-        <StatCard icon={<Target size={18} />} label="IEP Goals" value={child.iepGoalCount} color="#F59E0B" delay={400} />
+        <StatCard icon={<TrendingUp size={18} />} label={t("statAvgMastery")} value={`${child.mastery}%`} color="#7C3AED" delay={100} />
+        <StatCard icon={<BookOpen size={18} />} label={t("statRecentSessions")} value={child.recentSessionCount} color="#3B82F6" delay={200} />
+        <StatCard icon={<ShieldCheck size={18} />} label={t("statAccommodations")} value={child.accommodationCount} color="#10B981" delay={300} />
+        <StatCard icon={<Target size={18} />} label={t("statIepGoals")} value={child.iepGoalCount} color="#F59E0B" delay={400} />
       </div>
 
       <ExpandableCard
         icon={<Brain size={16} />}
-        title="Quick Navigation"
-        subtitle={`Explore different areas of ${child.name}'s learning profile`}
+        title={t("quickNavigation")}
+        subtitle={t("quickNavigationSubtitle", { name: child.name })}
         gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
         delay={500}
-        infoText="As a caregiver, you have view-only access to this child's learning profile. You can see their progress, brain profile, and IEP goals but cannot make changes."
+        infoText={t("caregiverAccessInfo")}
       >
         <div className="grid gap-3 grid-cols-2 lg:grid-cols-3">
           {quickLinks.map((link) => (
@@ -154,13 +156,13 @@ export default function CaregiverDashboardPage() {
         <div className="mt-6">
           <ExpandableCard
             icon={<GraduationCap size={16} />}
-            title="Subject Mastery"
-            subtitle={`How ${child.name} is progressing in each subject`}
+            title={t("subjectMastery")}
+            subtitle={t("subjectMasterySubtitle", { name: child.name })}
             gradient="linear-gradient(135deg, #2DD4BF, #14B8A6)"
             delay={600}
-            infoText="Mastery scores show how well the child understands each subject. AIVO adjusts content difficulty based on these scores."
+            infoText={t("subjectMasteryInfo")}
             linkHref="/caregiver/gradebook"
-            linkLabel="View full gradebook"
+            linkLabel={t("viewFullGradebook")}
           >
             <div className="space-y-4">
               {child.subjects.map((subject) => (
@@ -185,9 +187,9 @@ export default function CaregiverDashboardPage() {
             <div className="w-12 h-12 rounded-xl mx-auto mb-3 flex items-center justify-center text-white" style={{ background: "linear-gradient(135deg, #F472B6, #EC4899)" }}>
               <Heart size={22} />
             </div>
-            <h3 className="font-bold text-sm" style={{ color: "var(--aivo-text)" }}>You&apos;re making a difference</h3>
+            <h3 className="font-bold text-sm" style={{ color: "var(--aivo-text)" }}>{t("makingDifference")}</h3>
             <p className="text-xs mt-1" style={{ color: "var(--aivo-text-muted)" }}>
-              Your involvement in {child.name}&apos;s education helps them thrive. Thank you for being part of the care team!
+              {t("makingDifferenceDesc", { name: child.name })}
             </p>
           </div>
         </AnimatedCard>

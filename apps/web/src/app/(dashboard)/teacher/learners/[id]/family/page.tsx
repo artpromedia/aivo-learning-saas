@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import {
   Users, Loader2, Mail, Trash2, UserPlus, Shield, Heart, AlertCircle, Copy, CheckCircle, Home,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -28,6 +29,7 @@ interface FamilyResponse {
 }
 
 export default function TeacherFamilyPage() {
+  const t = useTranslations("teacher");
   const params = useParams();
   const learnerId = params.id as string;
 
@@ -51,7 +53,7 @@ export default function TeacherFamilyPage() {
         setSubscriptionType(result.subscriptionType ?? "district");
         setMembers(result.members ?? []);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load family info");
+        setError(err instanceof Error ? err.message : t("failedToLoadFamily"));
       } finally {
         setLoading(false);
       }
@@ -90,7 +92,7 @@ export default function TeacherFamilyPage() {
       setInviteSuccess(true);
       setTimeout(() => setInviteSuccess(false), 4000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to send invite");
+      setError(err instanceof Error ? err.message : t("failedToSendInvite"));
     } finally {
       setInviting(false);
     }
@@ -107,7 +109,7 @@ export default function TeacherFamilyPage() {
       }
       setMembers((prev) => prev.filter((m) => m.id !== memberId));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to remove member");
+      setError(err instanceof Error ? err.message : t("failedToRemoveMember"));
     } finally {
       setRemovingId(null);
     }
@@ -138,7 +140,7 @@ export default function TeacherFamilyPage() {
 
   return (
     <PageWrapper>
-      <BackLink href={`/teacher/learners/${learnerId}`}>Back to Learner Hub</BackLink>
+      <BackLink href={`/teacher/learners/${learnerId}`}>{t("backToLearnerHub")}</BackLink>
 
       <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
@@ -146,16 +148,16 @@ export default function TeacherFamilyPage() {
             <Users size={22} />
           </div>
           <div>
-            <h1 className="text-2xl font-extrabold">Family & Guardians</h1>
-            <p className="text-white/80 text-sm">Manage parent and caregiver access for this learner</p>
+            <h1 className="text-2xl font-extrabold">{t("familyTitle")}</h1>
+            <p className="text-white/80 text-sm">{t("familySubtitle")}</p>
           </div>
         </div>
       </PurpleGradientHeader>
 
       <div className="grid gap-3 grid-cols-3 mb-8">
-        <StatCard icon={<Users size={18} />} label="Family Members" value={members.length} color="#7C3AED" delay={100} />
-        <StatCard icon={<Home size={18} />} label="Parents" value={parentCount} color="#3B82F6" delay={200} />
-        <StatCard icon={<Heart size={18} />} label="Caregivers" value={members.filter((m) => m.role === "caregiver").length} color="#F472B6" delay={300} />
+        <StatCard icon={<Users size={18} />} label={t("familyMembersLabel")} value={members.length} color="#7C3AED" delay={100} />
+        <StatCard icon={<Home size={18} />} label={t("parentsLabel")} value={parentCount} color="#3B82F6" delay={200} />
+        <StatCard icon={<Heart size={18} />} label={t("caregiversLabel")} value={members.filter((m) => m.role === "caregiver").length} color="#F472B6" delay={300} />
       </div>
 
       {error && (
@@ -168,39 +170,39 @@ export default function TeacherFamilyPage() {
       {isDistrictPaid ? (
         <ExpandableCard
           icon={<UserPlus size={16} />}
-          title="Invite Parent"
-          subtitle="Connect this learner's parent to view their child's progress"
+          title={t("inviteParentTitle")}
+          subtitle={t("inviteParentSubtitle")}
           gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
           delay={300}
-          infoText="Since your school district manages this subscription, you can invite parents to view their child's AIVO learning data. Parents get access to brain profile, gradebook, IEP goals, and session history."
+          infoText={t("inviteParentInfo")}
         >
           <div className="p-3 rounded-xl mb-4" style={{ backgroundColor: "rgba(124,58,237,0.06)", border: "1px solid rgba(124,58,237,0.12)" }}>
             <p className="text-xs" style={{ color: "var(--aivo-text-secondary)" }}>
-              <strong>District-managed subscription</strong> — As the teacher, you can invite parents to view their child&apos;s learning data. Parents will receive view-only access to progress reports, brain profile, and IEP goals.
+              <strong>{t("districtManagedLabel")}</strong> — {t("districtManagedDesc")}
             </p>
           </div>
           <form onSubmit={handleInviteParent} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>Parent&apos;s email address</label>
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>{t("parentEmailLabel")}</label>
               <input
                 type="email"
                 value={inviteEmail}
                 onChange={(e) => setInviteEmail(e.target.value)}
                 className="w-full px-4 py-2.5 rounded-3xl border border-[#E8DDF0] bg-white text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none"
-                placeholder="parent@email.com"
+                placeholder={t("parentEmailPlaceholder")}
                 required
               />
             </div>
             <div className="flex items-center gap-3">
-              <Button type="submit" loading={inviting} leftIcon={<Mail size={16} />}>Send Invitation</Button>
+              <Button type="submit" loading={inviting} leftIcon={<Mail size={16} />}>{t("sendInvitation")}</Button>
               <Button type="button" variant="outline" size="sm" onClick={handleCopyInviteLink} leftIcon={copiedLink ? <CheckCircle size={14} /> : <Copy size={14} />}>
-                {copiedLink ? "Copied!" : "Copy Link"}
+                {copiedLink ? t("copiedLink") : t("copyLink")}
               </Button>
             </div>
             {inviteSuccess && (
               <div className="p-3 rounded-xl bg-[#D1FAE5] border border-[#A7F3D0] text-[#065F46] text-sm flex items-center gap-2">
                 <CheckCircle size={16} />
-                Invitation sent! The parent will receive an email to create their account and view their child&apos;s progress.
+                {t("invitationSentSuccess")}
               </div>
             )}
           </form>
@@ -208,15 +210,15 @@ export default function TeacherFamilyPage() {
       ) : (
         <ExpandableCard
           icon={<Shield size={16} />}
-          title="Parent-Managed Account"
-          subtitle="This learner's parent manages the subscription"
+          title={t("parentManagedTitle")}
+          subtitle={t("parentManagedSubtitle")}
           gradient="linear-gradient(135deg, #10B981, #059669)"
           delay={300}
-          infoText="This account is managed by the parent. They invited you to view their child's learning data. You can see the family members connected to this learner below."
+          infoText={t("parentManagedInfo")}
         >
           <div className="p-3 rounded-xl" style={{ backgroundColor: "rgba(16,185,129,0.06)", border: "1px solid rgba(16,185,129,0.12)" }}>
             <p className="text-xs" style={{ color: "var(--aivo-text-secondary)" }}>
-              <strong>Parent-managed subscription</strong> — The parent controls access for this learner. You were invited by the parent to view learning data. Contact the parent if you need to add additional family members.
+              <strong>{t("parentManagedLabel")}</strong> — {t("parentManagedDesc")}
             </p>
           </div>
         </ExpandableCard>
@@ -225,11 +227,11 @@ export default function TeacherFamilyPage() {
       <div className="mt-6">
         <ExpandableCard
           icon={<Users size={16} />}
-          title={`Family Members (${members.length})`}
-          subtitle="Parents and caregivers connected to this learner"
+          title={t("familyMembersTitle", { count: members.length })}
+          subtitle={t("familyMembersSubtitle")}
           gradient="linear-gradient(135deg, #3B82F6, #2563EB)"
           delay={400}
-          infoText="Active members can view the learner's data. Pending members haven't accepted their invitation yet."
+          infoText={t("familyMembersInfo")}
         >
           {members.length > 0 ? (
             <div className="space-y-3">
@@ -242,13 +244,13 @@ export default function TeacherFamilyPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <h3 className="font-medium truncate" style={{ color: "var(--aivo-text)" }}>{member.name || member.email}</h3>
-                        <Badge variant={member.role === "parent" ? "default" : "warning"}>{member.role}</Badge>
-                        {member.status === "pending" && <Badge variant="secondary">Pending</Badge>}
+                        <Badge variant={member.role === "parent" ? "default" : "warning"}>{member.role === "parent" ? t("parentRole") : t("caregiverRole")}</Badge>
+                        {member.status === "pending" && <Badge variant="secondary">{t("pendingStatus")}</Badge>}
                       </div>
                       <p className="text-sm truncate" style={{ color: "var(--aivo-text-secondary)" }}>{member.email}</p>
                     </div>
                     {isDistrictPaid && (
-                      <button onClick={() => handleRemove(member.id)} disabled={removingId === member.id} className="p-2 rounded-3xl transition-colors hover:text-red-500 hover:bg-red-50 disabled:opacity-50" style={{ color: "var(--aivo-text-muted)" }} title="Remove member">
+                      <button onClick={() => handleRemove(member.id)} disabled={removingId === member.id} className="p-2 rounded-3xl transition-colors hover:text-red-500 hover:bg-red-50 disabled:opacity-50" style={{ color: "var(--aivo-text-muted)" }} title={t("removeMember")}>
                         {removingId === member.id ? <Loader2 className="animate-spin" size={16} /> : <Trash2 size={16} />}
                       </button>
                     )}
@@ -259,9 +261,9 @@ export default function TeacherFamilyPage() {
           ) : (
             <div className="text-center py-8">
               <Users className="mx-auto mb-3" size={40} style={{ color: "var(--aivo-text-muted)" }} />
-              <p className="font-bold mb-1" style={{ color: "var(--aivo-text)" }}>No family members yet</p>
+              <p className="font-bold mb-1" style={{ color: "var(--aivo-text)" }}>{t("noFamilyMembers")}</p>
               <p className="text-sm" style={{ color: "var(--aivo-text-secondary)" }}>
-                {isDistrictPaid ? "Invite this learner's parent to connect them to their child's progress." : "The parent manages access to this learner's data."}
+                {isDistrictPaid ? t("noFamilyDistrictDesc") : t("noFamilyParentDesc")}
               </p>
             </div>
           )}

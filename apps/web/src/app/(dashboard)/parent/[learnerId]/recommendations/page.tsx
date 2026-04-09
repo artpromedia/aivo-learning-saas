@@ -104,14 +104,14 @@ export default function RecommendationsPage() {
           </div>
           <div>
             <h1 className="text-2xl font-extrabold">{t("recommendationsTitle")}</h1>
-            <p className="text-white/80 text-sm">AIVO&apos;s personalized suggestions to help your child learn better</p>
+            <p className="text-white/80 text-sm">{t("recommendationsHeaderSubtitle")}</p>
           </div>
         </div>
       </PurpleGradientHeader>
 
       <div className="grid gap-3 grid-cols-2 mb-8">
-        <StatCard icon={<Clock size={18} />} label="Pending Review" value={pendingRecs.length} color="#F59E0B" delay={100} />
-        <StatCard icon={<Check size={18} />} label="Resolved" value={resolvedRecs.length} color="#10B981" delay={200} />
+        <StatCard icon={<Clock size={18} />} label={t("pendingReviewLabel")} value={pendingRecs.length} color="#F59E0B" delay={100} />
+        <StatCard icon={<Check size={18} />} label={t("resolvedLabel")} value={resolvedRecs.length} color="#10B981" delay={200} />
       </div>
 
       {actionError && (
@@ -124,10 +124,10 @@ export default function RecommendationsPage() {
         <ExpandableCard
           icon={<Lightbulb size={16} />}
           title={t("pendingReview", { count: pendingRecs.length })}
-          subtitle="Review and approve AI suggestions for your child"
+          subtitle={t("pendingReviewSubtitle")}
           gradient="linear-gradient(135deg, #F59E0B, #D97706)"
           delay={300}
-          infoText="AIVO analyzes your child's learning patterns and suggests improvements. You can approve, decline, or adjust each recommendation. Your approval is always required before any changes take effect."
+          infoText={t("pendingReviewInfo")}
         >
           <div className="space-y-4">
             {pendingRecs.map((rec, idx) => (
@@ -172,7 +172,7 @@ export default function RecommendationsPage() {
           <ExpandableCard
             icon={<Check size={16} />}
             title={t("history")}
-            subtitle="Previously reviewed recommendations"
+            subtitle={t("historySubtitle")}
             gradient="linear-gradient(135deg, #10B981, #059669)"
             delay={500}
             defaultExpanded={false}
@@ -211,7 +211,7 @@ export default function RecommendationsPage() {
           onChange={(e) => setAdjustNotes(e.target.value)}
           rows={4}
           className="w-full px-4 py-3 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none resize-none"
-          placeholder="e.g., 'I'd prefer shorter sessions' or 'Focus more on reading comprehension'"
+          placeholder={t("adjustPlaceholder")}
         />
       </Modal>
     </PageWrapper>

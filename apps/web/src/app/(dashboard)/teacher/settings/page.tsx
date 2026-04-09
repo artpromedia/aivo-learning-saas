@@ -2,12 +2,14 @@
 
 import React, { useState } from "react";
 import { Settings, Bell, User, Shield } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/Button";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
 import { PageWrapper, ExpandableCard, AnimatedCard } from "@/components/ui/PageDesign";
 import { useAuthStore } from "@/stores/auth.store";
 
 export default function TeacherSettingsPage() {
+  const t = useTranslations("teacher");
   const { user } = useAuthStore();
   const [emailNotifs, setEmailNotifs] = useState(true);
   const [pushNotifs, setPushNotifs] = useState(true);
@@ -26,32 +28,32 @@ export default function TeacherSettingsPage() {
             <Settings size={22} />
           </div>
           <div>
-            <h1 className="text-2xl font-extrabold">Settings</h1>
-            <p className="text-white/80 text-sm">Manage your account preferences</p>
+            <h1 className="text-2xl font-extrabold">{t("settingsTitle")}</h1>
+            <p className="text-white/80 text-sm">{t("settingsSubtitle")}</p>
           </div>
         </div>
       </PurpleGradientHeader>
 
       <ExpandableCard
         icon={<User size={16} />}
-        title="Profile"
-        subtitle="Your account information"
+        title={t("profileTitle")}
+        subtitle={t("profileSubtitle")}
         gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
         delay={100}
-        infoText="Your profile information is managed by your school administrator."
+        infoText={t("profileInfo")}
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-bold mb-1" style={{ color: "var(--aivo-text-muted)" }}>Name</label>
-            <p className="text-sm font-medium" style={{ color: "var(--aivo-text)" }}>{user?.name ?? "Teacher"}</p>
+            <label className="block text-xs font-bold mb-1" style={{ color: "var(--aivo-text-muted)" }}>{t("nameLabel")}</label>
+            <p className="text-sm font-medium" style={{ color: "var(--aivo-text)" }}>{user?.name ?? t("defaultTeacher")}</p>
           </div>
           <div>
-            <label className="block text-xs font-bold mb-1" style={{ color: "var(--aivo-text-muted)" }}>Email</label>
-            <p className="text-sm font-medium" style={{ color: "var(--aivo-text)" }}>{user?.email ?? "teacher@school.edu"}</p>
+            <label className="block text-xs font-bold mb-1" style={{ color: "var(--aivo-text-muted)" }}>{t("emailLabel")}</label>
+            <p className="text-sm font-medium" style={{ color: "var(--aivo-text)" }}>{user?.email ?? t("teacherEmailPlaceholder")}</p>
           </div>
           <div>
-            <label className="block text-xs font-bold mb-1" style={{ color: "var(--aivo-text-muted)" }}>Role</label>
-            <p className="text-sm font-medium" style={{ color: "var(--aivo-text)" }}>Educator</p>
+            <label className="block text-xs font-bold mb-1" style={{ color: "var(--aivo-text-muted)" }}>{t("roleLabel")}</label>
+            <p className="text-sm font-medium" style={{ color: "var(--aivo-text)" }}>{t("roleEducator")}</p>
           </div>
         </div>
       </ExpandableCard>
@@ -59,17 +61,17 @@ export default function TeacherSettingsPage() {
       <div className="mt-6">
         <ExpandableCard
           icon={<Bell size={16} />}
-          title="Notifications"
-          subtitle="Choose how you receive alerts"
+          title={t("notificationsTitle")}
+          subtitle={t("notificationsSubtitle")}
           gradient="linear-gradient(135deg, #38BDF8, #0EA5E9)"
           delay={200}
-          infoText="Control which notifications you receive. At-risk alerts are always enabled for student safety."
+          infoText={t("notificationsInfo")}
         >
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-bold" style={{ color: "var(--aivo-text)" }}>Email Notifications</p>
-                <p className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>Receive updates via email</p>
+                <p className="text-sm font-bold" style={{ color: "var(--aivo-text)" }}>{t("emailNotifications")}</p>
+                <p className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>{t("emailNotificationsDesc")}</p>
               </div>
               <button
                 type="button"
@@ -84,8 +86,8 @@ export default function TeacherSettingsPage() {
             </div>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-bold" style={{ color: "var(--aivo-text)" }}>Push Notifications</p>
-                <p className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>Browser push notifications</p>
+                <p className="text-sm font-bold" style={{ color: "var(--aivo-text)" }}>{t("pushNotifications")}</p>
+                <p className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>{t("pushNotificationsDesc")}</p>
               </div>
               <button
                 type="button"
@@ -100,8 +102,8 @@ export default function TeacherSettingsPage() {
             </div>
           </div>
           <div className="mt-4 flex items-center gap-3">
-            <Button size="sm" onClick={handleSave}>Save Preferences</Button>
-            {saved && <span className="text-sm text-green-600 font-medium">Saved!</span>}
+            <Button size="sm" onClick={handleSave}>{t("savePreferences")}</Button>
+            {saved && <span className="text-sm text-green-600 font-medium">{t("saved")}</span>}
           </div>
         </ExpandableCard>
       </div>
@@ -109,20 +111,20 @@ export default function TeacherSettingsPage() {
       <div className="mt-6">
         <ExpandableCard
           icon={<Shield size={16} />}
-          title="Privacy & Security"
-          subtitle="Data handling and security settings"
+          title={t("privacySecurityTitle")}
+          subtitle={t("privacySecuritySubtitle")}
           gradient="linear-gradient(135deg, #10B981, #059669)"
           delay={300}
-          infoText="AIVO follows FERPA, COPPA, and IDEA compliance standards for all learner data."
+          infoText={t("privacySecurityInfo")}
         >
           <div className="space-y-3">
             <div className="p-3 rounded-xl" style={{ backgroundColor: "var(--aivo-bg)", border: "1px solid var(--aivo-border)" }}>
-              <p className="text-sm font-bold" style={{ color: "var(--aivo-text)" }}>FERPA Compliant</p>
-              <p className="text-xs mt-0.5" style={{ color: "var(--aivo-text-muted)" }}>All student data is handled in compliance with federal education privacy laws</p>
+              <p className="text-sm font-bold" style={{ color: "var(--aivo-text)" }}>{t("ferpaCompliant")}</p>
+              <p className="text-xs mt-0.5" style={{ color: "var(--aivo-text-muted)" }}>{t("ferpaCompliantDesc")}</p>
             </div>
             <div className="p-3 rounded-xl" style={{ backgroundColor: "var(--aivo-bg)", border: "1px solid var(--aivo-border)" }}>
-              <p className="text-sm font-bold" style={{ color: "var(--aivo-text)" }}>Data Encryption</p>
-              <p className="text-xs mt-0.5" style={{ color: "var(--aivo-text-muted)" }}>All data is encrypted at rest and in transit</p>
+              <p className="text-sm font-bold" style={{ color: "var(--aivo-text)" }}>{t("dataEncryption")}</p>
+              <p className="text-xs mt-0.5" style={{ color: "var(--aivo-text-muted)" }}>{t("dataEncryptionDesc")}</p>
             </div>
           </div>
         </ExpandableCard>

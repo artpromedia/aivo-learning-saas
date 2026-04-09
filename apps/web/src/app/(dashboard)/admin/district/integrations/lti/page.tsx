@@ -4,6 +4,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import {
   Plus, CheckCircle, XCircle, Trash2, ExternalLink, Key,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -41,6 +42,7 @@ const EMPTY_FORM: NewPlatformForm = {
 };
 
 export default function LtiConfigPage() {
+  const t = useTranslations("districtAdmin");
   const [platforms, setPlatforms] = useState<LtiPlatform[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -55,7 +57,7 @@ export default function LtiConfigPage() {
       const result = await apiFetch<{ platforms: LtiPlatform[] }>("/api/integrations/lti/platforms");
       setPlatforms(result.platforms ?? []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load LTI platforms");
+      setError(err instanceof Error ? err.message : t("failedToLoadLtiPlatforms"));
     } finally {
       setLoading(false);
     }
@@ -72,7 +74,7 @@ export default function LtiConfigPage() {
       setForm(EMPTY_FORM);
       await fetchPlatforms();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to register platform");
+      setError(err instanceof Error ? err.message : t("failedToRegisterPlatform"));
     } finally {
       setRegistering(false);
     }
@@ -83,7 +85,7 @@ export default function LtiConfigPage() {
       await apiFetch(`/api/integrations/lti/platforms/${id}`, { method: "DELETE" });
       await fetchPlatforms();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete platform");
+      setError(err instanceof Error ? err.message : t("failedToDeletePlatform"));
     }
   }
 
@@ -104,7 +106,7 @@ export default function LtiConfigPage() {
 
   return (
     <PageWrapper>
-      <BackLink href="/admin/district/integrations">Back to Integrations</BackLink>
+      <BackLink href="/admin/district/integrations">{t("backToIntegrations")}</BackLink>
 
       <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
@@ -112,8 +114,8 @@ export default function LtiConfigPage() {
             <Key size={22} />
           </div>
           <div>
-            <h1 className="text-2xl font-extrabold">LTI 1.3 Configuration</h1>
-            <p className="mt-0.5 text-white/80 text-sm">Register and manage LTI platform connections</p>
+            <h1 className="text-2xl font-extrabold">{t("ltiTitle")}</h1>
+            <p className="mt-0.5 text-white/80 text-sm">{t("ltiSubtitle")}</p>
           </div>
         </div>
       </PurpleGradientHeader>
@@ -126,7 +128,7 @@ export default function LtiConfigPage() {
 
       <div className="mb-6">
         <Button leftIcon={<Plus size={16} />} onClick={() => setShowRegisterModal(true)}>
-          Register Platform
+          {t("registerPlatform")}
         </Button>
       </div>
 
@@ -137,8 +139,8 @@ export default function LtiConfigPage() {
       ) : platforms.length === 0 ? (
         <EmptyState
           icon={<Key size={32} />}
-          title="No LTI platforms registered"
-          description="Register one to enable LTI 1.3 launches."
+          title={t("noLtiPlatforms")}
+          description={t("noLtiPlatformsDescription")}
           delay={200}
         />
       ) : (
@@ -152,24 +154,24 @@ export default function LtiConfigPage() {
                       <div className="flex items-center gap-3 mb-2">
                         <h3 className="text-lg font-bold" style={{ color: "var(--aivo-text)" }}>{platform.name}</h3>
                         <Badge variant={platform.enabled ? "success" : "secondary"}>
-                          {platform.enabled ? "Active" : "Disabled"}
+                          {platform.enabled ? t("active") : t("disabled")}
                         </Badge>
-                        {testResults[platform.id] === "success" && <Badge variant="success">Connection OK</Badge>}
-                        {testResults[platform.id] === "failed" && <Badge variant="error">Connection Failed</Badge>}
+                        {testResults[platform.id] === "success" && <Badge variant="success">{t("connectionOk")}</Badge>}
+                        {testResults[platform.id] === "failed" && <Badge variant="error">{t("connectionFailed")}</Badge>}
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm" style={{ color: "var(--aivo-text-secondary)" }}>
-                        <p><span className="font-medium">Issuer:</span> {platform.platformId}</p>
-                        <p><span className="font-medium">Client ID:</span> {platform.clientId}</p>
+                        <p><span className="font-medium">{t("issuerLabel")}</span> {platform.platformId}</p>
+                        <p><span className="font-medium">{t("clientIdLabel")}</span> {platform.clientId}</p>
                         <p className="flex items-center gap-1">
-                          <span className="font-medium">JWKS:</span>
+                          <span className="font-medium">{t("jwksLabel")}</span>
                           <span className="truncate">{platform.jwksUrl}</span>
                           <ExternalLink size={12} className="shrink-0" />
                         </p>
-                        <p><span className="font-medium">Registered:</span> {new Date(platform.createdAt).toLocaleDateString()}</p>
+                        <p><span className="font-medium">{t("registeredLabel")}</span> {new Date(platform.createdAt).toLocaleDateString()}</p>
                       </div>
                     </div>
                     <div className="flex gap-2 ml-4">
-                      <Button size="sm" variant="outline" onClick={() => handleTestConnection(platform.id)} loading={testing === platform.id}>Test</Button>
+                      <Button size="sm" variant="outline" onClick={() => handleTestConnection(platform.id)} loading={testing === platform.id}>{t("test")}</Button>
                       <Button size="sm" variant="ghost" onClick={() => handleDelete(platform.id)} className="text-red-500 hover:text-red-700">
                         <Trash2 size={16} />
                       </Button>
@@ -185,44 +187,44 @@ export default function LtiConfigPage() {
       <Modal
         open={showRegisterModal}
         onClose={() => { if (!registering) { setShowRegisterModal(false); setForm(EMPTY_FORM); } }}
-        title="Register LTI Platform"
+        title={t("registerLtiPlatformModal")}
         footer={
           <div className="flex justify-end gap-2">
-            <Button variant="ghost" onClick={() => setShowRegisterModal(false)} disabled={registering}>Cancel</Button>
-            <Button onClick={handleRegister} loading={registering} disabled={!form.name || !form.platformId || !form.clientId || !form.jwksUrl}>Register</Button>
+            <Button variant="ghost" onClick={() => setShowRegisterModal(false)} disabled={registering}>{t("cancel")}</Button>
+            <Button onClick={handleRegister} loading={registering} disabled={!form.name || !form.platformId || !form.clientId || !form.jwksUrl}>{t("register")}</Button>
           </div>
         }
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>Platform Name</label>
-            <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g., Canvas, Schoology" className={inputClass} />
+            <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>{t("platformNameLabel")}</label>
+            <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder={t("platformNamePlaceholder")} className={inputClass} />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>Issuer URL (Platform ID)</label>
-            <input value={form.platformId} onChange={(e) => setForm({ ...form, platformId: e.target.value })} placeholder="https://canvas.instructure.com" className={inputClass} />
+            <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>{t("issuerUrlLabel")}</label>
+            <input value={form.platformId} onChange={(e) => setForm({ ...form, platformId: e.target.value })} placeholder={t("issuerUrlPlaceholder")} className={inputClass} />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>Client ID</label>
-              <input value={form.clientId} onChange={(e) => setForm({ ...form, clientId: e.target.value })} placeholder="10000000000001" className={inputClass} />
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>{t("clientIdFormLabel")}</label>
+              <input value={form.clientId} onChange={(e) => setForm({ ...form, clientId: e.target.value })} placeholder={t("clientIdPlaceholder")} className={inputClass} />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>Deployment ID (optional)</label>
-              <input value={form.deploymentId} onChange={(e) => setForm({ ...form, deploymentId: e.target.value })} placeholder="1" className={inputClass} />
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>{t("deploymentIdLabel")}</label>
+              <input value={form.deploymentId} onChange={(e) => setForm({ ...form, deploymentId: e.target.value })} placeholder={t("deploymentIdPlaceholder")} className={inputClass} />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>Auth Login URL</label>
-            <input value={form.authLoginUrl} onChange={(e) => setForm({ ...form, authLoginUrl: e.target.value })} placeholder="https://sso.canvaslms.com/api/lti/authorize_redirect" className={inputClass} />
+            <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>{t("authLoginUrlLabel")}</label>
+            <input value={form.authLoginUrl} onChange={(e) => setForm({ ...form, authLoginUrl: e.target.value })} placeholder={t("authLoginUrlPlaceholder")} className={inputClass} />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>Auth Token URL</label>
-            <input value={form.authTokenUrl} onChange={(e) => setForm({ ...form, authTokenUrl: e.target.value })} placeholder="https://sso.canvaslms.com/login/oauth2/token" className={inputClass} />
+            <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>{t("authTokenUrlLabel")}</label>
+            <input value={form.authTokenUrl} onChange={(e) => setForm({ ...form, authTokenUrl: e.target.value })} placeholder={t("authTokenUrlPlaceholder")} className={inputClass} />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>JSON Web Key Set URL</label>
-            <input value={form.jwksUrl} onChange={(e) => setForm({ ...form, jwksUrl: e.target.value })} placeholder="https://sso.canvaslms.com/api/lti/security/jwks" className={inputClass} />
+            <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>{t("jwksUrlLabel")}</label>
+            <input value={form.jwksUrl} onChange={(e) => setForm({ ...form, jwksUrl: e.target.value })} placeholder={t("jwksUrlPlaceholder")} className={inputClass} />
           </div>
         </div>
       </Modal>

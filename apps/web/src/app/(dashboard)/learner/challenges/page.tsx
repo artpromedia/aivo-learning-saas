@@ -80,7 +80,7 @@ export default function ChallengesPage() {
     return (
       <div className="text-center py-16">
         <p className="text-red-500 mb-4">{error}</p>
-        <Button variant="outline" onClick={() => window.location.reload()} leftIcon={<RefreshCw size={16} />}>Retry</Button>
+        <Button variant="outline" onClick={() => window.location.reload()} leftIcon={<RefreshCw size={16} />}>{t("retry")}</Button>
       </div>
     );
   }
@@ -100,7 +100,7 @@ export default function ChallengesPage() {
           </div>
           <div>
             <h1 className="text-2xl font-extrabold">{t("challenges")}</h1>
-            <p className="text-white/80 text-sm">Compete with friends and earn bonus XP!</p>
+            <p className="text-white/80 text-sm">{t("challengesSubtitle")}</p>
           </div>
         </div>
       </PurpleGradientHeader>
@@ -108,8 +108,8 @@ export default function ChallengesPage() {
       {challenges.length === 0 ? (
         <EmptyState
           icon={<Swords size={32} />}
-          title="No challenges available"
-          description="Check back soon for new multiplayer challenges."
+          title={t("noChallengesAvailable")}
+          description={t("noChallengesDescription")}
           delay={200}
         />
       ) : (
@@ -117,8 +117,8 @@ export default function ChallengesPage() {
           {activeChallenges.length > 0 && (
             <ExpandableCard
               icon={<Swords size={16} />}
-              title="Active Challenges"
-              subtitle="Challenges you're currently competing in"
+              title={t("activeChallenges")}
+              subtitle={t("activeChallengesSubtitle")}
               gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
               delay={200}
             >
@@ -127,14 +127,14 @@ export default function ChallengesPage() {
                   <div key={c.id} className="p-4 rounded-3xl border-2" style={{ borderColor: "#7C3AED", backgroundColor: "var(--aivo-bg)" }}>
                     <div className="flex items-center gap-2 mb-2 flex-wrap">
                       <h3 className="font-bold" style={{ color: "var(--aivo-text)" }}>{c.title}</h3>
-                      <Badge variant="warning">In Progress</Badge>
+                      <Badge variant="warning">{t("challengeInProgress")}</Badge>
                     </div>
                     <div className="flex items-center gap-3 text-xs mb-3" style={{ color: "var(--aivo-text-secondary)" }}>
                       <span className="flex items-center gap-1"><Users size={12} /> {c.participants}/{c.maxParticipants}</span>
                       <span className="flex items-center gap-1"><Clock size={12} /> {c.duration}min</span>
                       <Badge variant={difficultyVariant[c.difficulty]}>{c.difficulty}</Badge>
                     </div>
-                    <Button size="sm" className="w-full">Continue</Button>
+                    <Button size="sm" className="w-full">{t("challengeContinue")}</Button>
                   </div>
                 ))}
               </div>
@@ -145,8 +145,8 @@ export default function ChallengesPage() {
             <div className={activeChallenges.length > 0 ? "mt-6" : ""}>
               <ExpandableCard
                 icon={<Zap size={16} />}
-                title={`Open Challenges (${openChallenges.length})`}
-                subtitle="Join a challenge and compete!"
+                title={t("openChallengesCount", { count: openChallenges.length })}
+                subtitle={t("openChallengesSubtitle")}
                 gradient="linear-gradient(135deg, #2DD4BF, #14B8A6)"
                 delay={300}
               >
@@ -165,7 +165,7 @@ export default function ChallengesPage() {
                           <span className="flex items-center gap-1" style={{ color: "#7C3AED" }}><Zap size={12} /> +{c.xpReward} XP</span>
                           <Badge variant={difficultyVariant[c.difficulty]}>{c.difficulty}</Badge>
                         </div>
-                        <Button size="sm" className="w-full" loading={joiningId === c.id} onClick={() => handleJoin(c.id)}>Join Challenge</Button>
+                        <Button size="sm" className="w-full" loading={joiningId === c.id} onClick={() => handleJoin(c.id)}>{t("joinChallenge")}</Button>
                       </div>
                     </AnimatedCard>
                   ))}
@@ -178,8 +178,8 @@ export default function ChallengesPage() {
             <div className="mt-6">
               <ExpandableCard
                 icon={<Trophy size={16} />}
-                title="Completed"
-                subtitle="Your finished challenges"
+                title={t("completedChallenges")}
+                subtitle={t("completedChallengesSubtitle")}
                 gradient="linear-gradient(135deg, #FBBF24, #F59E0B)"
                 delay={400}
                 defaultExpanded={false}

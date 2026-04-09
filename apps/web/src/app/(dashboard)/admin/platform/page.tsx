@@ -6,6 +6,7 @@ import {
   BarChart3, Building2, Users, CreditCard, TrendingUp, Activity, Globe, Server,
   ArrowUpRight, AlertTriangle, CheckCircle,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
 import { PageWrapper, StatCard, ExpandableCard, AnimatedCard } from "@/components/ui/PageDesign";
 import { Badge } from "@/components/ui/Badge";
@@ -32,6 +33,7 @@ export default function PlatformDashboardPage() {
   const { user } = useAuthStore();
   const [data, setData] = useState<PlatformOverview | null>(null);
   const [loading, setLoading] = useState(true);
+  const t = useTranslations("platformAdmin");
 
   const platformRole = (user?.platformRole ?? "super_admin") as PlatformRole;
 
@@ -61,7 +63,7 @@ export default function PlatformDashboardPage() {
   if (!data) return null;
 
   const healthColors = { healthy: "#10B981", degraded: "#F59E0B", down: "#EF4444" };
-  const healthLabels = { healthy: "All Systems Operational", degraded: "Partial Degradation", down: "System Down" };
+  const healthLabels = { healthy: t("statusOperational"), degraded: t("statusDegraded"), down: t("statusDown") };
 
   return (
     <PageWrapper>
@@ -71,17 +73,17 @@ export default function PlatformDashboardPage() {
             <BarChart3 size={22} />
           </div>
           <div>
-            <h1 className="text-2xl font-extrabold">Platform Dashboard</h1>
-            <p className="text-white/80 text-sm">Enterprise overview of AIVO Learning</p>
+            <h1 className="text-2xl font-extrabold">{t("platformDashboard")}</h1>
+            <p className="text-white/80 text-sm">{t("enterpriseOverview")}</p>
           </div>
         </div>
       </PurpleGradientHeader>
 
       <div className="grid gap-3 grid-cols-2 lg:grid-cols-4 mb-8">
-        <StatCard icon={<Building2 size={18} />} label="Districts" value={data.totalDistricts} color="#3B82F6" delay={100} />
-        <StatCard icon={<Users size={18} />} label="Total Users" value={data.totalUsers.toLocaleString()} color="#7C3AED" delay={200} />
-        <StatCard icon={<TrendingUp size={18} />} label="Active Learners" value={data.totalLearners.toLocaleString()} color="#10B981" delay={300} />
-        <StatCard icon={<CreditCard size={18} />} label="Active Subs" value={data.activeSubscriptions} color="#F59E0B" delay={400} />
+        <StatCard icon={<Building2 size={18} />} label={t("statDistricts")} value={data.totalDistricts} color="#3B82F6" delay={100} />
+        <StatCard icon={<Users size={18} />} label={t("statTotalUsers")} value={data.totalUsers.toLocaleString()} color="#7C3AED" delay={200} />
+        <StatCard icon={<TrendingUp size={18} />} label={t("statActiveLearners")} value={data.totalLearners.toLocaleString()} color="#10B981" delay={300} />
+        <StatCard icon={<CreditCard size={18} />} label={t("statActiveSubs")} value={data.activeSubscriptions} color="#F59E0B" delay={400} />
       </div>
 
       <div className="grid gap-3 grid-cols-2 lg:grid-cols-4 mb-8">
@@ -99,7 +101,7 @@ export default function PlatformDashboardPage() {
               <Server size={22} />
             </div>
             <p className="text-lg font-extrabold" style={{ color: "var(--aivo-text)", fontFamily: "var(--font-display)" }}>{data.uptime}%</p>
-            <p className="text-xs mt-0.5" style={{ color: "var(--aivo-text-muted)" }}>Uptime (30d)</p>
+            <p className="text-xs mt-0.5" style={{ color: "var(--aivo-text-muted)" }}>{t("uptime30d")}</p>
           </div>
         </AnimatedCard>
         <AnimatedCard delay={250}>
@@ -108,7 +110,7 @@ export default function PlatformDashboardPage() {
               <Activity size={22} />
             </div>
             <p className="text-lg font-extrabold" style={{ color: "var(--aivo-text)", fontFamily: "var(--font-display)" }}>{data.apiLatency}ms</p>
-            <p className="text-xs mt-0.5" style={{ color: "var(--aivo-text-muted)" }}>Avg API Latency</p>
+            <p className="text-xs mt-0.5" style={{ color: "var(--aivo-text-muted)" }}>{t("avgApiLatency")}</p>
           </div>
         </AnimatedCard>
         <AnimatedCard delay={300}>
@@ -117,7 +119,7 @@ export default function PlatformDashboardPage() {
               <Globe size={22} />
             </div>
             <p className="text-lg font-extrabold" style={{ color: "var(--aivo-text)", fontFamily: "var(--font-display)" }}>${(data.monthlyRevenue / 100).toLocaleString()}</p>
-            <p className="text-xs mt-0.5" style={{ color: "var(--aivo-text-muted)" }}>Monthly Revenue</p>
+            <p className="text-xs mt-0.5" style={{ color: "var(--aivo-text-muted)" }}>{t("monthlyRevenue")}</p>
           </div>
         </AnimatedCard>
       </div>
@@ -125,12 +127,12 @@ export default function PlatformDashboardPage() {
       {hasPermission(platformRole, "platform.districts.view") && (
         <ExpandableCard
           icon={<Building2 size={16} />}
-          title="Top Districts"
-          subtitle="Highest-performing districts by learner count"
+          title={t("topDistricts")}
+          subtitle={t("topDistrictsSubtitle")}
           gradient="linear-gradient(135deg, #3B82F6, #2563EB)"
           delay={350}
           linkHref="/admin/platform/districts"
-          linkLabel="View all districts"
+          linkLabel={t("viewAllDistricts")}
         >
           <div className="space-y-3">
             {data.topDistricts.map((district, idx) => (
@@ -141,11 +143,11 @@ export default function PlatformDashboardPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-bold truncate" style={{ color: "var(--aivo-text)" }}>{district.name}</h3>
-                    <p className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>{district.learners} learners</p>
+                    <p className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>{t("learnersCount", { count: district.learners })}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-bold" style={{ color: "#7C3AED" }}>{district.mastery}%</p>
-                    <p className="text-[10px]" style={{ color: "var(--aivo-text-muted)" }}>Avg Mastery</p>
+                    <p className="text-[10px]" style={{ color: "var(--aivo-text-muted)" }}>{t("avgMastery")}</p>
                   </div>
                 </div>
               </AnimatedCard>
@@ -157,12 +159,12 @@ export default function PlatformDashboardPage() {
       <div className="mt-6">
         <ExpandableCard
           icon={<Activity size={16} />}
-          title="Recent Activity"
-          subtitle="Latest actions across the platform"
+          title={t("recentActivity")}
+          subtitle={t("recentActivitySubtitle")}
           gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
           delay={450}
           linkHref="/admin/platform/audit"
-          linkLabel="View full audit log"
+          linkLabel={t("viewFullAuditLog")}
         >
           <div className="space-y-2">
             {data.recentActivity.map((item, idx) => (
@@ -182,10 +184,10 @@ export default function PlatformDashboardPage() {
 
       <div className="mt-6 grid gap-3 grid-cols-2 lg:grid-cols-4">
         {[
-          { href: "/admin/platform/districts", label: "Districts", icon: <Building2 size={20} />, gradient: "linear-gradient(135deg, #3B82F6, #2563EB)", perm: "platform.districts.view" as const },
-          { href: "/admin/platform/users", label: "Users", icon: <Users size={20} />, gradient: "linear-gradient(135deg, #2DD4BF, #14B8A6)", perm: "platform.users.view" as const },
-          { href: "/admin/platform/subscriptions", label: "Subscriptions", icon: <CreditCard size={20} />, gradient: "linear-gradient(135deg, #F59E0B, #D97706)", perm: "platform.subscriptions.view" as const },
-          { href: "/admin/platform/settings", label: "Settings", icon: <Activity size={20} />, gradient: "linear-gradient(135deg, #10B981, #059669)", perm: "platform.settings.view" as const },
+          { href: "/admin/platform/districts", label: t("navDistricts"), icon: <Building2 size={20} />, gradient: "linear-gradient(135deg, #3B82F6, #2563EB)", perm: "platform.districts.view" as const },
+          { href: "/admin/platform/users", label: t("navUsers"), icon: <Users size={20} />, gradient: "linear-gradient(135deg, #2DD4BF, #14B8A6)", perm: "platform.users.view" as const },
+          { href: "/admin/platform/subscriptions", label: t("navSubscriptions"), icon: <CreditCard size={20} />, gradient: "linear-gradient(135deg, #F59E0B, #D97706)", perm: "platform.subscriptions.view" as const },
+          { href: "/admin/platform/settings", label: t("navSettings"), icon: <Activity size={20} />, gradient: "linear-gradient(135deg, #10B981, #059669)", perm: "platform.settings.view" as const },
         ].filter((item) => hasPermission(platformRole, item.perm)).map((item) => (
           <Link key={item.href} href={item.href}>
             <div className="rounded-3xl p-5 text-center transition-all cursor-pointer hover:scale-[1.03] h-full" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>

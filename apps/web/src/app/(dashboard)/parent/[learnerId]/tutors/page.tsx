@@ -94,14 +94,14 @@ export default function TutorsPage() {
           </div>
           <div>
             <h1 className="text-2xl font-extrabold">{t("aiTutors")}</h1>
-            <p className="text-white/80 text-sm">AI-powered tutors that adapt to your child&apos;s unique learning style</p>
+            <p className="text-white/80 text-sm">{t("aiTutorsHeaderSubtitle")}</p>
           </div>
         </div>
       </PurpleGradientHeader>
 
       <div className="grid gap-3 grid-cols-2 mb-8">
-        <StatCard icon={<Bot size={18} />} label="Active Tutors" value={activeTutors.length} color="#7C3AED" delay={100} />
-        <StatCard icon={<MessageSquare size={18} />} label="Available" value={storeTutors.length} color="#2DD4BF" delay={200} />
+        <StatCard icon={<Bot size={18} />} label={t("activeTutorsLabel")} value={activeTutors.length} color="#7C3AED" delay={100} />
+        <StatCard icon={<MessageSquare size={18} />} label={t("availableLabel")} value={storeTutors.length} color="#2DD4BF" delay={200} />
       </div>
 
       {error && (
@@ -111,10 +111,10 @@ export default function TutorsPage() {
       <ExpandableCard
         icon={<Bot size={16} />}
         title={t("activeTutorsCount", { count: activeTutors.length })}
-        subtitle="Your child's current AI learning companions"
+        subtitle={t("activeTutorsSubtitle")}
         gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
         delay={300}
-        infoText="Active tutors are AI learning companions currently working with your child. Each tutor specializes in a subject and has a unique teaching personality adapted to your child's needs."
+        infoText={t("activeTutorsInfo")}
       >
         {activeTutors.length > 0 ? (
           <div className="grid gap-4 sm:grid-cols-2">
@@ -144,10 +144,10 @@ export default function TutorsPage() {
           <ExpandableCard
             icon={<Plus size={16} />}
             title={t("tutorStoreLabel")}
-            subtitle="Add more AI tutors to help your child learn"
+            subtitle={t("tutorStoreSubtitle")}
             gradient="linear-gradient(135deg, #2DD4BF, #14B8A6)"
             delay={400}
-            infoText="Browse available AI tutors and subscribe to add them to your child's learning team. Each tutor has unique strengths and teaching approaches."
+            infoText={t("tutorStoreInfo")}
           >
             <div className="grid gap-4 sm:grid-cols-2">
               {storeTutors.map((tutor) => (

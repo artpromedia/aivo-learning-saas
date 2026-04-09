@@ -140,17 +140,17 @@ export default function IepPage() {
           <div>
             <h1 className="text-2xl font-extrabold">{t("iepGoalsDocuments")}</h1>
             <p className="text-white/80 text-sm">
-              Track your child&apos;s individualized education goals and store important documents
-              {data?.nextReviewDate && <span> &middot; Next review: {new Date(data.nextReviewDate).toLocaleDateString()}</span>}
+              {t("iepHeaderSubtitle")}
+              {data?.nextReviewDate && <span> &middot; {t("nextReview", { date: new Date(data.nextReviewDate).toLocaleDateString() })}</span>}
             </p>
           </div>
         </div>
       </PurpleGradientHeader>
 
       <div className="grid gap-3 grid-cols-3 mb-8">
-        <StatCard icon={<Target size={18} />} label="Total Goals" value={totalGoals} color="#7C3AED" delay={100} />
-        <StatCard icon={<CheckCircle2 size={18} />} label="Goals Met" value={metGoals} color="#10B981" delay={200} />
-        <StatCard icon={<FileText size={18} />} label="Documents" value={data?.documents.length ?? 0} color="#3B82F6" delay={300} />
+        <StatCard icon={<Target size={18} />} label={t("totalGoals")} value={totalGoals} color="#7C3AED" delay={100} />
+        <StatCard icon={<CheckCircle2 size={18} />} label={t("goalsMet")} value={metGoals} color="#10B981" delay={200} />
+        <StatCard icon={<FileText size={18} />} label={t("documents")} value={data?.documents.length ?? 0} color="#3B82F6" delay={300} />
       </div>
 
       {error && (
@@ -160,10 +160,10 @@ export default function IepPage() {
       <ExpandableCard
         icon={<Target size={16} />}
         title={t("iepGoals")}
-        subtitle="Track progress on individualized education plan goals"
+        subtitle={t("iepGoalsSubtitle")}
         gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
         delay={400}
-        infoText="IEP (Individualized Education Plan) goals are specific objectives set by your child's education team. Each goal has a target date and progress tracker. Green means on track, yellow means needs attention."
+        infoText={t("iepGoalsInfo")}
       >
         {data?.goals && data.goals.length > 0 ? (
           <div className="space-y-4">
@@ -197,10 +197,10 @@ export default function IepPage() {
           <ExpandableCard
             icon={<Shield size={16} />}
             title={t("accommodations")}
-            subtitle="Active learning accommodations for your child"
+            subtitle={t("accommodationsSubtitle")}
             gradient="linear-gradient(135deg, #2DD4BF, #14B8A6)"
             delay={500}
-            infoText="Accommodations are adjustments made to how your child learns. These don't change what they learn, but how they access the material — like extra time, visual aids, or simplified instructions."
+            infoText={t("accommodationsInfo")}
           >
             <div className="flex flex-wrap gap-2">
               {data.accommodations.map((acc, i) => (
@@ -215,10 +215,10 @@ export default function IepPage() {
         <ExpandableCard
           icon={<FileText size={16} />}
           title={t("documents")}
-          subtitle="Upload and manage IEP documents securely"
+          subtitle={t("documentsSubtitle")}
           gradient="linear-gradient(135deg, #3B82F6, #2563EB)"
           delay={600}
-          infoText="Keep your child's IEP documents organized in one place. Upload PDF files of evaluations, meeting notes, or official IEP documents."
+          infoText={t("documentsInfo")}
         >
           <div className="flex justify-end mb-4">
             <Button size="sm" leftIcon={<Upload size={16} />} loading={uploading} onClick={() => fileInputRef.current?.click()}>
@@ -237,12 +237,12 @@ export default function IepPage() {
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate" style={{ color: "var(--aivo-text)" }}>{doc.fileName}</p>
                     <p className="text-xs" style={{ color: "var(--aivo-text-secondary)" }}>
-                      Uploaded {new Date(doc.uploadedAt).toLocaleDateString()} &middot; {(doc.fileSize / 1024 / 1024).toFixed(1)} MB
+                      {t("uploaded", { date: new Date(doc.uploadedAt).toLocaleDateString() })} &middot; {(doc.fileSize / 1024 / 1024).toFixed(1)} MB
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button className="p-2 rounded-3xl transition-colors hover:bg-[var(--aivo-purple-50)]" style={{ color: "var(--aivo-text-muted)" }} title="Download"><Download size={16} /></button>
-                    <button onClick={() => handleDelete(doc.id)} disabled={deletingId === doc.id} className="p-2 rounded-3xl transition-colors hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 disabled:opacity-50" style={{ color: "var(--aivo-text-muted)" }} title="Delete">
+                    <button className="p-2 rounded-3xl transition-colors hover:bg-[var(--aivo-purple-50)]" style={{ color: "var(--aivo-text-muted)" }} title={t("downloadTitle")}><Download size={16} /></button>
+                    <button onClick={() => handleDelete(doc.id)} disabled={deletingId === doc.id} className="p-2 rounded-3xl transition-colors hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 disabled:opacity-50" style={{ color: "var(--aivo-text-muted)" }} title={t("deleteTitle")}>
                       {deletingId === doc.id ? <Loader2 className="animate-spin" size={16} /> : <Trash2 size={16} />}
                     </button>
                   </div>

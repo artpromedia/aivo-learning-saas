@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { RefreshCw, CheckCircle, XCircle, Clock, Link2, Key, Webhook, FileSearch } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -28,6 +29,7 @@ interface IntegrationStatus {
 }
 
 export default function IntegrationsPage() {
+  const t = useTranslations("districtAdmin");
   const [data, setData] = useState<IntegrationStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -39,7 +41,7 @@ export default function IntegrationsPage() {
       const res = await apiFetch<IntegrationStatus>("/api/integrations/status");
       setData(res);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load integration status");
+      setError(err instanceof Error ? err.message : t("failedToLoadIntegrationStatus"));
     } finally {
       setLoading(false);
     }
@@ -55,10 +57,10 @@ export default function IntegrationsPage() {
 
     try {
       await apiFetch("/api/integrations/sync", { method: "POST" });
-      setSyncMessage("Sync triggered successfully. It may take a few minutes to complete.");
+      setSyncMessage(t("syncTriggeredSuccess"));
       await fetchStatus();
     } catch (err) {
-      setSyncMessage(err instanceof Error ? err.message : "Failed to trigger sync");
+      setSyncMessage(err instanceof Error ? err.message : t("failedToTriggerSync"));
     } finally {
       setSyncing(false);
     }
@@ -87,14 +89,14 @@ export default function IntegrationsPage() {
 
   const latestSyncId = data?.syncHistory?.[0]?.id ?? "";
   const quickLinks = [
-    { href: "/admin/district/integrations/lti", icon: Key, label: "LTI Configuration", desc: "Manage LTI 1.3 platforms", gradient: "linear-gradient(135deg, #7C3AED, #A855F7)" },
-    { href: "/admin/district/integrations/webhooks", icon: Webhook, label: "Outbound Webhooks", desc: "Endpoints & delivery logs", gradient: "linear-gradient(135deg, #3B82F6, #2563EB)" },
-    { href: `/admin/district/integrations/sync?id=${latestSyncId}`, icon: FileSearch, label: "Sync Error Dashboard", desc: "Drill into sync details", gradient: "linear-gradient(135deg, #2DD4BF, #14B8A6)" },
+    { href: "/admin/district/integrations/lti", icon: Key, label: t("ltiConfigLabel"), desc: t("ltiConfigDesc"), gradient: "linear-gradient(135deg, #7C3AED, #A855F7)" },
+    { href: "/admin/district/integrations/webhooks", icon: Webhook, label: t("webhooksLabel"), desc: t("webhooksDesc"), gradient: "linear-gradient(135deg, #3B82F6, #2563EB)" },
+    { href: `/admin/district/integrations/sync?id=${latestSyncId}`, icon: FileSearch, label: t("syncErrorDashboardLabel"), desc: t("syncErrorDashboardDesc"), gradient: "linear-gradient(135deg, #2DD4BF, #14B8A6)" },
   ];
 
   return (
     <PageWrapper>
-      <BackLink href="/admin/district">Back to District</BackLink>
+      <BackLink href="/admin/district">{t("backToDistrict")}</BackLink>
 
       <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
@@ -102,9 +104,9 @@ export default function IntegrationsPage() {
             <Link2 size={22} />
           </div>
           <div>
-            <h1 className="text-2xl font-extrabold">SIS Integrations</h1>
+            <h1 className="text-2xl font-extrabold">{t("integrationsTitle")}</h1>
             <p className="mt-0.5 text-white/80 text-sm">
-              Manage your Student Information System sync settings
+              {t("integrationsSubtitle")}
             </p>
           </div>
         </div>
@@ -147,15 +149,15 @@ export default function IntegrationsPage() {
 
           <ExpandableCard
             icon={<Link2 size={16} />}
-            title={data.provider === "clever" ? "Clever" : data.provider === "classlink" ? "ClassLink" : "No SIS Connected"}
-            subtitle={data.lastSyncAt ? `Last synced: ${formatDate(data.lastSyncAt)}` : data.connected ? "No syncs performed yet" : "Connect a SIS provider"}
+            title={data.provider === "clever" ? t("clever") : data.provider === "classlink" ? t("classLink") : t("noSisConnected")}
+            subtitle={data.lastSyncAt ? t("lastSynced", { date: formatDate(data.lastSyncAt) }) : data.connected ? t("noSyncsPerformed") : t("connectSisProvider")}
             gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
             delay={400}
-            infoText="This shows the status of your Student Information System connection. Manual syncs pull the latest data from your SIS."
+            infoText={t("sisConnectionInfo")}
           >
             <div className="flex items-center justify-between">
               <Badge variant={data.connected ? "success" : "secondary"}>
-                {data.connected ? "Connected" : "Disconnected"}
+                {data.connected ? t("connected") : t("disconnected")}
               </Badge>
               <Button
                 leftIcon={<RefreshCw size={16} />}
@@ -163,7 +165,7 @@ export default function IntegrationsPage() {
                 disabled={!data.connected}
                 onClick={handleSync}
               >
-                Trigger Manual Sync
+                {t("triggerManualSync")}
               </Button>
             </div>
             {syncMessage && (
@@ -175,16 +177,16 @@ export default function IntegrationsPage() {
 
           <ExpandableCard
             icon={<Clock size={16} />}
-            title="Sync History"
-            subtitle={`${data.syncHistory?.length ?? 0} sync records`}
+            title={t("syncHistory")}
+            subtitle={t("syncRecords", { count: data.syncHistory?.length ?? 0 })}
             gradient="linear-gradient(135deg, #6B7280, #4B5563)"
             delay={500}
             defaultExpanded={false}
-            infoText="View the history of all SIS sync operations. Click on an entry to see detailed results."
+            infoText={t("syncHistoryInfo")}
           >
             {!data.syncHistory || data.syncHistory.length === 0 ? (
               <p className="text-sm py-4 text-center" style={{ color: "var(--aivo-text-secondary)" }}>
-                No sync history available.
+                {t("noSyncHistory")}
               </p>
             ) : (
               <div className="space-y-3">
@@ -201,12 +203,12 @@ export default function IntegrationsPage() {
                           {formatDate(entry.triggeredAt)}
                         </span>
                         <Badge variant={statusVariant(entry.status)}>
-                          {entry.status === "in_progress" ? "In Progress" : entry.status}
+                          {entry.status === "in_progress" ? t("inProgress") : entry.status}
                         </Badge>
                       </div>
                       {entry.recordsSynced !== undefined && (
                         <p className="text-xs mt-0.5" style={{ color: "var(--aivo-text-secondary)" }}>
-                          {entry.recordsSynced} records synced
+                          {t("recordsSynced", { count: entry.recordsSynced })}
                         </p>
                       )}
                       {entry.errorMessage && (
@@ -215,7 +217,7 @@ export default function IntegrationsPage() {
                     </div>
                     {entry.completedAt && (
                       <span className="text-xs shrink-0" style={{ color: "var(--aivo-text-muted)" }}>
-                        Completed: {formatDate(entry.completedAt)}
+                        {t("completedLabel", { date: formatDate(entry.completedAt) })}
                       </span>
                     )}
                   </Link>

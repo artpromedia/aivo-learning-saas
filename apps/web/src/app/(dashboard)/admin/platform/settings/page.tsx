@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import { Shield, Users, Key, Globe, Server, Lock, Save, CheckCircle, Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
 import { PageWrapper, BackLink, ExpandableCard, AnimatedCard } from "@/components/ui/PageDesign";
 import { Badge } from "@/components/ui/Badge";
@@ -89,6 +90,7 @@ export default function SettingsPage() {
   const [enforceSSO, setEnforceSSO] = useState(false);
   const [apiRateLimit, setApiRateLimit] = useState(1000);
 
+  const t = useTranslations("platformAdmin");
   const platformRole = (user?.platformRole ?? "super_admin") as PlatformRole;
   const canManageSettings = hasPermission(platformRole, "platform.settings.manage");
   const canManageRoles = hasPermission(platformRole, "platform.roles.manage");
@@ -156,49 +158,49 @@ export default function SettingsPage() {
   const settingsFields = [
     {
       key: "maintenanceMode",
-      label: "Maintenance Mode",
-      description: "When enabled, the platform shows a maintenance page to all non-admin users",
+      label: t("settingsMaintenanceMode"),
+      description: t("settingsMaintenanceModeDesc"),
       icon: <Server size={16} />,
       control: <Toggle checked={maintenanceMode} onChange={setMaintenanceMode} disabled={!canManageSettings} />,
       color: maintenanceMode ? "#EF4444" : "#10B981",
     },
     {
       key: "maxDistrictSize",
-      label: "Max District Size",
-      description: "Maximum number of learners allowed per district",
+      label: t("settingsMaxDistrictSize"),
+      description: t("settingsMaxDistrictSizeDesc"),
       icon: <Users size={16} />,
-      control: <NumberInput value={maxDistrictSize} onChange={setMaxDistrictSize} min={100} max={50000} suffix="learners" disabled={!canManageSettings} />,
+      control: <NumberInput value={maxDistrictSize} onChange={setMaxDistrictSize} min={100} max={50000} suffix={t("settingsSuffixLearners")} disabled={!canManageSettings} />,
       color: "#3B82F6",
     },
     {
       key: "defaultTrialDays",
-      label: "Default Trial Period",
-      description: "Number of days for new district trial subscriptions",
+      label: t("settingsDefaultTrialPeriod"),
+      description: t("settingsDefaultTrialPeriodDesc"),
       icon: <Key size={16} />,
-      control: <NumberInput value={defaultTrialDays} onChange={setDefaultTrialDays} min={7} max={90} suffix="days" disabled={!canManageSettings} />,
+      control: <NumberInput value={defaultTrialDays} onChange={setDefaultTrialDays} min={7} max={90} suffix={t("settingsSuffixDays")} disabled={!canManageSettings} />,
       color: "#F59E0B",
     },
     {
       key: "enforceSSO",
-      label: "Enforce SSO",
-      description: "Require single sign-on for all platform users",
+      label: t("settingsEnforceSSO"),
+      description: t("settingsEnforceSSODesc"),
       icon: <Lock size={16} />,
       control: <Toggle checked={enforceSSO} onChange={setEnforceSSO} disabled={!canManageSettings} />,
       color: "#7C3AED",
     },
     {
       key: "apiRateLimit",
-      label: "API Rate Limit",
-      description: "Maximum API requests per minute per client",
+      label: t("settingsApiRateLimit"),
+      description: t("settingsApiRateLimitDesc"),
       icon: <Globe size={16} />,
-      control: <NumberInput value={apiRateLimit} onChange={setApiRateLimit} min={100} max={10000} suffix="req/min" disabled={!canManageSettings} />,
+      control: <NumberInput value={apiRateLimit} onChange={setApiRateLimit} min={100} max={10000} suffix={t("settingsSuffixReqMin")} disabled={!canManageSettings} />,
       color: "#10B981",
     },
   ];
 
   return (
     <PageWrapper>
-      <BackLink href="/admin/platform">Back to Dashboard</BackLink>
+      <BackLink href="/admin/platform">{t("backToDashboard")}</BackLink>
 
       <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
@@ -206,16 +208,16 @@ export default function SettingsPage() {
             <Shield size={22} />
           </div>
           <div>
-            <h1 className="text-2xl font-extrabold">Platform Settings</h1>
-            <p className="text-white/80 text-sm">Global configuration and role management</p>
+            <h1 className="text-2xl font-extrabold">{t("settingsTitle")}</h1>
+            <p className="text-white/80 text-sm">{t("settingsSubtitle")}</p>
           </div>
         </div>
       </PurpleGradientHeader>
 
       <ExpandableCard
         icon={<Server size={16} />}
-        title="General Settings"
-        subtitle="Platform-wide configuration"
+        title={t("settingsGeneralTitle")}
+        subtitle={t("settingsGeneralSubtitle")}
         gradient="linear-gradient(135deg, #10B981, #059669)"
         delay={100}
       >
@@ -243,7 +245,7 @@ export default function SettingsPage() {
             {saved && (
               <span className="flex items-center gap-1.5 text-sm font-medium" style={{ color: "#10B981" }}>
                 <CheckCircle size={16} />
-                Settings saved
+                {t("settingsSaved")}
               </span>
             )}
             <Button
@@ -256,9 +258,9 @@ export default function SettingsPage() {
               }}
             >
               {saving ? (
-                <span className="flex items-center gap-2"><Loader2 size={16} className="animate-spin" /> Saving...</span>
+                <span className="flex items-center gap-2"><Loader2 size={16} className="animate-spin" /> {t("settingsSaving")}</span>
               ) : (
-                <span className="flex items-center gap-2"><Save size={16} /> Save Changes</span>
+                <span className="flex items-center gap-2"><Save size={16} /> {t("settingsSaveChanges")}</span>
               )}
             </Button>
           </div>
@@ -269,8 +271,8 @@ export default function SettingsPage() {
         <div className="mt-6">
           <ExpandableCard
             icon={<Shield size={16} />}
-            title={`Platform Admins (${data.admins.length})`}
-            subtitle="Users with platform-level access"
+            title={t("platformAdminsCount", { count: data.admins.length })}
+            subtitle={t("platformAdminsSubtitle")}
             gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
             delay={300}
           >
@@ -295,7 +297,7 @@ export default function SettingsPage() {
             </div>
 
             <div className="mt-6">
-              <h4 className="text-sm font-bold mb-3" style={{ color: "var(--aivo-text)" }}>Role Definitions</h4>
+              <h4 className="text-sm font-bold mb-3" style={{ color: "var(--aivo-text)" }}>{t("roleDefinitions")}</h4>
               <div className="grid gap-2 sm:grid-cols-2">
                 {(Object.entries(PLATFORM_ROLE_LABELS) as [PlatformRole, string][]).map(([role, label]) => (
                   <div key={role} className="rounded-xl p-3" style={{ backgroundColor: "var(--aivo-bg)", border: "1px solid var(--aivo-border)" }}>

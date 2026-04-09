@@ -42,7 +42,7 @@ export default function BadgesPage() {
       <div className="text-center py-16">
         <p className="text-red-500 mb-4">{error.message}</p>
         <Button variant="outline" onClick={() => window.location.reload()} leftIcon={<RefreshCw size={16} />}>
-          Retry
+          {t("retry")}
         </Button>
       </div>
     );
@@ -85,8 +85,8 @@ export default function BadgesPage() {
               <ExpandableCard
                 key={category}
                 icon={<Trophy size={16} />}
-                title={`${category.charAt(0).toUpperCase() + category.slice(1)} Badges`}
-                subtitle={`${categoryBadges.length} badge${categoryBadges.length !== 1 ? "s" : ""} earned`}
+                title={t("badgeCategoryTitle", { category: category.charAt(0).toUpperCase() + category.slice(1) })}
+                subtitle={t("badgeCategoryCount", { count: categoryBadges.length })}
                 gradient={gradient}
                 delay={200 + catIdx * 100}
               >
@@ -105,7 +105,7 @@ export default function BadgesPage() {
                           <h3 className="font-bold text-sm mb-0.5" style={{ color: "var(--aivo-text)" }}>{badge.name}</h3>
                           <p className="text-xs line-clamp-2 mb-1.5" style={{ color: "var(--aivo-text-secondary)" }}>{badge.description}</p>
                           <p className="text-xs font-medium" style={{ color: "#7C3AED" }}>
-                            Earned {new Date(badge.earnedAt).toLocaleDateString()}
+                            {t("badgeEarnedDate", { date: new Date(badge.earnedAt).toLocaleDateString() })}
                           </p>
                         </CardBody>
                       </Card>

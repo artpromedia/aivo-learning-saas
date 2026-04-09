@@ -150,6 +150,7 @@ function ExpandableCard({
   icon: React.ReactNode; title: string; subtitle: string; gradient: string;
   children: React.ReactNode; learnMoreText?: string; linkHref?: string; linkLabel?: string; delay: number;
 }) {
+  const t = useTranslations("brain");
   const [expanded, setExpanded] = useState(true);
   const [showInfo, setShowInfo] = useState(false);
 
@@ -179,7 +180,7 @@ function ExpandableCard({
                 <button
                   onClick={(e) => { e.stopPropagation(); setShowInfo(true); }}
                   className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-[var(--aivo-purple-50)] transition-colors focus-visible:outline-2 focus-visible:outline-[#7C3AED]"
-                  aria-label="Learn more"
+                  aria-label={t("learnMore")}
                 >
                   <Info size={14} style={{ color: "#7C3AED" }} />
                 </button>
@@ -187,7 +188,7 @@ function ExpandableCard({
               <button
                 onClick={() => setExpanded(!expanded)}
                 className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-[var(--aivo-purple-50)] transition-colors focus-visible:outline-2 focus-visible:outline-[#7C3AED]"
-                aria-label={expanded ? "Collapse" : "Expand"}
+                aria-label={expanded ? t("collapse") : t("expand")}
               >
                 <ChevronDown
                   size={16}
@@ -601,16 +602,16 @@ export default function BrainProfilePage() {
           <p className="mb-3">{adaptationDetail.description}</p>
           <div className="p-3 rounded-xl" style={{ backgroundColor: "rgba(124,58,237,0.05)" }}>
             <div className="flex items-center justify-between mb-1">
-              <span className="text-xs font-bold" style={{ color: "var(--aivo-text)" }}>Effectiveness</span>
+              <span className="text-xs font-bold" style={{ color: "var(--aivo-text)" }}>{t("effectiveness")}</span>
               <span className="text-xs font-extrabold" style={{ color: "#7C3AED" }}>{Math.round(adaptationDetail.strength * 100)}%</span>
             </div>
             <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: "var(--aivo-purple-50)" }}>
               <div className="h-full rounded-full" style={{ width: `${adaptationDetail.strength * 100}%`, background: "linear-gradient(90deg, #7C3AED, #A855F7)" }} />
             </div>
             <p className="text-xs mt-2" style={{ color: "var(--aivo-text-muted)" }}>
-              {adaptationDetail.strength >= 0.7 ? "This adaptation is working very well for your child!" :
-               adaptationDetail.strength >= 0.5 ? "This adaptation is showing good results and improving." :
-               "AIVO is still fine-tuning this adaptation to find the best approach."}
+              {adaptationDetail.strength >= 0.7 ? t("adaptationWorking") :
+               adaptationDetail.strength >= 0.5 ? t("adaptationGood") :
+               t("adaptationTuning")}
             </p>
           </div>
         </InfoModal>
@@ -812,9 +813,9 @@ export default function BrainProfilePage() {
               <p className="text-xs mb-3" style={{ color: "var(--aivo-text-muted)" }}>{t("insightsSubtitle")}</p>
               <div className="space-y-2">
                 {[
-                  { text: <>Alex learns best during <strong>Thursday sessions</strong> with 89% focus. Consider scheduling key lessons on Thursdays.</>, bg: "rgba(124,58,237,0.06)" },
-                  { text: <><strong>Visual Processing → Pattern Recognition</strong> is the strongest neural pathway (92%). Use this to scaffold weaker areas.</>, bg: "rgba(45,212,191,0.06)" },
-                  { text: <>Auditory Processing remains a growth area. Consider <strong>visual-first</strong> instruction with optional audio reinforcement.</>, bg: "rgba(251,146,60,0.06)" },
+                  { text: t.rich("insightBestDay", { strong: (chunks) => <strong>{chunks}</strong> }), bg: "rgba(124,58,237,0.06)" },
+                  { text: t.rich("insightStrongestPathway", { strong: (chunks) => <strong>{chunks}</strong> }), bg: "rgba(45,212,191,0.06)" },
+                  { text: t.rich("insightGrowthArea", { strong: (chunks) => <strong>{chunks}</strong> }), bg: "rgba(251,146,60,0.06)" },
                 ].map((insight, i) => (
                   <div key={i} className="p-2.5 rounded-lg" style={{ backgroundColor: insight.bg }}>
                     <p className="text-xs font-medium" style={{ color: "var(--aivo-text-secondary)" }}>{insight.text}</p>

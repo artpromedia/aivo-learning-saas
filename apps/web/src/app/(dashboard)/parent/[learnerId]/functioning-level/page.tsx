@@ -18,32 +18,20 @@ type Level = "STANDARD" | "SUPPORTED" | "LOW_VERBAL" | "NON_VERBAL" | "PRE_SYMBO
 interface HistoryEntry { level: Level; setAt: string; trigger: string; }
 interface FunctioningLevelData { current: Level; history: HistoryEntry[]; }
 
-const LEVEL_META: Record<Level, { label: string; description: string; badgeClass: string; color: string; adaptations: { icon: string; text: string }[] }> = {
-  STANDARD: {
-    label: "Standard", description: "Grade-level curriculum with standard expectations and regular progress checks.",
-    badgeClass: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400", color: "#10B981",
-    adaptations: [{ icon: "\u{1F4DA}", text: "Full grade-level text complexity" }, { icon: "\u{1F3AF}", text: "Up to 4 answer choices" }, { icon: "\u{1F50A}", text: "Audio cues available" }],
-  },
-  SUPPORTED: {
-    label: "Supported", description: "Moderate support with visual scaffolding, simplified language, and regular check-ins.",
-    badgeClass: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400", color: "#3B82F6",
-    adaptations: [{ icon: "\u{1F524}", text: "Simplified language" }, { icon: "\u{1F5BC}\u{FE0F}", text: "Visual scaffolding enabled" }, { icon: "\u{1F3AF}", text: "Up to 4 answer choices" }, { icon: "\u{1F50A}", text: "Audio cues available" }],
-  },
-  LOW_VERBAL: {
-    label: "Low Verbal", description: "Picture-based support with minimal text, audio narration, and up to 3 choices.",
-    badgeClass: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400", color: "#F59E0B",
-    adaptations: [{ icon: "\u{1F5BC}\u{FE0F}", text: "Picture-based support" }, { icon: "\u{1F3AF}", text: "Up to 3 answer choices" }, { icon: "\u{1F50A}", text: "Audio narration required" }],
-  },
-  NON_VERBAL: {
-    label: "Non-Verbal", description: "Symbol-based communication with partner support and up to 2 choices.",
-    badgeClass: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400", color: "#FB923C",
-    adaptations: [{ icon: "\u{1F523}", text: "Symbol-based communication" }, { icon: "\u{1F91D}", text: "Communication partner support" }, { icon: "\u{1F3AF}", text: "Up to 2 answer choices" }, { icon: "\u{1F50A}", text: "Audio narration required" }],
-  },
-  PRE_SYMBOLIC: {
-    label: "Pre-Symbolic", description: "Sensory-only engagement; adult-directed sessions with full partner assistance.",
-    badgeClass: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400", color: "#EF4444",
-    adaptations: [{ icon: "\u{1F31F}", text: "Sensory-only content" }, { icon: "\u{1F469}\u{200D}\u{1F3EB}", text: "Adult-directed sessions" }, { icon: "\u{1F50A}", text: "Audio narration required" }],
-  },
+const LEVEL_STYLE: Record<Level, { badgeClass: string; color: string }> = {
+  STANDARD: { badgeClass: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400", color: "#10B981" },
+  SUPPORTED: { badgeClass: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400", color: "#3B82F6" },
+  LOW_VERBAL: { badgeClass: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400", color: "#F59E0B" },
+  NON_VERBAL: { badgeClass: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400", color: "#FB923C" },
+  PRE_SYMBOLIC: { badgeClass: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400", color: "#EF4444" },
+};
+
+const LEVEL_ICONS: Record<Level, { icon: string; textKey: string }[]> = {
+  STANDARD: [{ icon: "\u{1F4DA}", textKey: "adaptFullGradeText" }, { icon: "\u{1F3AF}", textKey: "adaptUpTo4Choices" }, { icon: "\u{1F50A}", textKey: "adaptAudioCues" }],
+  SUPPORTED: [{ icon: "\u{1F524}", textKey: "adaptSimplifiedLanguage" }, { icon: "\u{1F5BC}\u{FE0F}", textKey: "adaptVisualScaffolding" }, { icon: "\u{1F3AF}", textKey: "adaptUpTo4Choices" }, { icon: "\u{1F50A}", textKey: "adaptAudioCues" }],
+  LOW_VERBAL: [{ icon: "\u{1F5BC}\u{FE0F}", textKey: "adaptPictureBased" }, { icon: "\u{1F3AF}", textKey: "adaptUpTo3Choices" }, { icon: "\u{1F50A}", textKey: "adaptAudioNarrationRequired" }],
+  NON_VERBAL: [{ icon: "\u{1F523}", textKey: "adaptSymbolBased" }, { icon: "\u{1F91D}", textKey: "adaptPartnerSupport" }, { icon: "\u{1F3AF}", textKey: "adaptUpTo2Choices" }, { icon: "\u{1F50A}", textKey: "adaptAudioNarrationRequired" }],
+  PRE_SYMBOLIC: [{ icon: "\u{1F31F}", textKey: "adaptSensoryOnly" }, { icon: "\u{1F469}\u{200D}\u{1F3EB}", textKey: "adaptAdultDirected" }, { icon: "\u{1F50A}", textKey: "adaptAudioNarrationRequired" }],
 };
 
 export default function FunctioningLevelPage() {
@@ -87,7 +75,18 @@ export default function FunctioningLevelPage() {
   }
 
   const current = data.current ?? "STANDARD";
-  const meta = LEVEL_META[current] ?? LEVEL_META.STANDARD;
+  const style = LEVEL_STYLE[current] ?? LEVEL_STYLE.STANDARD;
+  const icons = LEVEL_ICONS[current] ?? LEVEL_ICONS.STANDARD;
+
+  const levelDescriptions: Record<Level, string> = {
+    STANDARD: t("standardDescription"),
+    SUPPORTED: t("supportedDescription"),
+    LOW_VERBAL: t("lowVerbalDescription"),
+    NON_VERBAL: t("nonVerbalDescription"),
+    PRE_SYMBOLIC: t("preSymbolicDescription"),
+  };
+
+  const meta = { ...style, description: levelDescriptions[current], adaptations: icons.map((a) => ({ icon: a.icon, text: t(a.textKey) })) };
 
   return (
     <PageWrapper>
@@ -100,23 +99,23 @@ export default function FunctioningLevelPage() {
           </div>
           <div>
             <h1 className="text-2xl font-extrabold">{t("functioningLevel")}</h1>
-            <p className="text-white/80 text-sm">How AIVO adapts its teaching approach to match your child&apos;s needs</p>
+            <p className="text-white/80 text-sm">{t("functioningLevelHeaderSubtitle")}</p>
           </div>
         </div>
       </PurpleGradientHeader>
 
       <div className="grid gap-3 grid-cols-2 mb-8">
         <StatCard icon={<Brain size={18} />} label={t("currentLevel")} value={levelLabel(current)} color={meta.color} delay={100} />
-        <StatCard icon={<Clock size={18} />} label="History" value={`${data.history?.length ?? 0} changes`} color="#7C3AED" delay={200} />
+        <StatCard icon={<Clock size={18} />} label={t("historyLabel")} value={t("changesCount", { count: data.history?.length ?? 0 })} color="#7C3AED" delay={200} />
       </div>
 
       <ExpandableCard
         icon={<Brain size={16} />}
         title={t("currentLevel")}
-        subtitle="Your child's current support tier and what it means"
+        subtitle={t("currentLevelSubtitle")}
         gradient={`linear-gradient(135deg, ${meta.color}, ${meta.color}CC)`}
         delay={300}
-        infoText="The functioning level determines how AIVO presents content to your child. Higher support levels use more visual aids, simpler language, and fewer choices. AIVO automatically suggests level changes based on your child's progress."
+        infoText={t("currentLevelInfo")}
       >
         <div className="space-y-3">
           <div className="flex items-center gap-3">
@@ -130,10 +129,10 @@ export default function FunctioningLevelPage() {
         <ExpandableCard
           icon={<Shield size={16} />}
           title={t("activeAdaptations")}
-          subtitle="How lessons are customized for your child right now"
+          subtitle={t("activeAdaptationsSubtitle")}
           gradient="linear-gradient(135deg, #2DD4BF, #14B8A6)"
           delay={400}
-          infoText="These are the specific adjustments AIVO makes during lessons. They ensure your child can access learning content in a way that works best for them."
+          infoText={t("activeAdaptationsInfo")}
         >
           <ul className="space-y-3">
             {meta.adaptations.map((a) => (
@@ -151,15 +150,15 @@ export default function FunctioningLevelPage() {
           <ExpandableCard
             icon={<Clock size={16} />}
             title={t("levelHistory")}
-            subtitle="How your child's support level has changed over time"
+            subtitle={t("levelHistorySubtitle")}
             gradient="linear-gradient(135deg, #8B5CF6, #6D28D9)"
             delay={500}
             defaultExpanded={false}
-            infoText="This timeline shows when and why your child's functioning level was changed. Changes can happen through assessments, AI recommendations, or manual adjustments by your care team."
+            infoText={t("levelHistoryInfo")}
           >
             <ol className="relative border-l-2 space-y-4 ml-2" style={{ borderColor: "var(--aivo-border)" }}>
               {data.history.map((entry, i) => {
-                const entryMeta = LEVEL_META[entry.level] ?? LEVEL_META.STANDARD;
+                const entryMeta = LEVEL_STYLE[entry.level] ?? LEVEL_STYLE.STANDARD;
                 return (
                   <li key={i} className="ml-4">
                     <div className="absolute w-3 h-3 rounded-full -left-[7px] border-2 border-white dark:border-[#2A1E45]" style={{ backgroundColor: entryMeta.color }} />

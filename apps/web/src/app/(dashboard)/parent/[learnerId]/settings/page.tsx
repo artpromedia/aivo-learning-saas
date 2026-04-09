@@ -128,13 +128,13 @@ export default function LearnerSettingsPage() {
         } else if (result.status === "error") {
           setBrainExportStatus("error");
           setBrainExportLoading(false);
-          setError(result.error ?? "Export failed");
+          setError(result.error ?? t("exportFailed"));
           stopPolling();
         }
       } catch {
         setBrainExportStatus("error");
         setBrainExportLoading(false);
-        setError("Failed to check export status");
+        setError(t("failedToCheckExportStatus"));
         stopPolling();
       }
     }, 3000);
@@ -159,7 +159,7 @@ export default function LearnerSettingsPage() {
     } catch (err) {
       setBrainExportStatus("error");
       setBrainExportLoading(false);
-      setError(err instanceof Error ? err.message : "Failed to start export");
+      setError(err instanceof Error ? err.message : t("failedToStartExport"));
     }
   };
 
@@ -175,7 +175,7 @@ export default function LearnerSettingsPage() {
       setShowDeleteAllModal(false);
       router.push("/parent?message=All+learner+data+has+been+deleted+successfully");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete data");
+      setError(err instanceof Error ? err.message : t("failedToDeleteData"));
       setDeletingAllData(false);
     }
   };
@@ -191,7 +191,7 @@ export default function LearnerSettingsPage() {
       setSubscriptionStatus({ ...subscriptionStatus, status: "ACTIVE", gracePeriodEndsAt: undefined });
       setSuccessMsg(t("reactivateSuccess"));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to reactivate subscription");
+      setError(err instanceof Error ? err.message : t("failedToReactivate"));
     } finally {
       setReactivating(false);
     }
@@ -208,7 +208,7 @@ export default function LearnerSettingsPage() {
       });
       window.location.reload();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update language");
+      setError(err instanceof Error ? err.message : t("failedToUpdateLanguage"));
       setSavingLanguage(false);
     }
   };
@@ -235,7 +235,7 @@ export default function LearnerSettingsPage() {
         if (settingsResult.status === "fulfilled") {
           setSettings(settingsResult.value);
         } else {
-          setError("Failed to load settings");
+          setError(t("failedToLoadSettings"));
         }
 
         if (historyResult.status === "fulfilled") {
@@ -252,7 +252,7 @@ export default function LearnerSettingsPage() {
         }
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "Failed to load settings",
+          err instanceof Error ? err.message : t("failedToLoadSettings"),
         );
       } finally {
         setLoading(false);
@@ -274,7 +274,7 @@ export default function LearnerSettingsPage() {
       });
       setSuccessMsg(t("settingsSaved"));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to save settings");
+      setError(err instanceof Error ? err.message : t("failedToSaveSettings"));
     } finally {
       setSaving(false);
     }
@@ -309,7 +309,7 @@ export default function LearnerSettingsPage() {
         URL.revokeObjectURL(url);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Export failed");
+      setError(err instanceof Error ? err.message : t("exportFailed"));
     } finally {
       setExporting(false);
     }
@@ -322,7 +322,7 @@ export default function LearnerSettingsPage() {
       router.push("/parent");
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Failed to delete account",
+        err instanceof Error ? err.message : t("failedToDeleteAccount"),
       );
       setIsDeleting(false);
     }
@@ -350,7 +350,7 @@ export default function LearnerSettingsPage() {
           onClick={() => window.location.reload()}
           leftIcon={<RefreshCw size={16} />}
         >
-          Retry
+          {td("retry")}
         </Button>
       </div>
     );
@@ -368,7 +368,7 @@ export default function LearnerSettingsPage() {
           <div>
             <h1 className="text-2xl font-extrabold">{t("title")}</h1>
             <p className="text-white/80 text-sm">
-              Manage privacy, data, and preferences for your child&apos;s account
+              {t("settingsSubtitle")}
             </p>
           </div>
         </div>
@@ -392,13 +392,12 @@ export default function LearnerSettingsPage() {
             <AlertTriangle size={20} className="text-[#D97706] dark:text-amber-400 shrink-0 mt-0.5" />
             <div className="flex-1">
               <p className="text-sm font-medium text-amber-800 dark:text-amber-300">
-                Your subscription is cancelled. Your data will be deleted on{" "}
-                {subscriptionStatus.gracePeriodEndsAt
+                {t("subscriptionCancelled", { date: subscriptionStatus.gracePeriodEndsAt
                   ? new Date(subscriptionStatus.gracePeriodEndsAt).toLocaleDateString()
-                  : "the grace period end date"}.
+                  : t("gracePeriodEndDate") })}
               </p>
               <p className="text-xs text-[#D97706] dark:text-amber-400 mt-1">
-                Resubscribe now to keep all Brain data intact, or export your data before the deadline.
+                {t("resubscribePrompt")}
               </p>
               <div className="flex gap-3 mt-3">
                 <Button
@@ -406,7 +405,7 @@ export default function LearnerSettingsPage() {
                   loading={reactivating}
                   size="sm"
                 >
-                  Resubscribe Now
+                  {t("resubscribeNow")}
                 </Button>
                 <Button
                   variant="outline"
@@ -414,7 +413,7 @@ export default function LearnerSettingsPage() {
                   onClick={handleBrainExport}
                   leftIcon={<Download size={14} />}
                 >
-                  Export Brain Data
+                  {t("exportBrainData")}
                 </Button>
               </div>
             </div>
@@ -426,15 +425,15 @@ export default function LearnerSettingsPage() {
         <div className="space-y-6">
           <ExpandableCard
             icon={<Shield size={16} />}
-            title="Privacy Settings"
-            subtitle="Control how your child's data is shared and stored"
+            title={t("privacySettings")}
+            subtitle={t("privacySettingsSubtitle")}
             gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
             delay={100}
-            infoText="Privacy settings control who can see your child's learning data and how long it's stored. 'Standard' mode shares analytics with your collaboration team, while 'Strict' minimizes data sharing."
+            infoText={t("privacySettingsInfo")}
           >
               <div>
                 <label className="block text-sm font-medium text-[var(--aivo-text)] mb-1">
-                  Privacy Level
+                  {t("privacyLevel")}
                 </label>
                 <select
                   value={settings.privacyLevel}
@@ -447,10 +446,10 @@ export default function LearnerSettingsPage() {
                   className="w-full px-4 py-2.5 rounded-3xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none"
                 >
                   <option value="standard">
-                    Standard - Share learning analytics with collaborators
+                    {t("privacyStandard")}
                   </option>
                   <option value="strict">
-                    Strict - Minimal data sharing
+                    {t("privacyStrict")}
                   </option>
                 </select>
               </div>
@@ -469,10 +468,10 @@ export default function LearnerSettingsPage() {
                 />
                 <div>
                   <span className="text-sm font-medium text-[var(--aivo-text)]">
-                    Share progress with collaborators
+                    {t("shareWithCollaborators")}
                   </span>
                   <p className="text-xs text-[var(--aivo-text-secondary)]">
-                    Allow teachers and therapists to view learning data.
+                    {t("shareWithCollaboratorsDesc")}
                   </p>
                 </div>
               </label>
@@ -491,17 +490,17 @@ export default function LearnerSettingsPage() {
                 />
                 <div>
                   <span className="text-sm font-medium text-[var(--aivo-text)]">
-                    Allow anonymous analytics
+                    {t("allowAnalytics")}
                   </span>
                   <p className="text-xs text-[var(--aivo-text-secondary)]">
-                    Help us improve AIVO by sharing anonymized usage data.
+                    {t("allowAnalyticsDesc")}
                   </p>
                 </div>
               </label>
 
               <div>
                 <label className="block text-sm font-medium text-[var(--aivo-text)] mb-1">
-                  Data Retention Period
+                  {t("dataRetentionPeriod")}
                 </label>
                 <select
                   value={settings.dataRetentionMonths}
@@ -513,16 +512,16 @@ export default function LearnerSettingsPage() {
                   }
                   className="w-full px-4 py-2.5 rounded-3xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none"
                 >
-                  <option value={6}>6 months</option>
-                  <option value={12}>12 months</option>
-                  <option value={24}>24 months</option>
-                  <option value={36}>36 months</option>
+                  <option value={6}>{t("nMonths", { n: 6 })}</option>
+                  <option value={12}>{t("nMonths", { n: 12 })}</option>
+                  <option value={24}>{t("nMonths", { n: 24 })}</option>
+                  <option value={36}>{t("nMonths", { n: 36 })}</option>
                 </select>
               </div>
 
 
             <Button onClick={handleSave} loading={saving} leftIcon={<Save size={16} />} className="mt-4">
-              Save Settings
+              {t("saveSettings")}
             </Button>
           </ExpandableCard>
 
@@ -530,36 +529,35 @@ export default function LearnerSettingsPage() {
 
           <ExpandableCard
             icon={<Globe size={16} />}
-            title="Language Preferences"
-            subtitle="Change the language used across the app"
+            title={t("languagePreferences")}
+            subtitle={t("languagePreferencesSubtitle")}
             gradient="linear-gradient(135deg, #3B82F6, #2563EB)"
             delay={200}
-            infoText="Change the display language for the entire AIVO interface. The page will reload to apply the new language."
+            infoText={t("languagePreferencesInfo")}
           >
             <div className="space-y-4">
               <LanguageSelect
                 value={parentLanguage}
                 onChange={handleLanguageChange}
-                label="Your Language"
+                label={t("yourLanguage")}
                 disabled={savingLanguage}
               />
               <p className="text-xs text-[var(--aivo-text-secondary)]">
-                Changing the language will reload the page to apply the new locale across the entire app.
+                {t("languageReloadNote")}
               </p>
             </div>
           </ExpandableCard>
 
           <ExpandableCard
             icon={<Download size={16} />}
-            title="Data Export"
-            subtitle="Download your child's learning data"
+            title={t("dataExport")}
+            subtitle={t("dataExportSubtitle")}
             gradient="linear-gradient(135deg, #2DD4BF, #14B8A6)"
             delay={300}
-            infoText="Export all of your child's learning data as a JSON file. This includes progress, brain profile, session history, and IEP information."
+            infoText={t("dataExportInfo")}
           >
             <p className="text-sm text-[var(--aivo-text-secondary)] mb-4">
-              Download all learner data including progress, brain profile,
-              session history, and IEP information.
+              {t("dataExportDesc")}
             </p>
             <Button
               variant="outline"
@@ -567,22 +565,20 @@ export default function LearnerSettingsPage() {
               loading={exporting}
               leftIcon={<Download size={16} />}
             >
-              Export All Data
+              {t("exportAllData")}
             </Button>
           </ExpandableCard>
 
           <ExpandableCard
             icon={<Brain size={16} />}
-            title="Export Brain Data"
-            subtitle="Download neural adaptation data and AI model weights"
+            title={t("exportBrainData")}
+            subtitle={t("exportBrainDataSubtitle")}
             gradient="linear-gradient(135deg, #8B5CF6, #6D28D9)"
             delay={400}
-            infoText="This exports a complete copy of your child's brain profile data, including neural adaptations, learning patterns, and AI model weights. The file is generated in the background and a download link appears when ready."
+            infoText={t("exportBrainDataInfo")}
           >
               <p className="text-sm text-[var(--aivo-text-secondary)] mb-4">
-                Export a complete copy of this learner&apos;s brain profile data, including
-                neural adaptations, learning patterns, and AI model weights. The export
-                is generated asynchronously and a download link will appear when ready.
+                {t("exportBrainDataDesc")}
               </p>
 
               {brainExportStatus === "idle" && (
@@ -591,7 +587,7 @@ export default function LearnerSettingsPage() {
                   onClick={handleBrainExport}
                   leftIcon={<Brain size={16} />}
                 >
-                  Export Brain Data
+                  {t("exportBrainData")}
                 </Button>
               )}
 
@@ -600,10 +596,10 @@ export default function LearnerSettingsPage() {
                   <Loader2 size={20} className="text-[#7C3AED] animate-spin" />
                   <div>
                     <p className="text-sm font-medium text-[var(--aivo-text)]">
-                      Generating brain data export...
+                      {t("generatingBrainExport")}
                     </p>
                     <p className="text-xs text-[var(--aivo-text-secondary)]">
-                      This may take a few minutes. You can leave this page and come back.
+                      {t("exportMayTakeMinutes")}
                     </p>
                   </div>
                 </div>
@@ -615,13 +611,12 @@ export default function LearnerSettingsPage() {
                     <CheckCircle size={20} className="text-green-600 dark:text-green-400" />
                     <div>
                       <p className="text-sm font-medium text-green-800 dark:text-green-300">
-                        Brain data export is ready!
+                        {t("brainExportReady")}
                       </p>
                       {brainExportExpiresAt && (
                         <p className="text-xs text-green-600 dark:text-green-400 flex items-center gap-1 mt-1">
                           <Clock size={12} />
-                          Download link expires in 72 hours (
-                          {new Date(brainExportExpiresAt).toLocaleDateString()})
+                          {t("downloadLinkExpires", { date: new Date(brainExportExpiresAt).toLocaleDateString() })}
                         </p>
                       )}
                     </div>
@@ -632,7 +627,7 @@ export default function LearnerSettingsPage() {
                     className="inline-flex items-center gap-2 px-4 py-2 rounded-3xl bg-[#7C3AED] text-white text-sm font-medium hover:bg-[#6D28D9] transition-colors"
                   >
                     <Download size={16} />
-                    Download Brain Data
+                    {t("downloadBrainData")}
                   </a>
                   <Button
                     variant="ghost"
@@ -640,7 +635,7 @@ export default function LearnerSettingsPage() {
                     onClick={handleBrainExport}
                     className="ml-2"
                   >
-                    Generate New Export
+                    {t("generateNewExport")}
                   </Button>
                 </div>
               )}
@@ -650,7 +645,7 @@ export default function LearnerSettingsPage() {
                   <div className="flex items-center gap-3 p-4 rounded-3xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30">
                     <AlertTriangle size={20} className="text-red-600 dark:text-red-400" />
                     <p className="text-sm font-medium text-red-800 dark:text-red-300">
-                      Export failed. Please try again.
+                      {t("exportFailedRetry")}
                     </p>
                   </div>
                   <Button
@@ -658,7 +653,7 @@ export default function LearnerSettingsPage() {
                     onClick={handleBrainExport}
                     leftIcon={<RefreshCw size={16} />}
                   >
-                    Retry Export
+                    {t("retryExport")}
                   </Button>
                 </div>
               )}
@@ -667,12 +662,12 @@ export default function LearnerSettingsPage() {
           {exportHistory.length > 0 && (
             <ExpandableCard
               icon={<Clock size={16} />}
-              title="Export History"
-              subtitle="Previous data exports and download links"
+              title={t("exportHistory")}
+              subtitle={t("exportHistorySubtitle")}
               gradient="linear-gradient(135deg, #6B7280, #4B5563)"
               delay={500}
               defaultExpanded={false}
-              infoText="View your previous data exports. Download links expire after 72 hours."
+              infoText={t("exportHistoryInfo")}
             >
                 <div className="space-y-3">
                   {exportHistory.map((entry) => (
@@ -706,16 +701,16 @@ export default function LearnerSettingsPage() {
                           className="text-sm text-[#7C3AED] hover:text-[#6D28D9] font-medium flex items-center gap-1"
                         >
                           <Download size={14} />
-                          Download
+                          {t("download")}
                           {entry.expiresAt && (
                             <span className="text-xs text-[var(--aivo-text-muted)] ml-1">
-                              (expires {new Date(entry.expiresAt).toLocaleDateString()})
+                              ({t("expiresOn", { date: new Date(entry.expiresAt).toLocaleDateString() })})
                             </span>
                           )}
                         </a>
                       )}
                       {entry.status === "expired" && (
-                        <span className="text-xs text-[#A89BB5]">Link expired</span>
+                        <span className="text-xs text-[#A89BB5]">{t("linkExpired")}</span>
                       )}
                     </div>
                   ))}
@@ -725,41 +720,39 @@ export default function LearnerSettingsPage() {
 
           <ExpandableCard
             icon={<Trash2 size={16} />}
-            title="Danger Zone"
-            subtitle="Permanent actions that cannot be undone"
+            title={t("dangerZone")}
+            subtitle={t("dangerZoneSubtitle")}
             gradient="linear-gradient(135deg, #EF4444, #DC2626)"
             delay={600}
             defaultExpanded={false}
-            infoText="These actions permanently delete data. Please make sure you've exported any data you want to keep before proceeding."
+            infoText={t("dangerZoneInfo")}
           >
             <div className="space-y-6">
               <div className="p-4 rounded-3xl" style={{ backgroundColor: "var(--aivo-bg)", border: "1px solid var(--aivo-border)" }}>
-                <h4 className="font-bold text-red-600 dark:text-red-400 mb-2">Delete Learner Account</h4>
+                <h4 className="font-bold text-red-600 dark:text-red-400 mb-2">{t("deleteLearnerAccount")}</h4>
                 <p className="text-sm text-[var(--aivo-text-secondary)] mb-4">
-                  Permanently delete this learner profile and all associated data.
-                  This action cannot be undone.
+                  {t("deleteLearnerAccountDesc")}
                 </p>
                 <Button
                   variant="destructive"
                   onClick={() => setShowDeleteModal(true)}
                   leftIcon={<Trash2 size={16} />}
                 >
-                  Delete Learner Account
+                  {t("deleteLearnerAccount")}
                 </Button>
               </div>
 
               <div className="p-4 rounded-3xl border-2 border-red-300 dark:border-red-700">
               <p className="text-sm text-[var(--aivo-text-secondary)] mb-3">
-                Permanently delete <strong>ALL</strong> data for {learnerName || "this learner"}. This action cannot be undone.
+                {t("deleteAllDataDesc", { name: learnerName || t("thisLearner") })}
               </p>
               <p className="text-sm text-[var(--aivo-text-secondary)] mb-3">
-                This will delete: Brain state, all snapshots, session history, mastery data,
-                IEP documents, tutor sessions, homework history, gamification data, and all recommendations.
+                {t("deleteAllDataList")}
               </p>
               <div className="flex items-start gap-3 p-4 rounded-3xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 mb-4">
                 <Shield size={18} className="text-[#D97706] shrink-0 mt-0.5" />
                 <p className="text-sm text-amber-700 dark:text-amber-300">
-                  A compliance audit record will be retained per GDPR Article 17(3). The user record will be anonymized for billing audit purposes.
+                  {t("complianceAuditNote")}
                 </p>
               </div>
               <Button
@@ -772,7 +765,7 @@ export default function LearnerSettingsPage() {
                 }}
                 leftIcon={<Trash2 size={16} />}
               >
-                Delete All Data for {learnerName || "Learner"}
+                {t("deleteAllDataFor", { name: learnerName || t("thisLearner") })}
               </Button>
               </div>
             </div>
@@ -783,26 +776,24 @@ export default function LearnerSettingsPage() {
       <Modal
         open={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
-        title="Delete Learner Account"
+        title={t("deleteLearnerAccount")}
         footer={
           <div className="flex justify-end gap-2">
             <Button variant="ghost" onClick={() => setShowDeleteModal(false)}>
-              Cancel
+              {t("cancel")}
             </Button>
             <Button
               variant="destructive"
               onClick={handleDelete}
               loading={isDeleting}
             >
-              Permanently Delete
+              {t("permanentlyDelete")}
             </Button>
           </div>
         }
       >
         <p className="text-sm text-[var(--aivo-text-secondary)]">
-          Are you sure you want to delete this learner account? All data
-          including brain profile, learning history, IEP documents, and progress
-          will be permanently removed. This action cannot be undone.
+          {t("deleteLearnerConfirmDesc")}
         </p>
       </Modal>
 
@@ -815,7 +806,7 @@ export default function LearnerSettingsPage() {
             setDeleteConfirmName("");
           }
         }}
-        title="Delete All Data"
+        title={t("deleteAllData")}
         footer={
           <div className="flex justify-end gap-2">
             <Button
@@ -827,7 +818,7 @@ export default function LearnerSettingsPage() {
               }}
               disabled={deletingAllData}
             >
-              Cancel
+              {t("cancel")}
             </Button>
             <Button
               variant="destructive"
@@ -835,7 +826,7 @@ export default function LearnerSettingsPage() {
               loading={deletingAllData}
               disabled={!deletePassword || deleteConfirmName !== learnerName}
             >
-              Permanently Delete All Data
+              {t("permanentlyDeleteAllData")}
             </Button>
           </div>
         }
@@ -844,8 +835,7 @@ export default function LearnerSettingsPage() {
           <div className="flex items-start gap-3 p-3 rounded-3xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30">
             <AlertTriangle size={18} className="text-red-500 shrink-0 mt-0.5" />
             <p className="text-sm text-red-700 dark:text-red-300 font-medium">
-              This action cannot be undone. All brain data, learning history, and
-              associated records will be permanently destroyed.
+              {t("deleteAllDataWarning")}
             </p>
           </div>
 
@@ -854,7 +844,7 @@ export default function LearnerSettingsPage() {
               htmlFor="delete-confirm-name"
               className="block text-sm font-medium text-[var(--aivo-text)] mb-1"
             >
-              Type <strong>{learnerName}</strong> to confirm
+              {t("typeToConfirm")} <strong>{learnerName}</strong>
             </label>
             <input
               id="delete-confirm-name"
@@ -872,7 +862,7 @@ export default function LearnerSettingsPage() {
               htmlFor="delete-confirm-password"
               className="block text-sm font-medium text-[var(--aivo-text)] mb-1"
             >
-              Enter your password to confirm
+              {t("enterPasswordToConfirm")}
             </label>
             <div className="relative">
               <input
@@ -880,7 +870,7 @@ export default function LearnerSettingsPage() {
                 type={deletePasswordVisible ? "text" : "password"}
                 value={deletePassword}
                 onChange={(e) => setDeletePassword(e.target.value)}
-                placeholder="Enter your account password"
+                placeholder={t("enterAccountPassword")}
                 className="w-full px-4 py-2.5 pr-10 rounded-3xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none"
                 autoComplete="current-password"
               />

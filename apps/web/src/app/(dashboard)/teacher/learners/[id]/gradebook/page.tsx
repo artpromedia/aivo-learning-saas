@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { GraduationCap, TrendingUp } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
 import { PageWrapper, BackLink, ExpandableCard, StatCard } from "@/components/ui/PageDesign";
@@ -15,6 +16,7 @@ interface SubjectMastery {
 }
 
 export default function TeacherLearnerGradebookPage() {
+  const t = useTranslations("teacher");
   const params = useParams();
   const learnerId = params.id as string;
   const [subjects, setSubjects] = useState<SubjectMastery[]>([]);
@@ -55,7 +57,7 @@ export default function TeacherLearnerGradebookPage() {
 
   return (
     <PageWrapper>
-      <BackLink href={`/teacher/learners/${learnerId}`}>Back to Learner Hub</BackLink>
+      <BackLink href={`/teacher/learners/${learnerId}`}>{t("backToLearnerHub")}</BackLink>
 
       <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
@@ -63,28 +65,28 @@ export default function TeacherLearnerGradebookPage() {
             <GraduationCap size={22} />
           </div>
           <div>
-            <h1 className="text-2xl font-extrabold">Gradebook</h1>
-            <p className="text-white/80 text-sm">Subject-by-subject mastery breakdown</p>
+            <h1 className="text-2xl font-extrabold">{t("gradebookTitle")}</h1>
+            <p className="text-white/80 text-sm">{t("gradebookSubtitle")}</p>
           </div>
         </div>
       </PurpleGradientHeader>
 
       <div className="grid gap-3 grid-cols-3 mb-8">
-        <StatCard icon={<GraduationCap size={18} />} label="Avg Mastery" value={`${avgMastery}%`} color="#7C3AED" delay={100} />
-        <StatCard icon={<TrendingUp size={18} />} label="Subjects" value={subjects.length} color="#3B82F6" delay={200} />
-        <StatCard icon={<TrendingUp size={18} />} label="Strong (75%+)" value={strongSubjects} color="#10B981" delay={300} />
+        <StatCard icon={<GraduationCap size={18} />} label={t("avgMasteryLabel")} value={`${avgMastery}%`} color="#7C3AED" delay={100} />
+        <StatCard icon={<TrendingUp size={18} />} label={t("subjectsLabel")} value={subjects.length} color="#3B82F6" delay={200} />
+        <StatCard icon={<TrendingUp size={18} />} label={t("strongSubjects")} value={strongSubjects} color="#10B981" delay={300} />
       </div>
 
       <ExpandableCard
         icon={<GraduationCap size={16} />}
-        title="Subject Mastery"
-        subtitle="Detailed breakdown of mastery by subject"
+        title={t("subjectMasteryTitle")}
+        subtitle={t("gradebookMasterySubtitle")}
         gradient="linear-gradient(135deg, #2DD4BF, #14B8A6)"
         delay={400}
-        infoText="Mastery is calculated from adaptive assessments, practice sessions, and homework performance. AIVO adjusts content difficulty as mastery levels change."
+        infoText={t("gradebookMasteryInfo")}
       >
         {subjects.length === 0 ? (
-          <p className="text-sm" style={{ color: "var(--aivo-text-muted)" }}>No subject data available yet.</p>
+          <p className="text-sm" style={{ color: "var(--aivo-text-muted)" }}>{t("noSubjectDataAvailable")}</p>
         ) : (
           <div className="space-y-5">
             {subjects.map((subject) => (

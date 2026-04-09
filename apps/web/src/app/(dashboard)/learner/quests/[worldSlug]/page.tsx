@@ -13,6 +13,7 @@ import {
   Play,
   Star,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -43,6 +44,7 @@ interface QuestWorldDetail {
 
 export default function QuestWorldPage() {
   const params = useParams();
+  const t = useTranslations("dashboard");
   const worldSlug = params.worldSlug as string;
   const activeLearner = useLearnerStore((s) => s.activeLearner);
 
@@ -61,7 +63,7 @@ export default function QuestWorldPage() {
         setWorld(data);
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "Failed to load quest world",
+          err instanceof Error ? err.message : t("failedToLoadQuestWorld"),
         );
       } finally {
         setLoading(false);
@@ -77,22 +79,22 @@ export default function QuestWorldPage() {
   > = {
     locked: {
       icon: <Lock size={20} className="text-[#A89BB5]" />,
-      badge: "Locked",
+      badge: t("locked"),
       variant: "secondary",
     },
     available: {
       icon: <Play size={20} className="text-[#7C3AED]" />,
-      badge: "Ready",
+      badge: t("questReady"),
       variant: "default",
     },
     in_progress: {
       icon: <Play size={20} className="text-orange-500" />,
-      badge: "In Progress",
+      badge: t("questInProgress"),
       variant: "warning",
     },
     completed: {
       icon: <CheckCircle size={20} className="text-green-500" />,
-      badge: "Complete",
+      badge: t("questComplete"),
       variant: "success",
     },
   };
@@ -119,7 +121,7 @@ export default function QuestWorldPage() {
           onClick={() => window.location.reload()}
           leftIcon={<RefreshCw size={16} />}
         >
-          Retry
+          {t("retry")}
         </Button>
       </div>
     );
@@ -132,7 +134,7 @@ export default function QuestWorldPage() {
         className="inline-flex items-center gap-1 text-sm text-[var(--aivo-text-secondary)] hover:text-[var(--aivo-text)] dark:text-[var(--aivo-text-muted)] dark:hover:text-[#A89BB5] mb-4"
       >
         <ArrowLeft size={16} />
-        Back to Quest Worlds
+        {t("backToQuestWorlds")}
       </Link>
 
       <PurpleGradientHeader className="rounded-3xl mb-8">
@@ -178,7 +180,7 @@ export default function QuestWorldPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
                       <span className="text-xs font-semibold text-[var(--aivo-text-muted)] uppercase">
-                        Chapter {chapter.order}
+                        {t("chapterNumber", { number: chapter.order })}
                       </span>
                       <Badge variant={config.variant}>{config.badge}</Badge>
                     </div>
@@ -190,7 +192,7 @@ export default function QuestWorldPage() {
                     </p>
                     <div className="flex items-center gap-4 text-xs text-[var(--aivo-text-secondary)]">
                       <span>
-                        {chapter.completedLessons}/{chapter.lessonsCount} lessons
+                        {t("lessonsProgress", { completed: chapter.completedLessons, total: chapter.lessonsCount })}
                       </span>
                       <span className="flex items-center gap-1 text-[#7C3AED]">
                         <Star size={12} />

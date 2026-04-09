@@ -164,14 +164,12 @@ export default function ClassroomViewPage() {
           </Badge>
           <span className="text-white/80 text-sm flex items-center gap-1">
             <Users size={14} />
-            {classroom.learners.length} learner
-            {classroom.learners.length !== 1 ? "s" : ""}
+            {t("learnerCount", { count: classroom.learners.length })}
           </span>
         </div>
       </PurpleGradientHeader>
 
       <Card>
-        {/* Table header */}
         <div className="hidden sm:grid grid-cols-[1fr_120px_120px_100px_32px] gap-4 px-6 py-3 border-b border-[#E8DDF0] dark:border-[#3D2D5C]">
           <SortButton field="name" label={t("learner")} />
           <SortButton field="masteryPct" label={t("mastery")} />
@@ -182,7 +180,6 @@ export default function ClassroomViewPage() {
           <span />
         </div>
 
-        {/* Rows */}
         {sortedLearners.length === 0 ? (
           <CardBody className="text-center py-12 text-[var(--aivo-text-secondary)]">
             {t("noLearnersInClassroom")}

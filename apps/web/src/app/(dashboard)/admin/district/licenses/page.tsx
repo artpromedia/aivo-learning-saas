@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import { Key, Users, School, CheckCircle } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -36,6 +37,7 @@ interface LicenseData {
 }
 
 export default function LicenseManagementPage() {
+  const t = useTranslations("districtAdmin");
   const [data, setData] = useState<LicenseData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -47,7 +49,7 @@ export default function LicenseManagementPage() {
       const res = await apiFetch<LicenseData>("/api/admin/licenses");
       setData(res);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load license data");
+      setError(err instanceof Error ? err.message : t("failedToLoadLicenses"));
     } finally {
       setLoading(false);
     }
@@ -66,10 +68,10 @@ export default function LicenseManagementPage() {
         method: "POST",
         body: JSON.stringify({ classroomId }),
       });
-      setAllocateSuccess(`Licenses allocated to all learners in ${classroomName}`);
+      setAllocateSuccess(t("licensesAllocatedTo", { classroomName }));
       await fetchLicenses();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to allocate licenses");
+      setError(err instanceof Error ? err.message : t("failedToAllocateLicenses"));
     } finally {
       setAllocating(null);
     }
@@ -83,7 +85,7 @@ export default function LicenseManagementPage() {
 
   return (
     <PageWrapper>
-      <BackLink href="/admin/district">Back to District</BackLink>
+      <BackLink href="/admin/district">{t("backToDistrict")}</BackLink>
 
       <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
@@ -91,9 +93,9 @@ export default function LicenseManagementPage() {
             <Key size={22} />
           </div>
           <div>
-            <h1 className="text-2xl font-extrabold">Tutor License Management</h1>
+            <h1 className="text-2xl font-extrabold">{t("licensesTitle")}</h1>
             <p className="mt-0.5 text-white/80 text-sm">
-              Manage and allocate AI tutor licenses across your district
+              {t("licensesSubtitle")}
             </p>
           </div>
         </div>
@@ -128,12 +130,12 @@ export default function LicenseManagementPage() {
       ) : data ? (
         <div className="space-y-6">
           <div className="grid gap-3 sm:grid-cols-3">
-            <StatCard icon={<Key size={18} />} label="Total Licenses" value={data.pool?.totalLicenses ?? 0} color="#7C3AED" delay={100} />
-            <StatCard icon={<Users size={18} />} label="Used" value={data.pool?.usedLicenses ?? 0} color="#10B981" delay={200} />
+            <StatCard icon={<Key size={18} />} label={t("totalLicenses")} value={data.pool?.totalLicenses ?? 0} color="#7C3AED" delay={100} />
+            <StatCard icon={<Users size={18} />} label={t("used")} value={data.pool?.usedLicenses ?? 0} color="#10B981" delay={200} />
             <AnimatedCard delay={300}>
               <Card>
                 <CardBody className="text-center py-4">
-                  <p className="text-sm mb-2" style={{ color: "var(--aivo-text-secondary)" }}>Usage</p>
+                  <p className="text-sm mb-2" style={{ color: "var(--aivo-text-secondary)" }}>{t("usage")}</p>
                   <p className="text-3xl font-bold mb-2" style={{ color: "var(--aivo-text)" }}>{usagePercent}%</p>
                   <div className="w-full h-3 bg-[#F0E6FF] dark:bg-[#3D2D5C] rounded-full overflow-hidden">
                     <div
@@ -146,7 +148,7 @@ export default function LicenseManagementPage() {
                     />
                   </div>
                   <p className="text-xs mt-1" style={{ color: "var(--aivo-text-secondary)" }}>
-                    {data.pool?.availableLicenses ?? 0} available
+                    {t("available", { count: data.pool?.availableLicenses ?? 0 })}
                   </p>
                 </CardBody>
               </Card>
@@ -155,15 +157,15 @@ export default function LicenseManagementPage() {
 
           <ExpandableCard
             icon={<School size={16} />}
-            title="Bulk Allocate by Classroom"
-            subtitle="Assign licenses to entire classrooms at once"
+            title={t("bulkAllocateByClassroom")}
+            subtitle={t("bulkAllocateSubtitle")}
             gradient="linear-gradient(135deg, #3B82F6, #2563EB)"
             delay={400}
-            infoText="Bulk allocation assigns AI tutor licenses to all learners in a classroom at once."
+            infoText={t("bulkAllocateInfo")}
           >
             {!data.classrooms || data.classrooms.length === 0 ? (
               <p className="text-sm text-center py-4" style={{ color: "var(--aivo-text-secondary)" }}>
-                No classrooms available.
+                {t("noClassroomsAvailable")}
               </p>
             ) : (
               <div className="space-y-3">
@@ -177,7 +179,7 @@ export default function LicenseManagementPage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium truncate" style={{ color: "var(--aivo-text)" }}>{classroom.name}</p>
-                      <p className="text-xs" style={{ color: "var(--aivo-text-secondary)" }}>{classroom.learnerCount} learners</p>
+                      <p className="text-xs" style={{ color: "var(--aivo-text-secondary)" }}>{t("learnersUnit", { count: classroom.learnerCount })}</p>
                     </div>
                     <Button
                       size="sm"
@@ -185,7 +187,7 @@ export default function LicenseManagementPage() {
                       loading={allocating === classroom.id}
                       onClick={() => handleBulkAllocate(classroom.id, classroom.name)}
                     >
-                      Allocate Licenses
+                      {t("allocateLicenses")}
                     </Button>
                   </div>
                 ))}
@@ -195,25 +197,25 @@ export default function LicenseManagementPage() {
 
           <ExpandableCard
             icon={<Users size={16} />}
-            title="Learner Allocations"
-            subtitle="View which tutors are assigned to each learner"
+            title={t("learnerAllocations")}
+            subtitle={t("learnerAllocationsSubtitle")}
             gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
             delay={500}
             defaultExpanded={false}
-            infoText="This table shows each learner and the AI tutors that have been allocated to them."
+            infoText={t("learnerAllocationsInfo")}
           >
             {!data.learners || data.learners.length === 0 ? (
               <p className="text-sm text-center py-4" style={{ color: "var(--aivo-text-secondary)" }}>
-                No learner allocations found.
+                {t("noLearnerAllocations")}
               </p>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-[#E8DDF0] dark:border-[#3D2D5C]">
-                      <th className="text-left py-2 px-3 font-medium" style={{ color: "var(--aivo-text-secondary)" }}>Learner</th>
-                      <th className="text-left py-2 px-3 font-medium" style={{ color: "var(--aivo-text-secondary)" }}>Classroom</th>
-                      <th className="text-left py-2 px-3 font-medium" style={{ color: "var(--aivo-text-secondary)" }}>Allocated Tutors</th>
+                      <th className="text-left py-2 px-3 font-medium" style={{ color: "var(--aivo-text-secondary)" }}>{t("learnerHeader")}</th>
+                      <th className="text-left py-2 px-3 font-medium" style={{ color: "var(--aivo-text-secondary)" }}>{t("classroomHeader")}</th>
+                      <th className="text-left py-2 px-3 font-medium" style={{ color: "var(--aivo-text-secondary)" }}>{t("allocatedTutorsHeader")}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -229,7 +231,7 @@ export default function LicenseManagementPage() {
                               ))}
                             </div>
                           ) : (
-                            <span className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>None</span>
+                            <span className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>{t("none")}</span>
                           )}
                         </td>
                       </tr>

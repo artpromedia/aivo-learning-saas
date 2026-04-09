@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Brain, Lightbulb, Zap, Eye, Headphones } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
 import { PageWrapper, BackLink, ExpandableCard, StatCard, AnimatedCard } from "@/components/ui/PageDesign";
@@ -19,6 +20,7 @@ interface BrainProfile {
 }
 
 export default function TeacherLearnerBrainPage() {
+  const t = useTranslations("teacher");
   const params = useParams();
   const learnerId = params.id as string;
   const [profile, setProfile] = useState<BrainProfile | null>(null);
@@ -64,7 +66,7 @@ export default function TeacherLearnerBrainPage() {
 
   return (
     <PageWrapper>
-      <BackLink href={`/teacher/learners/${learnerId}`}>Back to Learner Hub</BackLink>
+      <BackLink href={`/teacher/learners/${learnerId}`}>{t("backToLearnerHub")}</BackLink>
 
       <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
@@ -72,25 +74,25 @@ export default function TeacherLearnerBrainPage() {
             <Brain size={22} />
           </div>
           <div>
-            <h1 className="text-2xl font-extrabold">Brain Profile</h1>
-            <p className="text-white/80 text-sm">AI-generated learning insights and preferences</p>
+            <h1 className="text-2xl font-extrabold">{t("brainProfileTitle")}</h1>
+            <p className="text-white/80 text-sm">{t("brainProfileSubtitle")}</p>
           </div>
         </div>
       </PurpleGradientHeader>
 
       <div className="grid gap-3 grid-cols-2 lg:grid-cols-4 mb-8">
-        <StatCard icon={<Lightbulb size={18} />} label="Strengths" value={profile.strengths.length} color="#10B981" delay={100} />
-        <StatCard icon={<Zap size={18} />} label="Challenges" value={profile.challenges.length} color="#F59E0B" delay={200} />
-        <StatCard icon={<Eye size={18} />} label="Adaptations" value={profile.adaptations.length} color="#7C3AED" delay={300} />
-        <StatCard icon={<Headphones size={18} />} label="Sensory Prefs" value={profile.sensoryPreferences.length} color="#3B82F6" delay={400} />
+        <StatCard icon={<Lightbulb size={18} />} label={t("brainStrengths")} value={profile.strengths.length} color="#10B981" delay={100} />
+        <StatCard icon={<Zap size={18} />} label={t("brainChallenges")} value={profile.challenges.length} color="#F59E0B" delay={200} />
+        <StatCard icon={<Eye size={18} />} label={t("brainAdaptations")} value={profile.adaptations.length} color="#7C3AED" delay={300} />
+        <StatCard icon={<Headphones size={18} />} label={t("brainSensoryPrefs")} value={profile.sensoryPreferences.length} color="#3B82F6" delay={400} />
       </div>
 
-      <ExpandableCard icon={<Brain size={16} />} title="Learning Style" subtitle="How this learner processes information best" gradient="linear-gradient(135deg, #7C3AED, #A855F7)" delay={500} infoText="AIVO identifies learning styles through session data, response patterns, and engagement metrics.">
+      <ExpandableCard icon={<Brain size={16} />} title={t("learningStyleTitle")} subtitle={t("learningStyleSubtitle")} gradient="linear-gradient(135deg, #7C3AED, #A855F7)" delay={500} infoText={t("learningStyleInfo")}>
         <p className="text-sm" style={{ color: "var(--aivo-text)" }}>{profile.learningStyle}</p>
       </ExpandableCard>
 
       <div className="mt-6">
-        <ExpandableCard icon={<Lightbulb size={16} />} title="Communication Style" subtitle="How to best communicate with this learner" gradient="linear-gradient(135deg, #F59E0B, #D97706)" delay={600} infoText="Understanding communication preferences helps tailor instructions and feedback.">
+        <ExpandableCard icon={<Lightbulb size={16} />} title={t("communicationStyleTitle")} subtitle={t("communicationStyleSubtitle")} gradient="linear-gradient(135deg, #F59E0B, #D97706)" delay={600} infoText={t("communicationStyleInfo")}>
           <p className="text-sm" style={{ color: "var(--aivo-text)" }}>{profile.communicationStyle}</p>
         </ExpandableCard>
       </div>
@@ -100,7 +102,7 @@ export default function TeacherLearnerBrainPage() {
           <div className="rounded-3xl p-6" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
             <h3 className="font-bold mb-3 flex items-center gap-2" style={{ color: "var(--aivo-text)" }}>
               <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white" style={{ background: "linear-gradient(135deg, #10B981, #059669)" }}><Lightbulb size={16} /></div>
-              Strengths
+              {t("brainStrengths")}
             </h3>
             <div className="flex flex-wrap gap-2">
               {profile.strengths.map((s) => (
@@ -114,7 +116,7 @@ export default function TeacherLearnerBrainPage() {
           <div className="rounded-3xl p-6" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
             <h3 className="font-bold mb-3 flex items-center gap-2" style={{ color: "var(--aivo-text)" }}>
               <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white" style={{ background: "linear-gradient(135deg, #F59E0B, #D97706)" }}><Zap size={16} /></div>
-              Challenges
+              {t("brainChallenges")}
             </h3>
             <div className="flex flex-wrap gap-2">
               {profile.challenges.map((c) => (
@@ -126,7 +128,7 @@ export default function TeacherLearnerBrainPage() {
       </div>
 
       <div className="mt-6">
-        <ExpandableCard icon={<Eye size={16} />} title="Adaptations" subtitle="How AIVO adapts for this learner" gradient="linear-gradient(135deg, #3B82F6, #2563EB)" delay={900} infoText="These are the specific adjustments AIVO makes during learning sessions based on the brain profile analysis.">
+        <ExpandableCard icon={<Eye size={16} />} title={t("adaptationsTitle")} subtitle={t("adaptationsSubtitle")} gradient="linear-gradient(135deg, #3B82F6, #2563EB)" delay={900} infoText={t("adaptationsInfo")}>
           <div className="space-y-4">
             {profile.adaptations.map((a) => (
               <div key={a.label}>
@@ -144,7 +146,7 @@ export default function TeacherLearnerBrainPage() {
       </div>
 
       <div className="mt-6">
-        <ExpandableCard icon={<Headphones size={16} />} title="Sensory Preferences" subtitle="Environmental and sensory needs" gradient="linear-gradient(135deg, #8B5CF6, #6D28D9)" delay={1000} infoText="Sensory preferences help create the optimal learning environment both digitally and in the classroom.">
+        <ExpandableCard icon={<Headphones size={16} />} title={t("sensoryPreferencesTitle")} subtitle={t("sensoryPreferencesSubtitle")} gradient="linear-gradient(135deg, #8B5CF6, #6D28D9)" delay={1000} infoText={t("sensoryPreferencesInfo")}>
           <ul className="space-y-2">
             {profile.sensoryPreferences.map((pref) => (
               <li key={pref} className="flex items-center gap-2 text-sm" style={{ color: "var(--aivo-text)" }}>

@@ -106,7 +106,7 @@ export default function GradebookPage() {
           </div>
           <div>
             <h1 className="text-2xl font-extrabold">{t("gradebook")}</h1>
-            <p className="text-white/80 text-sm">Track how your child is mastering each subject over time</p>
+            <p className="text-white/80 text-sm">{t("gradebookSubtitle")}</p>
           </div>
         </div>
       </PurpleGradientHeader>
@@ -119,10 +119,10 @@ export default function GradebookPage() {
       <ExpandableCard
         icon={<TrendingUp size={16} />}
         title={t("masteryOverTime")}
-        subtitle="See how learning improves week by week"
+        subtitle={t("masteryOverTimeSubtitle")}
         gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
         delay={300}
-        infoText="This chart shows your child's mastery percentage for each subject over time. An upward trend means they're improving! Use the subject filters to focus on one area."
+        infoText={t("masteryOverTimeInfo")}
       >
         <div className="flex flex-wrap gap-2 mb-4">
           <button
@@ -154,7 +154,7 @@ export default function GradebookPage() {
           <ResponsiveContainer width="100%" height={320}>
             <LineChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey="date" tick={{ fontSize: 12 }} tickFormatter={(v: string) => new Date(v).toLocaleDateString("en-US", { month: "short", day: "numeric" })} />
+              <XAxis dataKey="date" tick={{ fontSize: 12 }} tickFormatter={(v: string) => new Date(v).toLocaleDateString(undefined, { month: "short", day: "numeric" })} />
               <YAxis domain={[0, 100]} tick={{ fontSize: 12 }} />
               <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid #e5e7eb" }} />
               <Legend />
@@ -174,10 +174,10 @@ export default function GradebookPage() {
         <ExpandableCard
           icon={<GraduationCap size={16} />}
           title={t("subjectBreakdown")}
-          subtitle="Detailed view of each subject's progress"
+          subtitle={t("subjectBreakdownSubtitle")}
           gradient="linear-gradient(135deg, #2DD4BF, #14B8A6)"
           delay={400}
-          infoText="Each card shows a subject's current mastery level and whether it's trending up, down, or stable. 'Improving' means your child is getting better over time!"
+          infoText={t("subjectBreakdownInfo")}
         >
           <div className="grid gap-4 sm:grid-cols-2">
             {data?.subjects.map((subject, idx) => (

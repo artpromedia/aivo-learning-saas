@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, School, Users, ChevronRight, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -22,6 +23,7 @@ interface Classroom {
 const GRADE_BANDS = ["Pre-K", "K-2", "3-5", "6-8", "9-12"];
 
 export default function ClassroomManagementPage() {
+  const t = useTranslations("districtAdmin");
   const router = useRouter();
   const [classrooms, setClassrooms] = useState<Classroom[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,7 +39,7 @@ export default function ClassroomManagementPage() {
       const data = await apiFetch<Classroom[]>("/api/admin/classrooms");
       setClassrooms(data ?? []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load classrooms");
+      setError(err instanceof Error ? err.message : t("failedToLoadClassrooms"));
     } finally {
       setLoading(false);
     }
@@ -64,7 +66,7 @@ export default function ClassroomManagementPage() {
       setShowCreate(false);
       await fetchClassrooms();
     } catch (err) {
-      setCreateError(err instanceof Error ? err.message : "Failed to create classroom");
+      setCreateError(err instanceof Error ? err.message : t("failedToCreateClassroom"));
     } finally {
       setCreating(false);
     }
@@ -72,7 +74,7 @@ export default function ClassroomManagementPage() {
 
   return (
     <PageWrapper>
-      <BackLink href="/admin/district">Back to District</BackLink>
+      <BackLink href="/admin/district">{t("backToDistrict")}</BackLink>
 
       <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
@@ -80,8 +82,8 @@ export default function ClassroomManagementPage() {
             <School size={22} />
           </div>
           <div>
-            <h1 className="text-2xl font-extrabold">Classroom Management</h1>
-            <p className="mt-0.5 text-white/80 text-sm">Create and manage classrooms in your district</p>
+            <h1 className="text-2xl font-extrabold">{t("classroomsTitle")}</h1>
+            <p className="mt-0.5 text-white/80 text-sm">{t("classroomsSubtitle")}</p>
           </div>
         </div>
       </PurpleGradientHeader>
@@ -94,7 +96,7 @@ export default function ClassroomManagementPage() {
 
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-lg font-bold" style={{ color: "var(--aivo-text)" }}>
-          Classrooms ({classrooms.length})
+          {t("classroomsCount", { count: classrooms.length })}
         </h2>
         <Button
           size="sm"
@@ -104,7 +106,7 @@ export default function ClassroomManagementPage() {
             setCreateError(null);
           }}
         >
-          Create Classroom
+          {t("createClassroom")}
         </Button>
       </div>
 
@@ -113,25 +115,25 @@ export default function ClassroomManagementPage() {
           <Card className="mb-6">
             <CardBody>
               <div className="flex items-center justify-between mb-3">
-                <h3 className="font-semibold" style={{ color: "var(--aivo-text)" }}>Create a Classroom</h3>
+                <h3 className="font-semibold" style={{ color: "var(--aivo-text)" }}>{t("createAClassroom")}</h3>
                 <button onClick={() => setShowCreate(false)} className="text-[#A89BB5] hover:text-[#7C3AED]">
                   <X size={18} />
                 </button>
               </div>
               <form onSubmit={handleCreate} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>Classroom Name</label>
+                  <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>{t("classroomNameLabel")}</label>
                   <input
                     type="text"
                     value={formName}
                     onChange={(e) => setFormName(e.target.value)}
-                    placeholder="e.g., Room 204 - Morning Group"
+                    placeholder={t("classroomNamePlaceholder")}
                     required
                     className="w-full px-4 py-2 border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-2xl bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] placeholder-[#A89BB5] focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>Grade Band</label>
+                  <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>{t("gradeBandLabel")}</label>
                   <select
                     value={formGradeBand}
                     onChange={(e) => setFormGradeBand(e.target.value)}
@@ -143,8 +145,8 @@ export default function ClassroomManagementPage() {
                   </select>
                 </div>
                 <div className="flex justify-end gap-3">
-                  <Button variant="ghost" type="button" onClick={() => setShowCreate(false)}>Cancel</Button>
-                  <Button type="submit" loading={creating}>Create</Button>
+                  <Button variant="ghost" type="button" onClick={() => setShowCreate(false)}>{t("cancel")}</Button>
+                  <Button type="submit" loading={creating}>{t("create")}</Button>
                 </div>
                 {createError && <p className="text-sm text-red-600 dark:text-red-400">{createError}</p>}
               </form>
@@ -171,8 +173,8 @@ export default function ClassroomManagementPage() {
       ) : classrooms.length === 0 ? (
         <EmptyState
           icon={<School size={32} />}
-          title="No classrooms yet"
-          description="Create your first classroom to organize learners and teachers."
+          title={t("noClassroomsYet")}
+          description={t("noClassroomsDescription")}
           delay={200}
         />
       ) : (

@@ -99,7 +99,7 @@ export default function ParentDashboardPage() {
               {t("yourChildren")}
             </h2>
             <p className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>
-              Tap a child to see their learning dashboard
+              {t("tapChildToSee")}
             </p>
           </div>
           <Link href="/add-child">
@@ -180,7 +180,7 @@ export default function ParentDashboardPage() {
                           <div className="text-center p-2 rounded-2xl" style={{ backgroundColor: "#CCFBF1" }}>
                             <div className="flex items-center justify-center gap-1" style={{ color: "#2DD4BF" }}>
                               <Star size={14} />
-                              <span className="text-sm font-bold">Lv.{learner.level}</span>
+                              <span className="text-sm font-bold">{t("lvPrefix", { level: learner.level })}</span>
                             </div>
                             <span className="text-xs font-semibold" style={{ color: "var(--aivo-text-muted)" }}>{t("level")}</span>
                           </div>

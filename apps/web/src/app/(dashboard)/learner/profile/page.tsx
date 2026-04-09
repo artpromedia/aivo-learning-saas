@@ -60,10 +60,10 @@ export default function LearnerProfilePage() {
     try {
       const maxSize = 5 * 1024 * 1024;
       if (file.size > maxSize) {
-        throw new Error("Image must be smaller than 5MB");
+        throw new Error(t("errorImageTooLarge"));
       }
       if (!file.type.startsWith("image/")) {
-        throw new Error("Please select an image file");
+        throw new Error(t("errorSelectImageFile"));
       }
 
       const isMock = document.cookie.includes("user_role=");
@@ -76,7 +76,7 @@ export default function LearnerProfilePage() {
         const reader = new FileReader();
         const dataUrl = await new Promise<string>((resolve, reject) => {
           reader.onload = () => resolve(reader.result as string);
-          reader.onerror = () => reject(new Error("Failed to read image"));
+          reader.onerror = () => reject(new Error(t("failedToReadImage")));
           reader.readAsDataURL(file);
         });
         updateLearner(activeLearner.id, { avatarUrl: dataUrl });
@@ -87,7 +87,7 @@ export default function LearnerProfilePage() {
           `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001"}/api/learners/${activeLearner.id}/avatar`,
           { method: "PUT", credentials: "include", body: formData }
         );
-        if (!res.ok) throw new Error("Avatar upload failed");
+        if (!res.ok) throw new Error(t("avatarUploadFailed"));
         const { avatarUrl } = await res.json();
         updateLearner(activeLearner.id, { avatarUrl });
       }
@@ -120,14 +120,14 @@ export default function LearnerProfilePage() {
     return (
       <div className="text-center py-16">
         <p className="text-red-500 mb-4">{error}</p>
-        <Button variant="outline" onClick={() => window.location.reload()} leftIcon={<RefreshCw size={16} />}>Retry</Button>
+        <Button variant="outline" onClick={() => window.location.reload()} leftIcon={<RefreshCw size={16} />}>{t("retry")}</Button>
       </div>
     );
   }
 
   const memberSince = stats?.joinedAt
-    ? new Date(stats.joinedAt).toLocaleDateString("en-US", { month: "long", year: "numeric" })
-    : "Unknown";
+    ? new Date(stats.joinedAt).toLocaleDateString(undefined, { month: "long", year: "numeric" })
+    : t("profileUnknown");
 
   return (
     <PageWrapper>
@@ -155,14 +155,14 @@ export default function LearnerProfilePage() {
             {level && (
               <div className="mt-2">
                 <div className="flex items-center gap-2 mb-1">
-                  <Badge className="bg-white/20 text-white border-none">Level {level.level}</Badge>
+                  <Badge className="bg-white/20 text-white border-none">{t("levelNumber", { level: level.level })}</Badge>
                   <span className="text-xs text-white/70">{level.title}</span>
                 </div>
                 <div className="w-full max-w-xs h-2 bg-white/20 rounded-full overflow-hidden">
                   <div className="h-full bg-white rounded-full transition-all duration-700"
                     style={{ width: `${level.requiredXp > 0 ? (level.currentXp / level.requiredXp) * 100 : 0}%` }} />
                 </div>
-                <p className="text-xs text-white/60 mt-1">{level.currentXp} / {level.requiredXp} XP to next level</p>
+                <p className="text-xs text-white/60 mt-1">{t("xpToNextLevel", { xp: level.requiredXp - level.currentXp, level: level.level + 1 })}</p>
               </div>
             )}
           </div>
@@ -183,10 +183,10 @@ export default function LearnerProfilePage() {
       <ExpandableCard
         icon={<Zap size={16} />}
         title={t("activity")}
-        subtitle="Your detailed learning activity breakdown"
+        subtitle={t("profileDetailedBreakdown")}
         gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
         delay={500}
-        infoText="This shows a detailed breakdown of your learning activity including total sessions, quests completed, challenges won, and more."
+        infoText={t("profileActivityInfo")}
       >
         <div className="grid grid-cols-2 gap-y-4 gap-x-6">
           <div className="flex justify-between items-center">
@@ -220,7 +220,7 @@ export default function LearnerProfilePage() {
         <ExpandableCard
           icon={<Trophy size={16} />}
           title={t("recentBadges")}
-          subtitle="Your latest achievements"
+          subtitle={t("profileLatestAchievements")}
           gradient="linear-gradient(135deg, #FBBF24, #F59E0B)"
           delay={600}
           linkHref="/learner/badges"

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Clock, TrendingUp } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
@@ -19,6 +20,7 @@ interface Session {
 }
 
 export default function TeacherLearnerSessionsPage() {
+  const t = useTranslations("teacher");
   const params = useParams();
   const learnerId = params.id as string;
   const [sessions, setSessions] = useState<Session[]>([]);
@@ -65,7 +67,7 @@ export default function TeacherLearnerSessionsPage() {
 
   return (
     <PageWrapper>
-      <BackLink href={`/teacher/learners/${learnerId}`}>Back to Learner Hub</BackLink>
+      <BackLink href={`/teacher/learners/${learnerId}`}>{t("backToLearnerHub")}</BackLink>
 
       <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
@@ -73,28 +75,28 @@ export default function TeacherLearnerSessionsPage() {
             <Clock size={22} />
           </div>
           <div>
-            <h1 className="text-2xl font-extrabold">Sessions</h1>
-            <p className="text-white/80 text-sm">Recent learning activity history</p>
+            <h1 className="text-2xl font-extrabold">{t("sessionsTitle")}</h1>
+            <p className="text-white/80 text-sm">{t("sessionsSubtitle")}</p>
           </div>
         </div>
       </PurpleGradientHeader>
 
       <div className="grid gap-3 grid-cols-3 mb-8">
-        <StatCard icon={<Clock size={18} />} label="Sessions" value={sessions.length} color="#7C3AED" delay={100} />
-        <StatCard icon={<Clock size={18} />} label="Total Time" value={`${totalMin}m`} color="#3B82F6" delay={200} />
-        <StatCard icon={<TrendingUp size={18} />} label="Avg Score" value={`${avgScore}%`} color="#10B981" delay={300} />
+        <StatCard icon={<Clock size={18} />} label={t("sessionsLabel")} value={sessions.length} color="#7C3AED" delay={100} />
+        <StatCard icon={<Clock size={18} />} label={t("totalTime")} value={`${totalMin}m`} color="#3B82F6" delay={200} />
+        <StatCard icon={<TrendingUp size={18} />} label={t("avgScore")} value={`${avgScore}%`} color="#10B981" delay={300} />
       </div>
 
       <ExpandableCard
         icon={<Clock size={16} />}
-        title="All Sessions"
-        subtitle="Complete learning session history"
+        title={t("allSessions")}
+        subtitle={t("allSessionsSubtitle")}
         gradient="linear-gradient(135deg, #F59E0B, #D97706)"
         delay={400}
-        infoText="Each session represents a learning interaction with AIVO. Sessions are scored based on accuracy and engagement metrics."
+        infoText={t("allSessionsInfo")}
       >
         {sessions.length === 0 ? (
-          <p className="text-sm" style={{ color: "var(--aivo-text-muted)" }}>No sessions recorded yet.</p>
+          <p className="text-sm" style={{ color: "var(--aivo-text-muted)" }}>{t("noSessionsRecorded")}</p>
         ) : (
           <div className="space-y-3">
             {sessions.map((session, idx) => (
@@ -104,7 +106,7 @@ export default function TeacherLearnerSessionsPage() {
                     <span className="text-sm font-bold" style={{ color: "var(--aivo-text)" }}>{session.subject}</span>
                     <div className="flex items-center gap-3 mt-1">
                       <span className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>{formatDate(session.date)}</span>
-                      <span className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>{session.durationMin} min</span>
+                      <span className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>{t("minutesUnit", { count: session.durationMin })}</span>
                     </div>
                   </div>
                   {session.score != null && (

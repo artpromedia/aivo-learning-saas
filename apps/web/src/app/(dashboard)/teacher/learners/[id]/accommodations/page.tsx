@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { ShieldCheck, Info } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
 import { PageWrapper, BackLink, ExpandableCard, StatCard, AnimatedCard } from "@/components/ui/PageDesign";
@@ -17,6 +18,7 @@ interface Accommodation {
 }
 
 export default function TeacherAccommodationsPage() {
+  const t = useTranslations("teacher");
   const params = useParams();
   const learnerId = params.id as string;
   const [accommodations, setAccommodations] = useState<Accommodation[]>([]);
@@ -54,7 +56,7 @@ export default function TeacherAccommodationsPage() {
 
   return (
     <PageWrapper>
-      <BackLink href={`/teacher/learners/${learnerId}`}>Back to Learner Hub</BackLink>
+      <BackLink href={`/teacher/learners/${learnerId}`}>{t("backToLearnerHub")}</BackLink>
 
       <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
@@ -62,27 +64,27 @@ export default function TeacherAccommodationsPage() {
             <ShieldCheck size={22} />
           </div>
           <div>
-            <h1 className="text-2xl font-extrabold">Accommodations</h1>
-            <p className="text-white/80 text-sm">Support strategies and adaptations for this learner</p>
+            <h1 className="text-2xl font-extrabold">{t("accommodationsTitle")}</h1>
+            <p className="text-white/80 text-sm">{t("accommodationsSubtitle")}</p>
           </div>
         </div>
       </PurpleGradientHeader>
 
       <div className="grid gap-3 grid-cols-2 mb-8">
-        <StatCard icon={<ShieldCheck size={18} />} label="Active Accommodations" value={accommodations.length} color="#7C3AED" delay={100} />
-        <StatCard icon={<Info size={18} />} label="Categories" value={new Set(accommodations.map((a) => a.category ?? "General")).size} color="#10B981" delay={200} />
+        <StatCard icon={<ShieldCheck size={18} />} label={t("activeAccommodations")} value={accommodations.length} color="#7C3AED" delay={100} />
+        <StatCard icon={<Info size={18} />} label={t("categoriesLabel")} value={new Set(accommodations.map((a) => a.category ?? "General")).size} color="#10B981" delay={200} />
       </div>
 
       <ExpandableCard
         icon={<ShieldCheck size={16} />}
-        title="All Accommodations"
-        subtitle="Active support strategies for this learner"
+        title={t("allAccommodations")}
+        subtitle={t("allAccommodationsSubtitle")}
         gradient="linear-gradient(135deg, #8B5CF6, #6D28D9)"
         delay={300}
-        infoText="These accommodations are derived from the learner's IEP and brain profile analysis. They're automatically applied during AIVO learning sessions."
+        infoText={t("allAccommodationsInfo")}
       >
         {accommodations.length === 0 ? (
-          <p className="text-sm" style={{ color: "var(--aivo-text-muted)" }}>No accommodations configured yet.</p>
+          <p className="text-sm" style={{ color: "var(--aivo-text-muted)" }}>{t("noAccommodationsConfigured")}</p>
         ) : (
           <div className="space-y-3">
             {accommodations.map((acc, idx) => (

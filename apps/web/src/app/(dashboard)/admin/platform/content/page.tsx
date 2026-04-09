@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Layers, BookOpen, Brain, Puzzle, Star, BarChart3, Search } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
 import { PageWrapper, BackLink, StatCard, ExpandableCard, AnimatedCard } from "@/components/ui/PageDesign";
 import { Badge } from "@/components/ui/Badge";
@@ -39,6 +40,7 @@ export default function ContentPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
+  const t = useTranslations("platformAdmin");
 
   const platformRole = (user?.platformRole ?? "super_admin") as PlatformRole;
   const canManage = hasPermission(platformRole, "platform.content.manage");
@@ -80,7 +82,7 @@ export default function ContentPage() {
 
   return (
     <PageWrapper>
-      <BackLink href="/admin/platform">Back to Dashboard</BackLink>
+      <BackLink href="/admin/platform">{t("backToDashboard")}</BackLink>
 
       <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
@@ -88,17 +90,17 @@ export default function ContentPage() {
             <Layers size={22} />
           </div>
           <div>
-            <h1 className="text-2xl font-extrabold">Content Library</h1>
-            <p className="text-white/80 text-sm">Manage curriculum, lessons, and assessments</p>
+            <h1 className="text-2xl font-extrabold">{t("contentTitle")}</h1>
+            <p className="text-white/80 text-sm">{t("contentSubtitle")}</p>
           </div>
         </div>
       </PurpleGradientHeader>
 
       <div className="grid gap-3 grid-cols-2 lg:grid-cols-4 mb-8">
-        <StatCard icon={<Layers size={18} />} label="Total Items" value={data.totalItems} color="#7C3AED" delay={100} />
-        <StatCard icon={<BookOpen size={18} />} label="Published" value={data.publishedCount} color="#10B981" delay={200} />
-        <StatCard icon={<Brain size={18} />} label="In Review" value={data.reviewCount} color="#F59E0B" delay={300} />
-        <StatCard icon={<BarChart3 size={18} />} label="Total Usage" value={data.totalUsage.toLocaleString()} color="#3B82F6" delay={400} />
+        <StatCard icon={<Layers size={18} />} label={t("contentStatTotalItems")} value={data.totalItems} color="#7C3AED" delay={100} />
+        <StatCard icon={<BookOpen size={18} />} label={t("contentStatPublished")} value={data.publishedCount} color="#10B981" delay={200} />
+        <StatCard icon={<Brain size={18} />} label={t("contentStatInReview")} value={data.reviewCount} color="#F59E0B" delay={300} />
+        <StatCard icon={<BarChart3 size={18} />} label={t("contentStatTotalUsage")} value={data.totalUsage.toLocaleString()} color="#3B82F6" delay={400} />
       </div>
 
       <div className="flex gap-3 mb-6">
@@ -108,7 +110,7 @@ export default function ContentPage() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search content..."
+            placeholder={t("contentSearchPlaceholder")}
             className="w-full pl-11 pr-4 py-3 rounded-3xl border border-[#E8DDF0] bg-white text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none"
           />
         </div>
@@ -117,18 +119,18 @@ export default function ContentPage() {
           onChange={(e) => setTypeFilter(e.target.value)}
           className="px-4 py-3 rounded-3xl border border-[#E8DDF0] bg-white text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none text-sm"
         >
-          <option value="all">All Types</option>
-          <option value="lesson">Lessons</option>
-          <option value="quest">Quests</option>
-          <option value="assessment">Assessments</option>
-          <option value="module">Modules</option>
+          <option value="all">{t("contentAllTypes")}</option>
+          <option value="lesson">{t("contentTypeLessons")}</option>
+          <option value="quest">{t("contentTypeQuests")}</option>
+          <option value="assessment">{t("contentTypeAssessments")}</option>
+          <option value="module">{t("contentTypeModules")}</option>
         </select>
       </div>
 
       <ExpandableCard
         icon={<Layers size={16} />}
-        title={`Content Items (${filtered.length})`}
-        subtitle="All curriculum content across the platform"
+        title={t("contentItemsCount", { count: filtered.length })}
+        subtitle={t("contentItemsSubtitle")}
         gradient="linear-gradient(135deg, #EC4899, #DB2777)"
         delay={500}
       >
@@ -146,9 +148,9 @@ export default function ContentPage() {
                   </div>
                   <div className="flex items-center gap-3 mt-0.5">
                     <span className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>{item.subject}</span>
-                    <span className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>Grades {item.gradeRange}</span>
+                    <span className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>{t("contentGrades", { range: item.gradeRange })}</span>
                     <span className="text-xs flex items-center gap-0.5" style={{ color: "#F59E0B" }}><Star size={10} />{item.avgRating.toFixed(1)}</span>
-                    <span className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>{item.usageCount.toLocaleString()} uses</span>
+                    <span className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>{t("contentUses", { count: item.usageCount.toLocaleString() })}</span>
                   </div>
                 </div>
               </div>

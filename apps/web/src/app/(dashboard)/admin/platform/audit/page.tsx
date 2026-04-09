@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { FileText, Search, Filter, Shield, AlertTriangle, CheckCircle, Info, Clock } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
 import { PageWrapper, BackLink, AnimatedCard, ExpandableCard } from "@/components/ui/PageDesign";
 import { Badge } from "@/components/ui/Badge";
@@ -26,6 +27,7 @@ export default function AuditLogPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [severityFilter, setSeverityFilter] = useState("all");
+  const t = useTranslations("platformAdmin");
 
   useEffect(() => {
     async function fetchData() {
@@ -61,7 +63,7 @@ export default function AuditLogPage() {
 
   return (
     <PageWrapper>
-      <BackLink href="/admin/platform">Back to Dashboard</BackLink>
+      <BackLink href="/admin/platform">{t("backToDashboard")}</BackLink>
 
       <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
@@ -69,8 +71,8 @@ export default function AuditLogPage() {
             <FileText size={22} />
           </div>
           <div>
-            <h1 className="text-2xl font-extrabold">Audit Log</h1>
-            <p className="text-white/80 text-sm">Track all actions and security events</p>
+            <h1 className="text-2xl font-extrabold">{t("auditTitle")}</h1>
+            <p className="text-white/80 text-sm">{t("auditSubtitle")}</p>
           </div>
         </div>
       </PurpleGradientHeader>
@@ -82,7 +84,7 @@ export default function AuditLogPage() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search audit log..."
+            placeholder={t("auditSearchPlaceholder")}
             className="w-full pl-11 pr-4 py-3 rounded-3xl border border-[#E8DDF0] bg-white text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none"
           />
         </div>
@@ -91,17 +93,17 @@ export default function AuditLogPage() {
           onChange={(e) => setSeverityFilter(e.target.value)}
           className="px-4 py-3 rounded-3xl border border-[#E8DDF0] bg-white text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none text-sm"
         >
-          <option value="all">All Severity</option>
-          <option value="info">Info</option>
-          <option value="warning">Warning</option>
-          <option value="critical">Critical</option>
+          <option value="all">{t("auditAllSeverity")}</option>
+          <option value="info">{t("severityInfo")}</option>
+          <option value="warning">{t("severityWarning")}</option>
+          <option value="critical">{t("severityCritical")}</option>
         </select>
       </div>
 
       <ExpandableCard
         icon={<FileText size={16} />}
-        title={`Audit Entries (${filtered.length})`}
-        subtitle="All recorded platform actions"
+        title={t("auditEntriesCount", { count: filtered.length })}
+        subtitle={t("auditEntriesSubtitle")}
         gradient="linear-gradient(135deg, #6B7280, #4B5563)"
         delay={200}
       >
@@ -118,12 +120,12 @@ export default function AuditLogPage() {
                     <Badge variant={sevColors[entry.severity] as "default" | "warning" | "error" ?? "default"}>{entry.severity}</Badge>
                   </div>
                   <p className="text-xs mt-0.5" style={{ color: "var(--aivo-text-muted)" }}>
-                    by <span className="font-bold">{entry.actor}</span> ({entry.actorRole}) on <span className="font-bold">{entry.target}</span> ({entry.targetType})
+                    {t("auditByActor", { actor: entry.actor, role: entry.actorRole, target: entry.target, targetType: entry.targetType })}
                   </p>
                   {entry.details && <p className="text-xs mt-1" style={{ color: "var(--aivo-text-muted)" }}>{entry.details}</p>}
                   <div className="flex items-center gap-3 mt-1">
                     <span className="text-[10px] flex items-center gap-1" style={{ color: "var(--aivo-text-muted)" }}><Clock size={10} />{new Date(entry.timestamp).toLocaleString()}</span>
-                    <span className="text-[10px]" style={{ color: "var(--aivo-text-muted)" }}>IP: {entry.ip}</span>
+                    <span className="text-[10px]" style={{ color: "var(--aivo-text-muted)" }}>{t("auditIp", { ip: entry.ip })}</span>
                   </div>
                 </div>
               </div>

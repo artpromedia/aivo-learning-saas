@@ -217,7 +217,7 @@ export default function HomeworkSessionPage() {
           <CardBody className="p-2">
             <img
               src={session.imageUrl}
-              alt="Homework"
+              alt={t("homeworkImage")}
               className="w-full max-h-48 object-contain rounded-3xl"
             />
           </CardBody>
