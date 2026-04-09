@@ -34,13 +34,11 @@ const ROLE_ALLOWED_PREFIXES: Record<string, string[]> = {
 };
 
 function detectLocale(request: NextRequest): string {
-  // 1. Explicit cookie preference
   const cookieLocale = request.cookies.get("NEXT_LOCALE")?.value;
   if (cookieLocale && SUPPORTED_LOCALES.includes(cookieLocale)) {
     return cookieLocale;
   }
 
-  // 2. Accept-Language header
   const acceptLanguage = request.headers.get("accept-language") ?? "";
   const preferred = acceptLanguage
     .split(",")
@@ -51,7 +49,6 @@ function detectLocale(request: NextRequest): string {
     return preferred;
   }
 
-  // 3. Default
   return DEFAULT_LOCALE;
 }
 
@@ -59,11 +56,9 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const response = NextResponse.next();
 
-  // Detect and set locale
   const locale = detectLocale(request);
   response.headers.set("x-locale", locale);
 
-  // Skip auth/onboarding/billing/marketing and static assets
   if (
     pathname.startsWith("/login") ||
     pathname.startsWith("/register") ||
@@ -79,10 +74,15 @@ export function middleware(request: NextRequest) {
     return response;
   }
 
-  // Check for role cookie/header
+  const VALID_PREVIEW_ROLES = ["parent", "learner", "teacher", "admin"];
+  const isPreview = request.nextUrl.searchParams.has("preview") && process.env.NODE_ENV !== "production";
+  const rawPreviewRole = isPreview ? (request.nextUrl.searchParams.get("role") || "parent") : null;
+  const previewRole = rawPreviewRole && VALID_PREVIEW_ROLES.includes(rawPreviewRole) ? rawPreviewRole : null;
+
   const roleCookie = request.cookies.get("user_role")?.value;
-  if (!roleCookie) {
-    // Redirect unauthenticated users away from dashboard routes
+  const effectiveRole = roleCookie || previewRole;
+
+  if (!effectiveRole) {
     const isDashboard =
       pathname.startsWith("/parent") ||
       pathname.startsWith("/learner") ||
@@ -100,9 +100,6 @@ export function middleware(request: NextRequest) {
     return response;
   }
 
-  const role = roleCookie;
-
-  // Check if user is accessing a dashboard route
   const isDashboardRoute =
     pathname.startsWith("/parent") ||
     pathname.startsWith("/learner") ||
@@ -117,13 +114,11 @@ export function middleware(request: NextRequest) {
     return response;
   }
 
-  // Check if role has access to this path
-  const allowedPrefixes = ROLE_ALLOWED_PREFIXES[role] ?? [];
+  const allowedPrefixes = ROLE_ALLOWED_PREFIXES[effectiveRole] ?? [];
   const hasAccess = allowedPrefixes.some((prefix) => pathname.startsWith(prefix));
 
   if (!hasAccess) {
-    // Redirect to role's default page
-    const defaultPath = ROLE_REDIRECTS[role] ?? "/parent";
+    const defaultPath = ROLE_REDIRECTS[effectiveRole] ?? "/parent";
     const url = request.nextUrl.clone();
     url.pathname = defaultPath;
     return NextResponse.redirect(url);
