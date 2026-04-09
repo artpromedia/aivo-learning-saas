@@ -72,10 +72,14 @@ export default function TeacherSettingsPage() {
                 <p className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>Receive updates via email</p>
               </div>
               <button
+                type="button"
+                role="switch"
+                aria-checked={emailNotifs}
                 onClick={() => setEmailNotifs(!emailNotifs)}
-                className={`w-12 h-6 rounded-full transition-colors ${emailNotifs ? "bg-[#7C3AED]" : "bg-gray-300"}`}
+                className="relative inline-flex h-7 w-12 shrink-0 cursor-pointer items-center rounded-full transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7C3AED]"
+                style={{ backgroundColor: emailNotifs ? "#7C3AED" : "var(--aivo-border)" }}
               >
-                <div className={`w-5 h-5 rounded-full bg-white shadow-sm transition-transform ${emailNotifs ? "translate-x-6" : "translate-x-0.5"}`} />
+                <span className="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-md transition-transform duration-200" style={{ transform: emailNotifs ? "translateX(22px)" : "translateX(4px)" }} />
               </button>
             </div>
             <div className="flex items-center justify-between">
@@ -84,10 +88,14 @@ export default function TeacherSettingsPage() {
                 <p className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>Browser push notifications</p>
               </div>
               <button
+                type="button"
+                role="switch"
+                aria-checked={pushNotifs}
                 onClick={() => setPushNotifs(!pushNotifs)}
-                className={`w-12 h-6 rounded-full transition-colors ${pushNotifs ? "bg-[#7C3AED]" : "bg-gray-300"}`}
+                className="relative inline-flex h-7 w-12 shrink-0 cursor-pointer items-center rounded-full transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7C3AED]"
+                style={{ backgroundColor: pushNotifs ? "#7C3AED" : "var(--aivo-border)" }}
               >
-                <div className={`w-5 h-5 rounded-full bg-white shadow-sm transition-transform ${pushNotifs ? "translate-x-6" : "translate-x-0.5"}`} />
+                <span className="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-md transition-transform duration-200" style={{ transform: pushNotifs ? "translateX(22px)" : "translateX(4px)" }} />
               </button>
             </div>
           </div>
