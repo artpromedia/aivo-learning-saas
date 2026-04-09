@@ -2,7 +2,8 @@
 
 import React, { useCallback, useState, useRef, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, Send, Loader2, StopCircle, User, Mic } from "lucide-react";
+import { ArrowLeft, Send, Loader2, StopCircle, User, Mic, Paperclip, X, Image as ImageIcon, FileText } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/Button";
@@ -41,6 +42,17 @@ interface TutorSessionResponse {
   };
 }
 
+interface ChatAttachment {
+  id: string;
+  file: File;
+  previewUrl: string;
+  type: "image" | "file";
+}
+
+const ACCEPTED_FILE_TYPES = "image/png,image/jpeg,image/gif,image/webp,application/pdf,.doc,.docx,.txt";
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
+const MAX_ATTACHMENTS = 5;
+
 const KNOWN_PERSONAS = new Set<string>([
   "nova", "sage", "spark", "chrono", "pixel", "harmony", "echo",
 ]);
@@ -63,6 +75,60 @@ function isPracticePrompt(content: string): boolean {
   return /try saying|your turn|let's practice/i.test(content);
 }
 
+function MessageContent({ content, isUser }: { content: string; isUser: boolean }) {
+  if (!content) {
+    return (
+      <span className="inline-flex items-center gap-1">
+        <span className="w-1.5 h-1.5 rounded-full bg-current animate-bounce" />
+        <span className="w-1.5 h-1.5 rounded-full bg-current animate-bounce" style={{ animationDelay: "0.15s" }} />
+        <span className="w-1.5 h-1.5 rounded-full bg-current animate-bounce" style={{ animationDelay: "0.3s" }} />
+      </span>
+    );
+  }
+
+  const lines = content.split("\n");
+  const textLines: string[] = [];
+  const inlineAttachments: { label: string; type: "image" | "file"; name: string }[] = [];
+
+  for (const line of lines) {
+    const imgMatch = line.match(/^\[Image:\s*(.+?)\]$/);
+    const fileMatch = line.match(/^\[File:\s*(.+?)\]$/);
+    if (imgMatch) {
+      inlineAttachments.push({ label: imgMatch[0], type: "image", name: imgMatch[1] });
+    } else if (fileMatch) {
+      inlineAttachments.push({ label: fileMatch[0], type: "file", name: fileMatch[1] });
+    } else {
+      textLines.push(line);
+    }
+  }
+
+  const textContent = textLines.join("\n").trim();
+
+  return (
+    <div className="space-y-2">
+      {textContent && <p className="whitespace-pre-wrap">{textContent}</p>}
+      {inlineAttachments.length > 0 && (
+        <div className="flex flex-wrap gap-2 mt-1">
+          {inlineAttachments.map((att, i) => (
+            <div
+              key={i}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium",
+                isUser
+                  ? "bg-white/20 text-white/90"
+                  : "bg-[var(--aivo-purple-50,#F0E6FF)] text-[var(--aivo-purple-600,#7C3AED)]",
+              )}
+            >
+              {att.type === "image" ? <ImageIcon size={14} /> : <FileText size={14} />}
+              <span className="max-w-[120px] truncate">{att.name}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function TutorChatPage() {
   const params = useParams();
   const router = useRouter();
@@ -83,6 +149,8 @@ export default function TutorChatPage() {
   const [showRecorder, setShowRecorder] = useState(false);
   const isEcho = tutor?.slug === "echo" || tutor?.specialty === "Speech";
 
+  const [attachments, setAttachments] = useState<ChatAttachment[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const messagesRef = useRef<ChatMessage[]>([]);
@@ -146,6 +214,44 @@ export default function TutorChatPage() {
     setMockStreaming(false);
   }, [isMockSession, realChat]);
 
+  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    const newAttachments: ChatAttachment[] = [];
+    for (let i = 0; i < files.length; i++) {
+      if (attachments.length + newAttachments.length >= MAX_ATTACHMENTS) break;
+      const file = files[i];
+      if (file.size > MAX_FILE_SIZE) continue;
+      const isImage = file.type.startsWith("image/");
+      newAttachments.push({
+        id: `att-${Date.now()}-${i}`,
+        file,
+        previewUrl: isImage ? URL.createObjectURL(file) : "",
+        type: isImage ? "image" : "file",
+      });
+    }
+    setAttachments((prev) => [...prev, ...newAttachments]);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }, [attachments.length]);
+
+  const removeAttachment = useCallback((id: string) => {
+    setAttachments((prev) => {
+      const att = prev.find((a) => a.id === id);
+      if (att?.previewUrl) URL.revokeObjectURL(att.previewUrl);
+      return prev.filter((a) => a.id !== id);
+    });
+  }, []);
+
+  const attachmentsRef = useRef<ChatAttachment[]>([]);
+  attachmentsRef.current = attachments;
+
+  useEffect(() => {
+    return () => {
+      attachmentsRef.current.forEach((a) => { if (a.previewUrl) URL.revokeObjectURL(a.previewUrl); });
+    };
+  }, []);
+
   useEffect(() => {
     async function fetchTutor() {
       if (!activeLearner?.id) {
@@ -192,25 +298,43 @@ export default function TutorChatPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Inject emotion zone into first message for Harmony
   const handleSend = useCallback(async () => {
     const text = inputValue.trim();
-    if (!text || isStreaming) return;
+    const hasAttachments = attachments.length > 0;
+    if ((!text && !hasAttachments) || isStreaming) return;
+
+    const currentAttachments = [...attachments];
     setInputValue("");
+    setAttachments([]);
+    currentAttachments.forEach((a) => { if (a.previewUrl) URL.revokeObjectURL(a.previewUrl); });
+
+    const attachmentLabels = currentAttachments.map((a) =>
+      a.type === "image" ? `[Image: ${a.file.name}]` : `[File: ${a.file.name}]`
+    );
+    const fullContent = [text, ...attachmentLabels].filter(Boolean).join("\n");
 
     const isFirstMessage = messages.length === 0;
-    const extraContext =
-      isFirstMessage && isHarmony && emotionZone
-        ? { emotion_check_in: emotionZone }
-        : undefined;
+    const extraContext: Record<string, unknown> = {};
+    if (isFirstMessage && isHarmony && emotionZone) {
+      extraContext.emotion_check_in = emotionZone;
+    }
+    if (currentAttachments.length > 0) {
+      extraContext.attachments = currentAttachments.map((a) => ({
+        name: a.file.name,
+        type: a.type,
+        size: a.file.size,
+        mimeType: a.file.type,
+        previewUrl: a.previewUrl,
+      }));
+    }
 
     try {
-      await sendMessage(text, extraContext);
+      await sendMessage(fullContent, Object.keys(extraContext).length > 0 ? extraContext : undefined);
     } catch {
       // Error handled in hook
     }
     inputRef.current?.focus();
-  }, [inputValue, isStreaming, messages.length, isHarmony, emotionZone, sendMessage]);
+  }, [inputValue, isStreaming, messages.length, isHarmony, emotionZone, sendMessage, attachments]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -382,19 +506,7 @@ export default function TutorChatPage() {
                     : "bg-[var(--aivo-bg-alt,#FFF5EB)] text-[var(--aivo-text)] rounded-bl-sm",
                 )}
               >
-                {msg.content || (
-                  <span className="inline-flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-current animate-bounce" />
-                    <span
-                      className="w-1.5 h-1.5 rounded-full bg-current animate-bounce"
-                      style={{ animationDelay: "0.15s" }}
-                    />
-                    <span
-                      className="w-1.5 h-1.5 rounded-full bg-current animate-bounce"
-                      style={{ animationDelay: "0.3s" }}
-                    />
-                  </span>
-                )}
+                <MessageContent content={msg.content} isUser={msg.role === "user"} />
               </div>
             </div>
           </div>
@@ -421,7 +533,62 @@ export default function TutorChatPage() {
 
       {/* Input */}
       <div className="pt-4 border-t border-[#E8DDF0] dark:border-[#3D2D5C]">
+        {attachments.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-3 px-1">
+            {attachments.map((att) => (
+              <div
+                key={att.id}
+                className="relative group rounded-xl overflow-hidden border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45]"
+              >
+                {att.type === "image" ? (
+                  <div className="w-20 h-20 relative">
+                    <Image
+                      src={att.previewUrl}
+                      alt={att.file.name}
+                      fill
+                      className="object-cover"
+                      unoptimized
+                    />
+                  </div>
+                ) : (
+                  <div className="w-20 h-20 flex flex-col items-center justify-center gap-1 px-1">
+                    <FileText size={24} className="text-[#7C3AED]" />
+                    <span className="text-[10px] text-[var(--aivo-text-muted)] truncate max-w-full text-center leading-tight">
+                      {att.file.name}
+                    </span>
+                  </div>
+                )}
+                <button
+                  onClick={() => removeAttachment(att.id)}
+                  className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/80"
+                  aria-label="Remove attachment"
+                >
+                  <X size={12} />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept={ACCEPTED_FILE_TYPES}
+          multiple
+          onChange={handleFileSelect}
+          className="hidden"
+        />
+
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isStreaming || attachments.length >= MAX_ATTACHMENTS}
+            className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors text-[var(--aivo-text-muted)] hover:text-[#7C3AED] hover:bg-[var(--aivo-purple-50,#F0E6FF)] disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-[var(--aivo-text-muted)]"
+            aria-label="Attach file or image"
+          >
+            <Paperclip size={20} />
+          </button>
+
           <input
             ref={inputRef}
             type="text"
@@ -433,7 +600,6 @@ export default function TutorChatPage() {
             className="flex-1 px-4 py-3 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none disabled:opacity-50"
           />
 
-          {/* Echo: mic button */}
           {isEcho && (
             <button
               onClick={() => setShowRecorder((v) => !v)}
@@ -460,7 +626,7 @@ export default function TutorChatPage() {
           ) : (
             <Button
               onClick={handleSend}
-              disabled={!inputValue.trim()}
+              disabled={!inputValue.trim() && attachments.length === 0}
               className="shrink-0"
             >
               <Send size={20} />
