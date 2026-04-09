@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Brain, Palette, BarChart3, Shield, Heart, Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { AivoLogo } from "@/components/brand/AivoLogo";
+import { LanguageToggle } from "@/components/ui/LanguageToggle";
 
 export default function LandingPage() {
   const t = useTranslations("landing");
@@ -23,6 +24,7 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <AivoLogo size="md" />
           <div className="flex items-center gap-3">
+            <LanguageToggle />
             <Link href="/login" className="px-5 py-2 text-sm font-bold rounded-2xl transition-colors" style={{ color: "var(--aivo-purple-600)" }}>
               {t("signIn")}
             </Link>
