@@ -205,8 +205,63 @@ The platform uses **next-intl** for all UI text across every role dashboard.
 - **Adding new keys**: Add to the appropriate namespace in `fallback-messages.json`, then use `t("keyName")` in the component
 - **Shared layout**: The dashboard layout (`apps/web/src/app/(dashboard)/layout.tsx`) uses `dashboard` namespace for sidebar nav labels
 
+## Database & Seed Data
+
+The Replit PostgreSQL database is provisioned via `DATABASE_URL`. Schema is managed by Drizzle ORM (`packages/db`).
+
+### Schema Push
+```bash
+cd packages/db && npx drizzle-kit push --force
+```
+
+### Seed Script
+```bash
+cd packages/db && tsx src/seed.ts
+```
+
+Seeds the database with data matching the frontend mock data:
+- **Tenant**: Johnson Family (B2C_FAMILY)
+- **Parent**: Sarah Johnson (`parent@test.aivo.com`)
+- **Learners**: Alex Johnson (SUPPORTED, Grade 5), Maya Johnson (STANDARD, Grade 3)
+- **Teacher**: Ms. Rivera (`rivera@school.edu`)
+- **Caregiver**: Jamie Rodriguez (`jamie@email.com`)
+- **Brain States**: Full cognitive profile for Alex (visual-spatial learner), basic profile for Maya
+- **Assessments**: Parent assessment + baseline assessment with 10 items for Alex
+- **IEP**: 2 documents + 3 goals for Alex
+- **Recommendations**: 3 recommendations (curriculum, tutor, accommodation)
+- **Engagement**: XP, 6 badges (4 earned), 4 quests (2 active), 5 XP events
+- **Billing**: Active subscription (family_plus plan)
+- **Notifications**: 3 notifications for parent
+
+Seed IDs use deterministic UUIDs (e.g., `c0000000-0000-4000-8000-000000000001` for Alex learner).
+
+## Identity Service (Backend)
+
+The identity-svc runs as a Fastify API gateway on port 3001 with a dedicated workflow.
+
+### Required Environment Variables
+- `DATABASE_URL` — PostgreSQL connection (auto-set by Replit)
+- `AUTH_SECRET` — 32+ char secret for auth
+- `JWT_PRIVATE_KEY` — RSA private key (PKCS8 PEM)
+- `JWT_PUBLIC_KEY` — RSA public key (SPKI PEM)
+- `NATS_URL` — NATS server URL (gracefully degrades in dev if unavailable)
+- `REDIS_URL` — Redis URL (defaults to localhost, not actively used yet)
+
+### Building Dependencies
+Before identity-svc can start, workspace packages must be built:
+```bash
+pnpm --filter @aivo/db build
+pnpm --filter @aivo/events build
+pnpm --filter @aivo/observability build
+```
+
+### Workflow
+The "Identity Service" workflow runs `cd services/identity-svc && NODE_ENV=development tsx src/index.ts` on port 3001.
+
 ## Notes
 
 - The web app requires the `@aivo/brand` package to be built before starting
 - Backend microservices require a PostgreSQL database and various API keys
 - The full stack uses Docker Compose in production (see `docker-compose.dev.yml`)
+- NATS plugin in identity-svc gracefully degrades in dev mode (events silently skipped)
+- `publishEvent()` in `@aivo/events` accepts null NATS connection (no-op when null)

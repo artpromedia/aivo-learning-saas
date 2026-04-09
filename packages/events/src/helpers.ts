@@ -84,10 +84,11 @@ function getSchema(eventName: string): z.ZodType {
 }
 
 export async function publishEvent<T extends EventName>(
-  nc: NatsConnection,
+  nc: NatsConnection | null | undefined,
   eventName: T,
   data: z.infer<ReturnType<typeof getSchema>>,
 ): Promise<void> {
+  if (!nc) return;
   const schema = getSchema(eventName);
   const validated = schema.parse(data);
   const subject = SUBJECTS[eventName];
