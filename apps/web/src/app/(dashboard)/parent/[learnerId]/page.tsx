@@ -130,11 +130,11 @@ export default function ChildDashboardPage() {
 
   const quickLinks = [
     { href: `/parent/${learnerId}/brain`, label: t("brainProfile"), icon: <Brain size={20} />, color: "text-[#7C3AED]" },
-    { href: `/parent/${learnerId}/functioning-level`, label: t("functioningLevel", { defaultValue: "Functioning Level" }), icon: <Activity size={20} />, color: "text-purple-500" },
+    { href: `/parent/${learnerId}/functioning-level`, label: t("functioningLevel"), icon: <Activity size={20} />, color: "text-purple-500" },
     { href: `/parent/${learnerId}/recommendations`, label: t("recommendations"), icon: <Lightbulb size={20} />, color: "text-amber-500" },
     { href: `/parent/${learnerId}/gradebook`, label: t("gradebook"), icon: <GraduationCap size={20} />, color: "text-[#38B2AC]" },
     { href: `/parent/${learnerId}/tutors`, label: t("tutors"), icon: <Bot size={20} />, color: "text-blue-500" },
-    { href: "/learner", label: t("learnerDashboard", { defaultValue: "Learner Dashboard" }), icon: <Home size={20} />, color: "text-green-500", isLearnerView: true },
+    { href: "/learner", label: t("learnerDashboard"), icon: <Home size={20} />, color: "text-green-500", isLearnerView: true },
   ] as const;
 
   return (

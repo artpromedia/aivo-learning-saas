@@ -11,9 +11,11 @@ interface I18nProviderProps {
 }
 
 function handleI18nError(error: { code: string; message: string }) {
-  // Suppress MISSING_MESSAGE (key not yet seeded) and FORMATTING_ERROR
-  // (stale translation strings with unresolved placeholders like {level}).
-  if (error.code === "MISSING_MESSAGE" || error.code === "FORMATTING_ERROR") {
+  if (error.code === "MISSING_MESSAGE") {
+    // Key not yet seeded — silent in production, log in dev
+    if (process.env.NODE_ENV !== "production") {
+      console.warn(`[i18n] ${error.message}`);
+    }
     return;
   }
   console.error("[i18n]", error);

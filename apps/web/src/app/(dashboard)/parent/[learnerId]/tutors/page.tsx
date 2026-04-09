@@ -87,11 +87,8 @@ export default function TutorsPage() {
         setStoreTutors(storeResponse.catalog.filter((t) => !t.subscribed));
       } catch (err) {
         const msg = err instanceof Error ? err.message : "";
-        // Show a user-friendly message instead of raw server error text
         setError(
-          msg.includes("Session expired")
-            ? msg
-            : t("failedToLoadTutors", { defaultValue: "Failed to load tutors. Please try again." }),
+          msg.includes("Session expired") ? msg : t("failedToLoadTutors"),
         );
       } finally {
         setLoading(false);

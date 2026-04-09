@@ -579,7 +579,7 @@ const SEED_TRANSLATIONS: Record<string, Record<string, string>> = {
     "tutorStoreLabel": "Tutor Store",
     "subscribe": "Subscribe",
     "noAdditionalTutors": "No additional tutors available at this time.",
-    "failedToLoadTutors": "Failed to load tutors",
+    "failedToLoadTutors": "Failed to load tutors. Please try again.",
     "failedToSubscribe": "Failed to subscribe",
     "recommendationsTitle": "Recommendations",
     "recommendationsSubtitle": "AI-powered suggestions to optimize your child's learning path.",
