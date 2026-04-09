@@ -111,7 +111,7 @@ export function ExpandableCard({
       )}
       <div
         className="rounded-3xl bg-white dark:bg-[#2A1E45] border border-[#E8DDF0] dark:border-[#3D2D5C] shadow-[var(--shadow-card)] overflow-hidden transition-all duration-200 hover:shadow-[var(--shadow-hover)]"
-        style={{ animation: "aivo-slide-up 0.5s ease-out both", animationDelay: `${delay}ms` }}
+        style={{ animation: "aivo-slide-up 0.5s ease-out both", animationDelay: `${Math.min(delay, 500)}ms` }}
       >
         <div className="px-6 py-4 border-b border-[#E8DDF0] dark:border-[#3D2D5C]">
           <div className="flex items-center justify-between">
@@ -179,7 +179,7 @@ export function StatCard({ icon, label, value, color, delay, onClick }: {
         backgroundColor: "var(--aivo-bg-card)",
         border: "1px solid var(--aivo-border)",
         animation: "aivo-pop-in 0.5s ease-out both",
-        animationDelay: `${delay}ms`,
+        animationDelay: `${Math.min(delay, 500)}ms`,
       }}
       onClick={onClick}
     >
@@ -197,7 +197,7 @@ export function SectionHeader({ icon, title, subtitle, gradient, delay }: {
   icon: React.ReactNode; title: string; subtitle?: string; gradient: string; delay: number;
 }) {
   return (
-    <div className="flex items-center gap-3 mb-4" style={{ animation: "aivo-slide-up 0.5s ease-out both", animationDelay: `${delay}ms` }}>
+    <div className="flex items-center gap-3 mb-4" style={{ animation: "aivo-slide-up 0.5s ease-out both", animationDelay: `${Math.min(delay, 500)}ms` }}>
       <div className="w-10 h-10 rounded-2xl flex items-center justify-center text-white shrink-0" style={{ background: gradient }}>
         {icon}
       </div>
@@ -210,9 +210,10 @@ export function SectionHeader({ icon, title, subtitle, gradient, delay }: {
 }
 
 export function AnimatedCard({ children, delay, className = "" }: { children: React.ReactNode; delay: number; className?: string }) {
+  const cappedDelay = Math.min(delay, 500);
   return (
     <div
-      style={{ animation: "aivo-slide-up 0.5s ease-out both", animationDelay: `${delay}ms` }}
+      style={{ animation: "aivo-slide-up 0.5s ease-out both", animationDelay: `${cappedDelay}ms` }}
       className={`transition-all duration-200 ${className}`}
     >
       {children}
@@ -227,7 +228,7 @@ export function EmptyState({ icon, title, description, action, delay = 0 }: {
   return (
     <div
       className="rounded-3xl bg-white dark:bg-[#2A1E45] border border-[#E8DDF0] dark:border-[#3D2D5C] shadow-[var(--shadow-card)] transition-all duration-200"
-      style={{ animation: "aivo-slide-up 0.5s ease-out both", animationDelay: `${delay}ms` }}
+      style={{ animation: "aivo-slide-up 0.5s ease-out both", animationDelay: `${Math.min(delay ?? 0, 500)}ms` }}
     >
       <div className="text-center py-12 px-6">
         <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{

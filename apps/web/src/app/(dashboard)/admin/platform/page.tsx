@@ -85,7 +85,7 @@ export default function PlatformDashboardPage() {
       </div>
 
       <div className="grid gap-3 grid-cols-2 lg:grid-cols-4 mb-8">
-        <AnimatedCard delay={500}>
+        <AnimatedCard delay={150}>
           <div className="rounded-3xl p-5 text-center transition-all duration-200 hover:shadow-[var(--shadow-hover)]" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
             <div className="w-12 h-12 rounded-3xl mx-auto mb-3 flex items-center justify-center" style={{ backgroundColor: `${healthColors[data.systemHealth]}18` }}>
               {data.systemHealth === "healthy" ? <CheckCircle size={22} style={{ color: healthColors[data.systemHealth] }} /> : <AlertTriangle size={22} style={{ color: healthColors[data.systemHealth] }} />}
@@ -93,7 +93,7 @@ export default function PlatformDashboardPage() {
             <p className="text-xs font-bold" style={{ color: healthColors[data.systemHealth] }}>{healthLabels[data.systemHealth]}</p>
           </div>
         </AnimatedCard>
-        <AnimatedCard delay={600}>
+        <AnimatedCard delay={200}>
           <div className="rounded-3xl p-5 text-center transition-all duration-200 hover:shadow-[var(--shadow-hover)]" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
             <div className="w-12 h-12 rounded-3xl mx-auto mb-3 flex items-center justify-center" style={{ backgroundColor: "#7C3AED18", color: "#7C3AED" }}>
               <Server size={22} />
@@ -102,7 +102,7 @@ export default function PlatformDashboardPage() {
             <p className="text-xs mt-0.5" style={{ color: "var(--aivo-text-muted)" }}>Uptime (30d)</p>
           </div>
         </AnimatedCard>
-        <AnimatedCard delay={700}>
+        <AnimatedCard delay={250}>
           <div className="rounded-3xl p-5 text-center transition-all duration-200 hover:shadow-[var(--shadow-hover)]" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
             <div className="w-12 h-12 rounded-3xl mx-auto mb-3 flex items-center justify-center" style={{ backgroundColor: "#3B82F618", color: "#3B82F6" }}>
               <Activity size={22} />
@@ -111,7 +111,7 @@ export default function PlatformDashboardPage() {
             <p className="text-xs mt-0.5" style={{ color: "var(--aivo-text-muted)" }}>Avg API Latency</p>
           </div>
         </AnimatedCard>
-        <AnimatedCard delay={800}>
+        <AnimatedCard delay={300}>
           <div className="rounded-3xl p-5 text-center transition-all duration-200 hover:shadow-[var(--shadow-hover)]" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
             <div className="w-12 h-12 rounded-3xl mx-auto mb-3 flex items-center justify-center" style={{ backgroundColor: "#10B98118", color: "#10B981" }}>
               <Globe size={22} />
@@ -128,13 +128,13 @@ export default function PlatformDashboardPage() {
           title="Top Districts"
           subtitle="Highest-performing districts by learner count"
           gradient="linear-gradient(135deg, #3B82F6, #2563EB)"
-          delay={900}
+          delay={350}
           linkHref="/admin/platform/districts"
           linkLabel="View all districts"
         >
           <div className="space-y-3">
             {data.topDistricts.map((district, idx) => (
-              <AnimatedCard key={district.name} delay={1000 + idx * 80}>
+              <AnimatedCard key={district.name} delay={Math.min(400 + idx * 30, 500)}>
                 <div className="flex items-center gap-4 p-3 rounded-xl" style={{ backgroundColor: "var(--aivo-bg)", border: "1px solid var(--aivo-border)" }}>
                   <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 text-sm font-extrabold text-white" style={{ background: "linear-gradient(135deg, #3B82F6, #2563EB)" }}>
                     {idx + 1}
@@ -160,13 +160,13 @@ export default function PlatformDashboardPage() {
           title="Recent Activity"
           subtitle="Latest actions across the platform"
           gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
-          delay={1100}
+          delay={450}
           linkHref="/admin/platform/audit"
           linkLabel="View full audit log"
         >
           <div className="space-y-2">
             {data.recentActivity.map((item, idx) => (
-              <AnimatedCard key={item.id} delay={1200 + idx * 60}>
+              <AnimatedCard key={item.id} delay={Math.min(350 + idx * 30, 500)}>
                 <div className="flex items-center gap-3 p-2.5 rounded-xl" style={{ backgroundColor: "var(--aivo-bg)" }}>
                   <div className={`w-2 h-2 rounded-full shrink-0 ${item.type === "warning" ? "bg-yellow-400" : item.type === "success" ? "bg-green-400" : "bg-blue-400"}`} />
                   <div className="flex-1 min-w-0">

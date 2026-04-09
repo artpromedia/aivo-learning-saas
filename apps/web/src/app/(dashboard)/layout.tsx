@@ -217,11 +217,10 @@ export default function DashboardLayout({
       </aside>
 
       <div className="flex-1 lg:ml-72 relative bg-bubbles">
-        <div className="pointer-events-none fixed inset-0 lg:left-72 overflow-hidden z-0">
-          <div className="absolute top-16 right-12 w-32 h-32 rounded-full opacity-20 animate-float" style={{ background: "linear-gradient(135deg, #7C3AED, #A855F7)" }} />
-          <div className="absolute bottom-24 left-8 w-24 h-24 rounded-full opacity-15 animate-float" style={{ background: "linear-gradient(135deg, #2DD4BF, #38BDF8)", animationDelay: "1s" }} />
-          <div className="absolute top-1/3 right-1/4 w-16 h-16 rounded-full opacity-10 animate-float" style={{ background: "linear-gradient(135deg, #F472B6, #FB923C)", animationDelay: "2s" }} />
-          <div className="absolute bottom-1/3 right-8 w-20 h-20 rounded-full opacity-10 animate-float" style={{ background: "linear-gradient(135deg, #FBBF24, #F59E0B)", animationDelay: "3s" }} />
+        <div className="pointer-events-none fixed inset-0 lg:left-72 overflow-hidden z-0" aria-hidden="true">
+          <div className="absolute -top-6 -right-6 w-48 h-48 rounded-full opacity-[0.04] blur-2xl" style={{ background: "linear-gradient(135deg, #7C3AED, #A855F7)" }} />
+          <div className="absolute bottom-[15%] -left-8 w-40 h-40 rounded-full opacity-[0.04] blur-2xl" style={{ background: "linear-gradient(135deg, #2DD4BF, #38BDF8)" }} />
+          <div className="absolute top-[45%] right-[5%] w-28 h-28 rounded-full opacity-[0.03] blur-xl" style={{ background: "linear-gradient(135deg, #F472B6, #FB923C)" }} />
         </div>
 
         <header className="sticky top-0 z-20 px-4 lg:px-8 py-3 flex items-center justify-between backdrop-blur-md" style={{ backgroundColor: "rgba(255,251,247,0.8)", borderBottom: "1px solid var(--aivo-border)" }}>
