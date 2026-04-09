@@ -111,14 +111,24 @@ const mockGradebook = {
   ],
 };
 
-const mockMastery = [
-  { skill: "Addition & Subtraction", mastery: 95, attempts: 32, lastAttempt: new Date(Date.now() - 86400000).toISOString() },
-  { skill: "Multiplication", mastery: 80, attempts: 24, lastAttempt: new Date(Date.now() - 172800000).toISOString() },
-  { skill: "Fractions", mastery: 55, attempts: 15, lastAttempt: new Date(Date.now() - 86400000).toISOString() },
-  { skill: "Reading Comprehension", mastery: 60, attempts: 20, lastAttempt: new Date(Date.now() - 259200000).toISOString() },
-  { skill: "Vocabulary", mastery: 70, attempts: 18, lastAttempt: new Date(Date.now() - 172800000).toISOString() },
-  { skill: "Earth Science", mastery: 78, attempts: 14, lastAttempt: new Date(Date.now() - 345600000).toISOString() },
-];
+const mockMastery = {
+  overallMastery: 72,
+  totalSessions: 45,
+  subjects: [
+    { subject: "Mathematics", currentMastery: 85, trend: "up" as const, history: [
+      { date: "2026-01-15", mastery: 70 }, { date: "2026-02-15", mastery: 75 }, { date: "2026-03-15", mastery: 82 }, { date: "2026-04-01", mastery: 85 },
+    ]},
+    { subject: "Science", currentMastery: 75, trend: "up" as const, history: [
+      { date: "2026-01-15", mastery: 60 }, { date: "2026-02-15", mastery: 65 }, { date: "2026-03-15", mastery: 72 }, { date: "2026-04-01", mastery: 75 },
+    ]},
+    { subject: "Language Arts", currentMastery: 58, trend: "stable" as const, history: [
+      { date: "2026-01-15", mastery: 55 }, { date: "2026-02-15", mastery: 56 }, { date: "2026-03-15", mastery: 57 }, { date: "2026-04-01", mastery: 58 },
+    ]},
+    { subject: "Social Studies", currentMastery: 70, trend: "up" as const, history: [
+      { date: "2026-01-15", mastery: 58 }, { date: "2026-02-15", mastery: 62 }, { date: "2026-03-15", mastery: 67 }, { date: "2026-04-01", mastery: 70 },
+    ]},
+  ],
+};
 
 const mockIep = {
   goals: [

@@ -527,6 +527,7 @@
     "needsFocus": "Needs Focus",
     "stable": "Stable",
     "failedToLoadGradebook": "Failed to load gradebook",
+    "target": "Target:",
     "iepGoalsDocuments": "IEP Goals & Documents",
     "iepGoalsDocumentsSubtitle": "Track IEP goal progress and manage documents.",
     "nextReview": "Next review: {date}",
