@@ -11,6 +11,8 @@ export interface BrainProfile {
   learningStyle: string;
   sensoryPreferences: string[];
   communicationStyle: string;
+  confidenceScore?: number;
+  adaptations?: { type?: string; label: string; description: string; strength: number }[];
   status: "pending" | "approved" | "declined";
   createdAt: string;
   updatedAt: string;
