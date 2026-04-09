@@ -1,6 +1,6 @@
 import type { FastifyPluginAsync } from "fastify";
 import { loadConfig } from "../config.js";
-import { getQueryString } from "./proxy-utils.js";
+import { getQueryString, getToken } from "./proxy-utils.js";
 
 const { TUTOR_SVC_URL } = loadConfig();
 
@@ -61,9 +61,10 @@ async function proxyRawToTutor(
 export const tutorProxyRoutes: FastifyPluginAsync = async (app) => {
   // GET /api/tutors → tutor-svc GET /tutors/subscriptions
   app.get("/tutors", async (request, reply) => {
-    const accessToken =
-      request.cookies?.access_token ??
-      request.headers.authorization?.replace("Bearer ", "");
+    const accessToken = getToken(request);
+    if (!accessToken) {
+      return reply.status(401).send({ error: "Authentication required" });
+    }
     const queryString = getQueryString(request.url);
     const { status, data } = await proxyToTutor(`/tutors/subscriptions${queryString}`, accessToken);
     return reply.status(status).send(data);
@@ -71,9 +72,10 @@ export const tutorProxyRoutes: FastifyPluginAsync = async (app) => {
 
   // GET /api/tutors/store → tutor-svc GET /tutors/catalog
   app.get("/tutors/store", async (request, reply) => {
-    const accessToken =
-      request.cookies?.access_token ??
-      request.headers.authorization?.replace("Bearer ", "");
+    const accessToken = getToken(request);
+    if (!accessToken) {
+      return reply.status(401).send({ error: "Authentication required" });
+    }
     const queryString = getQueryString(request.url);
     const { status, data } = await proxyToTutor(`/tutors/catalog${queryString}`, accessToken);
     return reply.status(status).send(data);
@@ -81,9 +83,10 @@ export const tutorProxyRoutes: FastifyPluginAsync = async (app) => {
 
   // POST /api/tutors/homework/upload — multipart proxy (must be before catch-all)
   app.post("/tutors/homework/upload", async (request, reply) => {
-    const accessToken =
-      request.cookies?.access_token ??
-      request.headers.authorization?.replace("Bearer ", "");
+    const accessToken = getToken(request);
+    if (!accessToken) {
+      return reply.status(401).send({ error: "Authentication required" });
+    }
     const queryString = getQueryString(request.url);
     const contentType = request.headers["content-type"];
 
@@ -113,9 +116,10 @@ export const tutorProxyRoutes: FastifyPluginAsync = async (app) => {
   // POST /api/tutors/:sessionId/chat — SSE streaming proxy (must be before catch-all)
   app.post<{ Params: { sessionId: string } }>("/tutors/:sessionId/chat", async (request, reply) => {
     const { sessionId } = request.params;
-    const accessToken =
-      request.cookies?.access_token ??
-      request.headers.authorization?.replace("Bearer ", "");
+    const accessToken = getToken(request);
+    if (!accessToken) {
+      return reply.status(401).send({ error: "Authentication required" });
+    }
 
     try {
       const res = await fetch(`${TUTOR_SVC_URL}/tutors/sessions/${sessionId}/chat`, {
@@ -167,9 +171,10 @@ export const tutorProxyRoutes: FastifyPluginAsync = async (app) => {
     const rest = (request.params as Record<string, string>)["*"];
     const queryString = getQueryString(request.url);
     const path = `/tutors/${rest}${queryString}`;
-    const accessToken =
-      request.cookies?.access_token ??
-      request.headers.authorization?.replace("Bearer ", "");
+    const accessToken = getToken(request);
+    if (!accessToken) {
+      return reply.status(401).send({ error: "Authentication required" });
+    }
     const method = request.method;
     const body = ["GET", "HEAD"].includes(method) ? undefined : JSON.stringify(request.body);
     const { status, data } = await proxyToTutor(path, accessToken, method, body);

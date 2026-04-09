@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useTransition } from "react";
 import { useLocale } from "next-intl";
-import { getI18nServiceUrl, type Locale, defaultLocale } from "@/i18n/config";
+import { type Locale, defaultLocale, getI18nServiceUrl } from "@/i18n/config";
 
 interface LocaleOption {
   code: string;
@@ -19,7 +19,17 @@ export function LocaleSwitcher() {
   useEffect(() => {
     async function fetchLocales() {
       try {
-        const res = await fetch(`${getI18nServiceUrl()}/i18n/locales`);
+        const svcUrl = getI18nServiceUrl();
+        // Skip the fetch entirely when the URL is the localhost default —
+        // this avoids ERR_CONNECTION_REFUSED in production where the
+        // i18n-svc is only reachable from server-side code.
+        if (svcUrl.includes("localhost")) {
+          setAvailableLocales([
+            { code: "en", name: "English", nativeName: "English", direction: "LTR" },
+          ]);
+          return;
+        }
+        const res = await fetch(`${svcUrl}/i18n/locales`);
         if (res.ok) {
           const data = (await res.json()) as Array<{
             code: string;

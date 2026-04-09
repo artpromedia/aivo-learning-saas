@@ -38,11 +38,21 @@ async function proxyToEngagement(
 export const engagementProxyRoutes: FastifyPluginAsync = async (app) => {
   // ── XP ─────────────────────────────────────────────────────────────
 
+  // ── Auth guard for engagement routes ─────────────────────────────────
+  const requireToken = (token: string | undefined, reply: import("fastify").FastifyReply) => {
+    if (!token) {
+      reply.status(401).send({ error: "Authentication required" });
+      return false;
+    }
+    return true;
+  };
+
   // GET /api/learners/:learnerId/engagement/xp → engagement-svc GET /engagement/xp/:learnerId
   app.get<{ Params: { learnerId: string } }>(
     "/learners/:learnerId/engagement/xp",
     async (request, reply) => {
       const token = getToken(request);
+      if (!requireToken(token, reply)) return reply;
       const { status, data } = await proxyToEngagement(
         `/engagement/xp/${request.params.learnerId}`,
         token,
@@ -58,6 +68,7 @@ export const engagementProxyRoutes: FastifyPluginAsync = async (app) => {
     "/learners/:learnerId/engagement/streaks",
     async (request, reply) => {
       const token = getToken(request);
+      if (!requireToken(token, reply)) return reply;
       const { status, data } = await proxyToEngagement(
         `/engagement/streaks/${request.params.learnerId}`,
         token,
@@ -73,6 +84,7 @@ export const engagementProxyRoutes: FastifyPluginAsync = async (app) => {
     "/learners/:learnerId/engagement/badges",
     async (request, reply) => {
       const token = getToken(request);
+      if (!requireToken(token, reply)) return reply;
       const { status, data } = await proxyToEngagement(
         `/engagement/badges/${request.params.learnerId}`,
         token,
@@ -88,6 +100,7 @@ export const engagementProxyRoutes: FastifyPluginAsync = async (app) => {
     "/learners/:learnerId/engagement/level",
     async (request, reply) => {
       const token = getToken(request);
+      if (!requireToken(token, reply)) return reply;
       const { status, data } = await proxyToEngagement(
         `/engagement/xp/${request.params.learnerId}`,
         token,
@@ -112,6 +125,7 @@ export const engagementProxyRoutes: FastifyPluginAsync = async (app) => {
     "/learners/:learnerId/engagement",
     async (request, reply) => {
       const token = getToken(request);
+      if (!requireToken(token, reply)) return reply;
       const learnerId = request.params.learnerId;
 
       const [xpResult, streakResult, badgeResult] = await Promise.all([
