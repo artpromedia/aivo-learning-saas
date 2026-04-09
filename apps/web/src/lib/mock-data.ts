@@ -324,9 +324,15 @@ const mockExportHistory = [
 const mockSubscriptionStatus = {
   subscriptionId: "sub-001",
   status: "active",
-  plan: "family",
+  plan: { id: "family", name: "Family Plan", price: 1499, interval: "month", maxLearners: 3 },
   currentPeriodEnd: new Date(Date.now() + 86400000 * 25).toISOString(),
   cancelAtPeriodEnd: false,
+  addOns: [],
+  paymentMethod: { brand: "visa", last4: "4242", expMonth: 12, expYear: 2027 },
+  invoices: [
+    { id: "inv-001", amount: 1499, status: "paid", date: new Date(Date.now() - 86400000 * 5).toISOString(), pdfUrl: "#" },
+    { id: "inv-002", amount: 1499, status: "paid", date: new Date(Date.now() - 86400000 * 35).toISOString(), pdfUrl: "#" },
+  ],
 };
 
 const mockDistrictOverview = {
