@@ -11,7 +11,8 @@ const ROLE_REDIRECTS: Record<string, string> = {
   educator: "/teacher",
   DISTRICT_ADMIN: "/admin/district",
   admin: "/admin/district",
-  PLATFORM_ADMIN: "/admin/district",
+  PLATFORM_ADMIN: "/admin/platform",
+  platform_admin: "/admin/platform",
   LEARNER: "/learner",
   learner: "/learner",
   CAREGIVER: "/caregiver",
@@ -24,9 +25,10 @@ const ROLE_ALLOWED_PREFIXES: Record<string, string[]> = {
   TEACHER: ["/teacher"],
   teacher: ["/teacher"],
   educator: ["/teacher"],
-  DISTRICT_ADMIN: ["/admin"],
-  admin: ["/admin"],
+  DISTRICT_ADMIN: ["/admin/district", "/admin/translations"],
+  admin: ["/admin/district", "/admin/translations"],
   PLATFORM_ADMIN: ["/admin", "/teacher", "/parent", "/learner", "/caregiver"],
+  platform_admin: ["/admin", "/teacher", "/parent", "/learner", "/caregiver"],
   LEARNER: ["/learner"],
   learner: ["/learner"],
   CAREGIVER: ["/caregiver", "/notifications"],
@@ -74,7 +76,7 @@ export function middleware(request: NextRequest) {
     return response;
   }
 
-  const VALID_PREVIEW_ROLES = ["parent", "learner", "teacher", "admin"];
+  const VALID_PREVIEW_ROLES = ["parent", "learner", "teacher", "admin", "platform_admin"];
   const isPreview = request.nextUrl.searchParams.has("preview") && process.env.NODE_ENV !== "production";
   const rawPreviewRole = isPreview ? (request.nextUrl.searchParams.get("role") || "parent") : null;
   const previewRole = rawPreviewRole && VALID_PREVIEW_ROLES.includes(rawPreviewRole) ? rawPreviewRole : null;

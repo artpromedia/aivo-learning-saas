@@ -707,6 +707,113 @@ export function getMockResponse(path: string, method: string = "GET", body?: str
 
     [/^\/api\/learners\/[^/]+\/profile\/stats$/, () => mockProfileStats],
     [/^\/api\/learners\/[^/]+\/profile$/, () => mockProfileStats],
+
+    ["/api/admin/platform/overview", () => ({
+      totalDistricts: 47, totalUsers: 12840, totalLearners: 9256, activeSubscriptions: 42, monthlyRevenue: 18750000,
+      systemHealth: "healthy", uptime: 99.97, apiLatency: 42,
+      recentActivity: [
+        { id: "a1", action: "New district onboarded", user: "ops@aivo.com", timestamp: "2026-04-09T14:30:00Z", type: "success" },
+        { id: "a2", action: "Subscription upgraded to Enterprise", user: "billing@aivo.com", timestamp: "2026-04-09T13:15:00Z", type: "info" },
+        { id: "a3", action: "Content module published: Fractions Mastery", user: "content@aivo.com", timestamp: "2026-04-09T11:45:00Z", type: "info" },
+        { id: "a4", action: "API rate limit exceeded for District #23", user: "system", timestamp: "2026-04-09T10:20:00Z", type: "warning" },
+        { id: "a5", action: "User suspension: policy violation", user: "support@aivo.com", timestamp: "2026-04-09T09:00:00Z", type: "warning" },
+      ],
+      topDistricts: [
+        { name: "Sunshine Valley USD", learners: 1240, mastery: 78 },
+        { name: "Lakewood School District", learners: 980, mastery: 82 },
+        { name: "Mountain View ISD", learners: 875, mastery: 75 },
+        { name: "Riverside County Schools", learners: 720, mastery: 71 },
+        { name: "Oakdale Unified", learners: 650, mastery: 84 },
+      ],
+    })],
+
+    ["/api/admin/platform/districts", () => ({
+      districts: [
+        { id: "d1", name: "Sunshine Valley USD", state: "California", learnerCount: 1240, teacherCount: 85, avgMastery: 78, status: "active", plan: "Enterprise", createdAt: "2025-01-15" },
+        { id: "d2", name: "Lakewood School District", state: "Oregon", learnerCount: 980, teacherCount: 62, avgMastery: 82, status: "active", plan: "Enterprise", createdAt: "2025-03-20" },
+        { id: "d3", name: "Mountain View ISD", state: "Texas", learnerCount: 875, teacherCount: 54, avgMastery: 75, status: "active", plan: "Professional", createdAt: "2025-06-10" },
+        { id: "d4", name: "Riverside County Schools", state: "Florida", learnerCount: 720, teacherCount: 48, avgMastery: 71, status: "active", plan: "Enterprise", createdAt: "2025-02-28" },
+        { id: "d5", name: "Oakdale Unified", state: "Michigan", learnerCount: 650, teacherCount: 42, avgMastery: 84, status: "active", plan: "Professional", createdAt: "2025-04-15" },
+        { id: "d6", name: "Willowbrook Academy", state: "New York", learnerCount: 340, teacherCount: 24, avgMastery: 79, status: "trial", plan: "Trial", createdAt: "2026-03-01" },
+        { id: "d7", name: "Cedar Hills Elementary", state: "Colorado", learnerCount: 180, teacherCount: 12, avgMastery: 68, status: "trial", plan: "Trial", createdAt: "2026-03-15" },
+        { id: "d8", name: "Pine Ridge School District", state: "Montana", learnerCount: 0, teacherCount: 3, avgMastery: 0, status: "suspended", plan: "Professional", createdAt: "2025-09-01" },
+      ],
+    })],
+
+    [/^\/api\/admin\/platform\/districts\/[^/]+$/, () => ({
+      id: "d1", name: "Sunshine Valley USD", state: "California", status: "active", plan: "Enterprise",
+      contactName: "Dr. Maria Gonzalez", contactEmail: "mgonzalez@sunshinevalley.edu", contactPhone: "(555) 234-5678",
+      createdAt: "2025-01-15", learnerCount: 1240, teacherCount: 85, classroomCount: 42, avgMastery: 78,
+      licensesUsed: 1240, licensesTotal: 1500,
+      topTeachers: [
+        { name: "Ms. Rivera", learners: 32, mastery: 85 },
+        { name: "Mr. Chen", learners: 28, mastery: 82 },
+        { name: "Mrs. Patel", learners: 30, mastery: 79 },
+      ],
+      recentActivity: [
+        { action: "New teacher onboarded", timestamp: "2026-04-09T10:00:00Z" },
+        { action: "Classroom created: 4th Grade Math", timestamp: "2026-04-08T15:30:00Z" },
+      ],
+    })],
+
+    ["/api/admin/platform/users", () => ({
+      users: [
+        { id: "u1", name: "Elena Rodriguez", email: "elena@aivo.com", role: "platform_admin", platformRole: "super_admin", status: "active", lastLoginAt: "2026-04-09T14:00:00Z", createdAt: "2024-06-01" },
+        { id: "u2", name: "Marcus Chen", email: "marcus@aivo.com", role: "platform_admin", platformRole: "ops_manager", status: "active", lastLoginAt: "2026-04-09T10:30:00Z", createdAt: "2024-08-15" },
+        { id: "u3", name: "Priya Sharma", email: "priya@aivo.com", role: "platform_admin", platformRole: "content_manager", status: "active", lastLoginAt: "2026-04-08T16:00:00Z", createdAt: "2025-01-10" },
+        { id: "u4", name: "Jordan Blake", email: "jordan@aivo.com", role: "platform_admin", platformRole: "support_agent", status: "active", lastLoginAt: "2026-04-09T12:45:00Z", createdAt: "2025-03-20" },
+        { id: "u5", name: "Taylor Kim", email: "taylor@aivo.com", role: "platform_admin", platformRole: "billing_manager", status: "active", lastLoginAt: "2026-04-07T09:00:00Z", createdAt: "2025-06-01" },
+        { id: "u6", name: "Dr. Maria Gonzalez", email: "mgonzalez@sunshinevalley.edu", role: "admin", status: "active", district: "Sunshine Valley USD", lastLoginAt: "2026-04-09T08:30:00Z", createdAt: "2025-01-15" },
+        { id: "u7", name: "Ms. Rivera", email: "rivera@sunshinevalley.edu", role: "teacher", status: "active", district: "Sunshine Valley USD", lastLoginAt: "2026-04-09T07:00:00Z", createdAt: "2025-02-01" },
+        { id: "u8", name: "Sarah Johnson", email: "sarah@example.com", role: "parent", status: "active", lastLoginAt: "2026-04-09T13:00:00Z", createdAt: "2025-09-01" },
+        { id: "u9", name: "Suspended User", email: "suspended@example.com", role: "parent", status: "suspended", lastLoginAt: "2026-02-15T10:00:00Z", createdAt: "2025-11-01" },
+      ],
+    })],
+
+    ["/api/admin/platform/subscriptions", () => ({
+      totalMrr: 18750000, totalArr: 225000000, activeCount: 42, trialCount: 5, pastDueCount: 2, churnRate: 3.2,
+      subscriptions: [
+        { id: "s1", district: "Sunshine Valley USD", plan: "Enterprise", status: "active", mrr: 4500000, learners: 1240, renewsAt: "2027-01-15" },
+        { id: "s2", district: "Lakewood School District", plan: "Enterprise", status: "active", mrr: 3600000, learners: 980, renewsAt: "2027-03-20" },
+        { id: "s3", district: "Mountain View ISD", plan: "Professional", status: "active", mrr: 2100000, learners: 875, renewsAt: "2026-12-10" },
+        { id: "s4", district: "Willowbrook Academy", plan: "Trial", status: "trial", mrr: 0, learners: 340, renewsAt: "2026-05-01" },
+        { id: "s5", district: "Greenfield Schools", plan: "Professional", status: "past_due", mrr: 1800000, learners: 520, renewsAt: "2026-03-15" },
+      ],
+    })],
+
+    ["/api/admin/platform/content", () => ({
+      totalItems: 284, publishedCount: 231, draftCount: 38, reviewCount: 15, totalUsage: 456000,
+      items: [
+        { id: "c1", title: "Fractions Mastery: Part 1", type: "lesson", subject: "Mathematics", gradeRange: "3-5", status: "published", usageCount: 12400, avgRating: 4.8, updatedAt: "2026-04-01" },
+        { id: "c2", title: "Reading Comprehension Quest", type: "quest", subject: "English Language Arts", gradeRange: "2-4", status: "published", usageCount: 9800, avgRating: 4.6, updatedAt: "2026-03-28" },
+        { id: "c3", title: "Multiplication Facts Assessment", type: "assessment", subject: "Mathematics", gradeRange: "3-4", status: "published", usageCount: 15600, avgRating: 4.5, updatedAt: "2026-04-05" },
+        { id: "c4", title: "Geometry Basics: Shapes & Angles", type: "lesson", subject: "Mathematics", gradeRange: "4-6", status: "review", usageCount: 0, avgRating: 0, updatedAt: "2026-04-08" },
+        { id: "c5", title: "Sensory-Friendly Reading Module", type: "module", subject: "Special Education", gradeRange: "K-3", status: "draft", usageCount: 0, avgRating: 0, updatedAt: "2026-04-06" },
+      ],
+    })],
+
+    ["/api/admin/platform/audit", () => ({
+      entries: [
+        { id: "al1", action: "User suspended", actor: "Elena Rodriguez", actorRole: "super_admin", target: "suspended@example.com", targetType: "user", severity: "critical", timestamp: "2026-04-09T14:30:00Z", ip: "192.168.1.100", details: "Policy violation: inappropriate content" },
+        { id: "al2", action: "District onboarded", actor: "Marcus Chen", actorRole: "ops_manager", target: "Willowbrook Academy", targetType: "district", severity: "info", timestamp: "2026-04-09T13:15:00Z", ip: "192.168.1.101" },
+        { id: "al3", action: "Subscription upgraded", actor: "Taylor Kim", actorRole: "billing_manager", target: "Mountain View ISD", targetType: "subscription", severity: "info", timestamp: "2026-04-09T12:00:00Z", ip: "192.168.1.102", details: "Professional to Enterprise" },
+        { id: "al4", action: "API rate limit exceeded", actor: "system", actorRole: "system", target: "District #23 API Key", targetType: "api_key", severity: "warning", timestamp: "2026-04-09T10:20:00Z", ip: "10.0.0.1" },
+        { id: "al5", action: "Failed login attempt (5x)", actor: "unknown", actorRole: "unknown", target: "admin@lakewood.edu", targetType: "user", severity: "critical", timestamp: "2026-04-09T08:30:00Z", ip: "203.0.113.42", details: "Account temporarily locked" },
+        { id: "al6", action: "Content published", actor: "Priya Sharma", actorRole: "content_manager", target: "Fractions Mastery", targetType: "content", severity: "info", timestamp: "2026-04-09T09:45:00Z", ip: "192.168.1.103" },
+        { id: "al7", action: "SSO configuration updated", actor: "Elena Rodriguez", actorRole: "super_admin", target: "Lakewood School District", targetType: "district", severity: "warning", timestamp: "2026-04-07T11:00:00Z", ip: "192.168.1.100" },
+      ],
+    })],
+
+    ["/api/admin/platform/settings", () => ({
+      maintenanceMode: false, maxDistrictSize: 5000, defaultTrialDays: 30, enforceSSO: false, apiRateLimit: 1000,
+      admins: [
+        { id: "a1", name: "Elena Rodriguez", email: "elena@aivo.com", platformRole: "super_admin", lastLoginAt: "2026-04-09T14:00:00Z" },
+        { id: "a2", name: "Marcus Chen", email: "marcus@aivo.com", platformRole: "ops_manager", lastLoginAt: "2026-04-09T10:30:00Z" },
+        { id: "a3", name: "Priya Sharma", email: "priya@aivo.com", platformRole: "content_manager", lastLoginAt: "2026-04-08T16:00:00Z" },
+        { id: "a4", name: "Jordan Blake", email: "jordan@aivo.com", platformRole: "support_agent", lastLoginAt: "2026-04-09T12:45:00Z" },
+        { id: "a5", name: "Taylor Kim", email: "taylor@aivo.com", platformRole: "billing_manager", lastLoginAt: "2026-04-07T09:00:00Z" },
+      ],
+    })],
   ];
 
   return matchRoute(path, routes);

@@ -1,11 +1,14 @@
 import { create } from "zustand";
 
+import type { PlatformRole } from "@/lib/rbac";
+
 export interface User {
   id: string;
   email: string;
   name: string;
-  role: "parent" | "learner" | "therapist" | "educator" | "admin" | "caregiver";
+  role: "parent" | "learner" | "therapist" | "educator" | "admin" | "caregiver" | "platform_admin";
   avatarUrl?: string;
+  platformRole?: PlatformRole;
 }
 
 interface AuthState {
@@ -26,14 +29,16 @@ export function hydrateTestUser(): boolean {
   const match = document.cookie.match(/(?:^|;\s*)user_role=(\w+)/);
   if (!match) return false;
   const role = match[1];
-  const names: Record<string, string> = { parent: "Sarah Johnson", learner: "Alex Johnson", teacher: "Ms. Rivera", admin: "Admin User", caregiver: "Jamie Rodriguez" };
+  const names: Record<string, string> = { parent: "Sarah Johnson", learner: "Alex Johnson", teacher: "Ms. Rivera", admin: "Admin User", caregiver: "Jamie Rodriguez", platform_admin: "Platform Admin" };
   const storeRole = role === "teacher" ? "educator" : role;
+  const platformRole = role === "platform_admin" ? "super_admin" as const : undefined;
   useAuthStore.getState().login(
     {
       id: `test-${role}-1`,
       email: `${role}@test.aivo.com`,
       name: names[role] || "Test User",
       role: storeRole as User["role"],
+      platformRole,
     },
     "test-token",
   );

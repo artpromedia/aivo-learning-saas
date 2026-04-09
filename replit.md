@@ -136,7 +136,7 @@ See `.env.example` for all required variables. Key ones:
 
 ## Test Login & Mock Data
 
-In dev mode, the login page has "Test Accounts" buttons (Parent, Learner, Teacher, Admin, Caregiver) that set a `user_role` cookie via `/api/test-login?role=<role>` and redirect to the dashboard.
+In dev mode, the login page has "Test Accounts" buttons (Parent, Learner, Teacher, District Admin, Platform Admin, Caregiver) that set a `user_role` cookie via `/api/test-login?role=<role>` and redirect to the dashboard.
 
 When the backend APIs aren't running, the app falls back to **mock data** (`apps/web/src/lib/mock-data.ts`) for all dashboard pages. This includes:
 - Parent dashboard with 2 mock learners (Alex & Maya Johnson)
@@ -145,6 +145,15 @@ When the backend APIs aren't running, the app falls back to **mock data** (`apps
 - Teacher learner hub (matching parent child hub design) with Quick Navigation grid, StatCards, sub-pages (brain, accommodations, iep, gradebook, sessions), Reports page, Settings page
 - Caregiver dashboard with read-only child view (brain profile, accommodations, IEP, gradebook, sessions)
 - Admin district overview with teachers, classrooms, licenses
+- **Platform admin dashboard** (`/admin/platform`) with RBAC sub-roles (super_admin, ops_manager, content_manager, support_agent, billing_manager):
+  - Overview dashboard with KPIs, system health, top districts, recent activity
+  - Districts management with search, detail drilldown (contact info, license usage, top teachers)
+  - Users management with search + role filter, status badges, platform role labels
+  - Subscriptions with revenue metrics (MRR/ARR), churn rate, subscription list
+  - Content library with type/search filters, usage/rating stats
+  - Audit log with severity filtering, actor/IP tracking
+  - Platform settings with general config + admin role management
+  - RBAC permissions system (`apps/web/src/lib/rbac.ts`) gates pages/actions per role
 - Notifications, engagement stats, shop items, collaboration members
 - Caregiver invite system (max 2 per child) on parent collaboration page with copy invite link
 - Caregiver onboarding wizard at `/accept-invite` (public route, no auth required): welcome → set PIN → review → complete

@@ -202,7 +202,10 @@ export default function LoginPage() {
               Teacher
             </a>
             <a href="/api/test-login?role=admin" className="block px-3 py-2.5 rounded-2xl text-xs font-bold text-white text-center transition-all hover:scale-[1.03] active:scale-[0.98]" style={{ background: "linear-gradient(135deg, #6366F1, #8B5CF6)" }}>
-              Admin
+              District Admin
+            </a>
+            <a href="/api/test-login?role=platform_admin" className="block px-3 py-2.5 rounded-2xl text-xs font-bold text-white text-center transition-all hover:scale-[1.03] active:scale-[0.98]" style={{ background: "linear-gradient(135deg, #DC2626, #F97316)" }}>
+              Platform Admin
             </a>
           </div>
         </div>

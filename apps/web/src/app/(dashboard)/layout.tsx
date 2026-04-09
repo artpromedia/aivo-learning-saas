@@ -21,6 +21,11 @@ import {
   Bot,
   User,
   Sparkles,
+  Building2,
+  BarChart3,
+  FileText,
+  Shield,
+  Layers,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { AivoLogo } from "@/components/brand/AivoLogo";
@@ -74,6 +79,16 @@ const districtAdminNav: NavItem[] = [
   { href: "/admin/translations", labelKey: "translations", icon: <Languages size={20} />, color: "#F472B6" },
 ];
 
+const platformAdminNav: NavItem[] = [
+  { href: "/admin/platform", labelKey: "dashboard", icon: <BarChart3 size={20} />, color: "#7C3AED" },
+  { href: "/admin/platform/districts", labelKey: "districts", icon: <Building2 size={20} />, color: "#3B82F6" },
+  { href: "/admin/platform/users", labelKey: "users", icon: <Users size={20} />, color: "#2DD4BF" },
+  { href: "/admin/platform/subscriptions", labelKey: "subscriptions", icon: <CreditCard size={20} />, color: "#F59E0B" },
+  { href: "/admin/platform/content", labelKey: "content", icon: <Layers size={20} />, color: "#EC4899" },
+  { href: "/admin/platform/audit", labelKey: "auditLog", icon: <FileText size={20} />, color: "#6B7280" },
+  { href: "/admin/platform/settings", labelKey: "settings", icon: <Shield size={20} />, color: "#10B981" },
+];
+
 export default function DashboardLayout({
   children,
 }: {
@@ -87,12 +102,14 @@ export default function DashboardLayout({
 
   const isLearner = pathname.startsWith("/learner");
   const isTeacher = pathname.startsWith("/teacher");
-  const isAdmin = pathname.startsWith("/admin");
+  const isPlatformAdmin = pathname.startsWith("/admin/platform");
+  const isAdmin = pathname.startsWith("/admin") && !isPlatformAdmin;
   const isCaregiver = pathname.startsWith("/caregiver");
 
   let navItems = parentNav;
   if (isLearner) navItems = learnerNav;
   else if (isTeacher) navItems = teacherNav;
+  else if (isPlatformAdmin) navItems = platformAdminNav;
   else if (isAdmin) navItems = districtAdminNav;
   else if (isCaregiver) navItems = caregiverNav;
 
