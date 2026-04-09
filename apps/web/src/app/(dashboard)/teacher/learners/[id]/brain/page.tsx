@@ -52,9 +52,9 @@ export default function TeacherLearnerBrainPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={120} className="w-full rounded-2xl" />
+        <Skeleton height={120} className="w-full rounded-3xl" />
         <div className="grid gap-4 sm:grid-cols-2">
-          {[1, 2, 3, 4].map((i) => (<Skeleton key={i} height={150} className="w-full rounded-2xl" />))}
+          {[1, 2, 3, 4].map((i) => (<Skeleton key={i} height={150} className="w-full rounded-3xl" />))}
         </div>
       </div>
     );
@@ -66,7 +66,7 @@ export default function TeacherLearnerBrainPage() {
     <PageWrapper>
       <BackLink href={`/teacher/learners/${learnerId}`}>Back to Learner Hub</BackLink>
 
-      <PurpleGradientHeader className="rounded-2xl mb-8">
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
             <Brain size={22} />
@@ -97,7 +97,7 @@ export default function TeacherLearnerBrainPage() {
 
       <div className="grid gap-6 md:grid-cols-2 mt-6">
         <AnimatedCard delay={700}>
-          <div className="rounded-2xl p-6" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
+          <div className="rounded-3xl p-6" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
             <h3 className="font-bold mb-3 flex items-center gap-2" style={{ color: "var(--aivo-text)" }}>
               <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white" style={{ background: "linear-gradient(135deg, #10B981, #059669)" }}><Lightbulb size={16} /></div>
               Strengths
@@ -111,7 +111,7 @@ export default function TeacherLearnerBrainPage() {
         </AnimatedCard>
 
         <AnimatedCard delay={800}>
-          <div className="rounded-2xl p-6" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
+          <div className="rounded-3xl p-6" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
             <h3 className="font-bold mb-3 flex items-center gap-2" style={{ color: "var(--aivo-text)" }}>
               <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white" style={{ background: "linear-gradient(135deg, #F59E0B, #D97706)" }}><Zap size={16} /></div>
               Challenges

@@ -66,10 +66,10 @@ export default function QuestsPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={80} className="w-full rounded-2xl" />
+        <Skeleton height={80} className="w-full rounded-3xl" />
         <div className="space-y-6">
           {[1, 2, 3].map((i) => (
-            <Skeleton key={i} height={180} className="w-full rounded-2xl" />
+            <Skeleton key={i} height={180} className="w-full rounded-3xl" />
           ))}
         </div>
       </div>
@@ -91,7 +91,7 @@ export default function QuestsPage() {
     <PageWrapper>
       <BackLink href="/learner">{t("backToHome")}</BackLink>
 
-      <PurpleGradientHeader className="rounded-2xl mb-8">
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
             <Compass size={22} />
@@ -122,7 +122,7 @@ export default function QuestsPage() {
                   <Card className="opacity-60">
                     <CardBody>
                       <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 text-white" style={{ background: gradient }}>
+                        <div className="w-14 h-14 rounded-3xl flex items-center justify-center shrink-0 text-white" style={{ background: gradient }}>
                           <Lock size={24} />
                         </div>
                         <div className="flex-1">
@@ -141,7 +141,7 @@ export default function QuestsPage() {
                       <div className="h-2" style={{ background: gradient }} />
                       <CardBody>
                         <div className="flex items-start gap-4">
-                          <div className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-lg text-white" style={{ background: gradient }}>
+                          <div className="w-14 h-14 rounded-3xl flex items-center justify-center shrink-0 shadow-lg text-white" style={{ background: gradient }}>
                             {world.iconUrl ? (
                               <img src={world.iconUrl} alt={world.name} className="w-9 h-9" />
                             ) : (

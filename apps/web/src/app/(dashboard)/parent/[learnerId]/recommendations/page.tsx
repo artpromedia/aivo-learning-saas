@@ -97,7 +97,7 @@ export default function RecommendationsPage() {
     <PageWrapper>
       <BackLink href={`/parent/${learnerId}`}>{t("backToDashboard")}</BackLink>
 
-      <PurpleGradientHeader className="rounded-2xl mb-8">
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
             <Lightbulb size={22} />

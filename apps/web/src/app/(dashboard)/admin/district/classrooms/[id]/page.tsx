@@ -140,21 +140,21 @@ export default function ClassroomDetailPage() {
       {loading ? (
         <>
           <div className="mb-8">
-            <Skeleton height={120} className="w-full rounded-2xl" />
+            <Skeleton height={120} className="w-full rounded-3xl" />
           </div>
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
-              <Skeleton key={i} height={56} className="w-full rounded-2xl" />
+              <Skeleton key={i} height={56} className="w-full rounded-3xl" />
             ))}
           </div>
         </>
       ) : error ? (
-        <div className="p-4 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171]">
+        <div className="p-4 rounded-3xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171]">
           {error}
         </div>
       ) : data ? (
         <>
-          <PurpleGradientHeader className="rounded-2xl mb-8">
+          <PurpleGradientHeader className="rounded-3xl mb-8">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
                 <School size={22} />
@@ -228,7 +228,7 @@ export default function ClassroomDetailPage() {
                 </div>
 
                 {showAddLearner && (
-                  <div className="mb-4 p-4 border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-2xl">
+                  <div className="mb-4 p-4 border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-3xl">
                     <div className="flex items-center justify-between mb-3">
                       <h3 className="text-sm font-semibold" style={{ color: "var(--aivo-text)" }}>Add a Learner</h3>
                       <button onClick={() => setShowAddLearner(false)} className="text-[#A89BB5] hover:text-[#7C3AED]">
@@ -242,13 +242,13 @@ export default function ClassroomDetailPage() {
                         onChange={(e) => setLearnerName(e.target.value)}
                         placeholder="Learner name"
                         required
-                        className="w-full px-3 py-2 text-sm border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-2xl bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] placeholder-[#A89BB5] focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent"
+                        className="w-full px-3 py-2 text-sm border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-3xl bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] placeholder-[#A89BB5] focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent"
                       />
                       <div className="flex gap-3">
                         <select
                           value={learnerLevel}
                           onChange={(e) => setLearnerLevel(e.target.value)}
-                          className="flex-1 px-3 py-2 text-sm border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-2xl bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent"
+                          className="flex-1 px-3 py-2 text-sm border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-3xl bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent"
                         >
                           <option value="level1">Level 1</option>
                           <option value="level2">Level 2</option>
@@ -260,7 +260,7 @@ export default function ClassroomDetailPage() {
                           onChange={(e) => setLearnerGrade(e.target.value)}
                           placeholder="Enrolled grade"
                           required
-                          className="flex-1 px-3 py-2 text-sm border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-2xl bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] placeholder-[#A89BB5] focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent"
+                          className="flex-1 px-3 py-2 text-sm border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-3xl bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] placeholder-[#A89BB5] focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent"
                         />
                       </div>
                       <div className="flex justify-end gap-2">

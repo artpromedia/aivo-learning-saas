@@ -125,7 +125,7 @@ export default function SyncDetailsPage() {
     <PageWrapper>
       <BackLink href="/admin/district/integrations">Back to Integrations</BackLink>
 
-      <PurpleGradientHeader className="rounded-2xl mb-8">
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
             <RefreshCw size={22} />
@@ -138,15 +138,15 @@ export default function SyncDetailsPage() {
       </PurpleGradientHeader>
 
       {error && (
-        <div className="mb-6 p-4 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171]">
+        <div className="mb-6 p-4 rounded-3xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171]">
           {error}
         </div>
       )}
 
       {loading ? (
         <div className="space-y-4">
-          <Skeleton height={120} className="w-full rounded-2xl" />
-          <Skeleton height={200} className="w-full rounded-2xl" />
+          <Skeleton height={120} className="w-full rounded-3xl" />
+          <Skeleton height={200} className="w-full rounded-3xl" />
         </div>
       ) : syncLog ? (
         <div className="space-y-6">
@@ -228,7 +228,7 @@ export default function SyncDetailsPage() {
               </div>
               <div className="space-y-2">
                 {syncLog.errors.map((err, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-3 border border-[#FECACA] dark:border-[#991B1B]/30 rounded-2xl bg-red-50/50 dark:bg-red-900/10">
+                  <div key={idx} className="flex items-center justify-between p-3 border border-[#FECACA] dark:border-[#991B1B]/30 rounded-3xl bg-red-50/50 dark:bg-red-900/10">
                     <div className="flex items-center gap-3">
                       <XCircle size={16} className="text-red-500 shrink-0" />
                       <div>
@@ -253,7 +253,7 @@ export default function SyncDetailsPage() {
             >
               <div className="space-y-2">
                 {syncLog.details.map((detail) => (
-                  <div key={detail.id} className="flex items-center gap-4 p-3 border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-2xl">
+                  <div key={detail.id} className="flex items-center gap-4 p-3 border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-3xl">
                     {entityIcon(detail.entityType)}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">

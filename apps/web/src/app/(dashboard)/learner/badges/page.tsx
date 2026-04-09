@@ -27,10 +27,10 @@ export default function BadgesPage() {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={80} className="w-full rounded-2xl" />
+        <Skeleton height={80} className="w-full rounded-3xl" />
         <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-            <Skeleton key={i} height={180} className="w-full rounded-2xl" />
+            <Skeleton key={i} height={180} className="w-full rounded-3xl" />
           ))}
         </div>
       </div>
@@ -54,7 +54,7 @@ export default function BadgesPage() {
     <PageWrapper>
       <BackLink href="/learner">{t("backToHome", { defaultValue: "Back to Home" })}</BackLink>
 
-      <PurpleGradientHeader className="rounded-2xl mb-8">
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
             <Trophy size={22} />

@@ -116,9 +116,9 @@ export default function HomeworkPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={80} className="w-full rounded-2xl" />
-        <Skeleton height={180} className="w-full rounded-2xl" />
-        <div className="space-y-3">{[1, 2, 3].map((i) => (<Skeleton key={i} height={80} className="w-full rounded-2xl" />))}</div>
+        <Skeleton height={80} className="w-full rounded-3xl" />
+        <Skeleton height={180} className="w-full rounded-3xl" />
+        <div className="space-y-3">{[1, 2, 3].map((i) => (<Skeleton key={i} height={80} className="w-full rounded-3xl" />))}</div>
       </div>
     );
   }
@@ -127,7 +127,7 @@ export default function HomeworkPage() {
     <PageWrapper>
       <BackLink href="/learner">{t("backToHome", { defaultValue: "Back to Home" })}</BackLink>
 
-      <PurpleGradientHeader className="rounded-2xl mb-8">
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
             <BookOpen size={22} />
@@ -140,7 +140,7 @@ export default function HomeworkPage() {
       </PurpleGradientHeader>
 
       {error && (
-        <div className="mb-4 p-3 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171] text-sm">{error}</div>
+        <div className="mb-4 p-3 rounded-3xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171] text-sm">{error}</div>
       )}
 
       {lockedInfo && (
@@ -170,7 +170,7 @@ export default function HomeworkPage() {
               onDragLeave={() => setIsDragging(false)}
               onDrop={onDrop}
               onClick={() => fileInputRef.current?.click()}
-              className={`border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer transition-colors ${
+              className={`border-2 border-dashed rounded-3xl p-10 text-center cursor-pointer transition-colors ${
                 isDragging
                   ? "border-[#7C3AED] bg-[#7C3AED]/5"
                   : "border-[#E8DDF0] dark:border-[#3D2D5C] hover:border-[#7C3AED] hover:bg-[var(--aivo-bg)] dark:hover:bg-[#2A1E45]/50"

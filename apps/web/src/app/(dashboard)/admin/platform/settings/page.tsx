@@ -55,8 +55,8 @@ export default function SettingsPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={120} className="w-full rounded-2xl" />
-        <div className="space-y-3">{[1, 2, 3].map((i) => (<Skeleton key={i} height={100} className="w-full rounded-2xl" />))}</div>
+        <Skeleton height={120} className="w-full rounded-3xl" />
+        <div className="space-y-3">{[1, 2, 3].map((i) => (<Skeleton key={i} height={100} className="w-full rounded-3xl" />))}</div>
       </div>
     );
   }
@@ -67,7 +67,7 @@ export default function SettingsPage() {
     <PageWrapper>
       <BackLink href="/admin/platform">Back to Dashboard</BackLink>
 
-      <PurpleGradientHeader className="rounded-2xl mb-8">
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
             <Shield size={22} />

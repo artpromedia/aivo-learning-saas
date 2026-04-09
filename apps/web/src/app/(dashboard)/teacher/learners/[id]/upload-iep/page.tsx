@@ -113,7 +113,7 @@ export default function UploadIepPage() {
   if (success) {
     return (
       <div>
-        <PurpleGradientHeader className="rounded-2xl mb-8">
+        <PurpleGradientHeader className="rounded-3xl mb-8">
           <h1 className="text-2xl font-extrabold">{t("uploadIepTitle")}</h1>
         </PurpleGradientHeader>
 
@@ -139,7 +139,7 @@ export default function UploadIepPage() {
 
   return (
     <div>
-      <PurpleGradientHeader className="rounded-2xl mb-8">
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <Link
           href={`/teacher/learners/${learnerId}`}
           className="inline-flex items-center gap-1 text-white/80 hover:text-white text-sm mb-3 transition-colors"

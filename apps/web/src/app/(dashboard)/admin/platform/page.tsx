@@ -52,8 +52,8 @@ export default function PlatformDashboardPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={120} className="w-full rounded-2xl" />
-        <div className="grid gap-4 sm:grid-cols-4">{[1, 2, 3, 4].map((i) => (<Skeleton key={i} height={100} className="w-full rounded-2xl" />))}</div>
+        <Skeleton height={120} className="w-full rounded-3xl" />
+        <div className="grid gap-4 sm:grid-cols-4">{[1, 2, 3, 4].map((i) => (<Skeleton key={i} height={100} className="w-full rounded-3xl" />))}</div>
       </div>
     );
   }
@@ -65,7 +65,7 @@ export default function PlatformDashboardPage() {
 
   return (
     <PageWrapper>
-      <PurpleGradientHeader className="rounded-2xl mb-8">
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
             <BarChart3 size={22} />
@@ -86,32 +86,38 @@ export default function PlatformDashboardPage() {
 
       <div className="grid gap-3 grid-cols-2 lg:grid-cols-4 mb-8">
         <AnimatedCard delay={500}>
-          <div className="rounded-2xl p-4 text-center" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
-            <div className="w-10 h-10 rounded-full mx-auto mb-2 flex items-center justify-center" style={{ backgroundColor: `${healthColors[data.systemHealth]}20` }}>
-              {data.systemHealth === "healthy" ? <CheckCircle size={20} style={{ color: healthColors[data.systemHealth] }} /> : <AlertTriangle size={20} style={{ color: healthColors[data.systemHealth] }} />}
+          <div className="rounded-3xl p-5 text-center transition-all duration-200 hover:shadow-[var(--shadow-hover)]" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
+            <div className="w-12 h-12 rounded-3xl mx-auto mb-3 flex items-center justify-center" style={{ backgroundColor: `${healthColors[data.systemHealth]}18` }}>
+              {data.systemHealth === "healthy" ? <CheckCircle size={22} style={{ color: healthColors[data.systemHealth] }} /> : <AlertTriangle size={22} style={{ color: healthColors[data.systemHealth] }} />}
             </div>
             <p className="text-xs font-bold" style={{ color: healthColors[data.systemHealth] }}>{healthLabels[data.systemHealth]}</p>
           </div>
         </AnimatedCard>
         <AnimatedCard delay={600}>
-          <div className="rounded-2xl p-4 text-center" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
-            <Server size={20} className="mx-auto mb-2" style={{ color: "#7C3AED" }} />
-            <p className="text-lg font-extrabold" style={{ color: "var(--aivo-text)" }}>{data.uptime}%</p>
-            <p className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>Uptime (30d)</p>
+          <div className="rounded-3xl p-5 text-center transition-all duration-200 hover:shadow-[var(--shadow-hover)]" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
+            <div className="w-12 h-12 rounded-3xl mx-auto mb-3 flex items-center justify-center" style={{ backgroundColor: "#7C3AED18", color: "#7C3AED" }}>
+              <Server size={22} />
+            </div>
+            <p className="text-lg font-extrabold" style={{ color: "var(--aivo-text)", fontFamily: "var(--font-display)" }}>{data.uptime}%</p>
+            <p className="text-xs mt-0.5" style={{ color: "var(--aivo-text-muted)" }}>Uptime (30d)</p>
           </div>
         </AnimatedCard>
         <AnimatedCard delay={700}>
-          <div className="rounded-2xl p-4 text-center" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
-            <Activity size={20} className="mx-auto mb-2" style={{ color: "#3B82F6" }} />
-            <p className="text-lg font-extrabold" style={{ color: "var(--aivo-text)" }}>{data.apiLatency}ms</p>
-            <p className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>Avg API Latency</p>
+          <div className="rounded-3xl p-5 text-center transition-all duration-200 hover:shadow-[var(--shadow-hover)]" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
+            <div className="w-12 h-12 rounded-3xl mx-auto mb-3 flex items-center justify-center" style={{ backgroundColor: "#3B82F618", color: "#3B82F6" }}>
+              <Activity size={22} />
+            </div>
+            <p className="text-lg font-extrabold" style={{ color: "var(--aivo-text)", fontFamily: "var(--font-display)" }}>{data.apiLatency}ms</p>
+            <p className="text-xs mt-0.5" style={{ color: "var(--aivo-text-muted)" }}>Avg API Latency</p>
           </div>
         </AnimatedCard>
         <AnimatedCard delay={800}>
-          <div className="rounded-2xl p-4 text-center" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
-            <Globe size={20} className="mx-auto mb-2" style={{ color: "#10B981" }} />
-            <p className="text-lg font-extrabold" style={{ color: "var(--aivo-text)" }}>${(data.monthlyRevenue / 100).toLocaleString()}</p>
-            <p className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>Monthly Revenue</p>
+          <div className="rounded-3xl p-5 text-center transition-all duration-200 hover:shadow-[var(--shadow-hover)]" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
+            <div className="w-12 h-12 rounded-3xl mx-auto mb-3 flex items-center justify-center" style={{ backgroundColor: "#10B98118", color: "#10B981" }}>
+              <Globe size={22} />
+            </div>
+            <p className="text-lg font-extrabold" style={{ color: "var(--aivo-text)", fontFamily: "var(--font-display)" }}>${(data.monthlyRevenue / 100).toLocaleString()}</p>
+            <p className="text-xs mt-0.5" style={{ color: "var(--aivo-text-muted)" }}>Monthly Revenue</p>
           </div>
         </AnimatedCard>
       </div>
@@ -182,7 +188,7 @@ export default function PlatformDashboardPage() {
           { href: "/admin/platform/settings", label: "Settings", icon: <Activity size={20} />, gradient: "linear-gradient(135deg, #10B981, #059669)", perm: "platform.settings.view" as const },
         ].filter((item) => hasPermission(platformRole, item.perm)).map((item) => (
           <Link key={item.href} href={item.href}>
-            <div className="rounded-2xl p-4 text-center transition-all cursor-pointer hover:scale-[1.03] h-full" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
+            <div className="rounded-3xl p-5 text-center transition-all cursor-pointer hover:scale-[1.03] h-full" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
               <div className="w-10 h-10 rounded-xl mx-auto mb-2 flex items-center justify-center text-white" style={{ background: item.gradient }}>{item.icon}</div>
               <span className="text-sm font-bold block" style={{ color: "var(--aivo-text)" }}>{item.label}</span>
             </div>

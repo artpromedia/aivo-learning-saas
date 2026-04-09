@@ -49,8 +49,8 @@ export default function SubscriptionsPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={120} className="w-full rounded-2xl" />
-        <div className="grid gap-4 sm:grid-cols-4">{[1, 2, 3, 4].map((i) => (<Skeleton key={i} height={100} className="w-full rounded-2xl" />))}</div>
+        <Skeleton height={120} className="w-full rounded-3xl" />
+        <div className="grid gap-4 sm:grid-cols-4">{[1, 2, 3, 4].map((i) => (<Skeleton key={i} height={100} className="w-full rounded-3xl" />))}</div>
       </div>
     );
   }
@@ -69,7 +69,7 @@ export default function SubscriptionsPage() {
     <PageWrapper>
       <BackLink href="/admin/platform">Back to Dashboard</BackLink>
 
-      <PurpleGradientHeader className="rounded-2xl mb-8">
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
             <CreditCard size={22} />
@@ -90,24 +90,30 @@ export default function SubscriptionsPage() {
 
       <div className="grid gap-3 grid-cols-3 mb-8">
         <AnimatedCard delay={500}>
-          <div className="rounded-2xl p-4 text-center" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
-            <CheckCircle size={20} className="mx-auto mb-2 text-green-500" />
-            <p className="text-lg font-extrabold" style={{ color: "var(--aivo-text)" }}>{data.activeCount}</p>
-            <p className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>Active</p>
+          <div className="rounded-3xl p-5 text-center transition-all duration-200 hover:shadow-[var(--shadow-hover)]" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
+            <div className="w-12 h-12 rounded-3xl mx-auto mb-3 flex items-center justify-center" style={{ backgroundColor: "#10B98118", color: "#10B981" }}>
+              <CheckCircle size={22} />
+            </div>
+            <p className="text-lg font-extrabold" style={{ color: "var(--aivo-text)", fontFamily: "var(--font-display)" }}>{data.activeCount}</p>
+            <p className="text-xs mt-0.5" style={{ color: "var(--aivo-text-muted)" }}>Active</p>
           </div>
         </AnimatedCard>
         <AnimatedCard delay={600}>
-          <div className="rounded-2xl p-4 text-center" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
-            <Clock size={20} className="mx-auto mb-2 text-yellow-500" />
-            <p className="text-lg font-extrabold" style={{ color: "var(--aivo-text)" }}>{data.trialCount}</p>
-            <p className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>Trials</p>
+          <div className="rounded-3xl p-5 text-center transition-all duration-200 hover:shadow-[var(--shadow-hover)]" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
+            <div className="w-12 h-12 rounded-3xl mx-auto mb-3 flex items-center justify-center" style={{ backgroundColor: "#FBBF2418", color: "#FBBF24" }}>
+              <Clock size={22} />
+            </div>
+            <p className="text-lg font-extrabold" style={{ color: "var(--aivo-text)", fontFamily: "var(--font-display)" }}>{data.trialCount}</p>
+            <p className="text-xs mt-0.5" style={{ color: "var(--aivo-text-muted)" }}>Trials</p>
           </div>
         </AnimatedCard>
         <AnimatedCard delay={700}>
-          <div className="rounded-2xl p-4 text-center" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
-            <AlertTriangle size={20} className="mx-auto mb-2 text-red-500" />
-            <p className="text-lg font-extrabold" style={{ color: "var(--aivo-text)" }}>{data.pastDueCount}</p>
-            <p className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>Past Due</p>
+          <div className="rounded-3xl p-5 text-center transition-all duration-200 hover:shadow-[var(--shadow-hover)]" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
+            <div className="w-12 h-12 rounded-3xl mx-auto mb-3 flex items-center justify-center" style={{ backgroundColor: "#EF444418", color: "#EF4444" }}>
+              <AlertTriangle size={22} />
+            </div>
+            <p className="text-lg font-extrabold" style={{ color: "var(--aivo-text)", fontFamily: "var(--font-display)" }}>{data.pastDueCount}</p>
+            <p className="text-xs mt-0.5" style={{ color: "var(--aivo-text-muted)" }}>Past Due</p>
           </div>
         </AnimatedCard>
       </div>

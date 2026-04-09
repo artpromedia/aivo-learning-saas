@@ -129,9 +129,9 @@ export default function TeacherFamilyPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={80} className="w-full rounded-2xl" />
-        <Skeleton height={200} className="w-full rounded-2xl" />
-        <div className="space-y-3">{[1, 2, 3].map((i) => (<Skeleton key={i} height={72} className="w-full rounded-2xl" />))}</div>
+        <Skeleton height={80} className="w-full rounded-3xl" />
+        <Skeleton height={200} className="w-full rounded-3xl" />
+        <div className="space-y-3">{[1, 2, 3].map((i) => (<Skeleton key={i} height={72} className="w-full rounded-3xl" />))}</div>
       </div>
     );
   }
@@ -140,7 +140,7 @@ export default function TeacherFamilyPage() {
     <PageWrapper>
       <BackLink href={`/teacher/learners/${learnerId}`}>Back to Learner Hub</BackLink>
 
-      <PurpleGradientHeader className="rounded-2xl mb-8">
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
             <Users size={22} />
@@ -159,7 +159,7 @@ export default function TeacherFamilyPage() {
       </div>
 
       {error && (
-        <div className="mb-4 p-3 rounded-2xl bg-[#FFE0E0] border border-[#FECACA] text-[#991B1B] text-sm flex items-center gap-2">
+        <div className="mb-4 p-3 rounded-3xl bg-[#FFE0E0] border border-[#FECACA] text-[#991B1B] text-sm flex items-center gap-2">
           <AlertCircle size={16} />
           {error}
         </div>
@@ -186,7 +186,7 @@ export default function TeacherFamilyPage() {
                 type="email"
                 value={inviteEmail}
                 onChange={(e) => setInviteEmail(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-2xl border border-[#E8DDF0] bg-white text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none"
+                className="w-full px-4 py-2.5 rounded-3xl border border-[#E8DDF0] bg-white text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none"
                 placeholder="parent@email.com"
                 required
               />
@@ -248,7 +248,7 @@ export default function TeacherFamilyPage() {
                       <p className="text-sm truncate" style={{ color: "var(--aivo-text-secondary)" }}>{member.email}</p>
                     </div>
                     {isDistrictPaid && (
-                      <button onClick={() => handleRemove(member.id)} disabled={removingId === member.id} className="p-2 rounded-2xl transition-colors hover:text-red-500 hover:bg-red-50 disabled:opacity-50" style={{ color: "var(--aivo-text-muted)" }} title="Remove member">
+                      <button onClick={() => handleRemove(member.id)} disabled={removingId === member.id} className="p-2 rounded-3xl transition-colors hover:text-red-500 hover:bg-red-50 disabled:opacity-50" style={{ color: "var(--aivo-text-muted)" }} title="Remove member">
                         {removingId === member.id ? <Loader2 className="animate-spin" size={16} /> : <Trash2 size={16} />}
                       </button>
                     )}

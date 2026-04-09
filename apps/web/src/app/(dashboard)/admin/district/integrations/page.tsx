@@ -96,7 +96,7 @@ export default function IntegrationsPage() {
     <PageWrapper>
       <BackLink href="/admin/district">Back to District</BackLink>
 
-      <PurpleGradientHeader className="rounded-2xl mb-8">
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
             <Link2 size={22} />
@@ -111,7 +111,7 @@ export default function IntegrationsPage() {
       </PurpleGradientHeader>
 
       {error && (
-        <div className="mb-6 p-4 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171]">
+        <div className="mb-6 p-4 rounded-3xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171]">
           {error}
         </div>
       )}
@@ -119,9 +119,9 @@ export default function IntegrationsPage() {
       {loading ? (
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {[1, 2, 3].map((i) => (<Skeleton key={i} height={80} className="w-full rounded-2xl" />))}
+            {[1, 2, 3].map((i) => (<Skeleton key={i} height={80} className="w-full rounded-3xl" />))}
           </div>
-          <Skeleton height={120} className="w-full rounded-2xl" />
+          <Skeleton height={120} className="w-full rounded-3xl" />
         </div>
       ) : data ? (
         <div className="space-y-6">
@@ -131,7 +131,7 @@ export default function IntegrationsPage() {
                 <Link href={href}>
                   <Card className="hover:shadow-[var(--shadow-hover)] transition-all cursor-pointer hover:scale-[1.02]">
                     <CardBody className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-2xl flex items-center justify-center text-white shrink-0" style={{ background: gradient }}>
+                      <div className="w-10 h-10 rounded-3xl flex items-center justify-center text-white shrink-0" style={{ background: gradient }}>
                         <Icon size={20} />
                       </div>
                       <div>
@@ -167,7 +167,7 @@ export default function IntegrationsPage() {
               </Button>
             </div>
             {syncMessage && (
-              <p className="mt-3 text-sm p-3 rounded-2xl" style={{ backgroundColor: "var(--aivo-bg)", color: "var(--aivo-text-secondary)" }}>
+              <p className="mt-3 text-sm p-3 rounded-3xl" style={{ backgroundColor: "var(--aivo-bg)", color: "var(--aivo-text-secondary)" }}>
                 {syncMessage}
               </p>
             )}
@@ -192,7 +192,7 @@ export default function IntegrationsPage() {
                   <Link
                     key={entry.id}
                     href={`/admin/district/integrations/sync?id=${entry.id}`}
-                    className="flex items-center gap-4 p-3 border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-2xl hover:border-[#7C3AED] transition-colors"
+                    className="flex items-center gap-4 p-3 border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-3xl hover:border-[#7C3AED] transition-colors"
                   >
                     {statusIcon(entry.status)}
                     <div className="flex-1 min-w-0">

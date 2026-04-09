@@ -71,8 +71,8 @@ export default function LearnerTutorsPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={80} className="w-full rounded-2xl" />
-        <div className="space-y-4">{[1, 2, 3].map((i) => (<Skeleton key={i} height={100} className="w-full rounded-2xl" />))}</div>
+        <Skeleton height={80} className="w-full rounded-3xl" />
+        <div className="space-y-4">{[1, 2, 3].map((i) => (<Skeleton key={i} height={100} className="w-full rounded-3xl" />))}</div>
       </div>
     );
   }
@@ -90,7 +90,7 @@ export default function LearnerTutorsPage() {
     <PageWrapper>
       <BackLink href="/learner">{t("backToHome", { defaultValue: "Back to Home" })}</BackLink>
 
-      <PurpleGradientHeader className="rounded-2xl mb-8">
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
             <Bot size={22} />

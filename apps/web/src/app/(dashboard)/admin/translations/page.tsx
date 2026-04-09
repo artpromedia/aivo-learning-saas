@@ -45,7 +45,7 @@ export default function TranslationDashboardPage() {
     <PageWrapper>
       <BackLink href="/admin/district">Back to District</BackLink>
 
-      <PurpleGradientHeader className="rounded-2xl mb-8">
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">

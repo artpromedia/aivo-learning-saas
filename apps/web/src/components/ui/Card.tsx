@@ -33,7 +33,7 @@ const accentBorderColors: Record<NonNullable<CardProps["colorAccent"]>, string> 
 function Card({ children, colorAccent = "none", className = "", ...props }: CardProps) {
   return (
     <div
-      className={`rounded-2xl bg-white dark:bg-[#2A1E45] border border-[#E8DDF0] dark:border-[#3D2D5C] shadow-[var(--shadow-card)] transition-shadow duration-200 ${accentBorderColors[colorAccent]} ${className}`}
+      className={`rounded-3xl bg-white dark:bg-[#2A1E45] border border-[#E8DDF0] dark:border-[#3D2D5C] shadow-[var(--shadow-card)] transition-all duration-200 hover:shadow-[var(--shadow-hover)] ${accentBorderColors[colorAccent]} ${className}`}
       {...props}
     >
       {children}

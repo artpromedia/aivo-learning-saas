@@ -100,10 +100,10 @@ export default function QuestWorldPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={80} className="w-full rounded-2xl" />
+        <Skeleton height={80} className="w-full rounded-3xl" />
         <div className="space-y-4">
           {[1, 2, 3, 4, 5].map((i) => (
-            <Skeleton key={i} height={100} className="w-full rounded-2xl" />
+            <Skeleton key={i} height={100} className="w-full rounded-3xl" />
           ))}
         </div>
       </div>
@@ -135,7 +135,7 @@ export default function QuestWorldPage() {
         Back to Quest Worlds
       </Link>
 
-      <PurpleGradientHeader className="rounded-2xl mb-8">
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
           <Compass size={32} />
           <div>

@@ -68,8 +68,8 @@ export default function TutorsPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={80} className="w-full rounded-2xl" />
-        <div className="grid gap-4 sm:grid-cols-2">{[1, 2, 3, 4].map((i) => (<Skeleton key={i} height={160} className="w-full rounded-2xl" />))}</div>
+        <Skeleton height={80} className="w-full rounded-3xl" />
+        <div className="grid gap-4 sm:grid-cols-2">{[1, 2, 3, 4].map((i) => (<Skeleton key={i} height={160} className="w-full rounded-3xl" />))}</div>
       </div>
     );
   }
@@ -87,7 +87,7 @@ export default function TutorsPage() {
     <PageWrapper>
       <BackLink href={`/parent/${learnerId}`}>{t("backToDashboard")}</BackLink>
 
-      <PurpleGradientHeader className="rounded-2xl mb-8">
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
             <Bot size={22} />
@@ -105,7 +105,7 @@ export default function TutorsPage() {
       </div>
 
       {error && (
-        <div className="mb-4 p-3 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171] text-sm">{error}</div>
+        <div className="mb-4 p-3 rounded-3xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171] text-sm">{error}</div>
       )}
 
       <ExpandableCard
@@ -119,7 +119,7 @@ export default function TutorsPage() {
         {activeTutors.length > 0 ? (
           <div className="grid gap-4 sm:grid-cols-2">
             {activeTutors.map((tutor) => (
-              <div key={tutor.id} className="flex items-center gap-4 p-4 rounded-2xl transition-all hover:scale-[1.02]" style={{ backgroundColor: "var(--aivo-bg)", border: "1px solid var(--aivo-border)" }}>
+              <div key={tutor.id} className="flex items-center gap-4 p-4 rounded-3xl transition-all hover:scale-[1.02]" style={{ backgroundColor: "var(--aivo-bg)", border: "1px solid var(--aivo-border)" }}>
                 <TutorAvatar persona={tutor.persona as TutorPersona} size="sm" />
                 <div className="flex-1 min-w-0">
                   <h3 className="font-bold" style={{ color: "var(--aivo-text)" }}>{tutor.name}</h3>
@@ -151,7 +151,7 @@ export default function TutorsPage() {
           >
             <div className="grid gap-4 sm:grid-cols-2">
               {storeTutors.map((tutor) => (
-                <div key={tutor.sku} className="p-4 rounded-2xl" style={{ backgroundColor: "var(--aivo-bg)", border: "1px solid var(--aivo-border)" }}>
+                <div key={tutor.sku} className="p-4 rounded-3xl" style={{ backgroundColor: "var(--aivo-bg)", border: "1px solid var(--aivo-border)" }}>
                   <div className="flex items-start gap-4 mb-3">
                     <TutorAvatar persona={tutor.persona as TutorPersona} size="sm" />
                     <div className="flex-1 min-w-0">

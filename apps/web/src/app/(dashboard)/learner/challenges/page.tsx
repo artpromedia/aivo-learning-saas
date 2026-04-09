@@ -70,8 +70,8 @@ export default function ChallengesPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={80} className="w-full rounded-2xl" />
-        <div className="grid gap-4 sm:grid-cols-2">{[1, 2, 3, 4].map((i) => (<Skeleton key={i} height={180} className="w-full rounded-2xl" />))}</div>
+        <Skeleton height={80} className="w-full rounded-3xl" />
+        <div className="grid gap-4 sm:grid-cols-2">{[1, 2, 3, 4].map((i) => (<Skeleton key={i} height={180} className="w-full rounded-3xl" />))}</div>
       </div>
     );
   }
@@ -93,7 +93,7 @@ export default function ChallengesPage() {
     <PageWrapper>
       <BackLink href="/learner">{t("backToHome", { defaultValue: "Back to Home" })}</BackLink>
 
-      <PurpleGradientHeader className="rounded-2xl mb-8">
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
             <Swords size={22} />
@@ -124,7 +124,7 @@ export default function ChallengesPage() {
             >
               <div className="grid gap-4 sm:grid-cols-2">
                 {activeChallenges.map((c) => (
-                  <div key={c.id} className="p-4 rounded-2xl border-2" style={{ borderColor: "#7C3AED", backgroundColor: "var(--aivo-bg)" }}>
+                  <div key={c.id} className="p-4 rounded-3xl border-2" style={{ borderColor: "#7C3AED", backgroundColor: "var(--aivo-bg)" }}>
                     <div className="flex items-center gap-2 mb-2 flex-wrap">
                       <h3 className="font-bold" style={{ color: "var(--aivo-text)" }}>{c.title}</h3>
                       <Badge variant="warning">In Progress</Badge>
@@ -153,7 +153,7 @@ export default function ChallengesPage() {
                 <div className="grid gap-4 sm:grid-cols-2">
                   {openChallenges.map((c, idx) => (
                     <AnimatedCard key={c.id} delay={400 + idx * 80}>
-                      <div className="p-4 rounded-2xl" style={{ backgroundColor: "var(--aivo-bg)", border: "1px solid var(--aivo-border)" }}>
+                      <div className="p-4 rounded-3xl" style={{ backgroundColor: "var(--aivo-bg)", border: "1px solid var(--aivo-border)" }}>
                         <div className="flex items-center gap-2 mb-2 flex-wrap">
                           <h3 className="font-bold" style={{ color: "var(--aivo-text)" }}>{c.title}</h3>
                           <Badge variant="secondary">{typeLabels[c.type]}</Badge>

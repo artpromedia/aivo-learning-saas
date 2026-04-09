@@ -110,8 +110,8 @@ export default function IepPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={80} className="w-full rounded-2xl" />
-        <div className="space-y-4">{[1, 2, 3].map((i) => (<Skeleton key={i} height={120} className="w-full rounded-2xl" />))}</div>
+        <Skeleton height={80} className="w-full rounded-3xl" />
+        <div className="space-y-4">{[1, 2, 3].map((i) => (<Skeleton key={i} height={120} className="w-full rounded-3xl" />))}</div>
       </div>
     );
   }
@@ -132,7 +132,7 @@ export default function IepPage() {
     <PageWrapper>
       <BackLink href={`/parent/${learnerId}`}>{t("backToDashboard")}</BackLink>
 
-      <PurpleGradientHeader className="rounded-2xl mb-8">
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
             <FileText size={22} />
@@ -154,7 +154,7 @@ export default function IepPage() {
       </div>
 
       {error && (
-        <div className="mb-4 p-3 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171] text-sm">{error}</div>
+        <div className="mb-4 p-3 rounded-3xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171] text-sm">{error}</div>
       )}
 
       <ExpandableCard
@@ -168,7 +168,7 @@ export default function IepPage() {
         {data?.goals && data.goals.length > 0 ? (
           <div className="space-y-4">
             {data.goals.map((goal) => (
-              <div key={goal.id} className="p-4 rounded-2xl" style={{ backgroundColor: "var(--aivo-bg)", border: "1px solid var(--aivo-border)" }}>
+              <div key={goal.id} className="p-4 rounded-3xl" style={{ backgroundColor: "var(--aivo-bg)", border: "1px solid var(--aivo-border)" }}>
                 <div className="flex items-start justify-between mb-3">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
@@ -231,7 +231,7 @@ export default function IepPage() {
             <div className="space-y-3">
               {data.documents.map((doc) => (
                 <div key={doc.id} className="flex items-center gap-4 p-3 rounded-xl" style={{ backgroundColor: "var(--aivo-bg)", border: "1px solid var(--aivo-border)" }}>
-                  <div className="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0" style={{ backgroundColor: "rgba(124,58,237,0.1)" }}>
+                  <div className="w-10 h-10 rounded-3xl flex items-center justify-center shrink-0" style={{ backgroundColor: "rgba(124,58,237,0.1)" }}>
                     <FileText size={20} style={{ color: "#7C3AED" }} />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -241,8 +241,8 @@ export default function IepPage() {
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button className="p-2 rounded-2xl transition-colors hover:bg-[var(--aivo-purple-50)]" style={{ color: "var(--aivo-text-muted)" }} title="Download"><Download size={16} /></button>
-                    <button onClick={() => handleDelete(doc.id)} disabled={deletingId === doc.id} className="p-2 rounded-2xl transition-colors hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 disabled:opacity-50" style={{ color: "var(--aivo-text-muted)" }} title="Delete">
+                    <button className="p-2 rounded-3xl transition-colors hover:bg-[var(--aivo-purple-50)]" style={{ color: "var(--aivo-text-muted)" }} title="Download"><Download size={16} /></button>
+                    <button onClick={() => handleDelete(doc.id)} disabled={deletingId === doc.id} className="p-2 rounded-3xl transition-colors hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 disabled:opacity-50" style={{ color: "var(--aivo-text-muted)" }} title="Delete">
                       {deletingId === doc.id ? <Loader2 className="animate-spin" size={16} /> : <Trash2 size={16} />}
                     </button>
                   </div>

@@ -147,10 +147,10 @@ export default function HomeworkSessionPage() {
   if (loading) {
     return (
       <div className="flex flex-col h-[calc(100vh-8rem)]">
-        <Skeleton height={48} className="w-full rounded-2xl mb-4" />
+        <Skeleton height={48} className="w-full rounded-3xl mb-4" />
         <div className="flex-1 space-y-4">
           {[1, 2, 3].map((i) => (
-            <Skeleton key={i} height={60} className="w-3/4 rounded-2xl" />
+            <Skeleton key={i} height={60} className="w-3/4 rounded-3xl" />
           ))}
         </div>
       </div>
@@ -178,7 +178,7 @@ export default function HomeworkSessionPage() {
         <div className="flex items-center gap-3">
           <Link
             href="/learner/homework"
-            className="p-1 rounded-2xl text-[var(--aivo-text-muted)] hover:text-[var(--aivo-text-secondary)] hover:bg-[#FFF5EB] dark:hover:bg-[#2A1E45] transition-colors"
+            className="p-1 rounded-3xl text-[var(--aivo-text-muted)] hover:text-[var(--aivo-text-secondary)] hover:bg-[#FFF5EB] dark:hover:bg-[#2A1E45] transition-colors"
           >
             <ArrowLeft size={20} />
           </Link>
@@ -218,14 +218,14 @@ export default function HomeworkSessionPage() {
             <img
               src={session.imageUrl}
               alt="Homework"
-              className="w-full max-h-48 object-contain rounded-2xl"
+              className="w-full max-h-48 object-contain rounded-3xl"
             />
           </CardBody>
         </Card>
       )}
 
       {error && (
-        <div className="mb-2 p-2 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 text-red-600 dark:text-red-400 text-sm text-center">
+        <div className="mb-2 p-2 rounded-3xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 text-red-600 dark:text-red-400 text-sm text-center">
           {error}
         </div>
       )}
@@ -258,7 +258,7 @@ export default function HomeworkSessionPage() {
                 )}
               </div>
               <div
-                className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${
+                className={`px-4 py-3 rounded-3xl text-sm leading-relaxed ${
                   msg.role === "student"
                     ? "bg-[#7C3AED] text-white rounded-br-sm"
                     : "bg-[var(--aivo-bg-alt,#FFF5EB)] text-[var(--aivo-text)] rounded-bl-sm"
@@ -275,7 +275,7 @@ export default function HomeworkSessionPage() {
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#38B2AC] flex items-center justify-center">
                 <Bot className="text-white" size={14} />
               </div>
-              <div className="px-4 py-3 rounded-2xl rounded-bl-sm bg-[var(--aivo-bg-alt,#FFF5EB)]">
+              <div className="px-4 py-3 rounded-3xl rounded-bl-sm bg-[var(--aivo-bg-alt,#FFF5EB)]">
                 <Loader2 className="animate-spin text-[#7C3AED]" size={16} />
               </div>
             </div>
@@ -296,7 +296,7 @@ export default function HomeworkSessionPage() {
               onKeyDown={handleKeyDown}
               placeholder={t("askForHelp")}
               disabled={sending}
-              className="flex-1 px-4 py-3 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none disabled:opacity-50"
+              className="flex-1 px-4 py-3 rounded-3xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none disabled:opacity-50"
             />
             <Button
               onClick={handleSend}

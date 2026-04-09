@@ -53,9 +53,11 @@ The frontend uses a warm, playful, colorful design system built for neurodiverse
 - Headings use `font-extrabold`, subheadings use `font-bold`
 
 ### Corners & Shadows
-- Cards/panels: `rounded-2xl` (default), `rounded-3xl` (hero/modals)
+- Cards/panels: `rounded-3xl` (consistent with marketing site aesthetic)
 - Buttons/inputs: `rounded-2xl`
-- Shadows: `--shadow-card`, `--shadow-playful`, `--shadow-hover` (purple-tinted)
+- Icon containers: `w-12 h-12 rounded-2xl` with soft pastel backgrounds (e.g., `${color}18`)
+- Shadows: `--shadow-card` (resting), `--shadow-hover` (hover), `--shadow-playful` (elevated)
+- Cards use `transition-all duration-200 hover:shadow-[var(--shadow-hover)]` for consistent hover effects
 
 ### Animations (defined in globals.css)
 - `animate-float` — gentle floating effect
@@ -66,7 +68,7 @@ The frontend uses a warm, playful, colorful design system built for neurodiverse
 
 ### Key UI Components (apps/web/src/components/ui/)
 - **Button** — gradient purple, rounded-2xl, scale hover, shadow
-- **Card** — rounded-2xl, warm border, playful shadow, color accent variants
+- **Card** — rounded-3xl, warm border, base + hover shadow, color accent variants
 - **Badge** — colorful variants (purple, coral, teal, sunny, etc.)
 - **Modal** — rounded-3xl, purple-tinted backdrop blur
 - **ProgressBar** — rounded-full with gradient fill

@@ -201,10 +201,10 @@ export default function LearnerHubPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={120} className="w-full rounded-2xl" />
+        <Skeleton height={120} className="w-full rounded-3xl" />
         <div className="grid gap-4 sm:grid-cols-4">
           {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} height={100} className="w-full rounded-2xl" />
+            <Skeleton key={i} height={100} className="w-full rounded-3xl" />
           ))}
         </div>
       </div>
@@ -214,7 +214,7 @@ export default function LearnerHubPage() {
   if (error && !brain) {
     return (
       <div className="p-6">
-        <div className="p-4 rounded-2xl bg-[#FFE0E0] border border-[#FECACA] text-[#991B1B]">
+        <div className="p-4 rounded-3xl bg-[#FFE0E0] border border-[#FECACA] text-[#991B1B]">
           {error}
         </div>
       </div>
@@ -272,7 +272,7 @@ export default function LearnerHubPage() {
     <PageWrapper>
       <BackLink href="/teacher">{t("backToClassrooms")}</BackLink>
 
-      <PurpleGradientHeader className="rounded-2xl mb-8">
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center text-2xl font-extrabold">
             {brain.name.charAt(0).toUpperCase()}
@@ -332,7 +332,7 @@ export default function LearnerHubPage() {
           {quickLinks.map((link) => (
             <Link key={link.href} href={link.href}>
               <div
-                className="rounded-2xl p-4 text-center transition-all cursor-pointer hover:scale-[1.03] h-full"
+                className="rounded-3xl p-5 text-center transition-all cursor-pointer hover:scale-[1.03] h-full"
                 style={{
                   backgroundColor: "var(--aivo-bg-card)",
                   border: "1px solid var(--aivo-border)",
@@ -418,7 +418,7 @@ export default function LearnerHubPage() {
             onChange={(e) => setInsightText(e.target.value)}
             placeholder="Share observations about this learner's progress, behavior, or learning patterns..."
             rows={3}
-            className="w-full rounded-2xl border border-[#E8DDF0] bg-white text-[var(--aivo-text)] px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent resize-none"
+            className="w-full rounded-3xl border border-[#E8DDF0] bg-white text-[var(--aivo-text)] px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent resize-none"
           />
           <div className="flex items-center justify-between mt-3">
             {insightSuccess && (

@@ -60,8 +60,8 @@ export default function UsersPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={120} className="w-full rounded-2xl" />
-        <div className="space-y-3">{[1, 2, 3, 4, 5].map((i) => (<Skeleton key={i} height={70} className="w-full rounded-2xl" />))}</div>
+        <Skeleton height={120} className="w-full rounded-3xl" />
+        <div className="space-y-3">{[1, 2, 3, 4, 5].map((i) => (<Skeleton key={i} height={70} className="w-full rounded-3xl" />))}</div>
       </div>
     );
   }
@@ -72,7 +72,7 @@ export default function UsersPage() {
     <PageWrapper>
       <BackLink href="/admin/platform">Back to Dashboard</BackLink>
 
-      <PurpleGradientHeader className="rounded-2xl mb-8">
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
             <Users size={22} />
@@ -99,13 +99,13 @@ export default function UsersPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search users by name or email..."
-            className="w-full pl-11 pr-4 py-3 rounded-2xl border border-[#E8DDF0] bg-white text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none"
+            className="w-full pl-11 pr-4 py-3 rounded-3xl border border-[#E8DDF0] bg-white text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none"
           />
         </div>
         <select
           value={roleFilter}
           onChange={(e) => setRoleFilter(e.target.value)}
-          className="px-4 py-3 rounded-2xl border border-[#E8DDF0] bg-white text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none text-sm"
+          className="px-4 py-3 rounded-3xl border border-[#E8DDF0] bg-white text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none text-sm"
         >
           {roles.map((r) => <option key={r} value={r}>{r === "all" ? "All Roles" : r.replace("_", " ")}</option>)}
         </select>

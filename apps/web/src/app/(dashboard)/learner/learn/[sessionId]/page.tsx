@@ -126,7 +126,7 @@ export default function LearnSessionPage() {
     return (
       <div className="max-w-2xl mx-auto space-y-6">
         <Skeleton height={12} className="w-full rounded-full" />
-        <Skeleton height={300} className="w-full rounded-2xl" />
+        <Skeleton height={300} className="w-full rounded-3xl" />
       </div>
     );
   }
@@ -215,7 +215,7 @@ export default function LearnSessionPage() {
       <div className="flex items-center gap-4 mb-6">
         <button
           onClick={() => setShowExitModal(true)}
-          className="p-2 rounded-2xl text-[var(--aivo-text-muted)] hover:text-[var(--aivo-text-secondary)] hover:bg-[#FFF5EB] dark:hover:bg-[#2A1E45] transition-colors"
+          className="p-2 rounded-3xl text-[var(--aivo-text-muted)] hover:text-[var(--aivo-text-secondary)] hover:bg-[#FFF5EB] dark:hover:bg-[#2A1E45] transition-colors"
         >
           <X size={20} />
         </button>
@@ -231,7 +231,7 @@ export default function LearnSessionPage() {
         <Card>
           <CardBody>
             {question.imageUrl && (
-              <div className="mb-4 rounded-2xl overflow-hidden bg-[var(--aivo-bg-alt,#FFF5EB)]">
+              <div className="mb-4 rounded-3xl overflow-hidden bg-[var(--aivo-bg-alt,#FFF5EB)]">
                 <img
                   src={question.imageUrl}
                   alt="Question visual"
@@ -246,7 +246,7 @@ export default function LearnSessionPage() {
 
             {feedback && (
               <div
-                className={`mb-4 p-3 rounded-2xl text-sm font-medium ${
+                className={`mb-4 p-3 rounded-3xl text-sm font-medium ${
                   feedback.correct
                     ? "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800"
                     : "bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400 border border-orange-200 dark:border-orange-800"
@@ -264,7 +264,7 @@ export default function LearnSessionPage() {
                     type="button"
                     disabled={!!feedback}
                     onClick={() => setSelectedAnswer(option)}
-                    className={`w-full text-left p-4 rounded-2xl border-2 transition-all ${
+                    className={`w-full text-left p-4 rounded-3xl border-2 transition-all ${
                       selectedAnswer === option
                         ? "border-[#7C3AED] bg-[#7C3AED]/5 shadow-[var(--shadow-card)]"
                         : "border-[#E8DDF0] dark:border-[#3D2D5C] hover:border-[#E8DDF0] dark:hover:border-[#3D2D5C]"
@@ -284,7 +284,7 @@ export default function LearnSessionPage() {
                 value={selectedAnswer ?? ""}
                 onChange={(e) => setSelectedAnswer(e.target.value)}
                 disabled={!!feedback}
-                className="w-full px-4 py-3 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none text-lg"
+                className="w-full px-4 py-3 rounded-3xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none text-lg"
                 placeholder={t("typeYourAnswer")}
               />
             )}

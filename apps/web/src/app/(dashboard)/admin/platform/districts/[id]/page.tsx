@@ -53,8 +53,8 @@ export default function DistrictDetailPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={120} className="w-full rounded-2xl" />
-        <div className="grid gap-4 sm:grid-cols-4">{[1, 2, 3, 4].map((i) => (<Skeleton key={i} height={100} className="w-full rounded-2xl" />))}</div>
+        <Skeleton height={120} className="w-full rounded-3xl" />
+        <div className="grid gap-4 sm:grid-cols-4">{[1, 2, 3, 4].map((i) => (<Skeleton key={i} height={100} className="w-full rounded-3xl" />))}</div>
       </div>
     );
   }
@@ -67,7 +67,7 @@ export default function DistrictDetailPage() {
     <PageWrapper>
       <BackLink href="/admin/platform/districts">Back to Districts</BackLink>
 
-      <PurpleGradientHeader className="rounded-2xl mb-8">
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 rounded-xl flex items-center justify-center bg-white/20">
             <Building2 size={28} />

@@ -37,8 +37,8 @@ export default function CaregiverGradebookPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={120} className="w-full rounded-2xl" />
-        <Skeleton height={200} className="w-full rounded-2xl" />
+        <Skeleton height={120} className="w-full rounded-3xl" />
+        <Skeleton height={200} className="w-full rounded-3xl" />
       </div>
     );
   }
@@ -47,7 +47,7 @@ export default function CaregiverGradebookPage() {
     <PageWrapper>
       <BackLink href="/caregiver">Back to Dashboard</BackLink>
 
-      <PurpleGradientHeader className="rounded-2xl mb-8">
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20"><GraduationCap size={22} /></div>
           <div>

@@ -118,7 +118,7 @@ export default function LearnerHomePage() {
       </PurpleGradientHeader>
 
       <div className="grid grid-cols-3 gap-3 mb-6" style={{ animation: "aivo-slide-up 0.4s ease-out" }}>
-        <div className="rounded-2xl p-4 text-center relative overflow-hidden" style={{ background: "linear-gradient(135deg, #7C3AED, #6366F1)" }}>
+        <div className="rounded-3xl p-5 text-center relative overflow-hidden" style={{ background: "linear-gradient(135deg, #7C3AED, #6366F1)" }}>
           <div className="absolute inset-0 opacity-10" style={{ background: "radial-gradient(circle at 30% 30%, white, transparent)" }} />
           <div className="relative">
             <div className="text-3xl mb-1" style={{ animation: "aivo-float 3s ease-in-out infinite" }}>⭐</div>
@@ -127,7 +127,7 @@ export default function LearnerHomePage() {
           </div>
         </div>
 
-        <div className="rounded-2xl p-4 text-center relative overflow-hidden" style={{ background: "linear-gradient(135deg, #F97316, #EF4444)" }}>
+        <div className="rounded-3xl p-5 text-center relative overflow-hidden" style={{ background: "linear-gradient(135deg, #F97316, #EF4444)" }}>
           <div className="absolute inset-0 opacity-10" style={{ background: "radial-gradient(circle at 30% 30%, white, transparent)" }} />
           <div className="relative">
             <div className="text-3xl mb-1" style={{ animation: "aivo-float 3s ease-in-out infinite 0.5s" }}>🔥</div>
@@ -136,7 +136,7 @@ export default function LearnerHomePage() {
           </div>
         </div>
 
-        <div className="rounded-2xl p-4 text-center relative overflow-hidden" style={{ background: "linear-gradient(135deg, #FBBF24, #F59E0B)" }}>
+        <div className="rounded-3xl p-5 text-center relative overflow-hidden" style={{ background: "linear-gradient(135deg, #FBBF24, #F59E0B)" }}>
           <div className="absolute inset-0 opacity-10" style={{ background: "radial-gradient(circle at 30% 30%, white, transparent)" }} />
           <div className="relative">
             <div className="text-3xl mb-1" style={{ animation: "aivo-float 3s ease-in-out infinite 1s" }}>🪙</div>
@@ -148,7 +148,7 @@ export default function LearnerHomePage() {
 
       {level && (
         <AnimatedCard delay={200}>
-          <div className="rounded-2xl p-4 mb-6 border" style={{ backgroundColor: "var(--aivo-bg-card)", borderColor: "var(--aivo-border)" }}>
+          <div className="rounded-3xl p-5 mb-6 border" style={{ backgroundColor: "var(--aivo-bg-card)", borderColor: "var(--aivo-border)" }}>
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-extrabold text-sm" style={{ background: "linear-gradient(135deg, #7C3AED, #A855F7)" }}>
@@ -186,7 +186,7 @@ export default function LearnerHomePage() {
         {quickActionCards.map(({ href, icon: Icon, label, emoji, gradient, labelKey }, idx) => (
           <AnimatedCard key={href} delay={300 + idx * 60}>
             <Link href={href}>
-              <div className="rounded-2xl p-3 text-center transition-all cursor-pointer hover:scale-[1.08] active:scale-[0.95] group relative overflow-hidden"
+              <div className="rounded-3xl p-4 text-center transition-all cursor-pointer hover:scale-[1.08] active:scale-[0.95] group relative overflow-hidden"
                 style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity rounded-2xl" style={{ background: gradient }} />
                 <div className="w-11 h-11 rounded-xl mx-auto mb-1.5 flex items-center justify-center text-lg relative" style={{ background: gradient }}>
@@ -204,7 +204,7 @@ export default function LearnerHomePage() {
       <AnimatedCard delay={400}>
         <Link href="/learner/challenges">
           <div
-            className="rounded-2xl p-4 mb-6 flex items-center gap-4 cursor-pointer hover:scale-[1.01] transition-all group relative overflow-hidden border"
+            className="rounded-3xl p-5 mb-6 flex items-center gap-4 cursor-pointer hover:scale-[1.01] transition-all group relative overflow-hidden border"
             style={{
               background: "linear-gradient(135deg, rgba(124,58,237,0.08), rgba(236,72,153,0.08))",
               borderColor: "rgba(124,58,237,0.2)",

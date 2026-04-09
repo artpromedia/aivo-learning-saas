@@ -160,16 +160,16 @@ function ExpandableCard({
           <p>{learnMoreText}</p>
         </InfoModal>
       )}
-      <Card className="!rounded-2xl overflow-hidden" style={{ animation: "slide-up 0.5s ease-out both", animationDelay: `${delay}ms` }}>
+      <Card className="!rounded-3xl overflow-hidden" style={{ animation: "slide-up 0.5s ease-out both", animationDelay: `${delay}ms` }}>
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl flex items-center justify-center text-white shrink-0" style={{ background: gradient }}>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl flex items-center justify-center text-white shrink-0" style={{ background: gradient }}>
                   {icon}
                 </div>
                 <div className="min-w-0">
-                  <h3 className="font-extrabold text-base" style={{ color: "var(--aivo-text)" }}>{title}</h3>
+                  <h3 className="font-extrabold text-base" style={{ color: "var(--aivo-text)", fontFamily: "var(--font-display)" }}>{title}</h3>
                   <p className="text-xs" style={{ color: "var(--aivo-text-muted)" }}>{subtitle}</p>
                 </div>
               </div>
@@ -479,21 +479,21 @@ function StatCard({ icon, label, value, color, delay, onClick }: {
 }) {
   return (
     <div
-      className={`rounded-2xl p-4 text-center transition-all ${onClick ? "cursor-pointer hover:scale-[1.03] active:scale-[0.98]" : ""}`}
+      className={`rounded-3xl p-5 text-center transition-all duration-200 hover:shadow-[var(--shadow-hover)] ${onClick ? "cursor-pointer hover:scale-[1.02] active:scale-[0.98]" : "hover:scale-[1.01]"}`}
       style={{
-        backgroundColor: `${color}10`,
-        border: `1px solid ${color}20`,
+        backgroundColor: "var(--aivo-bg-card)",
+        border: "1px solid var(--aivo-border)",
         animation: "pop-in 0.5s ease-out both",
         animationDelay: `${delay}ms`,
       }}
       onClick={onClick}
     >
-      <div className="w-10 h-10 rounded-xl mx-auto mb-2 flex items-center justify-center text-white"
-        style={{ background: `linear-gradient(135deg, ${color}, ${color}BB)` }}>
+      <div className="w-12 h-12 rounded-2xl mx-auto mb-3 flex items-center justify-center"
+        style={{ backgroundColor: `${color}18`, color }}>
         {icon}
       </div>
-      <div className="text-lg font-extrabold" style={{ color }}>{value}</div>
-      <div className="text-xs font-medium" style={{ color: "var(--aivo-text-secondary)" }}>{label}</div>
+      <div className="text-xl font-extrabold" style={{ color, fontFamily: "var(--font-display)" }}>{value}</div>
+      <div className="text-xs font-medium mt-0.5" style={{ color: "var(--aivo-text-secondary)" }}>{label}</div>
     </div>
   );
 }
@@ -797,7 +797,7 @@ export default function BrainProfilePage() {
         )}
       </div>
 
-      <Card className="!rounded-2xl overflow-hidden mb-4" style={{
+      <Card className="!rounded-3xl overflow-hidden mb-4" style={{
         animation: "slide-up 0.5s ease-out both", animationDelay: "750ms",
         background: "linear-gradient(135deg, rgba(124,58,237,0.04), rgba(45,212,191,0.04))",
         border: "1px solid rgba(124,58,237,0.1)",

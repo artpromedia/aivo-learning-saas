@@ -55,7 +55,7 @@ export default function ParentSettingsPage() {
 
   return (
     <div>
-      <PurpleGradientHeader className="rounded-2xl mb-8">
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
           <Settings size={32} />
           <div>

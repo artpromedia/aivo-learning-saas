@@ -101,10 +101,10 @@ export default function ShopPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={80} className="w-full rounded-2xl" />
+        <Skeleton height={80} className="w-full rounded-3xl" />
         <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-            <Skeleton key={i} height={200} className="w-full rounded-2xl" />
+            <Skeleton key={i} height={200} className="w-full rounded-3xl" />
           ))}
         </div>
       </div>
@@ -124,7 +124,7 @@ export default function ShopPage() {
     <PageWrapper>
       <BackLink href="/learner">{t("backToHome", { defaultValue: "Back to Home" })}</BackLink>
 
-      <PurpleGradientHeader className="rounded-2xl mb-8">
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
@@ -144,7 +144,7 @@ export default function ShopPage() {
       </PurpleGradientHeader>
 
       {error && (
-        <div className="mb-4 p-3 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171] text-sm">{error}</div>
+        <div className="mb-4 p-3 rounded-3xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171] text-sm">{error}</div>
       )}
 
       <AnimatedCard delay={100}>
@@ -234,7 +234,7 @@ export default function ShopPage() {
       >
         {selectedItem && (
           <div className="text-center">
-            <div className="w-32 h-32 mx-auto mb-4 rounded-2xl overflow-hidden flex items-center justify-center" style={{ backgroundColor: "var(--aivo-bg-alt, #FFF5EB)" }}>
+            <div className="w-32 h-32 mx-auto mb-4 rounded-3xl overflow-hidden flex items-center justify-center" style={{ backgroundColor: "var(--aivo-bg-alt, #FFF5EB)" }}>
               <ShopItemImage item={selectedItem} size="lg" />
             </div>
             <h3 className="text-lg font-bold mb-1" style={{ color: "var(--aivo-text)" }}>{selectedItem.name}</h3>

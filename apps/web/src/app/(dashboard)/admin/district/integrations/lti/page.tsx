@@ -100,13 +100,13 @@ export default function LtiConfigPage() {
   }
 
   const inputClass =
-    "w-full px-4 py-2.5 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none text-sm";
+    "w-full px-4 py-2.5 rounded-3xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none text-sm";
 
   return (
     <PageWrapper>
       <BackLink href="/admin/district/integrations">Back to Integrations</BackLink>
 
-      <PurpleGradientHeader className="rounded-2xl mb-8">
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
             <Key size={22} />
@@ -119,7 +119,7 @@ export default function LtiConfigPage() {
       </PurpleGradientHeader>
 
       {error && (
-        <div className="mb-6 p-4 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171]">
+        <div className="mb-6 p-4 rounded-3xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171]">
           {error}
         </div>
       )}
@@ -132,7 +132,7 @@ export default function LtiConfigPage() {
 
       {loading ? (
         <div className="space-y-4">
-          {[1, 2].map((i) => (<Skeleton key={i} height={120} className="w-full rounded-2xl" />))}
+          {[1, 2].map((i) => (<Skeleton key={i} height={120} className="w-full rounded-3xl" />))}
         </div>
       ) : platforms.length === 0 ? (
         <EmptyState

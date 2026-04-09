@@ -125,7 +125,7 @@ export default function ClassroomViewPage() {
   if (loading) {
     return (
       <div>
-        <Skeleton height={120} className="w-full rounded-2xl mb-8" />
+        <Skeleton height={120} className="w-full rounded-3xl mb-8" />
         <div className="space-y-3 px-4">
           {[1, 2, 3, 4, 5].map((i) => (
             <Skeleton key={i} height={56} className="w-full" rounded="lg" />
@@ -138,7 +138,7 @@ export default function ClassroomViewPage() {
   if (error) {
     return (
       <div className="p-6">
-        <div className="p-4 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171]">
+        <div className="p-4 rounded-3xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171]">
           {error}
         </div>
       </div>
@@ -149,7 +149,7 @@ export default function ClassroomViewPage() {
 
   return (
     <div>
-      <PurpleGradientHeader className="rounded-2xl mb-8">
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <Link
           href="/teacher"
           className="inline-flex items-center gap-1 text-white/80 hover:text-white text-sm mb-3 transition-colors"

@@ -137,7 +137,7 @@ export default function WebhooksPage() {
     <PageWrapper>
       <BackLink href="/admin/district/integrations">Back to Integrations</BackLink>
 
-      <PurpleGradientHeader className="rounded-2xl mb-8">
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
             <Webhook size={22} />
@@ -150,7 +150,7 @@ export default function WebhooksPage() {
       </PurpleGradientHeader>
 
       {error && (
-        <div className="mb-6 p-4 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171]">
+        <div className="mb-6 p-4 rounded-3xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171]">
           {error}
         </div>
       )}
@@ -161,7 +161,7 @@ export default function WebhooksPage() {
 
       {loading ? (
         <div className="space-y-4">
-          {[1, 2].map((i) => (<Skeleton key={i} height={100} className="w-full rounded-2xl" />))}
+          {[1, 2].map((i) => (<Skeleton key={i} height={100} className="w-full rounded-3xl" />))}
         </div>
       ) : endpoints.length === 0 ? (
         <EmptyState
@@ -213,13 +213,13 @@ export default function WebhooksPage() {
             delay={400}
           >
             {loadingDeliveries ? (
-              <Skeleton height={100} className="w-full rounded-2xl" />
+              <Skeleton height={100} className="w-full rounded-3xl" />
             ) : deliveries.length === 0 ? (
               <p className="text-sm py-4 text-center" style={{ color: "var(--aivo-text-secondary)" }}>No deliveries yet.</p>
             ) : (
               <div className="space-y-2">
                 {deliveries.map((d) => (
-                  <div key={d.id} className="flex items-center gap-4 p-3 border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-2xl">
+                  <div key={d.id} className="flex items-center gap-4 p-3 border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-3xl">
                     {d.status === "DELIVERED" ? <CheckCircle size={16} className="text-green-500" /> : d.status === "FAILED" ? <XCircle size={16} className="text-red-500" /> : <Clock size={16} className="text-yellow-500" />}
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
@@ -252,12 +252,12 @@ export default function WebhooksPage() {
           <div>
             <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>Endpoint URL</label>
             <input value={form.url} onChange={(e) => setForm({ ...form, url: e.target.value })} placeholder="https://your-server.com/webhooks/aivo"
-              className="w-full px-4 py-2.5 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none text-sm" />
+              className="w-full px-4 py-2.5 rounded-3xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none text-sm" />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>Description (optional)</label>
             <input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="e.g., District data warehouse"
-              className="w-full px-4 py-2.5 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none text-sm" />
+              className="w-full px-4 py-2.5 rounded-3xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none text-sm" />
           </div>
           <div>
             <label className="block text-sm font-medium mb-2" style={{ color: "var(--aivo-text)" }}>Event Types</label>

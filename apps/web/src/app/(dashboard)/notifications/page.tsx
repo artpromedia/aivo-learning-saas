@@ -28,8 +28,8 @@ export default function NotificationsPage() {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={80} className="w-full rounded-2xl" />
-        <div className="space-y-3">{[1, 2, 3, 4, 5].map((i) => (<Skeleton key={i} height={80} className="w-full rounded-2xl" />))}</div>
+        <Skeleton height={80} className="w-full rounded-3xl" />
+        <div className="space-y-3">{[1, 2, 3, 4, 5].map((i) => (<Skeleton key={i} height={80} className="w-full rounded-3xl" />))}</div>
       </div>
     );
   }
@@ -45,7 +45,7 @@ export default function NotificationsPage() {
 
   return (
     <PageWrapper>
-      <PurpleGradientHeader className="rounded-2xl mb-8">
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
@@ -108,7 +108,7 @@ export default function NotificationsPage() {
                     </div>
                     {!notification.read && (
                       <button onClick={() => markAsRead(notification.id)}
-                        className="p-1.5 rounded-2xl transition-colors hover:text-[#7C3AED] hover:bg-[#7C3AED]/10 shrink-0"
+                        className="p-1.5 rounded-3xl transition-colors hover:text-[#7C3AED] hover:bg-[#7C3AED]/10 shrink-0"
                         style={{ color: "var(--aivo-text-muted)" }} title="Mark as read">
                         <Check size={16} />
                       </button>

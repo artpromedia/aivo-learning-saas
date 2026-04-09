@@ -110,8 +110,8 @@ export default function LearnerProfilePage() {
   if (engLoading || loadingStats) {
     return (
       <div className="space-y-6">
-        <Skeleton height={200} className="w-full rounded-2xl" />
-        <div className="grid grid-cols-2 gap-4">{[1, 2, 3, 4].map((i) => (<Skeleton key={i} height={100} className="w-full rounded-2xl" />))}</div>
+        <Skeleton height={200} className="w-full rounded-3xl" />
+        <div className="grid grid-cols-2 gap-4">{[1, 2, 3, 4].map((i) => (<Skeleton key={i} height={100} className="w-full rounded-3xl" />))}</div>
       </div>
     );
   }
@@ -133,7 +133,7 @@ export default function LearnerProfilePage() {
     <PageWrapper>
       <BackLink href="/learner">{t("backToHome")}</BackLink>
 
-      <PurpleGradientHeader className="rounded-2xl mb-8">
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-5">
           <div className="relative group">
             <div className="w-20 h-20 rounded-full bg-white/20 border-4 border-white/30 flex items-center justify-center overflow-hidden shrink-0">
@@ -170,7 +170,7 @@ export default function LearnerProfilePage() {
       </PurpleGradientHeader>
 
       {error && (
-        <div className="mb-4 p-3 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171] text-sm">{error}</div>
+        <div className="mb-4 p-3 rounded-3xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171] text-sm">{error}</div>
       )}
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">

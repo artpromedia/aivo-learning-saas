@@ -83,9 +83,9 @@ export default function CaregiverDashboardPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={120} className="w-full rounded-2xl" />
+        <Skeleton height={120} className="w-full rounded-3xl" />
         <div className="grid gap-4 sm:grid-cols-4">
-          {[1, 2, 3, 4].map((i) => (<Skeleton key={i} height={100} className="w-full rounded-2xl" />))}
+          {[1, 2, 3, 4].map((i) => (<Skeleton key={i} height={100} className="w-full rounded-3xl" />))}
         </div>
       </div>
     );
@@ -103,7 +103,7 @@ export default function CaregiverDashboardPage() {
 
   return (
     <PageWrapper>
-      <PurpleGradientHeader className="rounded-2xl mb-8">
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center text-2xl font-extrabold">
             <Heart size={28} />
@@ -138,7 +138,7 @@ export default function CaregiverDashboardPage() {
         <div className="grid gap-3 grid-cols-2 lg:grid-cols-3">
           {quickLinks.map((link) => (
             <Link key={link.href} href={link.href}>
-              <div className="rounded-2xl p-4 text-center transition-all cursor-pointer hover:scale-[1.03] h-full" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
+              <div className="rounded-3xl p-5 text-center transition-all cursor-pointer hover:scale-[1.03] h-full" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
                 <div className="w-10 h-10 rounded-xl mx-auto mb-2 flex items-center justify-center text-white" style={{ background: link.gradient }}>
                   {link.icon}
                 </div>
@@ -181,7 +181,7 @@ export default function CaregiverDashboardPage() {
 
       <div className="mt-6">
         <AnimatedCard delay={700}>
-          <div className="rounded-2xl p-6 text-center" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
+          <div className="rounded-3xl p-6 text-center" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
             <div className="w-12 h-12 rounded-xl mx-auto mb-3 flex items-center justify-center text-white" style={{ background: "linear-gradient(135deg, #F472B6, #EC4899)" }}>
               <Heart size={22} />
             </div>
