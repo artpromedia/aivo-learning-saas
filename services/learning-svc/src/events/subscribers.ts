@@ -5,6 +5,7 @@ import { GoalService } from "../services/goal.service.js";
 
 export async function setupSubscribers(app: FastifyInstance): Promise<void> {
   const nc = app.nats;
+  if (!nc) { app.log.warn("NATS unavailable — skipping event subscriptions"); return; }
   const subs: Subscription[] = [];
 
   // brain.cloned → initialize first learning path for new learner

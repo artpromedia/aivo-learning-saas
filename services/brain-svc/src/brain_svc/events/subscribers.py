@@ -14,7 +14,10 @@ from brain_svc.events.publishers import (
     publish_brain_cloned,
     publish_mastery_updated,
 )
-from brain_svc.ml.model_store import ModelStore
+try:
+    from brain_svc.ml.model_store import ModelStore
+except ImportError:
+    ModelStore = None  # type: ignore[assignment, misc]
 from brain_svc.nats_client import get_jetstream
 
 logger = logging.getLogger(__name__)

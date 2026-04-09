@@ -4,6 +4,7 @@ expertMode = true
 
 [nix]
 channel = "stable-25_05"
+packages = ["cargo", "libiconv", "libxcrypt", "nats-server", "openssl", "pkg-config", "postgresql", "rustc"]
 
 [workflows]
 runButton = "Project"
@@ -20,6 +21,14 @@ args = "Start application"
 [[workflows.workflow.tasks]]
 task = "workflow.run"
 args = "Identity Service"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Brain Service"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Backend Services"
 
 [[workflows.workflow]]
 name = "Start application"
@@ -45,13 +54,74 @@ waitForPort = 3001
 [workflows.workflow.metadata]
 outputType = "console"
 
+[[workflows.workflow]]
+name = "Brain Service"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd services/brain-svc && bash -c 'scripts/start-infra.sh 2>/dev/null; PYTHONPATH=src python3 -m uvicorn brain_svc.main:app --host 0.0.0.0 --port 3002'"
+waitForPort = 3002
+
+[workflows.workflow.metadata]
+outputType = "console"
+
+[[workflows.workflow]]
+name = "Backend Services"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "bash scripts/start-services.sh"
+waitForPort = 3003
+
+[workflows.workflow.metadata]
+outputType = "console"
+
 [[ports]]
 localPort = 3001
 externalPort = 3001
 
 [[ports]]
+localPort = 3002
+externalPort = 3002
+
+[[ports]]
+localPort = 3003
+externalPort = 3003
+
+[[ports]]
+localPort = 3004
+externalPort = 5173
+
+[[ports]]
+localPort = 3005
+externalPort = 6000
+
+[[ports]]
+localPort = 3006
+externalPort = 4200
+
+[[ports]]
+localPort = 3012
+externalPort = 5000
+
+[[ports]]
+localPort = 4222
+externalPort = 3003
+
+[[ports]]
 localPort = 5000
 externalPort = 80
+
+[[ports]]
+localPort = 6379
+externalPort = 3000
+exposeLocalhost = true
+
+[[ports]]
+localPort = 8222
+externalPort = 3002
 
 [userenv]
 

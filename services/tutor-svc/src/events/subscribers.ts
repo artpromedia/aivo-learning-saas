@@ -6,6 +6,7 @@ import { DeprovisioningService } from "../services/deprovisioning.service.js";
 
 export async function setupSubscribers(app: FastifyInstance): Promise<void> {
   const nc = app.nats;
+  if (!nc) { app.log.warn("NATS unavailable — skipping event subscriptions"); return; }
   const provisioning = new ProvisioningService(app);
   const deprovisioning = new DeprovisioningService(app);
   const subs: Subscription[] = [];

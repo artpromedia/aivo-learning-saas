@@ -11,9 +11,14 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from brain_svc.ml.base_brain_model import BaseBrainModel
 from brain_svc.ml.mastery_engine import MasteryEngine, SkillMastery
-from brain_svc.ml.model_store import ModelStore
+
+try:
+    from brain_svc.ml.base_brain_model import BaseBrainModel
+    from brain_svc.ml.model_store import ModelStore
+except ImportError:
+    BaseBrainModel = None  # type: ignore[assignment, misc]
+    ModelStore = None  # type: ignore[assignment, misc]
 from brain_svc.models.brain_state import BrainState
 from brain_svc.models.episode import BrainEpisode
 from brain_svc.models.snapshot import BrainStateSnapshot
@@ -175,10 +180,12 @@ async def clone_brain(
     )
     session.add(episode)
 
-    # Step 12: Clone PyTorch model
-    seed_model = BaseBrainModel()
-    seed_engine = MasteryEngine(seed_model)
-    model_store.clone_seed(learner_id, seed_engine)
+    if BaseBrainModel is not None and ModelStore is not None:
+        seed_model = BaseBrainModel()
+        seed_engine = MasteryEngine(seed_model)
+        model_store.clone_seed(learner_id, seed_engine)
+    else:
+        logger.info("PyTorch unavailable — skipping model clone for learner %s", learner_id)
 
     await session.flush()
 

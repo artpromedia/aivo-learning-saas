@@ -8,6 +8,7 @@ import { generateInitialRecommendations } from "../services/contextual-recommend
 
 export async function setupSubscribers(app: FastifyInstance): Promise<void> {
   const nc = app.nats;
+  if (!nc) { app.log.warn("NATS unavailable — skipping event subscriptions"); return; }
   const recService = new RecommendationService(app);
   const subs: Subscription[] = [];
 
