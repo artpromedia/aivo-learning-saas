@@ -19,7 +19,12 @@ export async function GET(request: NextRequest) {
   }
 
   const redirect = ROLE_REDIRECTS[role] || "/parent";
-  const response = NextResponse.redirect(new URL(redirect, request.url));
+
+  const host = request.headers.get("host") || request.headers.get("x-forwarded-host") || "localhost:5000";
+  const protocol = request.headers.get("x-forwarded-proto") || "https";
+  const redirectUrl = new URL(redirect, `${protocol}://${host}`);
+
+  const response = NextResponse.redirect(redirectUrl);
   response.cookies.set("user_role", role, { path: "/", maxAge: 86400 });
   return response;
 }
