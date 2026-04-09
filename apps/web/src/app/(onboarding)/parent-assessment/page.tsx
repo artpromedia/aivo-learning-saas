@@ -7,6 +7,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ClipboardList, ChevronLeft, ChevronRight, Loader2,
   MessageCircle, Eye, Puzzle, Heart, Sparkles, Star, Check,
+  BookOpen, Trophy, AlertTriangle, Zap, Settings, SmilePlus,
+  Shield, Accessibility, Monitor, HandHelping,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardBody } from "@/components/ui/Card";
@@ -35,20 +37,22 @@ interface ApiCategory {
 }
 
 const CATEGORY_THEMES: Record<string, { icon: React.ElementType; color: string; bgColor: string; emoji: string }> = {
-  communication: { icon: MessageCircle, color: "#7C3AED", bgColor: "#F0E6FF", emoji: "💬" },
-  sensory: { icon: Eye, color: "#2DD4BF", bgColor: "#CCFBF1", emoji: "🌈" },
-  learning: { icon: Puzzle, color: "#F472B6", bgColor: "#FCE7F3", emoji: "🧩" },
-  interests: { icon: Heart, color: "#F59E0B", bgColor: "#FEF3C7", emoji: "⭐" },
+  learning_style: { icon: BookOpen, color: "#7C3AED", bgColor: "#F0E6FF", emoji: "📚" },
+  strengths: { icon: Trophy, color: "#F59E0B", bgColor: "#FEF3C7", emoji: "🏆" },
+  challenges: { icon: AlertTriangle, color: "#F472B6", bgColor: "#FCE7F3", emoji: "🧗" },
+  behavior: { icon: Zap, color: "#FB923C", bgColor: "#FFF7ED", emoji: "⚡" },
+  preferences: { icon: Settings, color: "#2DD4BF", bgColor: "#CCFBF1", emoji: "🎯" },
+  social_emotional: { icon: SmilePlus, color: "#EC4899", bgColor: "#FCE7F3", emoji: "💛" },
+  functioning_level: { icon: Shield, color: "#6366F1", bgColor: "#EEF2FF", emoji: "📊" },
+  sensory_accessibility: { icon: Eye, color: "#14B8A6", bgColor: "#CCFBF1", emoji: "🌈" },
+  communication_needs: { icon: MessageCircle, color: "#8B5CF6", bgColor: "#F5F3FF", emoji: "💬" },
+  input_method: { icon: Monitor, color: "#38BDF8", bgColor: "#E0F2FE", emoji: "🖥️" },
+  support_needs: { icon: HandHelping, color: "#F43F5E", bgColor: "#FFE4E6", emoji: "🤝" },
   default: { icon: ClipboardList, color: "#7C3AED", bgColor: "#F0E6FF", emoji: "📋" },
 };
 
 function getCategoryTheme(key: string) {
-  const lower = key.toLowerCase();
-  if (lower.includes("commun")) return CATEGORY_THEMES.communication;
-  if (lower.includes("sensor")) return CATEGORY_THEMES.sensory;
-  if (lower.includes("learn") || lower.includes("style")) return CATEGORY_THEMES.learning;
-  if (lower.includes("interest") || lower.includes("motiv")) return CATEGORY_THEMES.interests;
-  return CATEGORY_THEMES.default;
+  return CATEGORY_THEMES[key] ?? CATEGORY_THEMES.default;
 }
 
 const ENCOURAGEMENT_EMOJIS = ["🌟", "✨", "🎯", "💪", "🙌", "🎉"];
