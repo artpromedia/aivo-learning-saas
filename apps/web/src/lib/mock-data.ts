@@ -375,24 +375,35 @@ const mockTeacherClassrooms = [
   {
     id: "tc1",
     name: "3rd Grade - Section A",
+    gradeBand: "3rd Grade",
     subject: "All Subjects",
-    studentCount: 24,
-    averageMastery: 72,
+    learnerCount: 24,
+    avgMasteryPct: 72,
+    atRiskCount: 3,
     recentActivity: new Date(Date.now() - 3600000).toISOString(),
-    students: [
-      { id: "s1", name: "Alex Johnson", mastery: 78, streak: 7, lastActive: new Date(Date.now() - 3600000).toISOString(), status: "active" },
-      { id: "s2", name: "Emma Wilson", mastery: 85, streak: 12, lastActive: new Date(Date.now() - 7200000).toISOString(), status: "active" },
-      { id: "s3", name: "Liam Brown", mastery: 62, streak: 3, lastActive: new Date(Date.now() - 86400000).toISOString(), status: "needs_attention" },
+    learners: [
+      { id: "s1", name: "Alex Johnson", masteryPct: 78, lastActiveAt: new Date(Date.now() - 3600000).toISOString(), atRisk: false, functioningLevel: "Supported" },
+      { id: "s2", name: "Emma Wilson", masteryPct: 85, lastActiveAt: new Date(Date.now() - 7200000).toISOString(), atRisk: false, functioningLevel: "Independent" },
+      { id: "s3", name: "Liam Brown", masteryPct: 62, lastActiveAt: new Date(Date.now() - 86400000).toISOString(), atRisk: true, functioningLevel: "Supported" },
+      { id: "s4", name: "Sophia Martinez", masteryPct: 91, lastActiveAt: new Date(Date.now() - 1800000).toISOString(), atRisk: false, functioningLevel: "Independent" },
+      { id: "s5", name: "Noah Davis", masteryPct: 45, lastActiveAt: new Date(Date.now() - 172800000).toISOString(), atRisk: true, functioningLevel: "Intensive" },
+      { id: "s6", name: "Olivia Garcia", masteryPct: 73, lastActiveAt: new Date(Date.now() - 14400000).toISOString(), atRisk: false, functioningLevel: "Supported" },
     ],
   },
   {
     id: "tc2",
     name: "3rd Grade - Section B",
+    gradeBand: "3rd Grade",
     subject: "All Subjects",
-    studentCount: 22,
-    averageMastery: 68,
+    learnerCount: 22,
+    avgMasteryPct: 68,
+    atRiskCount: 4,
     recentActivity: new Date(Date.now() - 7200000).toISOString(),
-    students: [],
+    learners: [
+      { id: "s7", name: "Ethan Kim", masteryPct: 80, lastActiveAt: new Date(Date.now() - 5400000).toISOString(), atRisk: false, functioningLevel: "Independent" },
+      { id: "s8", name: "Ava Chen", masteryPct: 55, lastActiveAt: new Date(Date.now() - 259200000).toISOString(), atRisk: true, functioningLevel: "Supported" },
+      { id: "s9", name: "Mason Lee", masteryPct: 70, lastActiveAt: new Date(Date.now() - 10800000).toISOString(), atRisk: false, functioningLevel: "Supported" },
+    ],
   },
 ];
 
@@ -562,7 +573,7 @@ export function getMockResponse(path: string, method: string = "GET", body?: str
     ["/api/admin/classrooms", () => mockAdminClassrooms],
     [/^\/api\/admin\/classrooms\/[^/]+$/, () => ({
       id: "cl1", name: "3rd Grade - Section A", teacher: "Maria Rivera", teacherId: "t1",
-      students: mockTeacherClassrooms[0].students, averageMastery: 72,
+      learners: mockTeacherClassrooms[0].learners, averageMastery: 72,
     })],
     ["/api/admin/licenses", () => mockLicenseData],
     ["/api/integrations/status", () => mockIntegrationStatus],
@@ -571,8 +582,36 @@ export function getMockResponse(path: string, method: string = "GET", body?: str
 
     ["/api/teacher/classrooms", () => mockTeacherClassrooms],
     [/^\/api\/teacher\/classrooms\/[^/]+$/, () => mockTeacherClassrooms[0]],
-    [/^\/api\/teacher\/learners\/[^/]+\/brain$/, () => mockBrainProfile],
+    [/^\/api\/teacher\/learners\/[^/]+\/brain$/, () => ({
+      id: "s1",
+      name: "Alex Johnson",
+      functioningLevel: "Supported",
+      subjects: [
+        { subject: "Mathematics", masteryPct: 85 },
+        { subject: "Science", masteryPct: 75 },
+        { subject: "Language Arts", masteryPct: 58 },
+        { subject: "Social Studies", masteryPct: 70 },
+      ],
+      accommodations: [
+        { id: "a1", label: "Visual Aids", description: "Uses image-based prompts and diagrams" },
+        { id: "a2", label: "Extended Time", description: "1.5x time for responses" },
+        { id: "a3", label: "Micro-breaks", description: "Scheduled breaks every 15 minutes" },
+        { id: "a4", label: "Low Stimulation", description: "Reduced animations and sounds" },
+      ],
+      iepGoals: [
+        { id: "g1", title: "Improve reading fluency to grade level", progressPct: 62, targetDate: new Date(Date.now() + 86400000 * 60).toISOString() },
+        { id: "g2", title: "Increase social interaction during group work", progressPct: 45, targetDate: new Date(Date.now() + 86400000 * 90).toISOString() },
+        { id: "g3", title: "Use self-regulation strategies independently", progressPct: 78, targetDate: new Date(Date.now() + 86400000 * 30).toISOString() },
+      ],
+      recentSessions: [
+        { id: "rs1", subject: "Mathematics", date: new Date(Date.now() - 3600000).toISOString(), durationMin: 25, score: 88 },
+        { id: "rs2", subject: "Language Arts", date: new Date(Date.now() - 86400000).toISOString(), durationMin: 20, score: 72 },
+        { id: "rs3", subject: "Science", date: new Date(Date.now() - 172800000).toISOString(), durationMin: 30, score: 80 },
+        { id: "rs4", subject: "Mathematics", date: new Date(Date.now() - 259200000).toISOString(), durationMin: 22, score: 92 },
+      ],
+    })],
     [/^\/api\/teacher\/learners\/[^/]+\/insights$/, () => ({ insights: [] })],
+    [/^\/api\/teacher\/learners\/[^/]+\/iep$/, () => ({ success: true })],
 
     ["/api/users/me", () => ({ id: "test-parent-1", name: "Sarah Johnson", email: "parent@test.aivo.com", role: "parent" })],
     ["/api/users/me/preferences", () => ({ theme: "light", language: "en" })],

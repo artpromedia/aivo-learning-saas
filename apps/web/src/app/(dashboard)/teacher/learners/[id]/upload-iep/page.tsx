@@ -70,22 +70,27 @@ export default function UploadIepPage() {
     setError(null);
 
     try {
-      const formData = new FormData();
-      formData.append("file", file);
+      const isMock = document.cookie.includes("user_role=");
+      if (isMock) {
+        await new Promise((r) => setTimeout(r, 2000));
+      } else {
+        const formData = new FormData();
+        formData.append("file", file);
 
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
-      const res = await fetch(
-        `${baseUrl}${API_ROUTES.TEACHER.LEARNER_IEP_UPLOAD(learnerId)}`,
-        {
-          method: "POST",
-          credentials: "include",
-          body: formData,
-        },
-      );
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
+        const res = await fetch(
+          `${baseUrl}${API_ROUTES.TEACHER.LEARNER_IEP_UPLOAD(learnerId)}`,
+          {
+            method: "POST",
+            credentials: "include",
+            body: formData,
+          },
+        );
 
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body.error ?? `Upload failed: ${res.status}`);
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          throw new Error(body.error ?? `Upload failed: ${res.status}`);
+        }
       }
 
       setSuccess(true);

@@ -56,7 +56,7 @@ export default function TeacherDashboardPage() {
           <div>
             <h1 className="text-2xl font-extrabold" style={{ fontFamily: "var(--font-display)" }}>{t("myClassrooms")}</h1>
             <p className="mt-0.5 text-white/80 font-medium text-sm">
-              {t("teacherWelcomeBack", { name: user?.name?.split(" ")[0] ?? "Teacher" })}
+              {t("teacherWelcomeBack", { name: user?.name ?? "Teacher" })}
             </p>
           </div>
         </div>

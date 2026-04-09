@@ -141,7 +141,7 @@ In dev mode, the login page has "Test Accounts" buttons (Parent, Learner, Teache
 When the backend APIs aren't running, the app falls back to **mock data** (`apps/web/src/lib/mock-data.ts`) for all dashboard pages. This includes:
 - Parent dashboard with 2 mock learners (Alex & Maya Johnson)
 - Learner profiles with brain data, gradebook, IEP, quests, tutors, badges, challenges
-- Teacher classrooms with student data
+- Teacher classrooms with learner data (6+ learners with mastery, at-risk flags, functioning levels), sortable tables, learner brain view with subjects/accommodations/IEP goals/sessions
 - Admin district overview with teachers, classrooms, licenses
 - Notifications, engagement stats, shop items, collaboration members
 
