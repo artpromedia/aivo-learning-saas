@@ -178,7 +178,7 @@ export default function FunctioningLevelPage() {
                 </span>
               </p>
               <p className="text-xs text-[var(--aivo-text-muted)] mb-4">
-                {t("autoRedirect", { seconds: autoRedirectCountdown })}
+                {t("autoRedirect", { countdown: autoRedirectCountdown })}
               </p>
               <Button onClick={handleContinue} rightIcon={<ArrowRight size={18} />}>
                 {t("continueToAssessment")}

@@ -541,6 +541,92 @@ export function getMockResponse(path: string, method: string = "GET", body?: str
     return { success: true };
   }
 
+  if (method === "POST" && path === "/api/assessment/iep/upload") {
+    return { id: `iep-${Date.now()}` };
+  }
+
+  if (method === "POST" && /\/api\/assessment\/iep\/[^/]+\/confirm$/.test(path)) {
+    return { success: true };
+  }
+
+  if (method === "POST" && /\/assessment\/baseline\/[^/]+\/start$/.test(path)) {
+    return {
+      question: {
+        id: "q1",
+        type: "multiple_choice",
+        subject: "math",
+        prompt: "What is 7 + 5?",
+        options: ["10", "11", "12", "13"],
+        difficulty: 1,
+      },
+      progress: 0,
+      breakConfig: {
+        frequencyQuestions: 5,
+        preferredTypes: ["breathing", "movement", "puzzle"],
+        adaptiveBreaks: true,
+      },
+    };
+  }
+
+  if (method === "POST" && /\/assessment\/baseline\/[^/]+\/answer$/.test(path)) {
+    let bodyData: Record<string, unknown> = {};
+    try { bodyData = body ? JSON.parse(body) : {}; } catch { bodyData = {}; }
+    const questionBank = [
+      { id: "q2", type: "multiple_choice", subject: "reading", prompt: "Which word rhymes with 'cat'?", options: ["Dog", "Hat", "Car", "Sun"], difficulty: 1 },
+      { id: "q3", type: "multiple_choice", subject: "science", prompt: "What do plants need to grow?", options: ["Sunlight and water", "Darkness", "Cold temperatures", "Plastic"], difficulty: 1 },
+      { id: "q4", type: "multiple_choice", subject: "math", prompt: "What is 15 - 8?", options: ["5", "6", "7", "8"], difficulty: 2 },
+      { id: "q5", type: "multiple_choice", subject: "writing", prompt: "Which sentence is correct?", options: ["She go to school.", "She goes to school.", "She going to school.", "She goed to school."], difficulty: 2 },
+      { id: "q6", type: "multiple_choice", subject: "math", prompt: "What is 6 × 4?", options: ["20", "22", "24", "26"], difficulty: 3 },
+      { id: "q7", type: "multiple_choice", subject: "reading", prompt: "What is the main idea of a story about a lost puppy finding its way home?", options: ["Cooking recipes", "Never giving up", "Building a house", "Going to school"], difficulty: 2 },
+      { id: "q8", type: "multiple_choice", subject: "science", prompt: "Which planet is closest to the Sun?", options: ["Earth", "Mars", "Mercury", "Venus"], difficulty: 3 },
+      { id: "q9", type: "multiple_choice", subject: "math", prompt: "What is 1/2 + 1/4?", options: ["1/6", "2/6", "3/4", "1/3"], difficulty: 4 },
+      { id: "q10", type: "multiple_choice", subject: "reading", prompt: "What does 'enormous' mean?", options: ["Tiny", "Very large", "Fast", "Colorful"], difficulty: 2 },
+    ];
+    const qIdx = Math.min(Math.floor(Math.random() * questionBank.length), questionBank.length - 1);
+    const nextQ = questionBank[qIdx];
+    const correctAnswers: Record<string, string> = {
+      q1: "12", q2: "Hat", q3: "Sunlight and water", q4: "7", q5: "She goes to school.",
+      q6: "24", q7: "Never giving up", q8: "Mercury", q9: "3/4", q10: "Very large",
+    };
+    const qId = String(bodyData?.questionId ?? "");
+    const ans = String(bodyData?.answer ?? "");
+    const isCorrect = correctAnswers[qId] === ans ||
+      (ans !== "" && Math.random() > 0.4);
+    const answeredCount = Math.floor(Math.random() * 8) + 2;
+    const progressVal = Math.min(answeredCount * 10, 95);
+    const isComplete = progressVal >= 90 && Math.random() > 0.5;
+
+    return {
+      correct: isCorrect,
+      feedback: isCorrect ? "Great job! That's correct!" : "Not quite right, but you're doing great!",
+      nextQuestion: isComplete ? undefined : nextQ,
+      progress: isComplete ? 100 : progressVal,
+      isComplete,
+      shouldBreak: !isComplete && answeredCount % 5 === 0,
+      suggestedBreakType: "breathing",
+    };
+  }
+
+  if (method === "POST" && /\/assessment\/baseline\/[^/]+\/complete$/.test(path)) {
+    return { success: true };
+  }
+
+  if (method === "POST" && /\/api\/learners\/[^/]+\/brain-profile\/approve$/.test(path)) {
+    return { success: true };
+  }
+
+  if (method === "POST" && /\/api\/learners\/[^/]+\/brain-profile\/decline$/.test(path)) {
+    return { success: true };
+  }
+
+  if (method === "POST" && /\/api\/learners\/[^/]+\/brain-profile\/insights$/.test(path)) {
+    return { success: true };
+  }
+
+  if (method === "POST" && path === "/api/onboarding/complete") {
+    return { success: true };
+  }
+
   if (method === "POST" && path === "/api/learners") {
     const bodyData = body ? JSON.parse(body) : {};
     const newId = `learner-${Date.now()}`;
@@ -676,6 +762,52 @@ export function getMockResponse(path: string, method: string = "GET", body?: str
             { id: "sn-5", category: "support_needs", questionText: "Any additional information about your child's accessibility or support needs?", questionType: "open_ended", required: false, helpText: "Share any specific accommodations, equipment, or strategies that help your child succeed." },
           ],
         },
+      ],
+    })],
+    [/^\/api\/assessment\/iep\/[^/]+\/status$/, () => ({
+      status: "completed",
+      data: {
+        goals: [
+          { area: "Reading Comprehension", description: "Student will identify main idea and supporting details in grade-level text with 80% accuracy." },
+          { area: "Math Computation", description: "Student will solve multi-step word problems involving fractions with 75% accuracy." },
+          { area: "Written Expression", description: "Student will write a 5-sentence paragraph with a topic sentence and supporting details." },
+        ],
+        accommodations: [
+          "Extended time (1.5x) on assessments",
+          "Preferential seating near teacher",
+          "Frequent breaks during lengthy tasks",
+          "Text-to-speech for reading passages",
+          "Graphic organizers for writing",
+        ],
+        services: [
+          "Speech-Language Therapy (30 min/week)",
+          "Occupational Therapy (30 min/week)",
+          "Resource Room Support (45 min/day)",
+        ],
+        strengths: [
+          "Strong visual-spatial reasoning",
+          "Excellent memory for facts and procedures",
+          "Creative problem-solving skills",
+          "Strong motivation when interested in topic",
+        ],
+        concerns: [
+          "Difficulty with reading fluency",
+          "Struggles with multi-step directions",
+          "Sensory sensitivities to noise",
+        ],
+      },
+    })],
+    [/^\/family\/brain\/[^/]+\/functioning-level$/, () => ({
+      level: "SUPPORTED",
+      label: "Supported",
+      description: "Your child benefits from some accommodations and modifications to optimize their learning experience. The assessment will be adjusted to include visual supports and extended time.",
+      assessmentType: "STANDARD",
+      recommendations: [
+        "Visual schedules and timers will be used during activities",
+        "Instructions will be paired with pictures and demonstrations",
+        "Extra processing time will be provided for responses",
+        "Frequent encouragement and positive reinforcement",
+        "Sensory-friendly interface with calming colors",
       ],
     })],
     ["/api/learners", () => ({ learners: mockLearners })],
