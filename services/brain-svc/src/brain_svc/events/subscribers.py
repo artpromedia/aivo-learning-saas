@@ -145,6 +145,7 @@ async def _on_assessment_baseline_completed(msg: Msg) -> None:
                 disability_signals=data.get("disabilitySignals"),
                 iep_accommodations=data.get("iepAccommodations"),
                 iep_goals=data.get("iepGoals"),
+                curriculum_framework=data.get("curriculumFramework"),
             )
 
         await publish_brain_cloned(

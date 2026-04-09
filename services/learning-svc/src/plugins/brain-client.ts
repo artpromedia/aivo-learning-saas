@@ -16,6 +16,8 @@ export interface BrainContext {
   preferredModality: string;
   cognitiveLoad: string;
   activeTutors: Array<{ tutorId: string; subject: string }>;
+  curriculumFramework?: string;
+  curriculumAlignment?: string[];
 }
 
 export interface BrainClient {

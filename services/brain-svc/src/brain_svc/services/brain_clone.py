@@ -39,6 +39,7 @@ async def clone_brain(
     disability_signals: dict[str, Any] | None = None,
     iep_accommodations: list[str] | None = None,
     iep_goals: list[dict[str, Any]] | None = None,
+    curriculum_framework: str | None = None,
 ) -> dict[str, Any]:
     """Execute the full Brain clone pipeline.
 
@@ -59,8 +60,8 @@ async def clone_brain(
     """
     learner_uuid = uuid.UUID(learner_id)
 
-    # Step 1: Select seed
-    resolved_seed = resolve_seed_for_learner(enrolled_grade, functioning_level)
+    # Step 1: Select seed (with optional district curriculum override)
+    resolved_seed = resolve_seed_for_learner(enrolled_grade, functioning_level, curriculum_framework)
     main_brain_version = resolved_seed["version"]
     logger.info("Cloning brain for learner %s from seed %s", learner_id, main_brain_version)
 
@@ -70,6 +71,7 @@ async def clone_brain(
         "domain_scores": {},
         "active_accommodations": [],
         "curriculum_alignment": resolved_seed.get("active_curriculum", []),
+        "curriculum_framework": resolved_seed.get("curriculum_framework", "DEFAULT"),
         "disability_signals": {},
     }
 

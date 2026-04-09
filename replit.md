@@ -261,6 +261,18 @@ Learners can optionally have a state + zip code which auto-resolves to a school 
 - `district_zip_codes` — Maps zip codes to districts
 - `district_curriculum_standards` — Subject/grade-band standards per district
 
+### Brain-svc Curriculum Resolution
+- `resolve_seed_for_learner(grade, level, curriculum_framework?)` now accepts an optional `curriculum_framework` parameter
+- When set (e.g. `COMMON_CORE`, `TEKS`, `NYSLS`, `BEST`, `NGSS`), `active_curriculum` is sourced from district-specific skill maps per grade band
+- Falls back to default alignment when framework is unknown or omitted
+- `clone_brain()` and event subscriber pass `curriculum_framework` through the pipeline
+
+### Learning-svc Curriculum Integration
+- `BrainContext` includes `curriculumFramework` and `curriculumAlignment` fields
+- `buildGapActivities()` prioritizes skills that match the learner's district curriculum
+- Gap activities tagged `curriculum_aligned_gap` when skill matches district standards
+- `DailyLearningPath` includes `curriculumFramework` in response
+
 ### Frontend Integration
 - Add-child onboarding form includes optional state/zip with auto district detection
 - Parent learner dashboard shows district name and curriculum framework badge in header

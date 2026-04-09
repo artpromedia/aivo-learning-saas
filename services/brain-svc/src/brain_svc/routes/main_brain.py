@@ -36,6 +36,7 @@ class CreateSeedRequest(BaseModel):
 class ResolveSeedRequest(BaseModel):
     enrolled_grade: int
     functioning_level: str
+    curriculum_framework: str | None = None
 
 
 @router.get("/seeds", response_model=list[SeedResponse])
@@ -85,5 +86,5 @@ async def create_new_seed(body: CreateSeedRequest, _claims: dict = Depends(requi
 
 @router.post("/resolve")
 async def resolve_seed(body: ResolveSeedRequest, _claims: dict = Depends(require_auth)):
-    result = resolve_seed_for_learner(body.enrolled_grade, body.functioning_level)
+    result = resolve_seed_for_learner(body.enrolled_grade, body.functioning_level, body.curriculum_framework)
     return result

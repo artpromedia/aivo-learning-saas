@@ -17,6 +17,7 @@ export interface DailyLearningPath {
   date: string;
   learnerId: string;
   functioningLevel: string;
+  curriculumFramework?: string;
   activities: PathActivity[];
 }
 
@@ -66,6 +67,7 @@ export class LearningPathService {
       date: today,
       learnerId,
       functioningLevel: brainContext.functioningLevel,
+      curriculumFramework: brainContext.curriculumFramework,
       activities: activities.slice(0, maxActivities),
     };
   }
@@ -99,15 +101,25 @@ export class LearningPathService {
   }
 
   private buildGapActivities(brainContext: BrainContext): PathActivity[] {
+    const curriculumSkills = new Set(brainContext.curriculumAlignment ?? []);
+    const hasCurriculum = curriculumSkills.size > 0;
+
     const gaps = brainContext.masteryGaps
       .filter((g) => g.level < MASTERY_THRESHOLD)
-      .sort((a, b) => a.level - b.level);
+      .sort((a, b) => {
+        if (hasCurriculum) {
+          const aInCurriculum = curriculumSkills.has(a.skill) ? 0 : 1;
+          const bInCurriculum = curriculumSkills.has(b.skill) ? 0 : 1;
+          if (aInCurriculum !== bInCurriculum) return aInCurriculum - bInCurriculum;
+        }
+        return a.level - b.level;
+      });
 
     return gaps.map((gap, idx) => ({
       type: gap.level < 0.4 ? ("lesson" as const) : ("practice" as const),
       subject: gap.subject,
       skill: gap.skill,
-      reason: "mastery_gap",
+      reason: hasCurriculum && curriculumSkills.has(gap.skill) ? "curriculum_aligned_gap" : "mastery_gap",
       priority: 2 + idx,
       estimatedMinutes: this.getSessionDuration(brainContext),
     }));
