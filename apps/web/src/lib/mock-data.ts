@@ -537,6 +537,21 @@ export function getMockResponse(path: string, method: string = "GET", body?: str
     return { correct: true, feedback: "Great job! That's the right answer!", xpEarned: 10, nextQuestion: { id: "q2", type: "multiple_choice", prompt: "What is 1/2 of 10?", options: ["5", "10", "2", "1"] } };
   }
 
+  if (method === "POST" && path === "/api/learners") {
+    const bodyData = body ? JSON.parse(body) : {};
+    const newId = `learner-${Date.now()}`;
+    return {
+      learner: {
+        id: newId,
+        name: bodyData.name ?? "New Learner",
+        dateOfBirth: bodyData.dateOfBirth ?? new Date().toISOString(),
+        avatarUrl: undefined,
+        functioningLevel: "STANDARD",
+        preferences: {},
+      },
+    };
+  }
+
   if (method !== "GET") return {};
 
   const routes: [string | RegExp, () => unknown][] = [
