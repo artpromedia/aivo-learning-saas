@@ -149,8 +149,19 @@ The mock system activates when:
 1. A `user_role` cookie is present (test login)
 2. The backend API call fails (connection refused or 401)
 
+Mock data covers all learner pages including:
+- **Learning path activities** — 4 activities (lesson, quest, practice, homework) for "Today's Learning Path"
+- **Quest worlds** — 4 worlds with chapters (Ocean Explorer, Space Adventure, Jungle Safari, Ancient Egypt)
+- **Tutor chat** — Mock session start (POST) and simulated streaming chat with per-persona responses for all 7 tutors (nova, sage, spark, chrono, pixel, harmony, echo)
+- **Challenges** — 4 challenges (1v1, team, global) with proper participants/duration data
+- **Shop items** — 8 avatar customization items with rarity tiers (common/rare/epic/legendary)
+- **Homework** — 3 assignments with proper status codes (READY/IN_PROGRESS/COMPLETED)
+- **Badges, Profile, Settings** — Full engagement/XP/streak/level data
+
+Learner PIN: `1234` — handled in `getMockResponse` with body parsing
+
 Key files:
-- `apps/web/src/lib/mock-data.ts` — All mock responses
+- `apps/web/src/lib/mock-data.ts` — All mock responses + `getMockTutorResponse()` for chat
 - `apps/web/src/lib/api.ts` — `apiFetch` with mock fallback
 - `apps/web/src/providers/AuthProvider.tsx` — Test user hydration + learner store population
 - `apps/web/src/stores/auth.store.ts` — `hydrateTestUser()` function

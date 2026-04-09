@@ -140,10 +140,10 @@ const mockCollaboration = [
 ];
 
 const mockQuestWorlds = [
-  { id: "w1", slug: "ocean-explorer", name: "Ocean Explorer", description: "Dive deep into the mysteries of the ocean", icon: "🌊", color: "#38BDF8", totalQuests: 8, completedQuests: 5, xpReward: 200, locked: false },
-  { id: "w2", slug: "space-adventure", name: "Space Adventure", description: "Journey through the solar system and beyond", icon: "🚀", color: "#7C3AED", totalQuests: 10, completedQuests: 3, xpReward: 300, locked: false },
-  { id: "w3", slug: "jungle-safari", name: "Jungle Safari", description: "Explore the rainforest and learn about wildlife", icon: "🌴", color: "#34D399", totalQuests: 6, completedQuests: 0, xpReward: 150, locked: false },
-  { id: "w4", slug: "ancient-egypt", name: "Ancient Egypt", description: "Uncover the secrets of the pharaohs", icon: "🏛️", color: "#FB923C", totalQuests: 7, completedQuests: 0, xpReward: 250, locked: true },
+  { id: "w1", slug: "ocean-explorer", name: "Ocean Explorer", description: "Dive deep into the mysteries of the ocean", theme: "ocean", color: "#38BDF8", totalChapters: 8, completedChapters: 5, isLocked: false, requiredLevel: 1, xpReward: 200 },
+  { id: "w2", slug: "space-adventure", name: "Space Adventure", description: "Journey through the solar system and beyond", theme: "space", color: "#7C3AED", totalChapters: 10, completedChapters: 3, isLocked: false, requiredLevel: 5, xpReward: 300 },
+  { id: "w3", slug: "jungle-safari", name: "Jungle Safari", description: "Explore the rainforest and learn about wildlife", theme: "jungle", color: "#34D399", totalChapters: 6, completedChapters: 0, isLocked: false, requiredLevel: 8, xpReward: 150 },
+  { id: "w4", slug: "ancient-egypt", name: "Ancient Egypt", description: "Uncover the secrets of the pharaohs", theme: "history", color: "#FB923C", totalChapters: 7, completedChapters: 0, isLocked: true, requiredLevel: 15, xpReward: 250 },
 ];
 
 const mockQuestWorldDetail = {
@@ -151,17 +151,16 @@ const mockQuestWorldDetail = {
   slug: "ocean-explorer",
   name: "Ocean Explorer",
   description: "Dive deep into the mysteries of the ocean and discover amazing sea creatures!",
-  icon: "🌊",
-  color: "#38BDF8",
-  quests: [
-    { id: "q1", title: "Coral Reef Colors", description: "Learn about the vibrant colors of coral reefs", xp: 25, status: "completed", difficulty: "easy" },
-    { id: "q2", title: "Deep Sea Creatures", description: "Discover creatures that live in the darkest depths", xp: 30, status: "completed", difficulty: "easy" },
-    { id: "q3", title: "Ocean Currents", description: "Understand how water moves around the globe", xp: 35, status: "completed", difficulty: "medium" },
-    { id: "q4", title: "Marine Mammals", description: "Learn about whales, dolphins, and seals", xp: 30, status: "completed", difficulty: "easy" },
-    { id: "q5", title: "Tidal Zones", description: "Explore life between high and low tide", xp: 40, status: "completed", difficulty: "medium" },
-    { id: "q6", title: "Pollution & Conservation", description: "How can we protect our oceans?", xp: 50, status: "available", difficulty: "hard" },
-    { id: "q7", title: "The Arctic Ocean", description: "Brave the frozen waters of the north", xp: 45, status: "locked", difficulty: "hard" },
-    { id: "q8", title: "Ocean Floor Mapping", description: "Map the mysteries beneath the waves", xp: 60, status: "locked", difficulty: "hard" },
+  theme: "ocean",
+  chapters: [
+    { id: "q1", order: 1, title: "Coral Reef Colors", description: "Learn about the vibrant colors of coral reefs", xpReward: 25, status: "completed", lessonsCount: 4, completedLessons: 4 },
+    { id: "q2", order: 2, title: "Deep Sea Creatures", description: "Discover creatures that live in the darkest depths", xpReward: 30, status: "completed", lessonsCount: 5, completedLessons: 5 },
+    { id: "q3", order: 3, title: "Ocean Currents", description: "Understand how water moves around the globe", xpReward: 35, status: "completed", lessonsCount: 4, completedLessons: 4 },
+    { id: "q4", order: 4, title: "Marine Mammals", description: "Learn about whales, dolphins, and seals", xpReward: 30, status: "completed", lessonsCount: 5, completedLessons: 5 },
+    { id: "q5", order: 5, title: "Tidal Zones", description: "Explore life between high and low tide", xpReward: 40, status: "completed", lessonsCount: 4, completedLessons: 4 },
+    { id: "q6", order: 6, title: "Pollution & Conservation", description: "How can we protect our oceans?", xpReward: 50, status: "available", lessonsCount: 6, completedLessons: 2 },
+    { id: "q7", order: 7, title: "The Arctic Ocean", description: "Brave the frozen waters of the north", xpReward: 45, status: "locked", lessonsCount: 5, completedLessons: 0 },
+    { id: "q8", order: 8, title: "Ocean Floor Mapping", description: "Map the mysteries beneath the waves", xpReward: 60, status: "locked", lessonsCount: 6, completedLessons: 0 },
   ],
 };
 
@@ -182,17 +181,82 @@ const mockTutorStore = [
 ];
 
 const mockHomework = [
-  { id: "hw1", title: "Math Practice: Fractions", subject: "Mathematics", dueDate: new Date(Date.now() + 86400000 * 2).toISOString(), status: "in_progress", progress: 60, assignedBy: "Ms. Rivera", createdAt: new Date(Date.now() - 86400000).toISOString() },
-  { id: "hw2", title: "Reading: Chapter 5 Questions", subject: "Language Arts", dueDate: new Date(Date.now() + 86400000 * 3).toISOString(), status: "not_started", progress: 0, assignedBy: "Mr. Park", createdAt: new Date(Date.now() - 43200000).toISOString() },
-  { id: "hw3", title: "Science: Ecosystems Worksheet", subject: "Science", dueDate: new Date(Date.now() - 86400000).toISOString(), status: "completed", progress: 100, assignedBy: "Ms. Rivera", createdAt: new Date(Date.now() - 259200000).toISOString() },
+  { id: "hw1", subject: "Mathematics", status: "IN_PROGRESS", homeworkMode: "practice", createdAt: new Date(Date.now() - 86400000).toISOString(), adaptedProblems: [{}, {}, {}], extractedText: "Fractions worksheet - adding and subtracting fractions with unlike denominators" },
+  { id: "hw2", subject: "Language Arts", status: "READY", homeworkMode: "review", createdAt: new Date(Date.now() - 43200000).toISOString(), adaptedProblems: [{}, {}], extractedText: "Chapter 5 comprehension questions" },
+  { id: "hw3", subject: "Science", status: "COMPLETED", homeworkMode: "practice", createdAt: new Date(Date.now() - 259200000).toISOString(), adaptedProblems: [{}, {}, {}, {}], extractedText: "Ecosystems and food chains worksheet" },
 ];
 
+const mockLearningActivities = [
+  { id: "act-1", title: "Fraction Fun: Adding & Subtracting", subject: "Math", type: "lesson" as const, estimatedMinutes: 15, difficulty: "medium" as const, progress: 30 },
+  { id: "act-2", title: "Ocean Currents Explorer", subject: "Science", type: "quest" as const, estimatedMinutes: 20, difficulty: "easy" as const, progress: 0 },
+  { id: "act-3", title: "Vocabulary Builder: Space Words", subject: "Language Arts", type: "practice" as const, estimatedMinutes: 10, difficulty: "easy" as const, progress: 0 },
+  { id: "act-4", title: "History Timeline Challenge", subject: "Social Studies", type: "homework" as const, estimatedMinutes: 25, difficulty: "hard" as const, progress: 60 },
+];
+
+const mockTutorGreetings: Record<string, { name: string; specialty: string; greeting: string }> = {
+  nova: { name: "Nova", specialty: "Mathematics", greeting: "Hey there, math explorer! I'm Nova, and I love making numbers come alive! What shall we work on today? We could tackle fractions, geometry, or even some brain-teasing puzzles!" },
+  sage: { name: "Sage", specialty: "Science", greeting: "Welcome, young scientist! I'm Sage, your guide through the wonders of the natural world. From tiny atoms to massive galaxies — what would you like to discover today?" },
+  spark: { name: "Spark", specialty: "Creative Writing", greeting: "Hello, creative mind! I'm Spark, and I'm bursting with story ideas! Want to write an adventure? A mystery? Or maybe a silly poem? Let your imagination run wild!" },
+  chrono: { name: "Chrono", specialty: "History", greeting: "Greetings, time traveler! I'm Chrono. Ready to journey through history? We could visit ancient civilizations, meet famous explorers, or uncover hidden mysteries of the past!" },
+  pixel: { name: "Pixel", specialty: "Digital Art", greeting: "Hi there, future artist! I'm Pixel. Let's create something amazing together! We can explore colors, shapes, patterns, and design — what inspires you?" },
+  harmony: { name: "Harmony", specialty: "Music & Language Arts", greeting: "Hello, friend! I'm Harmony. Music and words are my favorite things! Want to explore rhythm, learn about instruments, or play some word games? Let's make learning musical!" },
+  echo: { name: "Echo", specialty: "Social Skills", greeting: "Hi! I'm Echo. I'm here to help you practice talking, listening, and making friends. We can role-play conversations, practice greetings, or work on expressing feelings. What sounds good?" },
+};
+
+const mockTutorResponses: Record<string, string[]> = {
+  nova: [
+    "Great question! Let me break that down for you with a visual example. Imagine you have a pizza cut into 8 slices...",
+    "You're doing amazing! That's exactly right. Numbers can be tricky but you're getting the hang of it!",
+    "Let's try another approach. Sometimes looking at math problems from a different angle makes them click!",
+    "Wow, you solved that so fast! Want to try a trickier one? I bet you can handle it!",
+  ],
+  sage: [
+    "That's a fantastic observation! Scientists call that phenomenon... let me explain with an experiment you can try!",
+    "You're thinking like a real scientist! Asking 'why' is the most important thing a scientist can do.",
+    "Let's explore that idea further. What do you think would happen if we changed one variable?",
+    "Amazing connection! You just linked two concepts that many scientists took years to discover!",
+  ],
+  spark: [
+    "Oh, I love that idea! Your story is getting really exciting. What happens next? Does the hero find the treasure?",
+    "Beautiful words! You have such a creative way of describing things. Let's add some more details to paint the picture.",
+    "Plot twist! What if the villain isn't really bad, but actually has a secret reason? That would make the story so interesting!",
+    "Your writing is really improving! I can see so much imagination in your words. Keep going!",
+  ],
+  chrono: [
+    "Excellent question! Back in ancient times, people used to... Let me take you on a journey to find out!",
+    "You'd make a great historian! That's exactly the kind of connection that helps us understand the past.",
+    "Time travel alert! Let's zoom forward 500 years and see how things changed...",
+    "Fascinating! You just discovered something that puzzled historians for decades. Great detective work!",
+  ],
+  pixel: [
+    "Love your creative vision! Colors can tell stories too — warm colors feel energetic while cool colors feel calm.",
+    "That design is coming together beautifully! Try adding some contrast to make it pop even more.",
+    "Great eye for detail! Professional designers use that same technique. You've got real talent!",
+    "Let's experiment with different shapes. Sometimes the most unexpected combinations create the coolest art!",
+  ],
+  harmony: [
+    "That's a wonderful observation about rhythm! Music and language both have patterns — can you spot the similarity?",
+    "You're expressing yourself so well! Words are like music — they have rhythm, tone, and feeling.",
+    "Let's try singing that sentence! When we add melody, it's easier to remember. Ready?",
+    "Beautiful! You just found the connection between sounds and meanings. That's what language is all about!",
+  ],
+  echo: [
+    "That was a really thoughtful response! Let's practice that again — remember to make eye contact and smile.",
+    "Great job! You expressed your feelings clearly. That takes courage and practice.",
+    "Let's try a role-play. I'll be a new kid at school, and you can practice introducing yourself. Ready?",
+    "You're getting so much better at this! Remember, everyone feels nervous sometimes — that's totally normal.",
+  ],
+};
+
 const mockShopItems = [
-  { id: "s1", name: "Astronaut Helmet", type: "avatar_item", category: "headwear", price: 150, currency: "coins", imageUrl: "", owned: false, equipped: false, description: "A shiny astronaut helmet for your avatar!" },
-  { id: "s2", name: "Rainbow Cape", type: "avatar_item", category: "accessory", price: 200, currency: "coins", imageUrl: "", owned: true, equipped: true, description: "A flowing rainbow cape that sparkles!" },
-  { id: "s3", name: "Dragon Pet", type: "companion", category: "pet", price: 500, currency: "coins", imageUrl: "", owned: false, equipped: false, description: "A friendly baby dragon companion." },
-  { id: "s4", name: "Neon Sneakers", type: "avatar_item", category: "footwear", price: 100, currency: "coins", imageUrl: "", owned: false, equipped: false, description: "Glowing neon sneakers for your avatar." },
-  { id: "s5", name: "Star Trail", type: "effect", category: "trail", price: 300, currency: "coins", imageUrl: "", owned: false, equipped: false, description: "Leave a trail of stars wherever you go!" },
+  { id: "s1", name: "Astronaut Helmet", category: "accessory" as const, imageUrl: "", price: 150, rarity: "rare" as const, owned: false, equipped: false, description: "A shiny astronaut helmet for your avatar!" },
+  { id: "s2", name: "Rainbow Cape", category: "accessory" as const, imageUrl: "", price: 200, rarity: "epic" as const, owned: true, equipped: true, description: "A flowing rainbow cape that sparkles!" },
+  { id: "s3", name: "Dragon Wings", category: "background" as const, imageUrl: "", price: 500, rarity: "legendary" as const, owned: false, equipped: false, description: "Fiery dragon wings behind your avatar." },
+  { id: "s4", name: "Neon Sneakers", category: "outfit" as const, imageUrl: "", price: 100, rarity: "common" as const, owned: false, equipped: false, description: "Glowing neon sneakers for your avatar." },
+  { id: "s5", name: "Star Trail", category: "effect" as const, imageUrl: "", price: 300, rarity: "epic" as const, owned: false, equipped: false, description: "Leave a trail of stars wherever you go!" },
+  { id: "s6", name: "Spiky Purple Hair", category: "hair" as const, imageUrl: "", price: 120, rarity: "rare" as const, owned: false, equipped: false, description: "Cool spiky purple hair for your avatar!" },
+  { id: "s7", name: "Galaxy Outfit", category: "outfit" as const, imageUrl: "", price: 350, rarity: "legendary" as const, owned: false, equipped: false, description: "A stunning galaxy-themed outfit." },
+  { id: "s8", name: "Sparkle Effect", category: "effect" as const, imageUrl: "", price: 80, rarity: "common" as const, owned: true, equipped: false, description: "Sparkles follow you everywhere!" },
 ];
 
 const mockBadges = [
@@ -205,9 +269,10 @@ const mockBadges = [
 ];
 
 const mockChallenges = [
-  { id: "c1", title: "Speed Math Challenge", description: "Answer 20 math questions in under 5 minutes", type: "timed", xpReward: 100, coinReward: 50, expiresAt: new Date(Date.now() + 86400000).toISOString(), status: "available", difficulty: "medium" },
-  { id: "c2", title: "Reading Marathon", description: "Complete 3 reading lessons today", type: "daily", xpReward: 75, coinReward: 30, expiresAt: new Date(Date.now() + 43200000).toISOString(), status: "in_progress", progress: 66, difficulty: "easy" },
-  { id: "c3", title: "Perfect Week", description: "Score above 80% on every activity this week", type: "weekly", xpReward: 250, coinReward: 100, expiresAt: new Date(Date.now() + 86400000 * 5).toISOString(), status: "in_progress", progress: 40, difficulty: "hard" },
+  { id: "c1", title: "Speed Math Challenge", subject: "Mathematics", type: "1v1" as const, status: "open" as const, participants: 12, maxParticipants: 20, startsAt: new Date(Date.now() + 3600000).toISOString(), duration: 5, xpReward: 100, difficulty: "medium" as const },
+  { id: "c2", title: "Reading Marathon", subject: "Language Arts", type: "global" as const, status: "in_progress" as const, participants: 45, maxParticipants: 100, startsAt: new Date(Date.now() - 1800000).toISOString(), duration: 10, xpReward: 75, difficulty: "easy" as const },
+  { id: "c3", title: "Science Showdown", subject: "Science", type: "team" as const, status: "open" as const, participants: 8, maxParticipants: 16, startsAt: new Date(Date.now() + 7200000).toISOString(), duration: 8, xpReward: 150, difficulty: "hard" as const },
+  { id: "c4", title: "Spelling Bee", subject: "Language Arts", type: "1v1" as const, status: "completed" as const, participants: 20, maxParticipants: 20, startsAt: new Date(Date.now() - 86400000).toISOString(), duration: 3, xpReward: 50, difficulty: "easy" as const },
 ];
 
 const mockProfileStats = {
@@ -375,6 +440,11 @@ const mockLearnerDetail = {
   },
 };
 
+export function getMockTutorResponse(persona: string): string {
+  const responses = mockTutorResponses[persona] ?? mockTutorResponses.nova;
+  return responses[Math.floor(Math.random() * responses.length)];
+}
+
 function matchRoute(path: string, routes: [string | RegExp, () => unknown][]): unknown | undefined {
   for (const [pattern, handler] of routes) {
     if (typeof pattern === "string") {
@@ -397,6 +467,47 @@ export function getMockResponse(path: string, method: string = "GET", body?: str
     return { success: false, error: "Invalid PIN" };
   }
 
+  if (method === "POST" && path === "/api/tutors/sessions/start") {
+    try {
+      const parsed = body ? JSON.parse(body) : {};
+      const slug = parsed.subject ?? "nova";
+      const info = mockTutorGreetings[slug] ?? mockTutorGreetings.nova;
+      return {
+        session: {
+          id: `mock-session-${slug}-${Date.now()}`,
+          tutor: {
+            name: info.name,
+            slug: slug,
+            avatarUrl: "",
+            specialty: info.specialty,
+            greeting: info.greeting,
+          },
+        },
+      };
+    } catch {}
+    return { session: { id: "mock-session-fallback", tutor: { name: "Nova", slug: "nova", avatarUrl: "", specialty: "Mathematics", greeting: "Hi there! Let's learn together!" } } };
+  }
+
+  if (method === "POST" && /\/api\/learners\/[^/]+\/challenges\/[^/]+\/join$/.test(path)) {
+    return { success: true };
+  }
+
+  if (method === "POST" && path === "/api/shop/purchase") {
+    return { success: true };
+  }
+
+  if (method === "POST" && /\/api\/learning\/sessions\/[^/]+\/start$/.test(path)) {
+    return {
+      sessionId: `mock-learn-session-${Date.now()}`,
+      question: { id: "q1", type: "multiple_choice", prompt: "What is 3/4 + 1/4?", options: ["1", "2/4", "1/2", "3/4"] },
+      totalQuestions: 5,
+    };
+  }
+
+  if (method === "POST" && /\/api\/learning\/sessions\/[^/]+\/interact$/.test(path)) {
+    return { correct: true, feedback: "Great job! That's the right answer!", xpEarned: 10, nextQuestion: { id: "q2", type: "multiple_choice", prompt: "What is 1/2 of 10?", options: ["5", "10", "2", "1"] } };
+  }
+
   if (method !== "GET") return {};
 
   const routes: [string | RegExp, () => unknown][] = [
@@ -407,6 +518,8 @@ export function getMockResponse(path: string, method: string = "GET", body?: str
     [/^\/api\/learners\/[^/]+\/gradebook\/mastery$/, () => mockMastery],
     [/^\/api\/learners\/[^/]+\/iep$/, () => mockIep],
     [/^\/api\/learners\/[^/]+\/collaboration$/, () => mockCollaboration],
+    [/^\/api\/learning\/learning-path\/[^/]+\/next$/, () => mockLearningActivities],
+    [/^\/api\/learning\/learning-path\/[^/]+$/, () => ({ activities: mockLearningActivities, completedToday: 2, totalToday: 6 })],
     [/^\/api\/learners\/[^/]+\/quests\/worlds$/, () => mockQuestWorlds],
     [/^\/api\/learners\/[^/]+\/quests\/[^/]+$/, () => mockQuestWorldDetail],
     [/^\/api\/learners\/[^/]+\/engagement$/, () => mockEngagement],
