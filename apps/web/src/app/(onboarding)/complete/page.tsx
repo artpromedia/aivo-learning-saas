@@ -137,7 +137,7 @@ export default function OnboardingCompletePage() {
             rightIcon={<Rocket size={20} />}
             className="min-w-[200px]"
           >
-            {userIsLearner ? "Go to My Learning Dashboard" : t("goToDashboard")}
+            {userIsLearner ? t("goToMyLearningDashboard") : t("goToDashboard")}
           </Button>
         </motion.div>
       </motion.div>

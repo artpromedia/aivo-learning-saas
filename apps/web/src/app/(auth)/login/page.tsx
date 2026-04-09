@@ -90,7 +90,7 @@ export default function LoginPage() {
                   {...register("email")}
                   className="w-full pl-11 pr-4 py-3 rounded-2xl border-2 font-medium transition-all"
                   style={{ borderColor: "var(--aivo-border)", backgroundColor: "var(--aivo-bg)", color: "var(--aivo-text)" }}
-                  placeholder="parent@example.com"
+                  placeholder={t("emailPlaceholder")}
                 />
               </div>
               {errors.email && (

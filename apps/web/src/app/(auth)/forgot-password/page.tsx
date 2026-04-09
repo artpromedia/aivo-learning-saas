@@ -85,7 +85,7 @@ export default function ForgotPasswordPage() {
                       id="email" type="email" autoComplete="email" {...register("email")}
                       className="w-full pl-11 pr-4 py-3 rounded-2xl border-2 font-medium transition-all"
                       style={{ borderColor: "var(--aivo-border)", backgroundColor: "var(--aivo-bg)", color: "var(--aivo-text)" }}
-                      placeholder="parent@example.com"
+                      placeholder={t("emailPlaceholder")}
                     />
                   </div>
                   {errors.email && <p className="mt-1.5 text-sm font-medium" style={{ color: "var(--aivo-error)" }}>{errors.email.message}</p>}
