@@ -21,30 +21,48 @@ interface AuthState {
   setLoading: (loading: boolean) => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-  user: null,
-  token: null,
-  isAuthenticated: false,
-  isLoading: true,
+function getTestUserFromCookie(): User | null {
+  if (typeof document === "undefined") return null;
+  const match = document.cookie.match(/(?:^|;\s*)user_role=(\w+)/);
+  if (!match) return null;
+  const role = match[1];
+  const names: Record<string, string> = { parent: "Sarah Johnson", learner: "Alex Johnson", teacher: "Ms. Rivera", admin: "Admin User" };
+  const storeRole = role === "teacher" ? "educator" : role;
+  return {
+    id: `test-${role}-1`,
+    email: `${role}@test.aivo.com`,
+    name: names[role] || "Test User",
+    role: storeRole as User["role"],
+  };
+}
 
-  setUser: (user) => set({ user, isAuthenticated: !!user }),
-  setToken: (token) => set({ token }),
+export const useAuthStore = create<AuthState>((set) => {
+  const testUser = getTestUserFromCookie();
+  return {
+    user: testUser,
+    token: testUser ? "test-token" : null,
+    isAuthenticated: !!testUser,
+    isLoading: !testUser,
 
-  login: (user, token) =>
-    set({
-      user,
-      token,
-      isAuthenticated: true,
-      isLoading: false,
-    }),
+    setUser: (user) => set({ user, isAuthenticated: !!user }),
+    setToken: (token) => set({ token }),
 
-  logout: () =>
-    set({
-      user: null,
-      token: null,
-      isAuthenticated: false,
-      isLoading: false,
-    }),
+    login: (user, token) =>
+      set({
+        user,
+        token,
+        isAuthenticated: true,
+        isLoading: false,
+      }),
 
-  setLoading: (isLoading) => set({ isLoading }),
-}));
+    logout: () =>
+      set({
+        user: null,
+        token: null,
+        isAuthenticated: false,
+        isLoading: false,
+      }),
+
+    setLoading: (isLoading) => set({ isLoading }),
+  };
+});

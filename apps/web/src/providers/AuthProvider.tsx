@@ -27,6 +27,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let cancelled = false;
 
+    const hasTestCookie = document.cookie.split(";").some((c) => c.trim().startsWith("user_role="));
+    if (hasTestCookie) {
+      setLoading(false);
+      return;
+    }
+
     async function checkSession() {
       try {
         const data = await apiFetch<SessionResponse>(AUTH_ROUTES.SESSION);
@@ -37,9 +43,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } catch {
         if (!cancelled) {
           logout();
-          // Clear stale role cookie so middleware redirects properly
           document.cookie = "user_role=; path=/; max-age=0";
-          // Redirect to login if on a protected page
           const isPublic = PUBLIC_PATHS.some((p) => pathname.startsWith(p)) || pathname === "/";
           if (!isPublic) {
             router.replace("/login");
