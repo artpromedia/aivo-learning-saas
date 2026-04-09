@@ -214,6 +214,18 @@ export const functionalDomainEnum = pgEnum("functional_domain", [
   "MOTOR_SENSORY",
 ]);
 
+// Curriculum Framework
+export const curriculumFrameworkEnum = pgEnum("curriculum_framework", [
+  "COMMON_CORE",
+  "TEKS",
+  "NGSS",
+  "BEST",
+  "NYSLS",
+  "SOL",
+  "CCAS",
+  "STATE_SPECIFIC",
+]);
+
 // i18n
 export const localeDirectionEnum = pgEnum("locale_direction", [
   "LTR",

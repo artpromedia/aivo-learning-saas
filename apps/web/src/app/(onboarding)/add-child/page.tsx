@@ -1,18 +1,40 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { User, Calendar, GraduationCap, Lock } from "lucide-react";
+import { User, Calendar, GraduationCap, Lock, MapPin, CheckCircle2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardBody } from "@/components/ui/Card";
 import { LanguageSelect } from "@/components/ui/LanguageSelect";
 import { apiFetch } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
 import { useLearnerStore } from "@/stores/learner.store";
+
+const US_STATES = [
+  "AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA",
+  "HI","ID","IL","IN","IA","KS","KY","LA","ME","MD",
+  "MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ",
+  "NM","NY","NC","ND","OH","OK","OR","PA","RI","SC",
+  "SD","TN","TX","UT","VT","VA","WA","WV","WI","WY","DC",
+] as const;
+
+const STATE_NAMES: Record<string, string> = {
+  AL:"Alabama",AK:"Alaska",AZ:"Arizona",AR:"Arkansas",CA:"California",
+  CO:"Colorado",CT:"Connecticut",DE:"Delaware",FL:"Florida",GA:"Georgia",
+  HI:"Hawaii",ID:"Idaho",IL:"Illinois",IN:"Indiana",IA:"Iowa",KS:"Kansas",
+  KY:"Kentucky",LA:"Louisiana",ME:"Maine",MD:"Maryland",MA:"Massachusetts",
+  MI:"Michigan",MN:"Minnesota",MS:"Mississippi",MO:"Missouri",MT:"Montana",
+  NE:"Nebraska",NV:"Nevada",NH:"New Hampshire",NJ:"New Jersey",NM:"New Mexico",
+  NY:"New York",NC:"North Carolina",ND:"North Dakota",OH:"Ohio",OK:"Oklahoma",
+  OR:"Oregon",PA:"Pennsylvania",RI:"Rhode Island",SC:"South Carolina",
+  SD:"South Dakota",TN:"Tennessee",TX:"Texas",UT:"Utah",VT:"Vermont",
+  VA:"Virginia",WA:"Washington",WV:"West Virginia",WI:"Wisconsin",WY:"Wyoming",
+  DC:"Washington D.C.",
+};
 
 const GRADE_KEYS = [
   "preK",
@@ -38,12 +60,35 @@ function gradeToNumber(grade: string): number {
   return match ? parseInt(match[1], 10) : 0;
 }
 
+interface DistrictInfo {
+  id: string;
+  name: string;
+  state: string;
+  curriculumFramework: string;
+}
+
+const FRAMEWORK_LABELS: Record<string, string> = {
+  COMMON_CORE: "Common Core",
+  TEKS: "Texas Essential Knowledge & Skills",
+  NGSS: "Next Generation Science Standards",
+  BEST: "B.E.S.T. Standards",
+  NYSLS: "New York State Learning Standards",
+  STATE_SPECIFIC: "State Standards",
+};
+
 export default function AddChildPage() {
   const router = useRouter();
   const t = useTranslations("onboarding");
   const { addLearner, setActiveLearner } = useLearnerStore();
   const [childLanguage, setChildLanguage] = useState<string>("");
   const [serverError, setServerError] = useState<string | null>(null);
+
+  const [selectedState, setSelectedState] = useState<string>("");
+  const [zipCode, setZipCode] = useState<string>("");
+  const [districtInfo, setDistrictInfo] = useState<DistrictInfo | null>(null);
+  const [districtLoading, setDistrictLoading] = useState(false);
+  const [districtError, setDistrictError] = useState<string | null>(null);
+  const lookupTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const addChildSchema = z.object({
     name: z.string().min(1, t("childNameRequired")).max(50),
@@ -66,6 +111,40 @@ export default function AddChildPage() {
     resolver: zodResolver(addChildSchema),
   });
 
+  const lookupDistrict = useCallback(async (zip: string) => {
+    if (zip.length < 5) {
+      setDistrictInfo(null);
+      setDistrictError(null);
+      return;
+    }
+    setDistrictLoading(true);
+    setDistrictError(null);
+    try {
+      const res = await apiFetch<{ district: DistrictInfo }>(
+        `${API_ROUTES.DISTRICT.LOOKUP}?zip=${encodeURIComponent(zip)}`,
+      );
+      setDistrictInfo(res.district);
+    } catch {
+      setDistrictInfo(null);
+      setDistrictError(t("noDistrictFound"));
+    } finally {
+      setDistrictLoading(false);
+    }
+  }, [t]);
+
+  useEffect(() => {
+    if (lookupTimerRef.current) clearTimeout(lookupTimerRef.current);
+    if (zipCode.length >= 5) {
+      lookupTimerRef.current = setTimeout(() => lookupDistrict(zipCode), 400);
+    } else {
+      setDistrictInfo(null);
+      setDistrictError(null);
+    }
+    return () => {
+      if (lookupTimerRef.current) clearTimeout(lookupTimerRef.current);
+    };
+  }, [zipCode, lookupDistrict]);
+
   const onSubmit = async (data: AddChildForm) => {
     setServerError(null);
     try {
@@ -86,6 +165,9 @@ export default function AddChildPage() {
           enrolledGrade: gradeToNumber(data.enrolledGrade),
           pin: data.pin,
           preferredLanguage: childLanguage || undefined,
+          state: selectedState || undefined,
+          zipCode: zipCode || undefined,
+          districtId: districtInfo?.id || undefined,
         }),
       });
       const learner = res.learner;
@@ -112,6 +194,8 @@ export default function AddChildPage() {
       );
     }
   };
+
+  const inputClass = "w-full pl-10 pr-4 py-2.5 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-shadow";
 
   return (
     <div>
@@ -152,7 +236,7 @@ export default function AddChildPage() {
                   id="name"
                   type="text"
                   {...register("name")}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-shadow"
+                  className={inputClass}
                   placeholder={t("firstName")}
                 />
               </div>
@@ -179,7 +263,7 @@ export default function AddChildPage() {
                   id="dateOfBirth"
                   type="date"
                   {...register("dateOfBirth")}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-shadow"
+                  className={inputClass}
                 />
               </div>
               {errors.dateOfBirth && (
@@ -204,7 +288,7 @@ export default function AddChildPage() {
                 <select
                   id="enrolledGrade"
                   {...register("enrolledGrade")}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-shadow appearance-none"
+                  className={`${inputClass} appearance-none`}
                 >
                   <option value="">{t("selectGrade")}</option>
                   {GRADE_KEYS.map((key) => (
@@ -221,7 +305,84 @@ export default function AddChildPage() {
               )}
             </div>
 
-            {/* Child's preferred language */}
+            <div className="p-4 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-[#F9F5FF] dark:bg-[#2A1E45]/50 space-y-4">
+              <div className="flex items-center gap-2 mb-1">
+                <MapPin className="text-[#7C3AED]" size={16} />
+                <span className="text-sm font-medium text-[var(--aivo-text)]">{t("stateLabel")} & {t("zipCodeLabel")}</span>
+                <span className="text-xs text-[var(--aivo-text-secondary)] ml-auto italic">optional</span>
+              </div>
+              <p className="text-xs text-[var(--aivo-text-secondary)] -mt-2">{t("locationOptional")}</p>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <div className="relative">
+                    <MapPin
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A89BB5]"
+                      size={18}
+                    />
+                    <select
+                      id="state"
+                      value={selectedState}
+                      onChange={(e) => setSelectedState(e.target.value)}
+                      className={`${inputClass} appearance-none`}
+                    >
+                      <option value="">{t("selectState")}</option>
+                      {US_STATES.map((st) => (
+                        <option key={st} value={st}>
+                          {st} — {STATE_NAMES[st]}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <div className="relative">
+                    <MapPin
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A89BB5]"
+                      size={18}
+                    />
+                    <input
+                      id="zipCode"
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={5}
+                      value={zipCode}
+                      onChange={(e) => setZipCode(e.target.value.replace(/\D/g, "").slice(0, 5))}
+                      className={inputClass}
+                      placeholder={t("zipCodePlaceholder")}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {districtLoading && (
+                <div className="flex items-center gap-2 text-xs text-[var(--aivo-text-secondary)]">
+                  <Loader2 className="animate-spin" size={14} />
+                  {t("lookingUpDistrict")}
+                </div>
+              )}
+
+              {districtInfo && !districtLoading && (
+                <div className="flex items-start gap-2 p-3 rounded-xl bg-[#ECFDF5] dark:bg-[#065F46]/20 border border-[#A7F3D0] dark:border-[#065F46]/40">
+                  <CheckCircle2 className="text-[#059669] mt-0.5 shrink-0" size={16} />
+                  <div>
+                    <p className="text-sm font-medium text-[#065F46] dark:text-[#6EE7B7]">
+                      {t("districtDetected", { name: districtInfo.name })}
+                    </p>
+                    <p className="text-xs text-[#047857] dark:text-[#A7F3D0] mt-0.5">
+                      {t("curriculumFramework", { framework: FRAMEWORK_LABELS[districtInfo.curriculumFramework] ?? districtInfo.curriculumFramework })}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {districtError && !districtLoading && (
+                <p className="text-xs text-amber-600 dark:text-amber-400">
+                  {districtError}
+                </p>
+              )}
+            </div>
+
             <div>
               <LanguageSelect
                 value={childLanguage}
@@ -233,7 +394,6 @@ export default function AddChildPage() {
               </p>
             </div>
 
-            {/* PIN Creation */}
             <div>
               <label
                 htmlFor="pin"
@@ -256,7 +416,7 @@ export default function AddChildPage() {
                   maxLength={6}
                   pattern="[0-9]*"
                   {...register("pin")}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-shadow tracking-[0.5em] text-center text-lg"
+                  className={`${inputClass} tracking-[0.5em] text-center text-lg`}
                   placeholder="••••"
                 />
               </div>
@@ -286,7 +446,7 @@ export default function AddChildPage() {
                   maxLength={6}
                   pattern="[0-9]*"
                   {...register("confirmPin")}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-shadow tracking-[0.5em] text-center text-lg"
+                  className={`${inputClass} tracking-[0.5em] text-center text-lg`}
                   placeholder="••••"
                 />
               </div>

@@ -242,8 +242,28 @@ Seeds the database with data matching the frontend mock data:
 - **Engagement**: XP, 6 badges (4 earned), 4 quests (2 active), 5 XP events
 - **Billing**: Active subscription (family_plus plan)
 - **Notifications**: 3 notifications for parent
+- **School Districts**: 4 districts (LAUSD/CA, Houston ISD/TX, NYC DOE/NY, Miami-Dade/FL) with zip codes and curriculum standards
+- **District Curriculum Standards**: MATH + ELA per grade band per district (COMMON_CORE, TEKS, NYSLS, BEST)
 
 Seed IDs use deterministic UUIDs (e.g., `c0000000-0000-4000-8000-000000000001` for Alex learner).
+District IDs: `40000000-0000-4000-8000-000000000001` (LAUSD) through `...000004` (Miami-Dade).
+
+## Location-Based Curriculum Selection
+
+Learners can optionally have a state + zip code which auto-resolves to a school district. Each district has a curriculum framework (COMMON_CORE, TEKS, NYSLS, BEST, etc.) and grade-banded curriculum standards (MATH, ELA).
+
+### API Endpoints
+- `GET /api/districts/lookup?zip=XXXXX` — Lookup district by zip (returns district + curriculum standards)
+- `GET /api/districts/lookup?state=XX` — List districts by state
+
+### Schema Tables
+- `school_districts` — District metadata (name, state, NCES ID, curriculum framework)
+- `district_zip_codes` — Maps zip codes to districts
+- `district_curriculum_standards` — Subject/grade-band standards per district
+
+### Frontend Integration
+- Add-child onboarding form includes optional state/zip with auto district detection
+- Parent learner dashboard shows district name and curriculum framework badge in header
 
 ## Identity Service (Backend)
 

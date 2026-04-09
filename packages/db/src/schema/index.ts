@@ -49,6 +49,9 @@ export * from "./admin";
 // Integrations
 export * from "./integrations";
 
+// Districts
+export * from "./districts";
+
 // Classrooms
 export * from "./classrooms";
 

@@ -21,6 +21,10 @@ const IEP_DOC_ID = "20000000-0000-4000-8000-000000000001";
 const IEP_DOC_2_ID = "20000000-0000-4000-8000-000000000002";
 const ALEX_XP_ID = "30000000-0000-4000-8000-000000000001";
 const MAYA_XP_ID = "30000000-0000-4000-8000-000000000002";
+const DISTRICT_CA_ID = "40000000-0000-4000-8000-000000000001";
+const DISTRICT_TX_ID = "40000000-0000-4000-8000-000000000002";
+const DISTRICT_NY_ID = "40000000-0000-4000-8000-000000000003";
+const DISTRICT_FL_ID = "40000000-0000-4000-8000-000000000004";
 
 const now = new Date().toISOString();
 const hourAgo = new Date(Date.now() - 3600000).toISOString();
@@ -30,8 +34,62 @@ const dayAgo = new Date(Date.now() - 86400000).toISOString();
 async function seed() {
   console.log("🌱 Starting AIVO seed...\n");
 
-  await sql`TRUNCATE tenants, users, learners, brain_states, parent_assessments, baseline_assessments, assessment_items, iep_documents, iep_goals, recommendations, learner_xp, badges, learner_badges, quests, learner_quests, notifications, subscriptions, xp_events, accounts RESTART IDENTITY CASCADE`;
+  await sql`TRUNCATE tenants, users, learners, brain_states, parent_assessments, baseline_assessments, assessment_items, iep_documents, iep_goals, recommendations, learner_xp, badges, learner_badges, quests, learner_quests, notifications, subscriptions, xp_events, accounts, school_districts, district_zip_codes, district_curriculum_standards RESTART IDENTITY CASCADE`;
   console.log("  Cleared existing data.");
+
+  console.log("  Creating school districts...");
+  await sql`
+    INSERT INTO school_districts (id, name, state, nces_id, curriculum_framework) VALUES
+      (${DISTRICT_CA_ID}, 'Los Angeles Unified School District', 'CA', '0622710', 'COMMON_CORE'),
+      (${DISTRICT_TX_ID}, 'Houston Independent School District', 'TX', '4819380', 'TEKS'),
+      (${DISTRICT_NY_ID}, 'New York City Department of Education', 'NY', '3620580', 'NYSLS'),
+      (${DISTRICT_FL_ID}, 'Miami-Dade County Public Schools', 'FL', '1200390', 'BEST')
+  `;
+
+  await sql`
+    INSERT INTO district_zip_codes (id, district_id, zip_code) VALUES
+      (gen_random_uuid(), ${DISTRICT_CA_ID}, '90001'),
+      (gen_random_uuid(), ${DISTRICT_CA_ID}, '90002'),
+      (gen_random_uuid(), ${DISTRICT_CA_ID}, '90003'),
+      (gen_random_uuid(), ${DISTRICT_CA_ID}, '90004'),
+      (gen_random_uuid(), ${DISTRICT_CA_ID}, '90005'),
+      (gen_random_uuid(), ${DISTRICT_CA_ID}, '91001'),
+      (gen_random_uuid(), ${DISTRICT_TX_ID}, '77001'),
+      (gen_random_uuid(), ${DISTRICT_TX_ID}, '77002'),
+      (gen_random_uuid(), ${DISTRICT_TX_ID}, '77003'),
+      (gen_random_uuid(), ${DISTRICT_TX_ID}, '77004'),
+      (gen_random_uuid(), ${DISTRICT_NY_ID}, '10001'),
+      (gen_random_uuid(), ${DISTRICT_NY_ID}, '10002'),
+      (gen_random_uuid(), ${DISTRICT_NY_ID}, '10003'),
+      (gen_random_uuid(), ${DISTRICT_NY_ID}, '10004'),
+      (gen_random_uuid(), ${DISTRICT_NY_ID}, '10005'),
+      (gen_random_uuid(), ${DISTRICT_FL_ID}, '33101'),
+      (gen_random_uuid(), ${DISTRICT_FL_ID}, '33102'),
+      (gen_random_uuid(), ${DISTRICT_FL_ID}, '33125'),
+      (gen_random_uuid(), ${DISTRICT_FL_ID}, '33130')
+  `;
+
+  const curriculumStandards = [
+    { districtId: DISTRICT_CA_ID, subject: "MATH", gradeBand: "K-2", standards: ["CC.K.OA.1", "CC.1.NBT.1", "CC.2.OA.1"], alignments: { framework: "COMMON_CORE", skills: ["counting", "addition", "subtraction", "place_value"] } },
+    { districtId: DISTRICT_CA_ID, subject: "MATH", gradeBand: "3-5", standards: ["CC.3.OA.1", "CC.4.NF.1", "CC.5.NBT.1"], alignments: { framework: "COMMON_CORE", skills: ["multiplication", "fractions", "decimals", "multi_digit_operations"] } },
+    { districtId: DISTRICT_CA_ID, subject: "ELA", gradeBand: "K-2", standards: ["CC.K.RF.1", "CC.1.RL.1", "CC.2.W.1"], alignments: { framework: "COMMON_CORE", skills: ["phonics", "sight_words", "sentence_writing", "story_comprehension"] } },
+    { districtId: DISTRICT_CA_ID, subject: "ELA", gradeBand: "3-5", standards: ["CC.3.RL.1", "CC.4.RI.1", "CC.5.W.1"], alignments: { framework: "COMMON_CORE", skills: ["reading_comprehension", "informational_text", "essay_writing", "grammar"] } },
+    { districtId: DISTRICT_TX_ID, subject: "MATH", gradeBand: "K-2", standards: ["TEKS.K.2A", "TEKS.1.3A", "TEKS.2.4A"], alignments: { framework: "TEKS", skills: ["counting", "addition", "subtraction", "number_patterns"] } },
+    { districtId: DISTRICT_TX_ID, subject: "MATH", gradeBand: "3-5", standards: ["TEKS.3.4A", "TEKS.4.3A", "TEKS.5.3A"], alignments: { framework: "TEKS", skills: ["multiplication", "fractions", "decimals", "geometry_basics"] } },
+    { districtId: DISTRICT_TX_ID, subject: "ELA", gradeBand: "K-2", standards: ["TEKS.K.2A", "TEKS.1.6A", "TEKS.2.6A"], alignments: { framework: "TEKS", skills: ["phonemic_awareness", "decoding", "fluency", "vocabulary"] } },
+    { districtId: DISTRICT_TX_ID, subject: "ELA", gradeBand: "3-5", standards: ["TEKS.3.6A", "TEKS.4.6A", "TEKS.5.6A"], alignments: { framework: "TEKS", skills: ["comprehension", "literary_analysis", "composition", "research_skills"] } },
+    { districtId: DISTRICT_NY_ID, subject: "MATH", gradeBand: "3-5", standards: ["NY.3.OA.1", "NY.4.NF.1", "NY.5.NBT.1"], alignments: { framework: "NYSLS", skills: ["multiplication", "fractions", "decimals", "problem_solving"] } },
+    { districtId: DISTRICT_NY_ID, subject: "ELA", gradeBand: "3-5", standards: ["NY.3.RL.1", "NY.4.RI.1", "NY.5.W.1"], alignments: { framework: "NYSLS", skills: ["close_reading", "text_analysis", "argument_writing", "research"] } },
+    { districtId: DISTRICT_FL_ID, subject: "MATH", gradeBand: "3-5", standards: ["BEST.MA.3.AR.1", "BEST.MA.4.FR.1", "BEST.MA.5.NSO.1"], alignments: { framework: "BEST", skills: ["algebraic_reasoning", "fractions", "number_sense", "data_analysis"] } },
+    { districtId: DISTRICT_FL_ID, subject: "ELA", gradeBand: "3-5", standards: ["BEST.ELA.3.R.1", "BEST.ELA.4.R.1", "BEST.ELA.5.W.1"], alignments: { framework: "BEST", skills: ["foundational_reading", "comprehension", "writing_process", "communication"] } },
+  ];
+
+  for (const cs of curriculumStandards) {
+    await sql`
+      INSERT INTO district_curriculum_standards (id, district_id, subject, grade_band, standards, alignments) VALUES
+        (gen_random_uuid(), ${cs.districtId}, ${cs.subject}, ${cs.gradeBand}, ${JSON.stringify(cs.standards)}, ${JSON.stringify(cs.alignments)})
+    `;
+  }
 
   console.log("  Creating tenant...");
   await sql`
@@ -56,9 +114,9 @@ async function seed() {
 
   console.log("  Creating learners...");
   await sql`
-    INSERT INTO learners (id, user_id, tenant_id, parent_id, name, enrolled_grade, functioning_level, communication_mode, date_of_birth) VALUES
-      (${ALEX_LEARNER_ID}, ${ALEX_USER_ID}, ${TENANT_ID}, ${PARENT_USER_ID}, 'Alex Johnson', 5, 'SUPPORTED', 'VERBAL', '2015-03-15'),
-      (${MAYA_LEARNER_ID}, ${MAYA_USER_ID}, ${TENANT_ID}, ${PARENT_USER_ID}, 'Maya Johnson', 3, 'STANDARD', 'VERBAL', '2017-07-22')
+    INSERT INTO learners (id, user_id, tenant_id, parent_id, name, enrolled_grade, functioning_level, communication_mode, date_of_birth, state, zip_code, district_id) VALUES
+      (${ALEX_LEARNER_ID}, ${ALEX_USER_ID}, ${TENANT_ID}, ${PARENT_USER_ID}, 'Alex Johnson', 5, 'SUPPORTED', 'VERBAL', '2015-03-15', 'CA', '90001', ${DISTRICT_CA_ID}),
+      (${MAYA_LEARNER_ID}, ${MAYA_USER_ID}, ${TENANT_ID}, ${PARENT_USER_ID}, 'Maya Johnson', 3, 'STANDARD', 'VERBAL', '2017-07-22', 'CA', '90002', ${DISTRICT_CA_ID})
   `;
 
   await sql`

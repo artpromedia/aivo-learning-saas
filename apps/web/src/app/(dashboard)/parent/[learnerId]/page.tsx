@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import {
   Brain, Lightbulb, BookOpen, GraduationCap, Bot, TrendingUp, Trophy,
-  Flame, Home, Activity, Users, Settings, FileText,
+  Flame, Home, Activity, Users, Settings, FileText, MapPin,
 } from "lucide-react";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -29,6 +29,9 @@ interface LearnerDetail {
   enrolledGrade?: string;
   enrolledSubjects?: string[];
   languagePreference?: string;
+  state?: string;
+  zipCode?: string;
+  districtId?: string;
   preferences?: {
     theme?: string;
     reduceAnimations?: boolean;
@@ -51,6 +54,8 @@ export default function ChildDashboardPage() {
 
   const [learner, setLearner] = useState<LearnerDetail | null>(null);
   const [progress, setProgress] = useState<ProgressData | null>(null);
+  const [districtName, setDistrictName] = useState<string | null>(null);
+  const [curriculumFramework, setCurriculumFramework] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -84,6 +89,15 @@ export default function ChildDashboardPage() {
         ]);
         setLearner(learnerRes.learner);
         setProgress(progressData);
+
+        if (learnerRes.learner.zipCode) {
+          apiFetch<{ district: { name: string; curriculumFramework: string } }>(
+            `${API_ROUTES.DISTRICT.LOOKUP}?zip=${encodeURIComponent(learnerRes.learner.zipCode)}`,
+          ).then((res) => {
+            setDistrictName(res.district.name);
+            setCurriculumFramework(res.district.curriculumFramework);
+          }).catch(() => {});
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : t("failedToLoadData"));
       } finally {
@@ -158,6 +172,17 @@ export default function ChildDashboardPage() {
             <p className="text-white/80 text-sm">
               {learner?.enrolledGrade ?? t("gradeNotSet")} &middot; {levelLabel(learner?.functioningLevel ?? "STANDARD")}
             </p>
+            {districtName && (
+              <p className="text-white/70 text-xs mt-0.5 flex items-center gap-1">
+                <MapPin size={11} />
+                {districtName}
+                {curriculumFramework && (
+                  <span className="ml-1 px-1.5 py-0.5 rounded-full bg-white/15 text-[10px] font-medium">
+                    {curriculumFramework.replace(/_/g, " ")}
+                  </span>
+                )}
+              </p>
+            )}
             <p className="text-white/60 text-xs mt-0.5">{t("childLearningHub")}</p>
           </div>
         </div>

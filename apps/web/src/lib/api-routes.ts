@@ -211,6 +211,10 @@ export const TUTOR_SUBSCRIPTION_ROUTES = {
   SUBSCRIBE: "/api/tutors/subscribe",
 } as const;
 
+export const DISTRICT_ROUTES = {
+  LOOKUP: "/api/districts/lookup",
+} as const;
+
 // Combined API_ROUTES re-export
 export const API_ROUTES = {
   AUTH: AUTH_ROUTES,
@@ -237,4 +241,5 @@ export const API_ROUTES = {
   FAMILY: FAMILY_ROUTES,
   TEACHER: TEACHER_ROUTES,
   TUTOR_SUBSCRIPTION: TUTOR_SUBSCRIPTION_ROUTES,
+  DISTRICT: DISTRICT_ROUTES,
 } as const;

@@ -10,6 +10,9 @@ const createLearnerBodySchema = z.object({
   dateOfBirth: z.string().datetime().optional().transform((v) => (v ? new Date(v) : undefined)),
   enrolledGrade: z.number().int().min(0).max(12).optional(),
   schoolName: z.string().max(255).optional(),
+  state: z.string().length(2).optional(),
+  zipCode: z.string().min(5).max(10).optional(),
+  districtId: z.string().uuid().optional(),
   functioningLevel: z
     .enum(["STANDARD", "SUPPORTED", "LOW_VERBAL", "NON_VERBAL", "PRE_SYMBOLIC"])
     .optional(),
