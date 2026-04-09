@@ -34,7 +34,7 @@ const mockNotifications = [
 
 const mockBrainProfile = {
   learnerId: MOCK_LEARNER_ID,
-  status: "active",
+  status: "approved",
   functioningLevel: "SUPPORTED",
   learningStyle: "Visual-spatial learner who excels with diagrams, color-coded information, and hands-on activities.",
   communicationStyle: "Responds well to clear, concise instructions with visual supports. Prefers written over verbal directions.",
@@ -166,15 +166,19 @@ const mockQuestWorldDetail = {
 };
 
 const mockTutorSubscriptions = [
-  { id: "t1", tutorId: "tutor-luna", name: "Luna", subject: "Mathematics", avatar: "🌙", personality: "Patient and encouraging", status: "active", sessionsCompleted: 12, lastSession: new Date(Date.now() - 86400000).toISOString() },
-  { id: "t2", tutorId: "tutor-atlas", name: "Atlas", subject: "Science", avatar: "🗺️", personality: "Curious and adventurous", status: "active", sessionsCompleted: 8, lastSession: new Date(Date.now() - 172800000).toISOString() },
+  { id: "t1", sku: "tutor-nova", status: "active", activatedAt: new Date(Date.now() - 86400000 * 30).toISOString(), tutor: { name: "Nova", subject: "Mathematics", persona: "nova", description: "Nova makes math fun with visual puzzles and real-world examples." } },
+  { id: "t2", sku: "tutor-sage", status: "active", activatedAt: new Date(Date.now() - 86400000 * 20).toISOString(), tutor: { name: "Sage", subject: "Science", persona: "sage", description: "Sage takes you on scientific journeys of discovery." } },
+  { id: "t3", sku: "tutor-spark", status: "active", activatedAt: new Date(Date.now() - 86400000 * 10).toISOString(), tutor: { name: "Spark", subject: "Creative Writing", persona: "spark", description: "Spark ignites creativity through stories and imagination." } },
 ];
 
 const mockTutorStore = [
-  { id: "tutor-luna", name: "Luna", slug: "luna", subject: "Mathematics", avatar: "🌙", personality: "Patient and encouraging", description: "Luna makes math fun with visual puzzles and real-world examples.", price: 0, subscribed: true },
-  { id: "tutor-atlas", name: "Atlas", slug: "atlas", subject: "Science", avatar: "🗺️", personality: "Curious and adventurous", description: "Atlas takes you on scientific journeys of discovery.", price: 0, subscribed: true },
-  { id: "tutor-cosmos", name: "Professor Cosmos", slug: "professor-cosmos", subject: "Space Science", avatar: "🔭", personality: "Wise and inspiring", description: "Professor Cosmos reveals the wonders of the universe.", price: 100, subscribed: false },
-  { id: "tutor-melodie", name: "Melodie", slug: "melodie", subject: "Language Arts", avatar: "🎵", personality: "Creative and playful", description: "Melodie uses stories and songs to teach reading and writing.", price: 100, subscribed: false },
+  { sku: "tutor-nova", name: "Nova", subject: "Mathematics", persona: "nova", price: 0, description: "Nova makes math fun with visual puzzles and real-world examples.", subscribed: true },
+  { sku: "tutor-sage", name: "Sage", subject: "Science", persona: "sage", price: 0, description: "Sage takes you on scientific journeys of discovery.", subscribed: true },
+  { sku: "tutor-spark", name: "Spark", subject: "Creative Writing", persona: "spark", price: 0, description: "Spark ignites creativity through stories and imagination.", subscribed: true },
+  { sku: "tutor-chrono", name: "Chrono", subject: "History", persona: "chrono", price: 4.99, description: "Chrono travels through time to bring history to life.", subscribed: false },
+  { sku: "tutor-pixel", name: "Pixel", subject: "Digital Art", persona: "pixel", price: 4.99, description: "Pixel teaches digital creativity and design thinking.", subscribed: false },
+  { sku: "tutor-harmony", name: "Harmony", subject: "Music & Language Arts", persona: "harmony", price: 4.99, description: "Harmony uses music and rhythm to teach language skills.", subscribed: false },
+  { sku: "tutor-echo", name: "Echo", subject: "Social Skills", persona: "echo", price: 4.99, description: "Echo helps build communication and social understanding.", subscribed: false },
 ];
 
 const mockHomework = [
@@ -352,9 +356,23 @@ const mockIntegrationStatus = {
 };
 
 const mockLearnerDetail = {
-  id: MOCK_LEARNER_ID,
-  name: "Alex Johnson",
-  pinSetAt: "2025-10-01T00:00:00Z",
+  learner: {
+    id: MOCK_LEARNER_ID,
+    name: "Alex Johnson",
+    avatarUrl: "",
+    functioningLevel: "SUPPORTED" as const,
+    dateOfBirth: "2016-05-15T00:00:00Z",
+    enrolledGrade: "3rd Grade",
+    enrolledSubjects: ["Math", "Science", "Language Arts", "Social Studies"],
+    languagePreference: "en",
+    preferences: {
+      theme: "default",
+      reduceAnimations: false,
+      fontSize: "medium" as const,
+      soundEnabled: true,
+    },
+    pinSetAt: "2025-10-01T00:00:00Z",
+  },
 };
 
 function matchRoute(path: string, routes: [string | RegExp, () => unknown][]): unknown | undefined {
@@ -389,7 +407,7 @@ export function getMockResponse(path: string, method: string = "GET"): unknown |
     [/^\/api\/learners\/[^/]+\/settings$/, () => mockLearnerSettings],
     [/^\/api\/learners\/[^/]+\/avatar$/, () => ({ equipped: [] })],
     [/^\/api\/learners\/[^/]+$/, () => mockLearnerDetail],
-    [/^\/api\/learners\/[^/]+\/progress$/, () => ({ progress: 65, sessions: 45, lastActive: new Date().toISOString() })],
+    [/^\/api\/learners\/[^/]+\/progress$/, () => ({ overallMastery: 72, sessionsThisWeek: 12, averageAccuracy: 78, recentSubjects: [{ name: "Math", mastery: 85 }, { name: "Science", mastery: 75 }, { name: "Language Arts", mastery: 58 }, { name: "Social Studies", mastery: 70 }] })],
 
     ["/api/notifications", () => mockNotifications],
     ["/api/notifications/preferences", () => ({ email: true, push: true, sms: false })],
