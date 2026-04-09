@@ -1,4 +1,5 @@
 import postgres from "postgres";
+import { hash } from "argon2";
 
 const DATABASE_URL = process.env.DATABASE_URL ?? "postgresql://aivo:aivo_dev@localhost:5432/aivo_dev";
 
@@ -107,9 +108,12 @@ async function seed() {
       (${CAREGIVER_USER_ID}, ${TENANT_ID}, 'jamie@email.com', 'Jamie Rodriguez', 'CAREGIVER', 'ACTIVE', ${now})
   `;
 
+  const defaultPasswordHash = await hash("password123");
   await sql`
     INSERT INTO accounts (id, user_id, provider_id, provider_account_id, access_token) VALUES
-      (gen_random_uuid(), ${PARENT_USER_ID}, 'credential', ${PARENT_USER_ID}, NULL)
+      (gen_random_uuid(), ${PARENT_USER_ID}, 'credential', ${PARENT_USER_ID}, ${defaultPasswordHash}),
+      (gen_random_uuid(), ${TEACHER_USER_ID}, 'credential', ${TEACHER_USER_ID}, ${defaultPasswordHash}),
+      (gen_random_uuid(), ${CAREGIVER_USER_ID}, 'credential', ${CAREGIVER_USER_ID}, ${defaultPasswordHash})
   `;
 
   console.log("  Creating learners...");

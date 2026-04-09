@@ -36,23 +36,26 @@ async def setup_subscriptions() -> None:
     """Set up all NATS JetStream subscriptions."""
     js = await get_jetstream()
 
-    # Ensure stream exists
+    # Ensure stream exists — handle cases where another service already created it
     try:
         await js.find_stream_name_by_subject("aivo.brain.*")
     except Exception:
-        await js.add_stream(
-            name="AIVO_BRAIN",
-            subjects=[
-                "aivo.brain.*",
-                "aivo.assessment.*",
-                "aivo.lesson.*",
-                "aivo.quiz.*",
-                "aivo.tutor.*",
-                "aivo.homework.*",
-            ],
-            max_age=365 * 24 * 60 * 60 * 10**9,  # 365 days in nanoseconds
-            max_bytes=50 * 1024**3,  # 50GB
-        )
+        try:
+            await js.add_stream(
+                name="AIVO_BRAIN",
+                subjects=[
+                    "aivo.brain.*",
+                    "aivo.assessment.*",
+                    "aivo.lesson.*",
+                    "aivo.quiz.*",
+                    "aivo.tutor.*",
+                    "aivo.homework.*",
+                ],
+                max_age=30 * 24 * 60 * 60,  # 30 days in seconds
+                max_bytes=1 * 1024**3,  # 1GB
+            )
+        except Exception as stream_err:
+            logger.warning("Could not create AIVO_BRAIN stream: %s", stream_err)
 
     # Subscribe to assessment baseline completed
     await js.subscribe(

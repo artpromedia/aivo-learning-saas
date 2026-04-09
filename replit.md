@@ -146,9 +146,33 @@ See `.env.example` for all required variables. Key ones:
 2. Build shared packages: `pnpm --filter @aivo/brand build`
 3. The web app workflow starts automatically
 
+## Backend Microservices
+
+All backend services run as managed workflows:
+
+| Service | Port | Workflow | Description |
+|---------|------|----------|-------------|
+| identity-svc | 3001 | Identity Service | Auth gateway, API proxy |
+| brain-svc | 3002 | Brain Service | Cognitive profiles (Python/FastAPI) |
+| learning-svc | 3003 | Backend Services | Learning paths, curriculum |
+| engagement-svc | 3004 | Backend Services | XP, badges, quests |
+| family-svc | 3005 | Backend Services | Family management |
+| tutor-svc | 3006 | Backend Services | AI tutors |
+| assessment-svc | 3012 | Backend Services | Assessments, IEP |
+
+### Infrastructure
+- **Redis**: Port 6379 (started by Backend Services workflow)
+- **NATS**: Port 4222 with JetStream (started by Backend Services workflow)
+- Both services degrade gracefully if unavailable
+
+### JSON Safety
+Brain-svc uses `ensure_dict()` / `ensure_list()` from `brain_svc.utils.json_coerce` to safely handle database JSONB fields that may be stored as strings. This is applied consistently across all routes (brain, mastery, accommodations, context, tutor_registry).
+
 ## Test Login & Mock Data
 
-In dev mode, the login page has "Test Accounts" buttons (Parent, Learner, Teacher, District Admin, Platform Admin, Caregiver) that set a `user_role` cookie via `/api/test-login?role=<role>` and redirect to the dashboard.
+In dev mode, the login page has "Test Accounts" buttons (Parent, Learner, Teacher, District Admin, Platform Admin, Caregiver) that authenticate via identity-svc and set JWT cookies (`access_token`, `refresh_token`, `user_role`) via `/api/test-login?role=<role>`, then redirect to the dashboard.
+
+**Test credentials**: All seed accounts use password `password123`
 
 When the backend APIs aren't running, the app falls back to **mock data** (`apps/web/src/lib/mock-data.ts`) for all dashboard pages. This includes:
 - Parent dashboard with 2 mock learners (Alex & Maya Johnson)
