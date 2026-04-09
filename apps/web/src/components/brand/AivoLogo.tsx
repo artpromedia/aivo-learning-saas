@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 
 export interface AivoLogoProps {
   size?: "sm" | "md" | "lg";
@@ -8,10 +9,10 @@ export interface AivoLogoProps {
   className?: string;
 }
 
-const sizeMap: Record<NonNullable<AivoLogoProps["size"]>, { text: string; icon: number }> = {
-  sm: { text: "text-xl", icon: 28 },
-  md: { text: "text-2xl", icon: 36 },
-  lg: { text: "text-3xl", icon: 44 },
+const sizeMap: Record<NonNullable<AivoLogoProps["size"]>, { height: number; iconSize: number }> = {
+  sm: { height: 28, iconSize: 28 },
+  md: { height: 36, iconSize: 36 },
+  lg: { height: 48, iconSize: 44 },
 };
 
 function AivoLogoMark({ size, variant = "purple" }: { size: number; variant?: "purple" | "white" }) {
@@ -53,27 +54,22 @@ function AivoLogoMark({ size, variant = "purple" }: { size: number; variant?: "p
 }
 
 function AivoLogo({ size = "md", variant = "purple", className = "" }: AivoLogoProps) {
-  const { text, icon } = sizeMap[size];
+  const { height } = sizeMap[size];
   const isWhite = variant === "white";
+  const src = isWhite
+    ? "/logos/aivo-logo-horizontal-white.png"
+    : "/logos/aivo-logo-horizontal-purple.png";
 
   return (
-    <div className={`inline-flex items-center gap-2 ${className}`}>
-      <AivoLogoMark size={icon} variant={variant} />
-      <span
-        className={`${text} font-extrabold tracking-tight`}
-        style={
-          isWhite
-            ? { color: "#ffffff", fontFamily: "var(--font-display)" }
-            : {
-                background: "linear-gradient(135deg, #8a43c1, #352288)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                fontFamily: "var(--font-display)",
-              }
-        }
-      >
-        Aivo
-      </span>
+    <div className={`inline-flex items-center ${className}`}>
+      <Image
+        src={src}
+        alt="Aivo Learning"
+        width={Math.round(height * 2.48)}
+        height={height}
+        priority
+        style={{ height, width: "auto", maxWidth: "none" }}
+      />
     </div>
   );
 }
