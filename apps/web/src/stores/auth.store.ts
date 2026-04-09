@@ -21,48 +21,49 @@ interface AuthState {
   setLoading: (loading: boolean) => void;
 }
 
-function getTestUserFromCookie(): User | null {
-  if (typeof document === "undefined") return null;
+export function hydrateTestUser(): boolean {
+  if (typeof document === "undefined") return false;
   const match = document.cookie.match(/(?:^|;\s*)user_role=(\w+)/);
-  if (!match) return null;
+  if (!match) return false;
   const role = match[1];
   const names: Record<string, string> = { parent: "Sarah Johnson", learner: "Alex Johnson", teacher: "Ms. Rivera", admin: "Admin User" };
   const storeRole = role === "teacher" ? "educator" : role;
-  return {
-    id: `test-${role}-1`,
-    email: `${role}@test.aivo.com`,
-    name: names[role] || "Test User",
-    role: storeRole as User["role"],
-  };
+  useAuthStore.getState().login(
+    {
+      id: `test-${role}-1`,
+      email: `${role}@test.aivo.com`,
+      name: names[role] || "Test User",
+      role: storeRole as User["role"],
+    },
+    "test-token",
+  );
+  return true;
 }
 
-export const useAuthStore = create<AuthState>((set) => {
-  const testUser = getTestUserFromCookie();
-  return {
-    user: testUser,
-    token: testUser ? "test-token" : null,
-    isAuthenticated: !!testUser,
-    isLoading: !testUser,
+export const useAuthStore = create<AuthState>((set) => ({
+  user: null,
+  token: null,
+  isAuthenticated: false,
+  isLoading: true,
 
-    setUser: (user) => set({ user, isAuthenticated: !!user }),
-    setToken: (token) => set({ token }),
+  setUser: (user) => set({ user, isAuthenticated: !!user }),
+  setToken: (token) => set({ token }),
 
-    login: (user, token) =>
-      set({
-        user,
-        token,
-        isAuthenticated: true,
-        isLoading: false,
-      }),
+  login: (user, token) =>
+    set({
+      user,
+      token,
+      isAuthenticated: true,
+      isLoading: false,
+    }),
 
-    logout: () =>
-      set({
-        user: null,
-        token: null,
-        isAuthenticated: false,
-        isLoading: false,
-      }),
+  logout: () =>
+    set({
+      user: null,
+      token: null,
+      isAuthenticated: false,
+      isLoading: false,
+    }),
 
-    setLoading: (isLoading) => set({ isLoading }),
-  };
-});
+  setLoading: (isLoading) => set({ isLoading }),
+}));

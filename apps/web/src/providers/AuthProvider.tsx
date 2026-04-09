@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { useAuthStore } from "@/stores/auth.store";
+import { useAuthStore, hydrateTestUser } from "@/stores/auth.store";
 import { apiFetch } from "@/lib/api";
 import { AUTH_ROUTES } from "@/lib/api-routes";
 
@@ -27,9 +27,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let cancelled = false;
 
-    const hasTestCookie = document.cookie.split(";").some((c) => c.trim().startsWith("user_role="));
-    if (hasTestCookie) {
-      setLoading(false);
+    if (hydrateTestUser()) {
       return;
     }
 

@@ -15,8 +15,10 @@ const sizeMap: Record<NonNullable<AivoLogoProps["size"]>, { height: number; icon
   lg: { height: 48, iconSize: 44 },
 };
 
+let logoCounter = 0;
+
 function AivoLogoMark({ size, variant = "purple" }: { size: number; variant?: "purple" | "white" }) {
-  const id = React.useId();
+  const [id] = React.useState(() => `aivo-logo-${++logoCounter}`);
   const isWhite = variant === "white";
 
   return (
