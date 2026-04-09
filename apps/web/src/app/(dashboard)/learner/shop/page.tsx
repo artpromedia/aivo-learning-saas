@@ -29,6 +29,30 @@ interface ShopItem {
   equipped: boolean;
 }
 
+const categoryEmoji: Record<ShopItem["category"], string> = {
+  hair: "💇",
+  outfit: "👕",
+  accessory: "🎩",
+  background: "🖼️",
+  effect: "✨",
+};
+
+function ShopItemImage({ item, size = "sm" }: { item: ShopItem; size?: "sm" | "lg" }) {
+  const [failed, setFailed] = useState(false);
+  const textSize = size === "lg" ? "text-5xl" : "text-4xl";
+  if (!item.imageUrl || failed) {
+    return <span className={textSize}>{categoryEmoji[item.category] ?? "🎁"}</span>;
+  }
+  return (
+    <img
+      src={item.imageUrl}
+      alt={item.name}
+      className="w-full h-full object-contain p-2"
+      onError={() => setFailed(true)}
+    />
+  );
+}
+
 const RARITY_COLORS: Record<string, string> = { common: "secondary", rare: "default", epic: "warning", legendary: "error" };
 
 export default function ShopPage() {
@@ -160,8 +184,8 @@ export default function ShopPage() {
               }`}
               onClick={() => !item.owned && setSelectedItem(item)}
             >
-              <div className="aspect-square rounded-t-lg overflow-hidden relative" style={{ backgroundColor: "var(--aivo-bg-alt, #FFF5EB)" }}>
-                <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
+              <div className="aspect-square rounded-t-lg overflow-hidden relative flex items-center justify-center" style={{ backgroundColor: "var(--aivo-bg-alt, #FFF5EB)" }}>
+                <ShopItemImage item={item} size="sm" />
                 {item.owned && (
                   <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
                     <Check className="text-white" size={14} />
@@ -210,8 +234,8 @@ export default function ShopPage() {
       >
         {selectedItem && (
           <div className="text-center">
-            <div className="w-32 h-32 mx-auto mb-4 rounded-2xl overflow-hidden" style={{ backgroundColor: "var(--aivo-bg-alt, #FFF5EB)" }}>
-              <img src={selectedItem.imageUrl} alt={selectedItem.name} className="w-full h-full object-cover" />
+            <div className="w-32 h-32 mx-auto mb-4 rounded-2xl overflow-hidden flex items-center justify-center" style={{ backgroundColor: "var(--aivo-bg-alt, #FFF5EB)" }}>
+              <ShopItemImage item={selectedItem} size="lg" />
             </div>
             <h3 className="text-lg font-bold mb-1" style={{ color: "var(--aivo-text)" }}>{selectedItem.name}</h3>
             <p className="text-sm mb-3" style={{ color: "var(--aivo-text-secondary)" }}>{selectedItem.description}</p>

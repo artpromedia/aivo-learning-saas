@@ -1,0 +1,50 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "Hsn2y3sDFMbxWxdpX8f7c"
+uri = "file://apps/web/public/assets/shop/astronaut-helmet.png"
+type = "image"
+title = "astronaut helmet shop item"
+
+[[generated]]
+id = "ebOvh9gKM8qtQHn-eGvVt"
+uri = "file://apps/web/public/assets/shop/rainbow-cape.png"
+type = "image"
+title = "rainbow cape shop item"
+
+[[generated]]
+id = "hOTE4egBeDJ6iycqU1mrb"
+uri = "file://apps/web/public/assets/shop/dragon-wings.png"
+type = "image"
+title = "dragon wings shop item"
+
+[[generated]]
+id = "jBNy3ZiP8lr0w0nYaSkDG"
+uri = "file://apps/web/public/assets/shop/neon-sneakers.png"
+type = "image"
+title = "neon sneakers shop item"
+
+[[generated]]
+id = "pQRsmI_tXEL2cPcOeooeD"
+uri = "file://apps/web/public/assets/shop/star-trail.png"
+type = "image"
+title = "star trail effect item"
+
+[[generated]]
+id = "q7DLiCrVosUXCuvPqz5Iq"
+uri = "file://apps/web/public/assets/shop/spiky-purple-hair.png"
+type = "image"
+title = "spiky purple hair item"
+
+[[generated]]
+id = "cW5isKerSjp2jRGWm_nOv"
+uri = "file://apps/web/public/assets/shop/galaxy-outfit.png"
+type = "image"
+title = "galaxy outfit shop item"
+
+[[generated]]
+id = "WhDiuVgOmTrR4gNq4aOlG"
+uri = "file://apps/web/public/assets/shop/sparkle-effect.png"
+type = "image"
+title = "sparkle effect item"

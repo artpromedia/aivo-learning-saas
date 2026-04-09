@@ -249,14 +249,14 @@ const mockTutorResponses: Record<string, string[]> = {
 };
 
 const mockShopItems = [
-  { id: "s1", name: "Astronaut Helmet", category: "accessory" as const, imageUrl: "", price: 150, rarity: "rare" as const, owned: false, equipped: false, description: "A shiny astronaut helmet for your avatar!" },
-  { id: "s2", name: "Rainbow Cape", category: "accessory" as const, imageUrl: "", price: 200, rarity: "epic" as const, owned: true, equipped: true, description: "A flowing rainbow cape that sparkles!" },
-  { id: "s3", name: "Dragon Wings", category: "background" as const, imageUrl: "", price: 500, rarity: "legendary" as const, owned: false, equipped: false, description: "Fiery dragon wings behind your avatar." },
-  { id: "s4", name: "Neon Sneakers", category: "outfit" as const, imageUrl: "", price: 100, rarity: "common" as const, owned: false, equipped: false, description: "Glowing neon sneakers for your avatar." },
-  { id: "s5", name: "Star Trail", category: "effect" as const, imageUrl: "", price: 300, rarity: "epic" as const, owned: false, equipped: false, description: "Leave a trail of stars wherever you go!" },
-  { id: "s6", name: "Spiky Purple Hair", category: "hair" as const, imageUrl: "", price: 120, rarity: "rare" as const, owned: false, equipped: false, description: "Cool spiky purple hair for your avatar!" },
-  { id: "s7", name: "Galaxy Outfit", category: "outfit" as const, imageUrl: "", price: 350, rarity: "legendary" as const, owned: false, equipped: false, description: "A stunning galaxy-themed outfit." },
-  { id: "s8", name: "Sparkle Effect", category: "effect" as const, imageUrl: "", price: 80, rarity: "common" as const, owned: true, equipped: false, description: "Sparkles follow you everywhere!" },
+  { id: "s1", name: "Astronaut Helmet", category: "accessory" as const, imageUrl: "/assets/shop/astronaut-helmet.png", price: 150, rarity: "rare" as const, owned: false, equipped: false, description: "A shiny astronaut helmet for your avatar!" },
+  { id: "s2", name: "Rainbow Cape", category: "accessory" as const, imageUrl: "/assets/shop/rainbow-cape.png", price: 200, rarity: "epic" as const, owned: true, equipped: true, description: "A flowing rainbow cape that sparkles!" },
+  { id: "s3", name: "Dragon Wings", category: "background" as const, imageUrl: "/assets/shop/dragon-wings.png", price: 500, rarity: "legendary" as const, owned: false, equipped: false, description: "Fiery dragon wings behind your avatar." },
+  { id: "s4", name: "Neon Sneakers", category: "outfit" as const, imageUrl: "/assets/shop/neon-sneakers.png", price: 100, rarity: "common" as const, owned: false, equipped: false, description: "Glowing neon sneakers for your avatar." },
+  { id: "s5", name: "Star Trail", category: "effect" as const, imageUrl: "/assets/shop/star-trail.png", price: 300, rarity: "epic" as const, owned: false, equipped: false, description: "Leave a trail of stars wherever you go!" },
+  { id: "s6", name: "Spiky Purple Hair", category: "hair" as const, imageUrl: "/assets/shop/spiky-purple-hair.png", price: 120, rarity: "rare" as const, owned: false, equipped: false, description: "Cool spiky purple hair for your avatar!" },
+  { id: "s7", name: "Galaxy Outfit", category: "outfit" as const, imageUrl: "/assets/shop/galaxy-outfit.png", price: 350, rarity: "legendary" as const, owned: false, equipped: false, description: "A stunning galaxy-themed outfit." },
+  { id: "s8", name: "Sparkle Effect", category: "effect" as const, imageUrl: "/assets/shop/sparkle-effect.png", price: 80, rarity: "common" as const, owned: true, equipped: false, description: "Sparkles follow you everywhere!" },
 ];
 
 const mockBadges = [

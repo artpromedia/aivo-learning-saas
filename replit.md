@@ -154,9 +154,9 @@ Mock data covers all learner pages including:
 - **Quest worlds** — 4 worlds with chapters (Ocean Explorer, Space Adventure, Jungle Safari, Ancient Egypt)
 - **Tutor chat** — Mock session start (POST) and simulated streaming chat with per-persona responses for all 7 tutors (nova, sage, spark, chrono, pixel, harmony, echo)
 - **Challenges** — 4 challenges (1v1, team, global) with proper participants/duration data
-- **Shop items** — 8 avatar customization items with rarity tiers (common/rare/epic/legendary)
+- **Shop items** — 8 avatar customization items with AI-generated images (`/assets/shop/*.png`) and rarity tiers (common/rare/epic/legendary); `ShopItemImage` component handles image load failures with emoji fallbacks
 - **Homework** — 3 assignments with proper status codes (READY/IN_PROGRESS/COMPLETED)
-- **Badges, Profile, Settings** — Full engagement/XP/streak/level data
+- **Badges, Profile, Settings** — Full engagement/XP/streak/level data; avatar upload works in mock mode using data URIs (persists across reloads)
 
 Learner PIN: `1234` — handled in `getMockResponse` with body parsing
 

@@ -58,15 +58,39 @@ export default function LearnerProfilePage() {
     setUploading(true);
     setError(null);
     try {
-      const formData = new FormData();
-      formData.append("avatar", file);
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001"}/api/learners/${activeLearner.id}/avatar`,
-        { method: "PUT", credentials: "include", body: formData }
-      );
-      if (!res.ok) throw new Error("Avatar upload failed");
-      const { avatarUrl } = await res.json();
-      updateLearner(activeLearner.id, { avatarUrl });
+      const maxSize = 5 * 1024 * 1024;
+      if (file.size > maxSize) {
+        throw new Error("Image must be smaller than 5MB");
+      }
+      if (!file.type.startsWith("image/")) {
+        throw new Error("Please select an image file");
+      }
+
+      const isMock = document.cookie.includes("user_role=");
+      if (isMock) {
+        const oldUrl = activeLearner.avatarUrl;
+        if (oldUrl?.startsWith("blob:")) {
+          URL.revokeObjectURL(oldUrl);
+        }
+
+        const reader = new FileReader();
+        const dataUrl = await new Promise<string>((resolve, reject) => {
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = () => reject(new Error("Failed to read image"));
+          reader.readAsDataURL(file);
+        });
+        updateLearner(activeLearner.id, { avatarUrl: dataUrl });
+      } else {
+        const formData = new FormData();
+        formData.append("avatar", file);
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001"}/api/learners/${activeLearner.id}/avatar`,
+          { method: "PUT", credentials: "include", body: formData }
+        );
+        if (!res.ok) throw new Error("Avatar upload failed");
+        const { avatarUrl } = await res.json();
+        updateLearner(activeLearner.id, { avatarUrl });
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : t("uploadFailed"));
     } finally {
