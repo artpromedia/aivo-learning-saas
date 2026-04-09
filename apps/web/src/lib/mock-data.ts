@@ -530,7 +530,7 @@ export function getMockResponse(path: string, method: string = "GET", body?: str
     [/^\/api\/learners\/[^/]+\/gradebook$/, () => mockGradebook],
     [/^\/api\/learners\/[^/]+\/gradebook\/mastery$/, () => mockMastery],
     [/^\/api\/learners\/[^/]+\/iep$/, () => mockIep],
-    [/^\/api\/learners\/[^/]+\/collaboration$/, () => mockCollaboration],
+    [/^\/api\/learners\/[^/]+\/collaboration$/, () => ({ subscriptionType: "parent", members: mockCollaboration })],
     [/^\/api\/learning\/learning-path\/[^/]+\/next$/, () => mockLearningActivities],
     [/^\/api\/learning\/learning-path\/[^/]+$/, () => ({ activities: mockLearningActivities, completedToday: 2, totalToday: 6 })],
     [/^\/api\/learners\/[^/]+\/quests\/worlds$/, () => mockQuestWorlds],
@@ -614,6 +614,13 @@ export function getMockResponse(path: string, method: string = "GET", body?: str
     })],
     [/^\/api\/teacher\/learners\/[^/]+\/insights$/, () => ({ insights: [] })],
     [/^\/api\/teacher\/learners\/[^/]+\/iep$/, () => ({ success: true })],
+    [/^\/api\/teacher\/learners\/[^/]+\/family$/, () => ({
+      subscriptionType: "district",
+      members: [
+        { id: "fm1", name: "Sarah Johnson", email: "sarah@email.com", role: "parent", status: "active", joinedAt: "2025-08-15T00:00:00Z" },
+        { id: "fm2", name: "Jamie Rodriguez", email: "jamie@email.com", role: "caregiver", status: "active", joinedAt: "2025-11-01T00:00:00Z" },
+      ],
+    })],
 
     ["/api/caregiver/child", () => ({
       id: "learner-001",

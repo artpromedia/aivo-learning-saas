@@ -148,6 +148,11 @@ When the backend APIs aren't running, the app falls back to **mock data** (`apps
 - Notifications, engagement stats, shop items, collaboration members
 - Caregiver invite system (max 2 per child) on parent collaboration page with copy invite link
 - Caregiver onboarding wizard at `/accept-invite` (public route, no auth required): welcome → set PIN → review → complete
+- Bidirectional parent/teacher invite system:
+  - Parent-paid subscription: parent can invite teacher from collaboration page
+  - District-paid subscription: teacher can invite parent from `/teacher/learners/[id]/family`
+  - Subscription type returned by collaboration API (`subscriptionType: "parent" | "district"`)
+  - Teacher family page shows "Invite Parent" form with district context; parent collaboration page shows "Invite Teacher" form with parent context
 
 The mock system activates when:
 1. A `user_role` cookie is present (test login)

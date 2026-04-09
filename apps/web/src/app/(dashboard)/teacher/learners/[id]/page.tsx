@@ -16,6 +16,7 @@ import {
   Activity,
   FileText,
   BarChart3,
+  Users,
 } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -259,11 +260,11 @@ export default function LearnerHubPage() {
       description: "Activity history",
     },
     {
-      href: `/teacher/learners/${learnerId}/upload-iep`,
-      label: "Upload IEP",
-      icon: <FileText size={20} />,
-      gradient: "linear-gradient(135deg, #6B7280, #4B5563)",
-      description: "Documents",
+      href: `/teacher/learners/${learnerId}/family`,
+      label: "Family",
+      icon: <Users size={20} />,
+      gradient: "linear-gradient(135deg, #F472B6, #EC4899)",
+      description: "Parents & guardians",
     },
   ];
 

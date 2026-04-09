@@ -201,6 +201,9 @@ export const TEACHER_ROUTES = {
   LEARNER_BRAIN: (id: string) => `/api/teacher/learners/${id}/brain`,
   LEARNER_IEP_UPLOAD: (id: string) => `/api/teacher/learners/${id}/iep`,
   LEARNER_INSIGHTS: (id: string) => `/api/teacher/learners/${id}/insights`,
+  LEARNER_FAMILY: (id: string) => `/api/teacher/learners/${id}/family`,
+  LEARNER_FAMILY_INVITE: (id: string) => `/api/teacher/learners/${id}/family/invite`,
+  LEARNER_FAMILY_REMOVE: (id: string, memberId: string) => `/api/teacher/learners/${id}/family/${memberId}`,
 } as const;
 
 // Tutor subscription (parent dashboard)
