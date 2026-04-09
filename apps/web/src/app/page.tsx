@@ -1,24 +1,13 @@
 import Link from "next/link";
 import { Brain, Palette, BarChart3, Shield, Heart, Sparkles } from "lucide-react";
+import { AivoLogo } from "@/components/brand/AivoLogo";
 
 export default function LandingPage() {
   return (
     <main className="min-h-screen flex flex-col" style={{ backgroundColor: "var(--aivo-bg)" }}>
       <nav className="px-6 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div
-              className="w-10 h-10 rounded-2xl flex items-center justify-center"
-              style={{ background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 50%, #2DD4BF 100%)" }}
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="white" opacity="0.9" />
-              </svg>
-            </div>
-            <span className="text-2xl font-extrabold tracking-tight" style={{ background: "linear-gradient(135deg, #7C3AED, #A855F7)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontFamily: "var(--font-display)" }}>
-              AIVO
-            </span>
-          </div>
+          <AivoLogo size="md" />
           <div className="flex items-center gap-3">
             <Link href="/login" className="px-5 py-2 text-sm font-bold rounded-2xl transition-colors" style={{ color: "var(--aivo-purple-600)" }}>
               Sign In
