@@ -19,23 +19,29 @@ export default function LandingPage() {
   ];
 
   return (
-    <main className="min-h-screen flex flex-col" style={{ backgroundColor: "var(--aivo-bg)" }}>
-      <nav className="px-6 py-4">
+    <main className="min-h-screen flex flex-col relative bg-bubbles" style={{ backgroundColor: "var(--aivo-bg)" }}>
+      <div className="pointer-events-none fixed inset-0 overflow-hidden z-0" aria-hidden="true">
+        <div className="absolute -top-6 -right-6 w-48 h-48 rounded-full opacity-[0.04] blur-2xl" style={{ background: "linear-gradient(135deg, #7C3AED, #A855F7)" }} />
+        <div className="absolute bottom-[15%] -left-8 w-40 h-40 rounded-full opacity-[0.04] blur-2xl" style={{ background: "linear-gradient(135deg, #2DD4BF, #38BDF8)" }} />
+        <div className="absolute top-[45%] right-[5%] w-28 h-28 rounded-full opacity-[0.03] blur-xl" style={{ background: "linear-gradient(135deg, #F472B6, #FB923C)" }} />
+      </div>
+
+      <nav className="sticky top-0 z-20 px-6 py-3 backdrop-blur-md" style={{ backgroundColor: "rgba(255,251,247,0.8)", borderBottom: "1px solid var(--aivo-border)" }}>
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <AivoLogo size="md" />
           <div className="flex items-center gap-3">
             <LanguageToggle />
-            <Link href="/login" className="px-5 py-2 text-sm font-bold rounded-2xl transition-colors" style={{ color: "var(--aivo-purple-600)" }}>
+            <Link href="/login" className="px-5 py-2.5 text-sm font-bold rounded-2xl transition-colors" style={{ color: "var(--aivo-purple-600)" }}>
               {t("signIn")}
             </Link>
-            <Link href="/get-started" className="px-5 py-2 text-sm font-bold text-white rounded-2xl transition-all shadow-[0_4px_14px_rgba(124,58,237,0.3)] hover:shadow-[0_6px_20px_rgba(124,58,237,0.4)]" style={{ background: "linear-gradient(135deg, #7C3AED, #A855F7)" }}>
+            <Link href="/get-started" className="px-5 py-2.5 text-sm font-bold text-white rounded-2xl transition-all shadow-[0_4px_14px_rgba(124,58,237,0.3)] hover:shadow-[0_6px_20px_rgba(124,58,237,0.4)]" style={{ background: "linear-gradient(135deg, #7C3AED, #A855F7)" }}>
               {t("getStartedFree")}
             </Link>
           </div>
         </div>
       </nav>
 
-      <section className="relative flex-1 flex flex-col items-center justify-center px-6 py-20 text-center overflow-hidden bg-bubbles">
+      <section className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 py-20 text-center overflow-hidden">
         <div className="absolute top-10 left-10 w-32 h-32 rounded-full opacity-20 animate-float" style={{ background: "linear-gradient(135deg, #7C3AED, #A855F7)" }} />
         <div className="absolute bottom-20 right-16 w-24 h-24 rounded-full opacity-15 animate-float" style={{ background: "linear-gradient(135deg, #2DD4BF, #38BDF8)", animationDelay: "1s" }} />
         <div className="absolute top-32 right-1/4 w-16 h-16 rounded-full opacity-10 animate-float" style={{ background: "linear-gradient(135deg, #F472B6, #FB923C)", animationDelay: "2s" }} />
@@ -75,7 +81,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="py-20 px-6" style={{ backgroundColor: "var(--aivo-bg-alt)" }}>
+      <section className="relative z-10 py-20 px-6" style={{ backgroundColor: "var(--aivo-bg-alt)" }}>
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-4" style={{ fontFamily: "var(--font-display)", color: "var(--aivo-text)" }}>
             {t("builtForEveryLearner")}
@@ -99,7 +105,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="py-20 px-6" style={{ backgroundColor: "var(--aivo-bg)" }}>
+      <section className="relative z-10 py-20 px-6" style={{ backgroundColor: "var(--aivo-bg)" }}>
         <div className="max-w-3xl mx-auto text-center">
           <div className="rounded-3xl p-10 relative overflow-hidden" style={{ background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 50%, #2DD4BF 100%)" }}>
             <div className="absolute inset-0 opacity-10">
@@ -125,7 +131,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <footer className="py-8 text-center text-sm font-medium" style={{ color: "var(--aivo-text-muted)" }}>
+      <footer className="relative z-10 py-8 text-center text-sm font-medium" style={{ color: "var(--aivo-text-muted)" }}>
         {t("copyright", { year: new Date().getFullYear().toString() })}
       </footer>
     </main>
