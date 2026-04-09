@@ -537,6 +537,10 @@ export function getMockResponse(path: string, method: string = "GET", body?: str
     return { correct: true, feedback: "Great job! That's the right answer!", xpEarned: 10, nextQuestion: { id: "q2", type: "multiple_choice", prompt: "What is 1/2 of 10?", options: ["5", "10", "2", "1"] } };
   }
 
+  if (method === "POST" && path === "/api/assessment/parent") {
+    return { success: true };
+  }
+
   if (method === "POST" && path === "/api/learners") {
     const bodyData = body ? JSON.parse(body) : {};
     const newId = `learner-${Date.now()}`;
@@ -555,6 +559,46 @@ export function getMockResponse(path: string, method: string = "GET", body?: str
   if (method !== "GET") return {};
 
   const routes: [string | RegExp, () => unknown][] = [
+    ["/api/assessment/parent/questions", () => ({
+      categories: [
+        {
+          key: "communication",
+          label: "Communication",
+          questions: [
+            { id: "comm_1", category: "communication", questionText: "How does your child typically communicate their needs?", questionType: "multiple_choice", options: ["Verbal speech", "Sign language", "Picture cards/AAC device", "Gestures and pointing", "A combination of methods"], required: true },
+            { id: "comm_2", category: "communication", questionText: "How comfortable is your child in group conversations?", questionType: "rating_scale", scaleMin: 1, scaleMax: 5, scaleLabels: { min: "Very uncomfortable", max: "Very comfortable" }, required: true },
+            { id: "comm_3", category: "communication", questionText: "Which communication supports does your child currently use?", questionType: "multi_select", options: ["Speech therapy", "Visual schedules", "Social stories", "AAC device", "Picture exchange (PECS)", "None currently"], required: true },
+            { id: "comm_4", category: "communication", questionText: "Is there anything else about your child's communication you'd like us to know?", questionType: "open_ended", required: false, helpText: "Optional — share any details that might help us personalize the experience." },
+          ],
+        },
+        {
+          key: "sensory",
+          label: "Sensory Preferences",
+          questions: [
+            { id: "sens_1", category: "sensory", questionText: "How does your child respond to bright lights or busy visual environments?", questionType: "rating_scale", scaleMin: 1, scaleMax: 5, scaleLabels: { min: "Very sensitive", max: "Not sensitive" }, required: true },
+            { id: "sens_2", category: "sensory", questionText: "How does your child respond to loud or unexpected sounds?", questionType: "rating_scale", scaleMin: 1, scaleMax: 5, scaleLabels: { min: "Very sensitive", max: "Not sensitive" }, required: true },
+            { id: "sens_3", category: "sensory", questionText: "Which sensory accommodations help your child focus?", questionType: "multi_select", options: ["Noise-canceling headphones", "Fidget tools", "Weighted blanket/vest", "Reduced visual clutter", "Movement breaks", "Dim lighting"], required: true },
+          ],
+        },
+        {
+          key: "learning",
+          label: "Learning Style",
+          questions: [
+            { id: "learn_1", category: "learning", questionText: "How does your child learn best?", questionType: "multiple_choice", options: ["Watching videos or demonstrations", "Hands-on activities", "Reading or written instructions", "Listening to explanations", "Through games and play"], required: true },
+            { id: "learn_2", category: "learning", questionText: "How long can your child typically focus on a single activity?", questionType: "multiple_choice", options: ["Less than 5 minutes", "5-10 minutes", "10-20 minutes", "20-30 minutes", "More than 30 minutes"], required: true },
+            { id: "learn_3", category: "learning", questionText: "Does your child prefer structured or flexible learning?", questionType: "yes_no", required: true },
+          ],
+        },
+        {
+          key: "interests",
+          label: "Interests & Motivation",
+          questions: [
+            { id: "int_1", category: "interests", questionText: "What topics or subjects excite your child the most?", questionType: "multi_select", options: ["Animals & nature", "Space & science", "Art & creativity", "Music & rhythm", "Numbers & math", "Stories & reading", "Technology & computers", "Sports & movement"], required: true },
+            { id: "int_2", category: "interests", questionText: "What motivates your child to keep trying?", questionType: "multiple_choice", options: ["Earning rewards or points", "Praise and encouragement", "Seeing progress visually", "Competing with themselves", "Completing collections"], required: true },
+          ],
+        },
+      ],
+    })],
     ["/api/learners", () => ({ learners: mockLearners })],
     [/^\/api\/learners\/[^/]+\/brain-profile$/, () => mockBrainProfile],
     [/^\/api\/learners\/[^/]+\/recommendations$/, () => mockRecommendations],
