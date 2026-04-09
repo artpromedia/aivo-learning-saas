@@ -14,8 +14,8 @@ const ROLE_REDIRECTS: Record<string, string> = {
   PLATFORM_ADMIN: "/admin/district",
   LEARNER: "/learner",
   learner: "/learner",
-  CAREGIVER: "/parent",
-  caregiver: "/parent",
+  CAREGIVER: "/caregiver",
+  caregiver: "/caregiver",
 };
 
 const ROLE_ALLOWED_PREFIXES: Record<string, string[]> = {
@@ -26,11 +26,11 @@ const ROLE_ALLOWED_PREFIXES: Record<string, string[]> = {
   educator: ["/teacher"],
   DISTRICT_ADMIN: ["/admin"],
   admin: ["/admin"],
-  PLATFORM_ADMIN: ["/admin", "/teacher", "/parent", "/learner"],
+  PLATFORM_ADMIN: ["/admin", "/teacher", "/parent", "/learner", "/caregiver"],
   LEARNER: ["/learner"],
   learner: ["/learner"],
-  CAREGIVER: ["/parent", "/learner", "/notifications"],
-  caregiver: ["/parent", "/learner", "/notifications"],
+  CAREGIVER: ["/caregiver", "/notifications"],
+  caregiver: ["/caregiver", "/notifications"],
 };
 
 function detectLocale(request: NextRequest): string {
@@ -88,6 +88,7 @@ export function middleware(request: NextRequest) {
       pathname.startsWith("/learner") ||
       pathname.startsWith("/teacher") ||
       pathname.startsWith("/admin") ||
+      pathname.startsWith("/caregiver") ||
       pathname.startsWith("/notifications") ||
       pathname.startsWith("/manage") ||
       pathname.startsWith("/checkout") ||
@@ -105,6 +106,7 @@ export function middleware(request: NextRequest) {
     pathname.startsWith("/learner") ||
     pathname.startsWith("/teacher") ||
     pathname.startsWith("/admin") ||
+    pathname.startsWith("/caregiver") ||
     pathname.startsWith("/notifications") ||
     pathname.startsWith("/manage") ||
     pathname.startsWith("/checkout") ||

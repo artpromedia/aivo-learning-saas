@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const VALID_ROLES = ["parent", "learner", "teacher", "admin"];
+const VALID_ROLES = ["parent", "learner", "teacher", "admin", "caregiver"];
 const ROLE_REDIRECTS: Record<string, string> = {
   parent: "/parent",
   learner: "/learner",
   teacher: "/teacher",
   admin: "/admin/district",
+  caregiver: "/caregiver",
 };
 
 export async function GET(request: NextRequest) {

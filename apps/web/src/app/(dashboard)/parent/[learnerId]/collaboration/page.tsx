@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
-  Users, Loader2, Mail, Trash2, UserPlus, Shield,
+  Users, Loader2, Mail, Trash2, UserPlus, Shield, Heart, AlertCircle, Copy, CheckCircle,
 } from "lucide-react";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -24,6 +24,8 @@ interface CollaborationMember {
   joinedAt: string;
 }
 
+const MAX_CAREGIVERS = 2;
+
 export default function CollaborationPage() {
   const params = useParams();
   const learnerId = params.learnerId as string;
@@ -33,9 +35,14 @@ export default function CollaborationPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [inviteEmail, setInviteEmail] = useState("");
-  const [inviteRole, setInviteRole] = useState<"teacher" | "therapist" | "caregiver">("teacher");
+  const [inviteRole, setInviteRole] = useState<"teacher" | "therapist" | "caregiver">("caregiver");
   const [inviting, setInviting] = useState(false);
   const [removingId, setRemovingId] = useState<string | null>(null);
+  const [inviteSuccess, setInviteSuccess] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
+
+  const caregiverCount = members.filter((m) => m.role === "caregiver").length;
+  const canInviteCaregivers = caregiverCount < MAX_CAREGIVERS;
 
   useEffect(() => {
     async function fetchMembers() {
@@ -55,12 +62,38 @@ export default function CollaborationPage() {
   const handleInvite = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inviteEmail.trim()) return;
+
+    if (inviteRole === "caregiver" && !canInviteCaregivers) {
+      setError(`You can only invite up to ${MAX_CAREGIVERS} caregivers per child. Remove an existing caregiver first.`);
+      return;
+    }
+
     setInviting(true);
     setError(null);
+    setInviteSuccess(false);
     try {
-      const newMember = await apiFetch<CollaborationMember>(API_ROUTES.COLLABORATION.INVITE(learnerId), { method: "POST", body: JSON.stringify({ email: inviteEmail, role: inviteRole }) });
+      const isMock = document.cookie.includes("user_role=");
+      let newMember: CollaborationMember;
+      if (isMock) {
+        await new Promise((r) => setTimeout(r, 1500));
+        newMember = {
+          id: `member-${Date.now()}`,
+          name: "",
+          email: inviteEmail,
+          role: inviteRole,
+          status: "pending",
+          joinedAt: new Date().toISOString(),
+        };
+      } else {
+        newMember = await apiFetch<CollaborationMember>(API_ROUTES.COLLABORATION.INVITE(learnerId), {
+          method: "POST",
+          body: JSON.stringify({ email: inviteEmail, role: inviteRole }),
+        });
+      }
       setMembers((prev) => [...prev, newMember]);
       setInviteEmail("");
+      setInviteSuccess(true);
+      setTimeout(() => setInviteSuccess(false), 4000);
     } catch (err) {
       setError(err instanceof Error ? err.message : t("failedToSendInvite"));
     } finally {
@@ -71,13 +104,32 @@ export default function CollaborationPage() {
   const handleRemove = async (memberId: string) => {
     setRemovingId(memberId);
     try {
-      await apiFetch(API_ROUTES.COLLABORATION.REMOVE(learnerId, memberId), { method: "DELETE" });
+      const isMock = document.cookie.includes("user_role=");
+      if (isMock) {
+        await new Promise((r) => setTimeout(r, 800));
+      } else {
+        await apiFetch(API_ROUTES.COLLABORATION.REMOVE(learnerId, memberId), { method: "DELETE" });
+      }
       setMembers((prev) => prev.filter((m) => m.id !== memberId));
     } catch (err) {
       setError(err instanceof Error ? err.message : t("failedToRemoveMember"));
     } finally {
       setRemovingId(null);
     }
+  };
+
+  const handleCopyInviteLink = () => {
+    const link = `${window.location.origin}/accept-invite?child=${learnerId}`;
+    navigator.clipboard.writeText(link).then(() => {
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 3000);
+    });
+  };
+
+  const roleIcons: Record<string, React.ReactNode> = {
+    teacher: <Users size={20} style={{ color: "#7C3AED" }} />,
+    therapist: <Shield size={20} style={{ color: "#10B981" }} />,
+    caregiver: <Heart size={20} style={{ color: "#F472B6" }} />,
   };
 
   const roleColors: Record<string, string> = { teacher: "default", therapist: "success", caregiver: "warning" };
@@ -108,39 +160,81 @@ export default function CollaborationPage() {
         </div>
       </PurpleGradientHeader>
 
-      <div className="grid gap-3 grid-cols-2 mb-8">
+      <div className="grid gap-3 grid-cols-3 mb-8">
         <StatCard icon={<Users size={18} />} label="Team Members" value={members.length} color="#7C3AED" delay={100} />
         <StatCard icon={<Mail size={18} />} label="Pending" value={members.filter((m) => m.status === "pending").length} color="#F59E0B" delay={200} />
+        <StatCard icon={<Heart size={18} />} label={`Caregivers (${caregiverCount}/${MAX_CAREGIVERS})`} value={caregiverCount} color="#F472B6" delay={300} />
       </div>
 
       {error && (
-        <div className="mb-4 p-3 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171] text-sm">{error}</div>
+        <div className="mb-4 p-3 rounded-2xl bg-[#FFE0E0] border border-[#FECACA] text-[#991B1B] text-sm flex items-center gap-2">
+          <AlertCircle size={16} />
+          {error}
+        </div>
       )}
 
       <ExpandableCard
         icon={<UserPlus size={16} />}
-        title={t("inviteTeamMember")}
-        subtitle="Add a teacher, therapist, or caregiver to your child's team"
-        gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
+        title="Invite Caregiver"
+        subtitle={`Add a caregiver to your child's profile (${caregiverCount}/${MAX_CAREGIVERS} slots used)`}
+        gradient="linear-gradient(135deg, #F472B6, #EC4899)"
         delay={300}
-        infoText="Inviting team members lets them view your child's learning progress. They can see data like mastery scores and brain profile insights. You can remove them at any time."
+        infoText={`You can invite up to ${MAX_CAREGIVERS} caregivers (like grandparents, aunts, uncles, or family friends) to view your child's learning progress. Caregivers get view-only access — they can see progress but cannot change settings.`}
       >
-        <form onSubmit={handleInvite} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>{t("emailAddress")}</label>
-            <input type="email" value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} className="w-full px-4 py-2.5 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none" placeholder="colleague@school.edu" required />
+        {!canInviteCaregivers && inviteRole === "caregiver" ? (
+          <div className="p-4 rounded-xl text-center" style={{ backgroundColor: "#FEF3C7", border: "1px solid #FDE68A" }}>
+            <AlertCircle size={24} className="mx-auto mb-2 text-[#D97706]" />
+            <p className="text-sm font-bold text-[#92400E]">Caregiver limit reached</p>
+            <p className="text-xs text-[#92400E] mt-1">You&apos;ve invited the maximum of {MAX_CAREGIVERS} caregivers. Remove an existing caregiver to invite a new one.</p>
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>{t("role")}</label>
-            <select value={inviteRole} onChange={(e) => setInviteRole(e.target.value as "teacher" | "therapist" | "caregiver")} className="w-full px-4 py-2.5 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none">
-              <option value="teacher">{t("teacher")}</option>
-              <option value="therapist">{t("therapist")}</option>
-              <option value="caregiver">{t("caregiver")}</option>
-            </select>
-          </div>
-          <Button type="submit" loading={inviting} leftIcon={<Mail size={16} />}>{t("sendInvitation")}</Button>
-        </form>
+        ) : (
+          <form onSubmit={handleInvite} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>Email Address</label>
+              <input type="email" value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} className="w-full px-4 py-2.5 rounded-2xl border border-[#E8DDF0] bg-white text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none" placeholder="caregiver@email.com" required />
+            </div>
+            <div className="flex items-center gap-3">
+              <Button type="submit" loading={inviting} leftIcon={<Mail size={16} />}>Send Invitation</Button>
+              <Button type="button" variant="outline" size="sm" onClick={handleCopyInviteLink} leftIcon={copiedLink ? <CheckCircle size={14} /> : <Copy size={14} />}>
+                {copiedLink ? "Copied!" : "Copy Link"}
+              </Button>
+            </div>
+            {inviteSuccess && (
+              <div className="p-3 rounded-xl bg-[#D1FAE5] border border-[#A7F3D0] text-[#065F46] text-sm flex items-center gap-2">
+                <CheckCircle size={16} />
+                Invitation sent! They&apos;ll receive an email to join as a caregiver.
+              </div>
+            )}
+          </form>
+        )}
       </ExpandableCard>
+
+      <div className="mt-6">
+        <ExpandableCard
+          icon={<UserPlus size={16} />}
+          title={t("inviteTeamMember")}
+          subtitle="Add teachers or therapists to the care team"
+          gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
+          delay={400}
+          infoText="Teachers and therapists can view learning data and brain profile insights. You can remove them at any time."
+        >
+          <form onSubmit={handleInvite} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>{t("emailAddress")}</label>
+              <input type="email" value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} className="w-full px-4 py-2.5 rounded-2xl border border-[#E8DDF0] bg-white text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none" placeholder="colleague@school.edu" required />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1" style={{ color: "var(--aivo-text)" }}>{t("role")}</label>
+              <select value={inviteRole} onChange={(e) => setInviteRole(e.target.value as "teacher" | "therapist" | "caregiver")} className="w-full px-4 py-2.5 rounded-2xl border border-[#E8DDF0] bg-white text-[var(--aivo-text)] focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none">
+                <option value="teacher">{t("teacher")}</option>
+                <option value="therapist">{t("therapist")}</option>
+                <option value="caregiver">Caregiver</option>
+              </select>
+            </div>
+            <Button type="submit" loading={inviting} leftIcon={<Mail size={16} />}>{t("sendInvitation")}</Button>
+          </form>
+        </ExpandableCard>
+      </div>
 
       <div className="mt-6">
         <ExpandableCard
@@ -148,26 +242,26 @@ export default function CollaborationPage() {
           title={t("currentMembers", { count: members.length })}
           subtitle="People who can view your child's learning data"
           gradient="linear-gradient(135deg, #10B981, #059669)"
-          delay={400}
-          infoText="These people have been invited to collaborate on your child's learning journey. Active members can see learning data. Pending members haven't accepted their invitation yet."
+          delay={500}
+          infoText="Active members can see learning data. Pending members haven't accepted their invitation yet. You can remove anyone at any time."
         >
           {members.length > 0 ? (
             <div className="space-y-3">
               {members.map((member, idx) => (
-                <AnimatedCard key={member.id} delay={500 + idx * 80}>
+                <AnimatedCard key={member.id} delay={600 + idx * 80}>
                   <div className="flex items-center gap-4 p-3 rounded-xl" style={{ backgroundColor: "var(--aivo-bg)", border: "1px solid var(--aivo-border)" }}>
                     <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: "rgba(124,58,237,0.1)" }}>
-                      <Shield size={20} style={{ color: "#7C3AED" }} />
+                      {roleIcons[member.role] ?? <Shield size={20} style={{ color: "#7C3AED" }} />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <h3 className="font-medium truncate" style={{ color: "var(--aivo-text)" }}>{member.name || member.email}</h3>
                         <Badge variant={roleColors[member.role] as "default" | "success" | "warning"}>{member.role}</Badge>
                         {member.status === "pending" && <Badge variant="secondary">{t("pending")}</Badge>}
                       </div>
                       <p className="text-sm truncate" style={{ color: "var(--aivo-text-secondary)" }}>{member.email}</p>
                     </div>
-                    <button onClick={() => handleRemove(member.id)} disabled={removingId === member.id} className="p-2 rounded-2xl transition-colors hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 disabled:opacity-50" style={{ color: "var(--aivo-text-muted)" }} title={t("removeMember")}>
+                    <button onClick={() => handleRemove(member.id)} disabled={removingId === member.id} className="p-2 rounded-2xl transition-colors hover:text-red-500 hover:bg-red-50 disabled:opacity-50" style={{ color: "var(--aivo-text-muted)" }} title={t("removeMember")}>
                       {removingId === member.id ? <Loader2 className="animate-spin" size={16} /> : <Trash2 size={16} />}
                     </button>
                   </div>

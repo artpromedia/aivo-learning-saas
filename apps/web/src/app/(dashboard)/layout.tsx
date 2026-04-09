@@ -55,6 +55,13 @@ const learnerNav: NavItem[] = [
 
 const teacherNav: NavItem[] = [
   { href: "/teacher", labelKey: "myClassrooms", icon: <Home size={20} />, color: "#7C3AED" },
+  { href: "/teacher/reports", labelKey: "reports", icon: <Sparkles size={20} />, color: "#2DD4BF" },
+  { href: "/notifications", labelKey: "notifications", icon: <Bell size={20} />, color: "#38BDF8" },
+  { href: "/teacher/settings", labelKey: "settings", icon: <Settings size={20} />, color: "#A89BB5" },
+];
+
+const caregiverNav: NavItem[] = [
+  { href: "/caregiver", labelKey: "dashboard", icon: <Home size={20} />, color: "#7C3AED" },
   { href: "/notifications", labelKey: "notifications", icon: <Bell size={20} />, color: "#38BDF8" },
 ];
 
@@ -81,11 +88,13 @@ export default function DashboardLayout({
   const isLearner = pathname.startsWith("/learner");
   const isTeacher = pathname.startsWith("/teacher");
   const isAdmin = pathname.startsWith("/admin");
+  const isCaregiver = pathname.startsWith("/caregiver");
 
   let navItems = parentNav;
   if (isLearner) navItems = learnerNav;
   else if (isTeacher) navItems = teacherNav;
   else if (isAdmin) navItems = districtAdminNav;
+  else if (isCaregiver) navItems = caregiverNav;
 
   const handleLogout = async () => {
     await logout();

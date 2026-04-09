@@ -136,14 +136,18 @@ See `.env.example` for all required variables. Key ones:
 
 ## Test Login & Mock Data
 
-In dev mode, the login page has "Test Accounts" buttons (Parent, Learner, Teacher, Admin) that set a `user_role` cookie via `/api/test-login?role=<role>` and redirect to the dashboard.
+In dev mode, the login page has "Test Accounts" buttons (Parent, Learner, Teacher, Admin, Caregiver) that set a `user_role` cookie via `/api/test-login?role=<role>` and redirect to the dashboard.
 
 When the backend APIs aren't running, the app falls back to **mock data** (`apps/web/src/lib/mock-data.ts`) for all dashboard pages. This includes:
 - Parent dashboard with 2 mock learners (Alex & Maya Johnson)
 - Learner profiles with brain data, gradebook, IEP, quests, tutors, badges, challenges
 - Teacher classrooms with learner data (6+ learners with mastery, at-risk flags, functioning levels), sortable tables, learner brain view with subjects/accommodations/IEP goals/sessions
+- Teacher learner hub (matching parent child hub design) with Quick Navigation grid, StatCards, sub-pages (brain, accommodations, iep, gradebook, sessions), Reports page, Settings page
+- Caregiver dashboard with read-only child view (brain profile, accommodations, IEP, gradebook, sessions)
 - Admin district overview with teachers, classrooms, licenses
 - Notifications, engagement stats, shop items, collaboration members
+- Caregiver invite system (max 2 per child) on parent collaboration page with copy invite link
+- Caregiver onboarding wizard at `/accept-invite` (public route, no auth required): welcome → set PIN → review → complete
 
 The mock system activates when:
 1. A `user_role` cookie is present (test login)

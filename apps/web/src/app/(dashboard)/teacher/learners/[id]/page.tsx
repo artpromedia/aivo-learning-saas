@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import {
-  ArrowLeft,
   Brain,
   BookOpen,
   Upload,
@@ -12,13 +11,25 @@ import {
   Clock,
   Target,
   ShieldCheck,
+  GraduationCap,
+  TrendingUp,
+  Activity,
+  FileText,
+  BarChart3,
 } from "lucide-react";
-import { Card, CardBody, CardHeader } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { Skeleton, SkeletonText } from "@/components/ui/Skeleton";
-import { ProgressBar } from "@/components/ui/ProgressBar";
+import { Button } from "@/components/ui/Button";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
+import {
+  PageWrapper,
+  BackLink,
+  ExpandableCard,
+  StatCard,
+  AnimatedCard,
+} from "@/components/ui/PageDesign";
+import { ProgressBar } from "@/components/ui/ProgressBar";
+import { Card, CardBody, CardHeader } from "@/components/ui/Card";
 import { useTranslations } from "next-intl";
 import { apiFetch } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
@@ -59,7 +70,7 @@ interface LearnerBrain {
   recentSessions: Session[];
 }
 
-export default function LearnerBrainViewPage() {
+export default function LearnerHubPage() {
   const t = useTranslations("teacher");
   const params = useParams();
   const learnerId = params.id as string;
@@ -100,17 +111,20 @@ export default function LearnerBrainViewPage() {
     setSubmittingInsight(true);
     setInsightSuccess(false);
     try {
-      await apiFetch(API_ROUTES.TEACHER.LEARNER_INSIGHTS(learnerId), {
-        method: "POST",
-        body: JSON.stringify({ text: insightText.trim() }),
-      });
+      const isMock = document.cookie.includes("user_role=");
+      if (isMock) {
+        await new Promise((r) => setTimeout(r, 1000));
+      } else {
+        await apiFetch(API_ROUTES.TEACHER.LEARNER_INSIGHTS(learnerId), {
+          method: "POST",
+          body: JSON.stringify({ text: insightText.trim() }),
+        });
+      }
       setInsightText("");
       setInsightSuccess(true);
       setTimeout(() => setInsightSuccess(false), 3000);
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : t("failedToSubmit"),
-      );
+      setError(err instanceof Error ? err.message : t("failedToSubmit"));
     } finally {
       setSubmittingInsight(false);
     }
@@ -128,15 +142,10 @@ export default function LearnerBrainViewPage() {
       } else {
         const formData = new FormData();
         formData.append("file", file);
-
         const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
         const res = await fetch(
           `${baseUrl}${API_ROUTES.TEACHER.LEARNER_IEP_UPLOAD(learnerId)}`,
-          {
-            method: "POST",
-            credentials: "include",
-            body: formData,
-          },
+          { method: "POST", credentials: "include", body: formData },
         );
         if (!res.ok) {
           const body = await res.json().catch(() => ({}));
@@ -162,43 +171,39 @@ export default function LearnerBrainViewPage() {
     });
   };
 
-  const levelBadgeVariant = (level: string) => {
-    switch (level) {
-      case "level1":
-        return "warning" as const;
-      case "level2":
-        return "default" as const;
-      case "level3":
-        return "success" as const;
-      default:
-        return "secondary" as const;
-    }
+  const levelLabel = (level: string) => {
+    const labels: Record<string, string> = {
+      level1: "Needs Support",
+      level2: "Progressing",
+      level3: "On Track",
+      Supported: "Supported",
+      Standard: "Standard",
+      SUPPORTED: "Supported",
+      STANDARD: "Standard",
+      LOW_VERBAL: "Low Verbal",
+      NON_VERBAL: "Non-Verbal",
+      PRE_SYMBOLIC: "Pre-Symbolic",
+    };
+    return labels[level] ?? level;
   };
 
-  const levelLabel = (level: string) => {
-    switch (level) {
-      case "level1":
-        return t("level1");
-      case "level2":
-        return t("level2");
-      case "level3":
-        return t("level3");
-      default:
-        return level;
-    }
-  };
+  const avgMastery =
+    brain && brain.subjects.length > 0
+      ? Math.round(
+          brain.subjects.reduce((s, x) => s + x.masteryPct, 0) /
+            brain.subjects.length,
+        )
+      : 0;
+
+  const totalSessions = brain?.recentSessions?.length ?? 0;
 
   if (loading) {
     return (
-      <div>
-        <Skeleton height={120} className="w-full rounded-2xl mb-8" />
-        <div className="grid gap-6 md:grid-cols-2 px-4">
+      <div className="space-y-6">
+        <Skeleton height={120} className="w-full rounded-2xl" />
+        <div className="grid gap-4 sm:grid-cols-4">
           {[1, 2, 3, 4].map((i) => (
-            <Card key={i}>
-              <CardBody>
-                <SkeletonText lines={4} />
-              </CardBody>
-            </Card>
+            <Skeleton key={i} height={100} className="w-full rounded-2xl" />
           ))}
         </div>
       </div>
@@ -208,7 +213,7 @@ export default function LearnerBrainViewPage() {
   if (error && !brain) {
     return (
       <div className="p-6">
-        <div className="p-4 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171]">
+        <div className="p-4 rounded-2xl bg-[#FFE0E0] border border-[#FECACA] text-[#991B1B]">
           {error}
         </div>
       </div>
@@ -217,199 +222,233 @@ export default function LearnerBrainViewPage() {
 
   if (!brain) return null;
 
+  const quickLinks = [
+    {
+      href: `/teacher/learners/${learnerId}/brain`,
+      label: "Brain Profile",
+      icon: <Brain size={20} />,
+      gradient: "linear-gradient(135deg, #7C3AED, #A855F7)",
+      description: "AI learning insights",
+    },
+    {
+      href: `/teacher/learners/${learnerId}/accommodations`,
+      label: "Accommodations",
+      icon: <ShieldCheck size={20} />,
+      gradient: "linear-gradient(135deg, #8B5CF6, #6D28D9)",
+      description: "Support & adaptations",
+    },
+    {
+      href: `/teacher/learners/${learnerId}/iep`,
+      label: "IEP Goals",
+      icon: <Target size={20} />,
+      gradient: "linear-gradient(135deg, #3B82F6, #2563EB)",
+      description: "Goals & progress",
+    },
+    {
+      href: `/teacher/learners/${learnerId}/gradebook`,
+      label: "Gradebook",
+      icon: <GraduationCap size={20} />,
+      gradient: "linear-gradient(135deg, #2DD4BF, #14B8A6)",
+      description: "Subject mastery",
+    },
+    {
+      href: `/teacher/learners/${learnerId}/sessions`,
+      label: "Sessions",
+      icon: <Clock size={20} />,
+      gradient: "linear-gradient(135deg, #F59E0B, #D97706)",
+      description: "Activity history",
+    },
+    {
+      href: `/teacher/learners/${learnerId}/upload-iep`,
+      label: "Upload IEP",
+      icon: <FileText size={20} />,
+      gradient: "linear-gradient(135deg, #6B7280, #4B5563)",
+      description: "Documents",
+    },
+  ];
+
   return (
-    <div>
+    <PageWrapper>
+      <BackLink href="/teacher">{t("backToClassrooms")}</BackLink>
+
       <PurpleGradientHeader className="rounded-2xl mb-8">
-        <Link
-          href="/teacher"
-          className="inline-flex items-center gap-1 text-white/80 hover:text-white text-sm mb-3 transition-colors"
-        >
-          <ArrowLeft size={16} />
-          {t("backToClassrooms")}
-        </Link>
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-white text-xl font-extrabold">
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center text-2xl font-extrabold">
             {brain.name.charAt(0).toUpperCase()}
           </div>
           <div>
             <h1 className="text-2xl font-extrabold">{brain.name}</h1>
-            <Badge variant={levelBadgeVariant(brain.functioningLevel)} className="mt-1">
+            <p className="text-white/80 text-sm">
               {levelLabel(brain.functioningLevel)}
-            </Badge>
+            </p>
+            <p className="text-white/60 text-xs mt-0.5">
+              Learner hub — everything about this student in one place
+            </p>
           </div>
         </div>
       </PurpleGradientHeader>
 
-      {error && (
-        <div className="mb-6 p-4 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171]">
-          {error}
-        </div>
-      )}
+      <div className="grid gap-3 grid-cols-2 lg:grid-cols-4 mb-8">
+        <StatCard
+          icon={<TrendingUp size={18} />}
+          label="Avg Mastery"
+          value={`${avgMastery}%`}
+          color="#7C3AED"
+          delay={100}
+        />
+        <StatCard
+          icon={<BookOpen size={18} />}
+          label="Recent Sessions"
+          value={totalSessions}
+          color="#3B82F6"
+          delay={200}
+        />
+        <StatCard
+          icon={<ShieldCheck size={18} />}
+          label="Accommodations"
+          value={brain.accommodations.length}
+          color="#10B981"
+          delay={300}
+        />
+        <StatCard
+          icon={<Target size={18} />}
+          label="IEP Goals"
+          value={brain.iepGoals.length}
+          color="#F59E0B"
+          delay={400}
+        />
+      </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        {/* Subject Mastery */}
-        <Card>
-          <CardHeader>
-            <h2 className="font-semibold text-[var(--aivo-text)] flex items-center gap-2">
-              <Brain size={18} className="text-[#7C3AED]" />
-              {t("masteryBySubject")}
-            </h2>
-          </CardHeader>
-          <CardBody className="space-y-4">
-            {brain.subjects.length === 0 ? (
-              <p className="text-[var(--aivo-text-secondary)] text-sm">{t("noSubjectData")}</p>
-            ) : (
-              brain.subjects.map((s) => (
-                <div key={s.subject}>
+      <ExpandableCard
+        icon={<Brain size={16} />}
+        title="Quick Navigation"
+        subtitle="Jump to any section of this learner's profile"
+        gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
+        delay={500}
+        infoText="These shortcuts let you explore different aspects of the learner's AIVO profile. Each section provides insights into how the platform is adapting to their needs."
+      >
+        <div className="grid gap-3 grid-cols-2 lg:grid-cols-3">
+          {quickLinks.map((link) => (
+            <Link key={link.href} href={link.href}>
+              <div
+                className="rounded-2xl p-4 text-center transition-all cursor-pointer hover:scale-[1.03] h-full"
+                style={{
+                  backgroundColor: "var(--aivo-bg-card)",
+                  border: "1px solid var(--aivo-border)",
+                }}
+              >
+                <div
+                  className="w-10 h-10 rounded-xl mx-auto mb-2 flex items-center justify-center text-white"
+                  style={{ background: link.gradient }}
+                >
+                  {link.icon}
+                </div>
+                <span
+                  className="text-sm font-bold block"
+                  style={{ color: "var(--aivo-text)" }}
+                >
+                  {link.label}
+                </span>
+                <span
+                  className="text-[10px]"
+                  style={{ color: "var(--aivo-text-muted)" }}
+                >
+                  {link.description}
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </ExpandableCard>
+
+      {brain.subjects.length > 0 && (
+        <div className="mt-6">
+          <ExpandableCard
+            icon={<GraduationCap size={16} />}
+            title="Subject Mastery"
+            subtitle="How this learner is progressing in each subject"
+            gradient="linear-gradient(135deg, #2DD4BF, #14B8A6)"
+            delay={600}
+            infoText="Subject mastery scores show how well the learner has demonstrated understanding. AIVO continuously adapts content difficulty based on these scores."
+            linkHref={`/teacher/learners/${learnerId}/gradebook`}
+            linkLabel="View full gradebook"
+          >
+            <div className="space-y-4">
+              {brain.subjects.map((subject) => (
+                <div key={subject.subject}>
                   <div className="flex justify-between items-center mb-1">
-                    <span className="text-sm font-medium text-[var(--aivo-text)]">
-                      {s.subject}
+                    <span
+                      className="text-sm font-medium"
+                      style={{ color: "var(--aivo-text)" }}
+                    >
+                      {subject.subject}
                     </span>
                     <span className="text-sm font-semibold text-[#7C3AED]">
-                      {Math.round(s.masteryPct)}%
+                      {Math.round(subject.masteryPct)}%
                     </span>
                   </div>
-                  <div className="w-full h-2.5 bg-[#F0E6FF] dark:bg-[#3D2D5C] rounded-full overflow-hidden">
+                  <div
+                    className="w-full h-2.5 rounded-full overflow-hidden"
+                    style={{ backgroundColor: "var(--aivo-purple-50)" }}
+                  >
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-[#7C3AED] to-[#A855F7] transition-all duration-500"
-                      style={{ width: `${s.masteryPct}%` }}
+                      className="h-full bg-gradient-to-r from-[#7C3AED] to-[#A855F7] rounded-full transition-all duration-700"
+                      style={{ width: `${subject.masteryPct}%` }}
                     />
                   </div>
                 </div>
-              ))
-            )}
-          </CardBody>
-        </Card>
+              ))}
+            </div>
+          </ExpandableCard>
+        </div>
+      )}
 
-        {/* Accommodations */}
-        <Card>
-          <CardHeader>
-            <h2 className="font-semibold text-[var(--aivo-text)] flex items-center gap-2">
-              <ShieldCheck size={18} className="text-[#7C3AED]" />
-              {t("accommodations")}
-            </h2>
-          </CardHeader>
-          <CardBody>
-            {brain.accommodations.length === 0 ? (
-              <p className="text-[var(--aivo-text-secondary)] text-sm">
-                {t("noAccommodations")}
-              </p>
-            ) : (
-              <ul className="space-y-3">
-                {brain.accommodations.map((acc) => (
-                  <li
-                    key={acc.id}
-                    className="flex items-start gap-2 text-sm text-[var(--aivo-text)]"
-                  >
-                    <span className="mt-1 w-1.5 h-1.5 rounded-full bg-[#7C3AED] shrink-0" />
-                    <div>
-                      <span className="font-medium">{acc.label}</span>
-                      {acc.description && (
-                        <p className="text-[var(--aivo-text-secondary)] text-xs mt-0.5">
-                          {acc.description}
-                        </p>
-                      )}
-                    </div>
-                  </li>
-                ))}
-              </ul>
+      <div className="mt-6">
+        <ExpandableCard
+          icon={<Send size={16} />}
+          title="Submit Insight"
+          subtitle="Share your observations about this learner"
+          gradient="linear-gradient(135deg, #F59E0B, #D97706)"
+          delay={700}
+          infoText="Your observations help AIVO fine-tune its approach for this learner. Notes about classroom behavior, social interactions, or learning breakthroughs are all valuable."
+        >
+          <textarea
+            value={insightText}
+            onChange={(e) => setInsightText(e.target.value)}
+            placeholder="Share observations about this learner's progress, behavior, or learning patterns..."
+            rows={3}
+            className="w-full rounded-2xl border border-[#E8DDF0] bg-white text-[var(--aivo-text)] px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent resize-none"
+          />
+          <div className="flex items-center justify-between mt-3">
+            {insightSuccess && (
+              <span className="text-sm text-green-600 font-medium">
+                Insight submitted successfully!
+              </span>
             )}
-          </CardBody>
-        </Card>
-
-        {/* IEP Goals */}
-        <Card>
-          <CardHeader>
-            <h2 className="font-semibold text-[var(--aivo-text)] flex items-center gap-2">
-              <Target size={18} className="text-[#7C3AED]" />
-              {t("iepGoals")}
-            </h2>
-          </CardHeader>
-          <CardBody className="space-y-5">
-            {brain.iepGoals.length === 0 ? (
-              <p className="text-[var(--aivo-text-secondary)] text-sm">{t("noIepGoals")}</p>
-            ) : (
-              brain.iepGoals.map((goal) => (
-                <div key={goal.id}>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-medium text-[var(--aivo-text)] dark:text-[#C4B5D0]">
-                      {goal.title}
-                    </span>
-                    {goal.targetDate && (
-                      <span className="text-xs text-[#A89BB5]">
-                        {t("target")} {formatDate(goal.targetDate)}
-                      </span>
-                    )}
-                  </div>
-                  <ProgressBar
-                    value={goal.progressPct}
-                    size="sm"
-                    showLabel={false}
-                  />
-                  <span className="text-xs text-[#7C3AED] font-semibold">
-                    {Math.round(goal.progressPct)}%
-                  </span>
-                </div>
-              ))
-            )}
-          </CardBody>
-        </Card>
-
-        {/* Recent Sessions */}
-        <Card>
-          <CardHeader>
-            <h2 className="font-semibold text-[var(--aivo-text)] flex items-center gap-2">
-              <Clock size={18} className="text-[#7C3AED]" />
-              {t("recentSessions")}
-            </h2>
-          </CardHeader>
-          <CardBody>
-            {brain.recentSessions.length === 0 ? (
-              <p className="text-[var(--aivo-text-secondary)] text-sm">{t("noSessions")}</p>
-            ) : (
-              <ul className="divide-y divide-[#F0E6FF] dark:divide-[#3D2D5C]">
-                {brain.recentSessions.map((session) => (
-                  <li
-                    key={session.id}
-                    className="py-3 flex items-center justify-between"
-                  >
-                    <div>
-                      <span className="text-sm font-medium text-[var(--aivo-text)] dark:text-[#C4B5D0]">
-                        {session.subject}
-                      </span>
-                      <div className="text-xs text-[var(--aivo-text-secondary)] mt-0.5 flex items-center gap-2">
-                        <span>{formatDate(session.date)}</span>
-                        <span>{session.durationMin} min</span>
-                      </div>
-                    </div>
-                    {session.score != null && (
-                      <Badge
-                        variant={session.score >= 70 ? "success" : "warning"}
-                      >
-                        {session.score}%
-                      </Badge>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </CardBody>
-        </Card>
+            {!insightSuccess && <span />}
+            <Button
+              size="sm"
+              loading={submittingInsight}
+              disabled={!insightText.trim()}
+              leftIcon={<Send size={14} />}
+              onClick={handleSubmitInsight}
+            >
+              Submit
+            </Button>
+          </div>
+        </ExpandableCard>
       </div>
 
-      {/* Upload IEP */}
-      <Card className="mt-6">
-        <CardBody className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-          <div className="flex-1">
-            <h3 className="font-semibold text-[var(--aivo-text)] flex items-center gap-2">
-              <Upload size={16} className="text-[#7C3AED]" />
-              {t("uploadIep")}
-            </h3>
-            <p className="text-sm text-[var(--aivo-text-secondary)] mt-1">
-              {t("uploadIepHint")}
-            </p>
-          </div>
-          <div className="flex items-center gap-3">
+      <div className="mt-6">
+        <ExpandableCard
+          icon={<Upload size={16} />}
+          title="Quick Upload IEP"
+          subtitle="Upload IEP documents for this learner"
+          gradient="linear-gradient(135deg, #6B7280, #4B5563)"
+          delay={800}
+          infoText="Upload IEP documents to help AIVO better understand this learner's needs. Accepted formats: PDF, Word documents."
+        >
+          <div className="flex items-center gap-4">
             <input
               ref={iepFileRef}
               type="file"
@@ -425,52 +464,16 @@ export default function LearnerBrainViewPage() {
               leftIcon={<Upload size={14} />}
               onClick={() => iepFileRef.current?.click()}
             >
-              {t("chooseFile")}
+              Choose File
             </Button>
             {iepSuccess && (
               <span className="text-sm text-green-600 font-medium">
-                {t("iepUploadedSuccess")}
+                IEP uploaded successfully!
               </span>
             )}
           </div>
-        </CardBody>
-      </Card>
-
-      {/* Submit Insight */}
-      <Card className="mt-6">
-        <CardHeader>
-          <h3 className="font-semibold text-[var(--aivo-text)] flex items-center gap-2">
-            <BookOpen size={16} className="text-[#7C3AED]" />
-            {t("submitInsight")}
-          </h3>
-        </CardHeader>
-        <CardBody>
-          <textarea
-            value={insightText}
-            onChange={(e) => setInsightText(e.target.value)}
-            placeholder={t("insightPlaceholder")}
-            rows={3}
-            className="w-full rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent resize-none"
-          />
-          <div className="flex items-center justify-between mt-3">
-            {insightSuccess && (
-              <span className="text-sm text-green-600 font-medium">
-                {t("insightSubmittedMsg")}
-              </span>
-            )}
-            {!insightSuccess && <span />}
-            <Button
-              size="sm"
-              loading={submittingInsight}
-              disabled={!insightText.trim()}
-              leftIcon={<Send size={14} />}
-              onClick={handleSubmitInsight}
-            >
-              {t("submit")}
-            </Button>
-          </div>
-        </CardBody>
-      </Card>
-    </div>
+        </ExpandableCard>
+      </div>
+    </PageWrapper>
   );
 }

@@ -137,6 +137,8 @@ const mockIep = {
 const mockCollaboration = [
   { id: "m1", name: "Ms. Rivera", role: "teacher", email: "rivera@school.edu", joinedAt: "2025-09-01T00:00:00Z", status: "active" },
   { id: "m2", name: "Dr. Chen", role: "therapist", email: "chen@therapy.com", joinedAt: "2025-10-15T00:00:00Z", status: "active" },
+  { id: "m3", name: "Jamie Rodriguez", role: "caregiver", email: "jamie@email.com", joinedAt: "2025-11-01T00:00:00Z", status: "active" },
+  { id: "m4", name: "", role: "caregiver", email: "grandma@email.com", joinedAt: "2026-01-10T00:00:00Z", status: "pending" },
 ];
 
 const mockQuestWorlds = [
@@ -612,6 +614,80 @@ export function getMockResponse(path: string, method: string = "GET", body?: str
     })],
     [/^\/api\/teacher\/learners\/[^/]+\/insights$/, () => ({ insights: [] })],
     [/^\/api\/teacher\/learners\/[^/]+\/iep$/, () => ({ success: true })],
+
+    ["/api/caregiver/child", () => ({
+      id: "learner-001",
+      name: "Alex Johnson",
+      functioningLevel: "SUPPORTED",
+      grade: "3rd Grade",
+      mastery: 72,
+      recentSessionCount: 4,
+      accommodationCount: 4,
+      iepGoalCount: 3,
+      subjects: [
+        { name: "Mathematics", mastery: 85 },
+        { name: "Science", mastery: 75 },
+        { name: "Language Arts", mastery: 58 },
+        { name: "Social Studies", mastery: 70 },
+      ],
+    })],
+    [/^\/api\/caregiver\/child\/brain-profile$/, () => ({
+      learningStyle: "Visual-spatial learner who excels with diagrams, color-coded information, and hands-on activities.",
+      communicationStyle: "Responds well to clear, concise instructions with visual supports. Prefers written over verbal directions.",
+      strengths: ["Visual Learning", "Pattern Recognition", "Creative Thinking", "Mathematics", "Spatial Reasoning"],
+      challenges: ["Auditory Processing", "Time Management", "Social Communication"],
+      sensoryPreferences: ["Low noise environments", "Dim lighting preferred", "Fidget tools helpful"],
+      adaptations: [
+        { label: "Visual Aids", description: "Uses image-based prompts", strength: 0.85 },
+        { label: "Extended Time", description: "1.5x time for responses", strength: 0.7 },
+        { label: "Micro-breaks", description: "Scheduled breaks every 15 min", strength: 0.6 },
+      ],
+    })],
+    [/^\/api\/caregiver\/child\/accommodations$/, () => ({
+      accommodations: [
+        { id: "a1", label: "Visual Aids", description: "Uses image-based prompts and diagrams", category: "Visual" },
+        { id: "a2", label: "Extended Time", description: "1.5x time for responses", category: "Pacing" },
+        { id: "a3", label: "Micro-breaks", description: "Scheduled breaks every 15 minutes", category: "Breaks" },
+        { id: "a4", label: "Low Stimulation", description: "Reduced animations and sounds", category: "Sensory" },
+      ],
+    })],
+    [/^\/api\/caregiver\/child\/iep$/, () => ({
+      goals: [
+        { id: "g1", title: "Improve reading fluency to grade level", progressPct: 62, targetDate: new Date(Date.now() + 86400000 * 60).toISOString() },
+        { id: "g2", title: "Increase social interaction during group work", progressPct: 45, targetDate: new Date(Date.now() + 86400000 * 90).toISOString() },
+        { id: "g3", title: "Use self-regulation strategies independently", progressPct: 78, targetDate: new Date(Date.now() + 86400000 * 30).toISOString() },
+      ],
+    })],
+    [/^\/api\/caregiver\/child\/gradebook$/, () => ({
+      subjects: [
+        { name: "Mathematics", mastery: 85 },
+        { name: "Science", mastery: 75 },
+        { name: "Language Arts", mastery: 58 },
+        { name: "Social Studies", mastery: 70 },
+      ],
+    })],
+    [/^\/api\/caregiver\/child\/sessions$/, () => ({
+      sessions: [
+        { id: "rs1", subject: "Mathematics", date: new Date(Date.now() - 3600000).toISOString(), durationMin: 25, score: 88 },
+        { id: "rs2", subject: "Language Arts", date: new Date(Date.now() - 86400000).toISOString(), durationMin: 20, score: 72 },
+        { id: "rs3", subject: "Science", date: new Date(Date.now() - 172800000).toISOString(), durationMin: 30, score: 80 },
+        { id: "rs4", subject: "Mathematics", date: new Date(Date.now() - 259200000).toISOString(), durationMin: 22, score: 92 },
+      ],
+    })],
+
+    [/^\/api\/teacher\/learners\/[^/]+\/brain-profile$/, () => ({
+      learningStyle: "Visual-spatial learner who excels with diagrams, color-coded information, and hands-on activities.",
+      communicationStyle: "Responds well to clear, concise instructions with visual supports. Prefers written over verbal directions.",
+      strengths: ["Visual Learning", "Pattern Recognition", "Creative Thinking", "Mathematics", "Spatial Reasoning"],
+      challenges: ["Auditory Processing", "Time Management", "Social Communication"],
+      sensoryPreferences: ["Low noise environments", "Dim lighting preferred", "Fidget tools helpful", "Weighted blanket for calm-down"],
+      adaptations: [
+        { type: "visual", label: "Visual Aids", description: "Uses image-based prompts and diagrams", strength: 0.85 },
+        { type: "pacing", label: "Extended Time", description: "Allows 1.5x time for responses", strength: 0.7 },
+        { type: "breaks", label: "Micro-breaks", description: "Scheduled breaks every 15 minutes", strength: 0.6 },
+        { type: "sensory", label: "Low Stimulation", description: "Reduced animations and sounds", strength: 0.45 },
+      ],
+    })],
 
     ["/api/users/me", () => ({ id: "test-parent-1", name: "Sarah Johnson", email: "parent@test.aivo.com", role: "parent" })],
     ["/api/users/me/preferences", () => ({ theme: "light", language: "en" })],

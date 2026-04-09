@@ -4,7 +4,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: "parent" | "learner" | "therapist" | "educator" | "admin";
+  role: "parent" | "learner" | "therapist" | "educator" | "admin" | "caregiver";
   avatarUrl?: string;
 }
 
@@ -26,7 +26,7 @@ export function hydrateTestUser(): boolean {
   const match = document.cookie.match(/(?:^|;\s*)user_role=(\w+)/);
   if (!match) return false;
   const role = match[1];
-  const names: Record<string, string> = { parent: "Sarah Johnson", learner: "Alex Johnson", teacher: "Ms. Rivera", admin: "Admin User" };
+  const names: Record<string, string> = { parent: "Sarah Johnson", learner: "Alex Johnson", teacher: "Ms. Rivera", admin: "Admin User", caregiver: "Jamie Rodriguez" };
   const storeRole = role === "teacher" ? "educator" : role;
   useAuthStore.getState().login(
     {
