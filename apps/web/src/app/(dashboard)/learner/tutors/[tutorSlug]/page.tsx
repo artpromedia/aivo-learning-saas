@@ -15,7 +15,6 @@ import { SpeechPracticeRecorder } from "@/components/tutors/speech-practice-reco
 import { apiFetch } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
 import { useTutorChat, type ChatMessage } from "@/hooks/useTutorChat";
-import { getMockTutorResponse } from "@/lib/mock-data";
 import { useLearnerStore } from "@/stores/learner.store";
 import { cn } from "@/lib/utils";
 
@@ -154,65 +153,20 @@ export default function TutorChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const messagesRef = useRef<ChatMessage[]>([]);
-  const mockIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const isMockSession = tutor?.sessionId?.startsWith("mock-session") ?? false;
-  const realChat = useTutorChat(isMockSession ? undefined : tutor?.sessionId);
-  const [mockMessages, setMockMessages] = useState<ChatMessage[]>([]);
-  const [mockStreaming, setMockStreaming] = useState(false);
+  const realChat = useTutorChat(tutor?.sessionId);
 
-  const messages = isMockSession ? mockMessages : realChat.messages;
-  const isStreaming = isMockSession ? mockStreaming : realChat.isStreaming;
-  const chatError = isMockSession ? null : realChat.error;
-
-  useEffect(() => {
-    return () => {
-      if (mockIntervalRef.current) clearInterval(mockIntervalRef.current);
-    };
-  }, []);
+  const messages = realChat.messages;
+  const isStreaming = realChat.isStreaming;
+  const chatError = realChat.error;
 
   const sendMessage = useCallback(async (content: string, _extraContext?: Record<string, unknown>) => {
-    if (isMockSession) {
-      if (mockIntervalRef.current) {
-        clearInterval(mockIntervalRef.current);
-        mockIntervalRef.current = null;
-      }
-
-      const userMsg: ChatMessage = { id: `user-${Date.now()}`, role: "user", content, timestamp: new Date().toISOString() };
-      setMockMessages((prev) => [...prev, userMsg]);
-      setMockStreaming(true);
-
-      const response = getMockTutorResponse(tutorSlug);
-      const tutorMsgId = `tutor-${Date.now()}`;
-      setMockMessages((prev) => [...prev, { id: tutorMsgId, role: "tutor", content: "", timestamp: new Date().toISOString() }]);
-
-      let idx = 0;
-      mockIntervalRef.current = setInterval(() => {
-        idx++;
-        const chunk = response.slice(0, idx * 3);
-        setMockMessages((prev) => prev.map((m) => m.id === tutorMsgId ? { ...m, content: chunk } : m));
-        if (idx * 3 >= response.length) {
-          if (mockIntervalRef.current) clearInterval(mockIntervalRef.current);
-          mockIntervalRef.current = null;
-          setMockStreaming(false);
-        }
-      }, 30);
-    } else {
-      await realChat.sendMessage(content, _extraContext);
-    }
-  }, [isMockSession, tutorSlug, realChat]);
+    await realChat.sendMessage(content, _extraContext);
+  }, [realChat]);
 
   const stopStreaming = useCallback(() => {
-    if (isMockSession) {
-      if (mockIntervalRef.current) {
-        clearInterval(mockIntervalRef.current);
-        mockIntervalRef.current = null;
-      }
-    } else {
-      realChat.stopStreaming();
-    }
-    setMockStreaming(false);
-  }, [isMockSession, realChat]);
+    realChat.stopStreaming();
+  }, [realChat]);
 
   const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;

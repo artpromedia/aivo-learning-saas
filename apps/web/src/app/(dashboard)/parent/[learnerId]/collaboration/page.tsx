@@ -86,24 +86,10 @@ export default function CollaborationPage() {
     setError(null);
     setInviteSuccess(false);
     try {
-      const isMock = document.cookie.includes("user_role=");
-      let newMember: CollaborationMember;
-      if (isMock) {
-        await new Promise((r) => setTimeout(r, 1500));
-        newMember = {
-          id: `member-${Date.now()}`,
-          name: "",
-          email: inviteEmail,
-          role: effectiveRole,
-          status: "pending",
-          joinedAt: new Date().toISOString(),
-        };
-      } else {
-        newMember = await apiFetch<CollaborationMember>(API_ROUTES.COLLABORATION.INVITE(learnerId), {
-          method: "POST",
-          body: JSON.stringify({ email: inviteEmail, role: effectiveRole }),
-        });
-      }
+      const newMember = await apiFetch<CollaborationMember>(API_ROUTES.COLLABORATION.INVITE(learnerId), {
+        method: "POST",
+        body: JSON.stringify({ email: inviteEmail, role: effectiveRole }),
+      });
       setMembers((prev) => [...prev, newMember]);
       setInviteEmail("");
       setInviteSuccess(true);
@@ -118,12 +104,7 @@ export default function CollaborationPage() {
   const handleRemove = async (memberId: string) => {
     setRemovingId(memberId);
     try {
-      const isMock = document.cookie.includes("user_role=");
-      if (isMock) {
-        await new Promise((r) => setTimeout(r, 800));
-      } else {
-        await apiFetch(API_ROUTES.COLLABORATION.REMOVE(learnerId, memberId), { method: "DELETE" });
-      }
+      await apiFetch(API_ROUTES.COLLABORATION.REMOVE(learnerId, memberId), { method: "DELETE" });
       setMembers((prev) => prev.filter((m) => m.id !== memberId));
     } catch (err) {
       setError(err instanceof Error ? err.message : t("failedToRemoveMember"));

@@ -1,140 +1,186 @@
 /// Centralized API endpoint constants for the AIVO Learning mobile app.
 ///
-/// Path-parameter helpers return interpolated strings so callers never
-/// hard-code raw paths with manual string concatenation.
+/// All paths are relative to the identity-svc gateway root (http://host:3001).
+/// Most routes go through /api prefix; family-svc routes are at root /family/*.
 class Endpoints {
   Endpoints._();
 
   // ---------------------------------------------------------------------------
   // Auth
   // ---------------------------------------------------------------------------
-  static const String login = '/auth/login';
-  static const String register = '/auth/register';
-  static const String logout = '/auth/logout';
-  static const String refreshToken = '/auth/refresh';
-  static const String oauthCallback = '/auth/oauth-callback';
-  static const String verifyEmail = '/auth/verify-email';
-  static const String forgotPassword = '/auth/forgot-password';
-  static const String resetPassword = '/auth/reset-password';
+  static const String login = '/api/auth/login';
+  static const String register = '/api/auth/register';
+  static const String logout = '/api/auth/logout';
+  static const String refreshToken = '/api/auth/refresh';
+  static const String oauthCallback = '/api/auth/oauth-callback';
+  static const String verifyEmail = '/api/auth/verify-email';
+  static const String forgotPassword = '/api/auth/forgot-password';
+  static const String resetPassword = '/api/auth/reset-password';
 
   // ---------------------------------------------------------------------------
   // Users
   // ---------------------------------------------------------------------------
-  static const String usersMe = '/users/me';
+  static const String usersMe = '/api/users/me';
 
   // ---------------------------------------------------------------------------
   // Learners
   // ---------------------------------------------------------------------------
-  static const String learners = '/learners';
-  static String learnerDetail(String id) => '/learners/$id';
+  static const String learners = '/api/learners';
+  static String learnerDetail(String id) => '/api/learners/$id';
 
   // ---------------------------------------------------------------------------
   // Learner PIN
   // ---------------------------------------------------------------------------
-  static String learnerSetPin(String id) => '/learners/$id/pin';
-  static String learnerVerifyPin(String id) => '/learners/$id/pin/verify';
+  static String learnerSetPin(String id) => '/api/learners/$id/pin';
+  static String learnerVerifyPin(String id) => '/api/learners/$id/pin/verify';
 
   // ---------------------------------------------------------------------------
   // Assessment (Parent + Baseline)
   // ---------------------------------------------------------------------------
   static const String parentAssessmentQuestions =
-      '/assessment/parent/questions';
-  static const String parentAssessmentSubmit = '/assessment/parent';
+      '/api/assessment/parent/questions';
+  static const String parentAssessmentSubmit = '/api/assessment/parent';
   static String baselineStart(String learnerId) =>
-      '/assessment/baseline/$learnerId/start';
+      '/api/assessment/baseline/$learnerId/start';
   static String baselineAnswer(String learnerId) =>
-      '/assessment/baseline/$learnerId/answer';
+      '/api/assessment/baseline/$learnerId/answer';
   static String baselineComplete(String learnerId) =>
-      '/assessment/baseline/$learnerId/complete';
+      '/api/assessment/baseline/$learnerId/complete';
 
   // ---------------------------------------------------------------------------
-  // Learning
+  // Brain (via identity-svc proxy → brain-svc)
   // ---------------------------------------------------------------------------
-  static const String learningSessionStart = '/learning/sessions/start';
+  static String brainProfile(String learnerId) =>
+      '/api/learners/$learnerId/brain-profile';
+  static String brainProfileApprove(String learnerId) =>
+      '/api/learners/$learnerId/brain-profile/approve';
+  static String brainProfileDecline(String learnerId) =>
+      '/api/learners/$learnerId/brain-profile/decline';
+  static String brainProfileInsights(String learnerId) =>
+      '/api/learners/$learnerId/brain-profile/insights';
+  static String brainProfileSeed(String learnerId) =>
+      '/api/learners/$learnerId/brain-profile/seed';
+  static String functioningLevel(String learnerId) =>
+      '/api/learners/$learnerId/functioning-level';
+  static String brainAccommodationsResolve(String learnerId) =>
+      '/api/learners/$learnerId/brain-profile/accommodations';
+
+  // ---------------------------------------------------------------------------
+  // Gradebook / Mastery (via identity-svc proxy → brain-svc)
+  // ---------------------------------------------------------------------------
+  static String gradebook(String learnerId) =>
+      '/api/learners/$learnerId/gradebook';
+  static String gradebookMastery(String learnerId) =>
+      '/api/learners/$learnerId/gradebook/mastery';
+
+  // ---------------------------------------------------------------------------
+  // Recommendations (via identity-svc proxy → brain-svc)
+  // ---------------------------------------------------------------------------
+  static String recommendations(String learnerId) =>
+      '/api/learners/$learnerId/recommendations';
+  static String recommendationApprove(String learnerId, String recId) =>
+      '/api/learners/$learnerId/recommendations/$recId/approve';
+  static String recommendationDecline(String learnerId, String recId) =>
+      '/api/learners/$learnerId/recommendations/$recId/decline';
+  static String recommendationAdjust(String learnerId, String recId) =>
+      '/api/learners/$learnerId/recommendations/$recId/adjust';
+
+  // ---------------------------------------------------------------------------
+  // Progress (via identity-svc proxy → engagement-svc + brain-svc)
+  // ---------------------------------------------------------------------------
+  static String progress(String learnerId) =>
+      '/api/learners/$learnerId/progress';
+
+  // ---------------------------------------------------------------------------
+  // Learning (via identity-svc proxy → learning-svc)
+  // ---------------------------------------------------------------------------
+  static const String learningSessionStart = '/api/learning/sessions/start';
   static String learningSessionInteract(String id) =>
-      '/learning/sessions/$id/interact';
+      '/api/learning/sessions/$id/interact';
   static String learningSessionComplete(String id) =>
-      '/learning/sessions/$id/complete';
+      '/api/learning/sessions/$id/complete';
   static String learningSessionDetail(String id) =>
-      '/learning/sessions/$id';
-  static const String learningSessionHistory = '/learning/sessions/history';
-  static const String learningPath = '/learning/learning-path';
-  static const String learningPathNext = '/learning/learning-path/next';
+      '/api/learning/sessions/$id';
+  static const String learningSessionHistory = '/api/learning/sessions/history';
+  static String learningPath(String learnerId) =>
+      '/api/learning/learning-path/$learnerId';
+  static String learningPathNext(String learnerId) =>
+      '/api/learning/learning-path/$learnerId/next';
   static const String learningPathSpacedReview =
-      '/learning/learning-path/spaced-review';
-  static const String gradebookSummary = '/learning/gradebook/summary';
-  static String gradebookSubject(String subject) =>
-      '/learning/gradebook/subject/$subject';
-  static const String questWorlds = '/learning/quests/worlds';
-  static String questWorldDetail(String id) => '/learning/quests/worlds/$id';
-  static const String questStart = '/learning/quests/start';
-  static String questChapter(String id) => '/learning/quests/chapter/$id';
+      '/api/learning/learning-path/spaced-review';
+  static const String questWorlds = '/api/learning/quests/worlds';
+  static String questWorldDetail(String id) =>
+      '/api/learning/quests/worlds/$id';
+  static const String questStart = '/api/learning/quests/start';
+  static String questChapter(String id) => '/api/learning/quests/chapter/$id';
   static String questChapterComplete(String id) =>
-      '/learning/quests/chapter/$id/complete';
-  static const String questBoss = '/learning/quests/boss';
-  static const String questProgress = '/learning/quests/progress';
-  static const String learningGoals = '/learning/goals';
+      '/api/learning/quests/chapter/$id/complete';
+  static const String questBoss = '/api/learning/quests/boss';
+  static const String questProgress = '/api/learning/quests/progress';
+  static const String learningGoals = '/api/learning/goals';
 
   // ---------------------------------------------------------------------------
-  // Tutor
+  // Tutor (via identity-svc proxy → tutor-svc)
   // ---------------------------------------------------------------------------
-  static const String tutorSessionStart = '/tutors/sessions/start';
+  static const String tutorSessionStart = '/api/tutors/sessions/start';
   static String tutorSessionMessage(String id) =>
-      '/tutors/sessions/$id/message';
-  static String tutorSessionEnd(String id) => '/tutors/sessions/$id/end';
-  static String tutorSessionDetail(String id) => '/tutors/sessions/$id';
-  static const String tutorSessionHistory = '/tutors/sessions/history';
-  static const String tutorCatalog = '/tutors/catalog';
-  static const String tutorSubscriptions = '/tutors/subscriptions';
-  static const String tutorHomeworkUpload = '/tutors/homework/upload';
-  static String tutorHomeworkDetail(String id) => '/tutors/homework/$id';
+      '/api/tutors/sessions/$id/message';
+  static String tutorSessionEnd(String id) => '/api/tutors/sessions/$id/end';
+  static String tutorSessionDetail(String id) => '/api/tutors/sessions/$id';
+  static const String tutorSessionHistory = '/api/tutors/sessions/history';
+  static const String tutorCatalog = '/api/tutors/catalog';
+  static const String tutorSubscriptions = '/api/tutors/subscriptions';
+  static const String tutorHomeworkUpload = '/api/tutors/homework/upload';
+  static String tutorHomeworkDetail(String id) => '/api/tutors/homework/$id';
   static String tutorHomeworkSessionStart(String id) =>
-      '/tutors/homework/$id/session/start';
+      '/api/tutors/homework/$id/session/start';
   static String tutorHomeworkSessionMessage(String id) =>
-      '/tutors/homework/$id/session/message';
+      '/api/tutors/homework/$id/session/message';
   static String tutorHomeworkSessionEnd(String id) =>
-      '/tutors/homework/$id/session/end';
+      '/api/tutors/homework/$id/session/end';
 
   // ---------------------------------------------------------------------------
-  // Engagement
+  // Engagement (via identity-svc proxy → engagement-svc)
   // ---------------------------------------------------------------------------
-  static String xp(String learnerId) => '/engagement/xp/$learnerId';
+  static String xp(String learnerId) =>
+      '/api/learners/$learnerId/engagement/xp';
   static String xpHistory(String learnerId) =>
-      '/engagement/xp/$learnerId/history';
+      '/api/learners/$learnerId/engagement/xp/history';
   static String streaks(String learnerId) =>
-      '/engagement/streaks/$learnerId';
+      '/api/learners/$learnerId/engagement/streaks';
   static String streakFreeze(String learnerId) =>
-      '/engagement/streaks/$learnerId/freeze';
+      '/api/learners/$learnerId/engagement/streaks/freeze';
   static String badgesEarned(String learnerId) =>
-      '/engagement/badges/$learnerId/earned';
-  static const String badgesAvailable = '/engagement/badges/available';
+      '/api/learners/$learnerId/engagement/badges';
+  static const String badgesAvailable =
+      '/api/engagement/badges/available';
   static String badgeProgress(String slug) =>
-      '/engagement/badges/$slug/progress';
-  static const String shopCatalog = '/engagement/shop/catalog';
-  static const String shopPurchase = '/engagement/shop/purchase';
+      '/api/engagement/badges/$slug/progress';
+  static const String shopCatalog = '/api/shop/items';
+  static const String shopPurchase = '/api/shop/purchase';
   static String inventory(String learnerId) =>
-      '/engagement/inventory/$learnerId';
+      '/api/learners/$learnerId/engagement/inventory';
   static String avatar(String learnerId) =>
-      '/engagement/avatar/$learnerId';
-  static const String challenges = '/engagement/challenges';
+      '/api/learners/$learnerId/avatar';
+  static const String challenges = '/api/engagement/challenges';
   static String challengeJoin(String id) =>
-      '/engagement/challenges/$id/join';
+      '/api/engagement/challenges/$id/join';
   static String challengePlay(String id) =>
-      '/engagement/challenges/$id/play';
+      '/api/engagement/challenges/$id/play';
   static String challengeResult(String id) =>
-      '/engagement/challenges/$id/result';
-  static const String leaderboardGlobal = '/engagement/leaderboard/global';
+      '/api/engagement/challenges/$id/result';
+  static const String leaderboardGlobal = '/api/engagement/leaderboard/global';
   static const String leaderboardClassroom =
-      '/engagement/leaderboard/classroom';
+      '/api/engagement/leaderboard/classroom';
   static const String leaderboardFriends =
-      '/engagement/leaderboard/friends';
-  static const String selCheckin = '/engagement/sel/checkin';
-  static const String selHistory = '/engagement/sel/history';
-  static const String selBreak = '/engagement/sel/break';
-  static const String dailyChallenges = '/engagement/daily/challenges';
+      '/api/engagement/leaderboard/friends';
+  static const String selCheckin = '/api/engagement/sel/checkin';
+  static const String selHistory = '/api/engagement/sel/history';
+  static const String selBreak = '/api/engagement/sel/break';
+  static const String dailyChallenges = '/api/engagement/daily/challenges';
 
   // ---------------------------------------------------------------------------
-  // Family
+  // Family (root-level proxy, NOT under /api)
   // ---------------------------------------------------------------------------
   static String familyDashboardSummary(String learnerId) =>
       '/family/dashboard/$learnerId/summary';
@@ -151,6 +197,8 @@ class Endpoints {
       '/family/insights/$learnerId';
   static String familyCollaborationMembers(String learnerId) =>
       '/family/collaboration/$learnerId/members';
+  static String familyCollaborationInvite(String learnerId) =>
+      '/family/collaboration/$learnerId/invite';
   static const String familyIepUpload = '/family/iep/upload';
   static String familyIepDocuments(String learnerId) =>
       '/family/iep/documents/$learnerId';
@@ -174,69 +222,57 @@ class Endpoints {
       '/family/subscriptions/$learnerId/overview';
 
   // ---------------------------------------------------------------------------
-  // Brain
+  // Notifications (via identity-svc proxy → comms-svc)
+  // Proxy extracts userId from JWT, no need to pass userId manually
   // ---------------------------------------------------------------------------
-  static String brainLearner(String learnerId) =>
-      '/brain/learner/$learnerId';
-  static const String brainAccommodationsResolve =
-      '/brain/accommodations/resolve';
-  static String brainMasteryLearner(String learnerId) =>
-      '/brain/mastery/learner/$learnerId';
-  static const String brainMasteryUpdate = '/brain/mastery/update';
-  static String brainRecommendationsLearner(String learnerId) =>
-      '/brain/recommendations/learner/$learnerId';
-  static const String brainTutors = '/brain/tutors';
-
-  // ---------------------------------------------------------------------------
-  // Comms
-  // ---------------------------------------------------------------------------
-  static String notifications(String userId) =>
-      '/comms/notifications/$userId';
+  static const String notifications = '/api/notifications';
   static String notificationRead(String id) =>
-      '/comms/notifications/$id/read';
-  static String notificationsReadAll(String userId) =>
-      '/comms/notifications/$userId/read-all';
-  static String notificationPreferences(String userId) =>
-      '/comms/notifications/$userId/preferences';
-  static const String pushRegister = '/comms/push/register';
+      '/api/notifications/$id/read';
+  static const String notificationsReadAll = '/api/notifications/read-all';
+  static const String notificationPreferences =
+      '/api/notifications/preferences';
+  static const String pushRegister = '/api/notifications/push/register';
   static String pushRegisterDevice(String deviceId) =>
-      '/comms/push/register/$deviceId';
-  static const String ws = '/comms/ws';
+      '/api/notifications/push/devices/$deviceId';
 
   // ---------------------------------------------------------------------------
-  // Billing
+  // Billing (via identity-svc proxy → billing-svc)
   // ---------------------------------------------------------------------------
-  static const String billingPlans = '/billing/plans';
-  static const String billingSubscriptions = '/billing/subscriptions';
-  static const String billingAddons = '/billing/addons';
+  static const String billingPlans = '/api/billing/plans';
+  static const String billingSubscriptions = '/api/billing/subscriptions';
+  static const String billingAddons = '/api/billing/addons';
 
   // ---------------------------------------------------------------------------
-  // Teacher
+  // Teacher (via identity-svc proxy → teacher routes)
   // ---------------------------------------------------------------------------
-  static const String teacherClassrooms = '/teacher/classrooms';
-  static String teacherClassroomDetail(String id) => '/teacher/classrooms/$id';
+  static const String teacherClassrooms = '/api/teacher/classrooms';
+  static String teacherClassroomDetail(String id) =>
+      '/api/teacher/classrooms/$id';
   static String teacherLearnerBrain(String learnerId) =>
-      '/teacher/learners/$learnerId/brain';
+      '/api/learners/$learnerId/brain-profile';
   static String teacherLearnerInsights(String learnerId) =>
-      '/teacher/learners/$learnerId/insights';
+      '/api/learners/$learnerId/brain-profile/insights';
 
   // ---------------------------------------------------------------------------
-  // Caregiver
+  // Caregiver (via identity-svc proxy → family-svc)
+  // Caregiver routes go through family-svc with caregiver auth context
   // ---------------------------------------------------------------------------
-  static const String caregiverChild = '/caregiver/child';
-  static const String caregiverBrain = '/caregiver/brain';
-  static const String caregiverAccommodations = '/caregiver/accommodations';
-  static const String caregiverIep = '/caregiver/iep';
-  static const String caregiverGradebook = '/caregiver/gradebook';
-  static const String caregiverSessions = '/caregiver/sessions';
+  static const String caregiverChild = '/family/caregiver/child';
+  static const String caregiverBrain = '/family/caregiver/brain';
+  static const String caregiverAccommodations =
+      '/family/caregiver/accommodations';
+  static const String caregiverIep = '/family/caregiver/iep';
+  static const String caregiverGradebook = '/family/caregiver/gradebook';
+  static const String caregiverSessions = '/family/caregiver/sessions';
 
   // ---------------------------------------------------------------------------
-  // i18n
+  // i18n (direct to i18n-svc, no proxy in identity-svc)
   // ---------------------------------------------------------------------------
-  static const String i18nLocales = '/i18n/locales';
-  static String i18nTranslations(String locale) => '/i18n/translations/$locale';
+  static const String i18nLocales = '/api/i18n/locales';
+  static String i18nTranslations(String locale) =>
+      '/api/i18n/translations/$locale';
   static String i18nTranslationsNamespace(String locale, String namespace) =>
-      '/i18n/translations/$locale/$namespace';
-  static String i18nExport(String locale) => '/i18n/export/$locale';
-  static const String i18nExportCoverage = '/i18n/export/coverage';
+      '/api/i18n/translations/$locale/$namespace';
+  static String i18nExport(String locale) => '/api/i18n/export/$locale';
+  static const String i18nExportCoverage = '/api/i18n/export/coverage';
 }

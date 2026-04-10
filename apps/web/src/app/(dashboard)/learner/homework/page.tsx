@@ -68,33 +68,14 @@ export default function HomeworkPage() {
     setError(null);
     setLockedInfo(null);
     try {
-      const isMock = document.cookie.includes("user_role=");
-      if (isMock) {
-        await new Promise((r) => setTimeout(r, 1500));
-        const subjectGuess = file.name.toLowerCase().includes("math") ? "Mathematics"
-          : file.name.toLowerCase().includes("sci") ? "Science"
-          : file.name.toLowerCase().includes("eng") || file.name.toLowerCase().includes("read") ? "Language Arts"
-          : "General";
-        const mockAssignment: HomeworkAssignment = {
-          id: `hw-${Date.now()}`,
-          subject: subjectGuess,
-          status: "READY",
-          homeworkMode: "adaptive",
-          createdAt: new Date().toISOString(),
-          adaptedProblems: [],
-          extractedText: `Uploaded: ${file.name}`,
-        };
-        setAssignments((prev) => [mockAssignment, ...prev]);
-      } else {
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("learnerId", activeLearner.id);
-        const res = await fetch(`/api/tutors/homework/upload`, { method: "POST", credentials: "include", body: formData });
-        const data: UploadResponse = await res.json();
-        if (data.locked) { setLockedInfo({ locked: true, requiredSku: data.requiredSku ?? "" }); return; }
-        if (!res.ok) throw new Error(t("uploadFailed"));
-        if (data.assignment) setAssignments((prev) => [data.assignment!, ...prev]);
-      }
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("learnerId", activeLearner.id);
+      const res = await fetch(`/api/tutors/homework/upload`, { method: "POST", credentials: "include", body: formData });
+      const data: UploadResponse = await res.json();
+      if (data.locked) { setLockedInfo({ locked: true, requiredSku: data.requiredSku ?? "" }); return; }
+      if (!res.ok) throw new Error(t("uploadFailed"));
+      if (data.assignment) setAssignments((prev) => [data.assignment!, ...prev]);
     } catch (err) {
       setError(err instanceof Error ? err.message : t("errorUploadFailed"));
     } finally {

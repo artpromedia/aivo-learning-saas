@@ -70,20 +70,11 @@ export default function IepPage() {
     setUploading(true);
     setError(null);
     try {
-      const isMock = document.cookie.includes("user_role=");
-      if (isMock) {
-        await new Promise((r) => setTimeout(r, 2000));
-        setData((prev) => prev ? {
-          ...prev,
-          documents: [...prev.documents, { id: `doc-${Date.now()}`, fileName: file.name, uploadedAt: new Date().toISOString(), fileSize: file.size }],
-        } : null);
-      } else {
-        const formData = new FormData();
-        formData.append("file", file);
-        await fetch(`${API_ROUTES.IEP.UPLOAD_DOCUMENT(learnerId)}`, { method: "POST", credentials: "include", body: formData });
-        const result = await apiFetch<IepData>(API_ROUTES.IEP.GET(learnerId));
-        setData(result);
-      }
+      const formData = new FormData();
+      formData.append("file", file);
+      await fetch(`${API_ROUTES.IEP.UPLOAD_DOCUMENT(learnerId)}`, { method: "POST", credentials: "include", body: formData });
+      const result = await apiFetch<IepData>(API_ROUTES.IEP.GET(learnerId));
+      setData(result);
     } catch (err) {
       setError(err instanceof Error ? err.message : t("uploadFailed"));
     } finally {

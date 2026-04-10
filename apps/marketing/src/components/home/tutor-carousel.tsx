@@ -7,6 +7,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SectionHeader } from "@/components/shared/section-header";
+import { useI18n } from "@/providers/i18n-provider";
 import {
   TUTOR_ORDER,
   getTutorConfig,
@@ -14,31 +15,28 @@ import {
   type TutorAvatarConfig,
 } from "@/components/tutors/tutor-avatar-data";
 
-/* ─── Constants ─────────────────────────────────────────────────── */
-
 const AUTOPLAY_INTERVAL = 6000;
 const TOTAL = TUTOR_ORDER.length;
-
-/* ─── Helpers ───────────────────────────────────────────────────── */
 
 function wrap(index: number): number {
   return ((index % TOTAL) + TOTAL) % TOTAL;
 }
 
-/* ─── Flanking Card ─────────────────────────────────────────────── */
-
 function FlankingCard({
   config,
   side,
   onClick,
+  label,
 }: {
   config: TutorAvatarConfig;
   side: "left" | "right";
   onClick: () => void;
+  label: string;
 }) {
   return (
     <motion.button
       onClick={onClick}
+      aria-label={label}
       className="relative hidden md:block w-48 lg:w-56 aspect-[3/4] rounded-2xl overflow-hidden cursor-pointer shrink-0"
       initial={{ opacity: 0, x: side === "left" ? -40 : 40 }}
       animate={{ opacity: 0.7, x: 0, scale: 0.85 }}
@@ -63,16 +61,28 @@ function FlankingCard({
         }}
       />
       <div className="absolute bottom-0 left-0 right-0 p-4">
-        <p className="text-white font-bold text-lg">{config.name}</p>
+        <p className="text-white font-bold text-lg">{label}</p>
         <p className="text-white/80 text-xs">{config.subject}</p>
       </div>
     </motion.button>
   );
 }
 
-/* ─── Active Hero Panel ─────────────────────────────────────────── */
-
-function ActivePanel({ config }: { config: TutorAvatarConfig }) {
+function ActivePanel({
+  config,
+  tutorName,
+  tutorSubject,
+  tutorTagline,
+  sellingPoints,
+  ctaText,
+}: {
+  config: TutorAvatarConfig;
+  tutorName: string;
+  tutorSubject: string;
+  tutorTagline: string;
+  sellingPoints: string[];
+  ctaText: string;
+}) {
   const shouldReduceMotion = useReducedMotion();
 
   return (
@@ -84,9 +94,7 @@ function ActivePanel({ config }: { config: TutorAvatarConfig }) {
       transition={{ duration: 0.5, ease: "easeOut" }}
       className="flex flex-col md:flex-row items-center gap-8 lg:gap-14 w-full max-w-5xl mx-auto"
     >
-      {/* Hero Image */}
       <div className="relative w-64 h-80 sm:w-72 sm:h-96 md:w-80 md:h-[28rem] shrink-0">
-        {/* Radial glow */}
         <motion.div
           aria-hidden="true"
           className="absolute inset-0 -z-10 rounded-full blur-3xl"
@@ -98,7 +106,6 @@ function ActivePanel({ config }: { config: TutorAvatarConfig }) {
           }
           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
         />
-        {/* Floating image */}
         <motion.div
           className="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl"
           animate={!shouldReduceMotion ? { y: [0, -8, 0] } : {}}
@@ -106,7 +113,7 @@ function ActivePanel({ config }: { config: TutorAvatarConfig }) {
         >
           <Image
             src={config.heroImage}
-            alt={`${config.name} — AIVO's ${config.subject} Tutor`}
+            alt={`${tutorName} — AIVO's ${tutorSubject} Tutor`}
             fill
             priority
             sizes="(max-width: 768px) 288px, 320px"
@@ -116,9 +123,7 @@ function ActivePanel({ config }: { config: TutorAvatarConfig }) {
         </motion.div>
       </div>
 
-      {/* Text Content */}
       <div className="flex-1 text-center md:text-left">
-        {/* Subject pill */}
         <span
           className={cn(
             "inline-block rounded-full px-4 py-1.5 text-sm font-semibold mb-4",
@@ -126,23 +131,22 @@ function ActivePanel({ config }: { config: TutorAvatarConfig }) {
             config.tailwindText,
           )}
         >
-          {config.subject}
+          {tutorSubject}
         </span>
 
         <h3 className="text-3xl sm:text-4xl font-bold text-aivo-navy-800">
-          {config.name}
+          {tutorName}
         </h3>
 
         <p
           className="mt-3 text-lg sm:text-xl italic"
           style={{ color: config.primaryColor }}
         >
-          {config.tagline}
+          {tutorTagline}
         </p>
 
-        {/* Selling points */}
         <ul className="mt-6 space-y-3">
-          {config.sellingPoints.map((point) => (
+          {sellingPoints.map((point) => (
             <li key={point} className="flex items-start gap-3">
               <Check
                 className="mt-0.5 h-5 w-5 shrink-0"
@@ -153,27 +157,26 @@ function ActivePanel({ config }: { config: TutorAvatarConfig }) {
           ))}
         </ul>
 
-        {/* CTA */}
         <Link
           href={`/tutors#${config.persona}`}
           className="mt-8 inline-block rounded-lg px-8 py-3 font-semibold text-white shadow-sm transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
           style={{ backgroundColor: config.primaryColor }}
         >
-          Learn with {config.name}
+          {ctaText}
         </Link>
       </div>
     </motion.div>
   );
 }
 
-/* ─── Dot Indicators ────────────────────────────────────────────── */
-
 function DotIndicators({
   activeIndex,
   onSelect,
+  getLabel,
 }: {
   activeIndex: number;
   onSelect: (i: number) => void;
+  getLabel: (persona: string) => string;
 }) {
   return (
     <div className="flex items-center justify-center gap-2 mt-10">
@@ -184,7 +187,7 @@ function DotIndicators({
           <button
             key={persona}
             onClick={() => onSelect(i)}
-            aria-label={`View ${config.name}`}
+            aria-label={getLabel(persona)}
             className={cn(
               "rounded-full transition-all duration-300",
               isActive ? "w-8 h-3" : "w-3 h-3 hover:scale-125",
@@ -201,9 +204,8 @@ function DotIndicators({
   );
 }
 
-/* ─── Main Carousel ─────────────────────────────────────────────── */
-
 export function TutorCarousel() {
+  const { t } = useI18n();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -212,6 +214,29 @@ export function TutorCarousel() {
   const leftConfig = getTutorConfig(TUTOR_ORDER[wrap(activeIndex - 1)]);
   const rightConfig = getTutorConfig(TUTOR_ORDER[wrap(activeIndex + 1)]);
 
+  const tt = (key: string) => t("aiTutors", key);
+
+  const getTutorName = (persona: string) =>
+    tt(`${persona}Name`) || getTutorConfig(persona as any).name;
+  const getTutorSubject = (persona: string) =>
+    tt(`${persona}Subject`) || getTutorConfig(persona as any).subject;
+  const getTutorTagline = (persona: string) =>
+    tt(`${persona}Tagline`) || getTutorConfig(persona as any).tagline;
+  const getTutorPoints = (persona: string): string[] => {
+    const cfg = getTutorConfig(persona as any);
+    return [
+      tt(`${persona}Point1`) || cfg.sellingPoints[0],
+      tt(`${persona}Point2`) || cfg.sellingPoints[1],
+      tt(`${persona}Point3`) || cfg.sellingPoints[2],
+    ];
+  };
+  const getLearnWithText = (name: string) =>
+    tt("learnWith").replace("{name}", name);
+  const getViewLabel = (persona: string) => {
+    const name = getTutorName(persona);
+    return tt("viewTutor").replace("{name}", name);
+  };
+
   const navigate = useCallback(
     (direction: 1 | -1) => {
       setActiveIndex((prev) => wrap(prev + direction));
@@ -219,7 +244,6 @@ export function TutorCarousel() {
     [],
   );
 
-  // Autoplay
   useEffect(() => {
     if (isPaused) return;
     intervalRef.current = setInterval(() => navigate(1), AUTOPLAY_INTERVAL);
@@ -228,7 +252,6 @@ export function TutorCarousel() {
     };
   }, [isPaused, navigate, activeIndex]);
 
-  // Keyboard navigation
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft") navigate(-1);
@@ -237,6 +260,8 @@ export function TutorCarousel() {
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [navigate]);
+
+  const activeName = getTutorName(activeConfig.persona);
 
   return (
     <section
@@ -247,7 +272,6 @@ export function TutorCarousel() {
       onFocus={() => setIsPaused(true)}
       onBlur={() => setIsPaused(false)}
     >
-      {/* Animated radial background */}
       <motion.div
         className="absolute inset-0 -z-10"
         animate={{
@@ -258,75 +282,76 @@ export function TutorCarousel() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader
-          title="Meet Your AI Learning Team"
-          subtitle="Seven specialized AI tutors, each with a unique personality and teaching style designed to make every subject engaging and fun."
+          title={tt("title")}
+          subtitle={tt("subtitle")}
         />
 
-        {/* Carousel Layout */}
         <div
           className="relative flex items-center justify-center gap-4 lg:gap-8"
           role="region"
           aria-roledescription="carousel"
-          aria-label="AI Tutors"
+          aria-label={tt("carouselLabel")}
         >
-          {/* Left arrow */}
           <button
             onClick={() => navigate(-1)}
-            aria-label="Previous tutor"
+            aria-label={tt("previousTutor")}
             className="absolute left-0 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 shadow-md backdrop-blur-sm transition-all hover:bg-white hover:shadow-lg md:static"
           >
             <ChevronLeft className="h-5 w-5 text-aivo-navy-600" />
           </button>
 
-          {/* Left flanking card */}
           <AnimatePresence mode="popLayout">
             <FlankingCard
               key={`left-${leftConfig.persona}`}
               config={leftConfig}
               side="left"
               onClick={() => navigate(-1)}
+              label={getTutorName(leftConfig.persona)}
             />
           </AnimatePresence>
 
-          {/* Active hero panel */}
           <div
             className="flex-1 min-w-0"
             role="group"
             aria-roledescription="slide"
-            aria-label={`${activeConfig.name} — ${activeConfig.subject}`}
+            aria-label={`${activeName} — ${getTutorSubject(activeConfig.persona)}`}
           >
             <AnimatePresence mode="wait">
               <ActivePanel
                 key={activeConfig.persona}
                 config={activeConfig}
+                tutorName={activeName}
+                tutorSubject={getTutorSubject(activeConfig.persona)}
+                tutorTagline={getTutorTagline(activeConfig.persona)}
+                sellingPoints={getTutorPoints(activeConfig.persona)}
+                ctaText={getLearnWithText(activeName)}
               />
             </AnimatePresence>
           </div>
 
-          {/* Right flanking card */}
           <AnimatePresence mode="popLayout">
             <FlankingCard
               key={`right-${rightConfig.persona}`}
               config={rightConfig}
               side="right"
               onClick={() => navigate(1)}
+              label={getTutorName(rightConfig.persona)}
             />
           </AnimatePresence>
 
-          {/* Right arrow */}
           <button
             onClick={() => navigate(1)}
-            aria-label="Next tutor"
+            aria-label={tt("nextTutor")}
             className="absolute right-0 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 shadow-md backdrop-blur-sm transition-all hover:bg-white hover:shadow-lg md:static"
           >
             <ChevronRight className="h-5 w-5 text-aivo-navy-600" />
           </button>
         </div>
 
-        {/* Dot indicators */}
         <DotIndicators
           activeIndex={activeIndex}
           onSelect={setActiveIndex}
+          getLabel={getViewLabel}
         />
       </div>
     </section>

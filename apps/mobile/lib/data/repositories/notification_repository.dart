@@ -22,11 +22,11 @@ class NotificationRepository {
     int page = 1,
   }) async {
     final response = await _api.get(
-      Endpoints.notifications(userId),
+      Endpoints.notifications,
       queryParameters: {'page': page},
     );
     final data = response.data as Map<String, dynamic>;
-    return (data['notifications'] as List<dynamic>?)
+    return ((data['items'] ?? data['notifications']) as List<dynamic>?)
             ?.map((e) => e as Map<String, dynamic>)
             .toList() ??
         [];
@@ -43,7 +43,7 @@ class NotificationRepository {
 
   /// Marks all notifications for a user as read.
   Future<void> markAllAsRead(String userId) async {
-    await _api.post(Endpoints.notificationsReadAll(userId));
+    await _api.post(Endpoints.notificationsReadAll);
   }
 
   // ---------------------------------------------------------------------------
@@ -53,15 +53,15 @@ class NotificationRepository {
   /// Returns the user's notification preferences.
   Future<Map<String, dynamic>> getPreferences(String userId) async {
     final response =
-        await _api.get(Endpoints.notificationPreferences(userId));
+        await _api.get(Endpoints.notificationPreferences);
     return response.data as Map<String, dynamic>;
   }
 
   /// Updates the user's notification preferences.
   Future<void> updatePreferences(
       String userId, Map<String, dynamic> prefs,) async {
-    await _api.put(
-      Endpoints.notificationPreferences(userId),
+    await _api.patch(
+      Endpoints.notificationPreferences,
       data: prefs,
     );
   }

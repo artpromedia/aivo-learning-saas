@@ -44,7 +44,6 @@ export function useAuth() {
     } catch {
       // Always clear local state even if server call fails
     } finally {
-      document.cookie = "user_role=; path=/; max-age=0";
       storeLogout();
     }
   }, [storeLogout]);

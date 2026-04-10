@@ -112,15 +112,10 @@ export default function LearnerHubPage() {
     setSubmittingInsight(true);
     setInsightSuccess(false);
     try {
-      const isMock = document.cookie.includes("user_role=");
-      if (isMock) {
-        await new Promise((r) => setTimeout(r, 1000));
-      } else {
-        await apiFetch(API_ROUTES.TEACHER.LEARNER_INSIGHTS(learnerId), {
-          method: "POST",
-          body: JSON.stringify({ text: insightText.trim() }),
-        });
-      }
+      await apiFetch(API_ROUTES.TEACHER.LEARNER_INSIGHTS(learnerId), {
+        method: "POST",
+        body: JSON.stringify({ text: insightText.trim() }),
+      });
       setInsightText("");
       setInsightSuccess(true);
       setTimeout(() => setInsightSuccess(false), 3000);
@@ -137,20 +132,15 @@ export default function LearnerHubPage() {
     setUploadingIep(true);
     setIepSuccess(false);
     try {
-      const isMock = document.cookie.includes("user_role=");
-      if (isMock) {
-        await new Promise((r) => setTimeout(r, 2000));
-      } else {
-        const formData = new FormData();
-        formData.append("file", file);
-        const res = await fetch(
-          `${API_ROUTES.TEACHER.LEARNER_IEP_UPLOAD(learnerId)}`,
-          { method: "POST", credentials: "include", body: formData },
-        );
-        if (!res.ok) {
-          const body = await res.json().catch(() => ({}));
-          throw new Error(body.error ?? `Upload failed: ${res.status}`);
-        }
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch(
+        `${API_ROUTES.TEACHER.LEARNER_IEP_UPLOAD(learnerId)}`,
+        { method: "POST", credentials: "include", body: formData },
+      );
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error ?? `Upload failed: ${res.status}`);
       }
       setIepSuccess(true);
       setTimeout(() => setIepSuccess(false), 5000);

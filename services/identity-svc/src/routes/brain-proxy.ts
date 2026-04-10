@@ -8,6 +8,7 @@
 import type { FastifyPluginAsync } from "fastify";
 import { sql } from "drizzle-orm";
 import { loadConfig } from "../config.js";
+import { getToken } from "./proxy-utils.js";
 
 const { BRAIN_SVC_URL, ENGAGEMENT_SVC_URL } = loadConfig();
 
@@ -92,7 +93,7 @@ export const brainProxyRoutes: FastifyPluginAsync = async (app) => {
     "/learners/:learnerId/brain-profile",
     async (request, reply) => {
       const { learnerId } = request.params;
-      const token = request.cookies.access_token;
+      const token = getToken(request);
       const { status, data } = await proxyToBrain(
         `/brain/learner/${learnerId}`,
         token
@@ -110,7 +111,7 @@ export const brainProxyRoutes: FastifyPluginAsync = async (app) => {
     "/learners/:learnerId/brain-profile/approve",
     async (request, reply) => {
       const { learnerId } = request.params;
-      const token = request.cookies.access_token;
+      const token = getToken(request);
 
       const { status, data } = await proxyToBrain(
         `/brain/learner/${learnerId}`,
@@ -137,7 +138,7 @@ export const brainProxyRoutes: FastifyPluginAsync = async (app) => {
     "/learners/:learnerId/brain-profile/decline",
     async (request, reply) => {
       const { learnerId } = request.params;
-      const token = request.cookies.access_token;
+      const token = getToken(request);
 
       const { status, data } = await proxyToBrain(
         `/brain/learner/${learnerId}`,
@@ -164,7 +165,7 @@ export const brainProxyRoutes: FastifyPluginAsync = async (app) => {
     "/learners/:learnerId/brain-profile/insights",
     async (request, reply) => {
       const { learnerId } = request.params;
-      const token = request.cookies.access_token;
+      const token = getToken(request);
 
       const { status, data } = await proxyToBrain(
         `/brain/learner/${learnerId}`,
@@ -196,7 +197,7 @@ export const brainProxyRoutes: FastifyPluginAsync = async (app) => {
     "/learners/:learnerId/brain-profile/seed",
     async (request, reply) => {
       const { learnerId } = request.params;
-      const token = request.cookies.access_token;
+      const token = getToken(request);
 
       // Check if brain state already exists via brain-svc
       const existing = await proxyToBrain(
@@ -266,7 +267,7 @@ export const brainProxyRoutes: FastifyPluginAsync = async (app) => {
     "/learners/:learnerId/recommendations",
     async (request, reply) => {
       const { learnerId } = request.params;
-      const token = request.cookies.access_token;
+      const token = getToken(request);
       const { status, data } = await proxyToBrain(
         `/recommendations/learner/${learnerId}`,
         token
@@ -300,7 +301,7 @@ export const brainProxyRoutes: FastifyPluginAsync = async (app) => {
     "/learners/:learnerId/recommendations/:recId/approve",
     async (request, reply) => {
       const { recId } = request.params;
-      const token = request.cookies.access_token;
+      const token = getToken(request);
       const { status, data } = await proxyToBrain(
         `/recommendations/${recId}/respond`,
         token,
@@ -316,7 +317,7 @@ export const brainProxyRoutes: FastifyPluginAsync = async (app) => {
     "/learners/:learnerId/recommendations/:recId/decline",
     async (request, reply) => {
       const { recId } = request.params;
-      const token = request.cookies.access_token;
+      const token = getToken(request);
       const { status, data } = await proxyToBrain(
         `/recommendations/${recId}/respond`,
         token,
@@ -332,7 +333,7 @@ export const brainProxyRoutes: FastifyPluginAsync = async (app) => {
     "/learners/:learnerId/recommendations/:recId/adjust",
     async (request, reply) => {
       const { recId } = request.params;
-      const token = request.cookies.access_token;
+      const token = getToken(request);
       const { status, data } = await proxyToBrain(
         `/recommendations/${recId}/respond`,
         token,
@@ -350,7 +351,7 @@ export const brainProxyRoutes: FastifyPluginAsync = async (app) => {
     "/learners/:learnerId/gradebook/mastery",
     async (request, reply) => {
       const { learnerId } = request.params;
-      const token = request.cookies.access_token;
+      const token = getToken(request);
       const { status, data } = await proxyToBrain(
         `/mastery/learner/${learnerId}`,
         token
@@ -399,7 +400,7 @@ export const brainProxyRoutes: FastifyPluginAsync = async (app) => {
     "/learners/:learnerId/gradebook",
     async (request, reply) => {
       const { learnerId } = request.params;
-      const token = request.cookies.access_token;
+      const token = getToken(request);
       const { status, data } = await proxyToBrain(
         `/mastery/learner/${learnerId}`,
         token
@@ -449,7 +450,7 @@ export const brainProxyRoutes: FastifyPluginAsync = async (app) => {
     "/learners/:learnerId/functioning-level",
     async (request, reply) => {
       const { learnerId } = request.params;
-      const token = request.cookies.access_token;
+      const token = getToken(request);
       const { status, data } = await proxyToBrain(
         `/functional/learner/${learnerId}`,
         token
@@ -467,7 +468,7 @@ export const brainProxyRoutes: FastifyPluginAsync = async (app) => {
     "/learners/:learnerId/progress",
     async (request, reply) => {
       const { learnerId } = request.params;
-      const token = request.cookies.access_token;
+      const token = getToken(request);
 
       // Combine XP and mastery data to produce a progress summary
       const [xpRes, masteryRes] = await Promise.all([

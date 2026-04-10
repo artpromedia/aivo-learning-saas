@@ -13,7 +13,7 @@ final _brainProfileProvider =
     FutureProvider.family<Map<String, dynamic>, String>((ref, learnerId) async {
   final api = ref.read(apiClientProvider);
   try {
-    final res = await api.get(Endpoints.brainLearner(learnerId));
+    final res = await api.get(Endpoints.brainProfile(learnerId));
     return res.data as Map<String, dynamic>;
   } catch (_) {
     return {

@@ -32,7 +32,7 @@ final _profileDataProvider =
     api.get(Endpoints.xp(learnerId)),
     api.get(Endpoints.streaks(learnerId)),
     api.get(Endpoints.badgesEarned(learnerId)),
-    api.get(Endpoints.gradebookSummary),
+    api.get(Endpoints.gradebook(learnerId)),
   ]);
 
   final xpData = results[0].data as Map<String, dynamic>;

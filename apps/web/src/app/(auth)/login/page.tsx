@@ -186,29 +186,6 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <div className="mt-6 rounded-3xl p-5" style={{ backgroundColor: "var(--aivo-purple-50)", border: "2px dashed var(--aivo-purple-200, #DDD6FE)" }}>
-          <p className="text-xs font-bold text-center mb-3" style={{ color: "var(--aivo-purple-500)" }}>
-            Test Accounts (Dev Only)
-          </p>
-          <div className="grid grid-cols-2 gap-2">
-            <a href="/api/test-login?role=parent" className="block px-3 py-2.5 rounded-2xl text-xs font-bold text-white text-center transition-all hover:scale-[1.03] active:scale-[0.98]" style={{ background: "linear-gradient(135deg, #7C3AED, #A855F7)" }}>
-              Parent
-            </a>
-            <a href="/api/test-login?role=learner" className="block px-3 py-2.5 rounded-2xl text-xs font-bold text-white text-center transition-all hover:scale-[1.03] active:scale-[0.98]" style={{ background: "linear-gradient(135deg, #2DD4BF, #38BDF8)" }}>
-              Learner
-            </a>
-            <a href="/api/test-login?role=teacher" className="block px-3 py-2.5 rounded-2xl text-xs font-bold text-white text-center transition-all hover:scale-[1.03] active:scale-[0.98]" style={{ background: "linear-gradient(135deg, #FB923C, #F472B6)" }}>
-              Teacher
-            </a>
-            <a href="/api/test-login?role=admin" className="block px-3 py-2.5 rounded-2xl text-xs font-bold text-white text-center transition-all hover:scale-[1.03] active:scale-[0.98]" style={{ background: "linear-gradient(135deg, #6366F1, #8B5CF6)" }}>
-              District Admin
-            </a>
-            <a href="/api/test-login?role=platform_admin" className="block px-3 py-2.5 rounded-2xl text-xs font-bold text-white text-center transition-all hover:scale-[1.03] active:scale-[0.98]" style={{ background: "linear-gradient(135deg, #DC2626, #F97316)" }}>
-              Platform Admin
-            </a>
-          </div>
-        </div>
-
         <p className="mt-6 text-center text-sm font-medium" style={{ color: "var(--aivo-text-secondary)" }}>
           {t("noAccount")}{" "}
           <Link href="/register" className="font-bold" style={{ color: "var(--aivo-purple-500)" }}>

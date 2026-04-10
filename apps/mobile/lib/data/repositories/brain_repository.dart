@@ -58,7 +58,7 @@ class BrainRepository {
   Future<BrainContext> getBrainContext(String learnerId) async {
     if (_isOnline) {
       try {
-        final response = await _api.get(Endpoints.brainLearner(learnerId));
+        final response = await _api.get(Endpoints.brainProfile(learnerId));
         final data = response.data as Map<String, dynamic>;
         final context = BrainContext.fromJson(data);
         // Cache locally for offline access.
@@ -80,7 +80,7 @@ class BrainRepository {
   /// Forces a full sync of the brain snapshot from the remote API into local
   /// storage and returns the fresh [BrainContext].
   Future<BrainContext> syncBrainSnapshot(String learnerId) async {
-    final response = await _api.get(Endpoints.brainLearner(learnerId));
+    final response = await _api.get(Endpoints.brainProfile(learnerId));
     final data = response.data as Map<String, dynamic>;
     final context = BrainContext.fromJson(data);
     await _saveBrainContext(context);
@@ -102,7 +102,7 @@ class BrainRepository {
     if (_isOnline) {
       try {
         final response =
-            await _api.get(Endpoints.brainMasteryLearner(learnerId));
+            await _api.get(Endpoints.gradebookMastery(learnerId));
         final data = response.data as Map<String, dynamic>;
         final items = (data['masteryLevels'] as List<dynamic>?)
                 ?.map(
@@ -153,7 +153,7 @@ class BrainRepository {
 
     if (_isOnline) {
       try {
-        await _api.post(Endpoints.brainMasteryUpdate, data: payload);
+        await _api.post(Endpoints.gradebookMastery(learnerId), data: payload);
         return;
       } on DioException {
         // Queue offline.
@@ -161,7 +161,7 @@ class BrainRepository {
     }
 
     await _syncManager.queueAction(SyncAction(
-      endpoint: Endpoints.brainMasteryUpdate,
+      endpoint: Endpoints.gradebookMastery(learnerId),
       method: 'POST',
       payload: jsonEncode(payload),
     ),);
@@ -200,7 +200,7 @@ class BrainRepository {
     if (_isOnline) {
       try {
         final response = await _api
-            .get(Endpoints.brainRecommendationsLearner(learnerId),);
+            .get(Endpoints.recommendations(learnerId),);
         final data = response.data as Map<String, dynamic>;
         final items = (data['recommendations'] as List<dynamic>?)
                 ?.map((e) =>
@@ -237,7 +237,7 @@ class BrainRepository {
     // Fetch server state.
     BrainContext serverContext;
     try {
-      final response = await _api.get(Endpoints.brainLearner(learnerId));
+      final response = await _api.get(Endpoints.brainProfile(learnerId));
       final data = response.data as Map<String, dynamic>;
       serverContext = BrainContext.fromJson(data);
     } on DioException {
@@ -265,7 +265,7 @@ class BrainRepository {
 
       // Fetch fresh state that now includes replayed actions.
       try {
-        final response = await _api.get(Endpoints.brainLearner(learnerId));
+        final response = await _api.get(Endpoints.brainProfile(learnerId));
         final data = response.data as Map<String, dynamic>;
         final finalContext = BrainContext.fromJson(data);
         await _saveBrainContext(finalContext);
