@@ -391,7 +391,7 @@ class _CardWidget extends StatelessWidget {
               child: isFace
                   ? Text(card.emoji, style: const TextStyle(fontSize: 32))
                   : const Icon(Icons.question_mark,
-                      color: Colors.white54, size: 28),
+                      color: Colors.white54, size: 28,),
             ),
           ),
         ),

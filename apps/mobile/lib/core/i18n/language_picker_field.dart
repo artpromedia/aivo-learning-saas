@@ -58,7 +58,7 @@ class LanguagePickerField extends ConsumerWidget {
     String label,
   ) {
     return DropdownButtonFormField<String>(
-      value: selectedLocaleCode,
+      initialValue: selectedLocaleCode,
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: const Icon(Icons.language),

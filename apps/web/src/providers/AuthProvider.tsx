@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { useAuthStore } from "@/stores/auth.store";
+import { useAuthStore, type User } from "@/stores/auth.store";
 import { apiFetch } from "@/lib/api";
 import { AUTH_ROUTES } from "@/lib/api-routes";
 
@@ -14,7 +14,6 @@ interface SessionResponse {
     role: string;
     avatarUrl?: string;
   };
-  token?: string;
 }
 
 const PUBLIC_PATHS = ["/login", "/register", "/forgot-password", "/reset-password", "/verify-email", "/accept-invite"];
@@ -31,8 +30,8 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
       try {
         const data = await apiFetch<SessionResponse>(AUTH_ROUTES.SESSION);
         if (!cancelled) {
-          setUser({ ...data.user, role: data.user.role.toLowerCase() as "parent" | "therapist" | "educator" | "admin" });
-          setToken(data.token ?? "");
+          setUser({ ...data.user, role: data.user.role.toLowerCase() as User["role"] });
+          setToken("");
         }
       } catch {
         if (!cancelled) {

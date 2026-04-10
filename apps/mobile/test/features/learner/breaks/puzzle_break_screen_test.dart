@@ -59,7 +59,7 @@ void main() {
       await tester.pumpWidget(buildApp(
         xpAwardCallback: (xp) => xpReceived = xp,
         onComplete: () {},
-      ));
+      ),);
       await tester.pump();
 
       await tester.tap(find.text("I'm Ready!"));

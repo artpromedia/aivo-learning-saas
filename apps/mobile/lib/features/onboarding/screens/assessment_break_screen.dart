@@ -147,9 +147,9 @@ class _AssessmentBreakScreenState extends ConsumerState<AssessmentBreakScreen>
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
+          const Text(
             '\uD83C\uDF89', // 🎉
-            style: const TextStyle(fontSize: 64),
+            style: TextStyle(fontSize: 64),
           ),
           const SizedBox(height: 16),
           Text(

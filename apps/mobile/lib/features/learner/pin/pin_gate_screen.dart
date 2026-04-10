@@ -125,7 +125,7 @@ class _PinGateScreenState extends ConsumerState<PinGateScreen> {
                     shape: BoxShape.circle,
                   ),
                   child: Icon(Icons.lock_outline,
-                      size: 36, color: colorScheme.primary),
+                      size: 36, color: colorScheme.primary,),
                 ),
                 const SizedBox(height: 24),
                 Text(
@@ -176,7 +176,7 @@ class _PinGateScreenState extends ConsumerState<PinGateScreen> {
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: BorderSide(
-                                    color: colorScheme.primary, width: 2),
+                                    color: colorScheme.primary, width: 2,),
                               ),
                             ),
                             onChanged: (v) => _onDigitEntered(i, v),

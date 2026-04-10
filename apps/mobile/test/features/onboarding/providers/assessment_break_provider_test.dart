@@ -12,7 +12,7 @@ void main() {
         frequencyQuestions: 4,
         preferredTypes: ['breathing', 'music', 'puzzle'],
         adaptiveBreaks: true,
-      ));
+      ),);
     });
 
     test('initial state has zero questions answered', () {
@@ -103,7 +103,7 @@ void main() {
     test('getNextBreakType returns breathing for empty preferredTypes', () {
       final emptyNotifier = AssessmentBreakNotifier(const BreakConfig(
         preferredTypes: [],
-      ));
+      ),);
       expect(emptyNotifier.getNextBreakType(), 'breathing');
     });
 
@@ -111,7 +111,7 @@ void main() {
       final noAdaptive = AssessmentBreakNotifier(const BreakConfig(
         frequencyQuestions: 8,
         adaptiveBreaks: false,
-      ));
+      ),);
 
       noAdaptive.recordAnswer(false);
       noAdaptive.recordAnswer(false);

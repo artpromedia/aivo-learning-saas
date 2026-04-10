@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:aivo_mobile/app.dart';
 import 'package:aivo_mobile/config/theme.dart';
 import 'package:aivo_mobile/core/auth/auth_provider.dart';
-import 'package:aivo_mobile/core/i18n/translation_ext.dart';
 import 'package:aivo_mobile/data/repositories/family_repository.dart';
 
 // ---------------------------------------------------------------------------
@@ -78,10 +77,9 @@ class FamilySettingsScreen extends ConsumerWidget {
     final asyncLearners = ref.watch(_learnersProvider);
     final selectedId = ref.watch(_selectedLearnerIdProvider);
     final theme = Theme.of(context);
-    final t = ref.t;
 
     return Scaffold(
-      appBar: AppBar(title: Text(t('settings.settings'))),
+      appBar: AppBar(title: const Text('Settings')),
       body: asyncLearners.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(
@@ -91,19 +89,19 @@ class FamilySettingsScreen extends ConsumerWidget {
               Icon(Icons.error_outline,
                   size: 48, color: theme.colorScheme.error,),
               const SizedBox(height: 16),
-              Text(t('settings.failedToLoad')),
+              const Text('Failed to load settings'),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () => ref.invalidate(_learnersProvider),
-                child: Text(t('common.retry')),
+                child: const Text('Retry'),
               ),
             ],
           ),
         ),
         data: (learners) {
           if (learners.isEmpty) {
-            return Center(
-              child: Text(t('settings.noChildrenFound')),
+            return const Center(
+              child: Text('No children found. Add a child first.'),
             );
           }
 
@@ -144,7 +142,6 @@ class _SettingsBody extends ConsumerWidget {
     final settingsState =
         ref.watch(_settingsNotifierProvider(currentLearnerId));
     final theme = Theme.of(context);
-    final t = ref.t;
 
     if (settingsState == null) {
       return const Center(child: CircularProgressIndicator());
@@ -163,9 +160,9 @@ class _SettingsBody extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: DropdownButtonFormField<String>(
               initialValue: currentLearnerId,
-              decoration: InputDecoration(
-                labelText: t('settings.selectChild'),
-                prefixIcon: const Icon(Icons.child_care),
+              decoration: const InputDecoration(
+                labelText: 'Select Child',
+                prefixIcon: Icon(Icons.child_care),
               ),
               items: learners.map((l) {
                 return DropdownMenuItem(
@@ -184,16 +181,17 @@ class _SettingsBody extends ConsumerWidget {
         const SizedBox(height: 16),
 
         // ---- Accessibility ----
-        _SettingsSectionHeader(title: t('settings.accessibility')),
+        const _SettingsSectionHeader(title: 'Accessibility'),
         _InfoTile(
           icon: Icons.psychology,
-          title: t('settings.functioningLevel'),
+          title: 'Functioning Level',
           subtitle: settings.functioningLevel,
         ),
         SwitchListTile(
           secondary: const Icon(Icons.font_download),
-          title: Text(t('settings.dyslexicFont')),
-          subtitle: Text(t('settings.dyslexicFontDesc')),
+          title: const Text('OpenDyslexic Font'),
+          subtitle:
+              const Text('Use OpenDyslexic font throughout the app'),
           value: settings.useDyslexicFont,
           onChanged: (v) {
             notifier.update(settings.copyWith(useDyslexicFont: v));
@@ -202,10 +200,10 @@ class _SettingsBody extends ConsumerWidget {
         ),
         ListTile(
           leading: const Icon(Icons.text_fields),
-          title: Text(t('settings.fontSize')),
+          title: const Text('Font Size'),
           subtitle: Semantics(
             label:
-                '${t('settings.fontSize')} ${settings.fontSizeScale.toStringAsFixed(1)}',
+                'Font size scale ${settings.fontSizeScale.toStringAsFixed(1)}',
             slider: true,
             child: Slider(
               value: settings.fontSizeScale.clamp(0.8, 1.5),
@@ -221,8 +219,8 @@ class _SettingsBody extends ConsumerWidget {
         ),
         SwitchListTile(
           secondary: const Icon(Icons.volume_up),
-          title: Text(t('settings.audioNarration')),
-          subtitle: Text(t('settings.audioNarrationDesc')),
+          title: const Text('Audio Narration'),
+          subtitle: const Text('Read all text aloud'),
           value: settings.audioNarration,
           onChanged: (v) {
             notifier.update(settings.copyWith(audioNarration: v));
@@ -230,8 +228,9 @@ class _SettingsBody extends ConsumerWidget {
         ),
         SwitchListTile(
           secondary: const Icon(Icons.touch_app),
-          title: Text(t('settings.switchScanning')),
-          subtitle: Text(t('settings.switchScanningDesc')),
+          title: const Text('Switch Scanning'),
+          subtitle:
+              const Text('Enable switch access scanning mode'),
           value: settings.switchScan,
           onChanged: (v) {
             notifier.update(settings.copyWith(switchScan: v));
@@ -240,10 +239,10 @@ class _SettingsBody extends ConsumerWidget {
         const Divider(height: 32),
 
         // ---- Notifications ----
-        _SettingsSectionHeader(title: t('settings.notifications')),
+        const _SettingsSectionHeader(title: 'Notifications'),
         SwitchListTile(
           secondary: const Icon(Icons.notifications_active),
-          title: Text(t('settings.learningReminders')),
+          title: const Text('Learning Reminders'),
           value: settings.pushLearningReminders,
           onChanged: (v) {
             notifier
@@ -252,7 +251,7 @@ class _SettingsBody extends ConsumerWidget {
         ),
         SwitchListTile(
           secondary: const Icon(Icons.local_fire_department),
-          title: Text(t('settings.streakWarnings')),
+          title: const Text('Streak Warnings'),
           value: settings.pushStreakWarnings,
           onChanged: (v) {
             notifier
@@ -261,7 +260,7 @@ class _SettingsBody extends ConsumerWidget {
         ),
         SwitchListTile(
           secondary: const Icon(Icons.recommend),
-          title: Text(t('settings.recommendationNotifs')),
+          title: const Text('Recommendations'),
           value: settings.pushRecommendations,
           onChanged: (v) {
             notifier
@@ -270,7 +269,7 @@ class _SettingsBody extends ConsumerWidget {
         ),
         SwitchListTile(
           secondary: const Icon(Icons.emoji_events),
-          title: Text(t('settings.badgeNotifs')),
+          title: const Text('Badge Notifications'),
           value: settings.pushBadges,
           onChanged: (v) {
             notifier.update(settings.copyWith(pushBadges: v));
@@ -279,11 +278,12 @@ class _SettingsBody extends ConsumerWidget {
         const Divider(height: 32),
 
         // ---- Privacy ----
-        _SettingsSectionHeader(title: t('settings.privacy')),
+        const _SettingsSectionHeader(title: 'Privacy'),
         SwitchListTile(
           secondary: const Icon(Icons.share),
-          title: Text(t('settings.dataSharing')),
-          subtitle: Text(t('settings.dataSharingDesc')),
+          title: const Text('Data Sharing'),
+          subtitle: const Text(
+              'Share anonymized learning data to improve AIVO',),
           value: settings.dataSharing,
           onChanged: (v) {
             notifier.update(settings.copyWith(dataSharing: v));
@@ -292,17 +292,17 @@ class _SettingsBody extends ConsumerWidget {
         const Divider(height: 32),
 
         // ---- Learning ----
-        _SettingsSectionHeader(title: t('settings.learningSection')),
+        const _SettingsSectionHeader(title: 'Learning'),
         ListTile(
           leading: const Icon(Icons.timer),
-          title: Text(t('settings.sessionDuration')),
+          title: const Text('Session Duration Limit'),
           subtitle: Text(
               '${settings.sessionDurationLimitMinutes} minutes',),
           trailing: SizedBox(
             width: 160,
             child: Semantics(
               label:
-                  '${t('settings.sessionDuration')} ${settings.sessionDurationLimitMinutes} minutes',
+                  'Session duration limit ${settings.sessionDurationLimitMinutes} minutes',
               slider: true,
               child: Slider(
                 value:
@@ -323,13 +323,13 @@ class _SettingsBody extends ConsumerWidget {
         ),
         ListTile(
           leading: const Icon(Icons.flag),
-          title: Text(t('settings.dailyGoal')),
+          title: const Text('Daily Goal'),
           subtitle: Text('${settings.dailyGoalMinutes} minutes'),
           trailing: SizedBox(
             width: 160,
             child: Semantics(
               label:
-                  '${t('settings.dailyGoal')} ${settings.dailyGoalMinutes} minutes',
+                  'Daily goal ${settings.dailyGoalMinutes} minutes',
               slider: true,
               child: Slider(
                 value: settings.dailyGoalMinutes.toDouble(),
@@ -356,38 +356,38 @@ class _SettingsBody extends ConsumerWidget {
         const Divider(height: 32),
 
         // ---- Learner PIN ----
-        _SettingsSectionHeader(title: t('settings.learnerPin')),
+        const _SettingsSectionHeader(title: 'Learner PIN'),
         _PinManagementTile(learnerId: currentLearnerId),
         const Divider(height: 32),
 
         // ---- Account ----
-        _SettingsSectionHeader(title: t('settings.account')),
+        const _SettingsSectionHeader(title: 'Account'),
         ListTile(
           leading: const Icon(Icons.lock_outline),
-          title: Text(t('settings.changePassword')),
+          title: const Text('Change Password'),
           trailing: const Icon(Icons.chevron_right),
           onTap: () {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                  content: Text(t('settings.changePasswordComingSoon')),),
+              const SnackBar(
+                  content: Text('Password change coming soon'),),
             );
           },
         ),
         ListTile(
           leading: const Icon(Icons.email_outlined),
-          title: Text(t('settings.changeEmail')),
+          title: const Text('Change Email'),
           trailing: const Icon(Icons.chevron_right),
           onTap: () {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                  content: Text(t('settings.changeEmailComingSoon')),),
+              const SnackBar(
+                  content: Text('Email change coming soon'),),
             );
           },
         ),
         ListTile(
           leading: Icon(Icons.delete_forever,
               color: theme.colorScheme.error,),
-          title: Text(t('settings.deleteAccount'),
+          title: Text('Delete Account',
               style: TextStyle(color: theme.colorScheme.error),),
           onTap: () => _confirmDeleteAccount(context, ref),
         ),
@@ -398,22 +398,24 @@ class _SettingsBody extends ConsumerWidget {
 
   Future<void> _confirmDeleteAccount(
       BuildContext context, WidgetRef ref,) async {
-    final t = ref.t;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(t('settings.deleteAccount')),
-        content: Text(t('settings.deleteAccountConfirm')),
+        title: const Text('Delete Account'),
+        content: const Text(
+          'This action is permanent and cannot be undone. '
+          'All your data and your children\'s learning data will be removed.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(t('common.cancel')),
+            child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
             style: TextButton.styleFrom(
                 foregroundColor: AivoColors.error,),
-            child: Text(t('settings.deleteAccount')),
+            child: const Text('Delete Account'),
           ),
         ],
       ),
@@ -432,7 +434,7 @@ class _SettingsBody extends ConsumerWidget {
 // Subject toggles
 // ---------------------------------------------------------------------------
 
-class _SubjectToggles extends ConsumerWidget {
+class _SubjectToggles extends StatelessWidget {
   const _SubjectToggles({
     required this.enabledSubjects,
     required this.onChanged,
@@ -452,8 +454,7 @@ class _SubjectToggles extends ConsumerWidget {
   ];
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final t = ref.t;
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Wrap(
@@ -461,7 +462,13 @@ class _SubjectToggles extends ConsumerWidget {
         runSpacing: 4,
         children: _allSubjects.map((subject) {
           final isEnabled = enabledSubjects.contains(subject);
-          final displayName = t('settings.subject_$subject');
+          final displayName = subject
+              .replaceAll('_', ' ')
+              .split(' ')
+              .map((w) => w.isNotEmpty
+                  ? '${w[0].toUpperCase()}${w.substring(1)}'
+                  : w,)
+              .join(' ');
           return FilterChip(
             label: Text(displayName),
             selected: isEnabled,
@@ -510,27 +517,6 @@ class _SettingsSectionHeader extends StatelessWidget {
 // Info tile (non-interactive)
 // ---------------------------------------------------------------------------
 
-class _InfoTile extends StatelessWidget {
-  const _InfoTile({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-  });
-
-  final IconData icon;
-  final String title;
-  final String subtitle;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      leading: Icon(icon),
-      title: Text(title),
-      subtitle: Text(subtitle),
-    );
-  }
-}
-
 // ---------------------------------------------------------------------------
 // PIN management tile
 // ---------------------------------------------------------------------------
@@ -559,16 +545,15 @@ class _PinManagementTileState extends ConsumerState<_PinManagementTile> {
   }
 
   Future<void> _handleSetPin() async {
-    final t = ref.t;
     final pin = _pinController.text.trim();
     final confirm = _confirmPinController.text.trim();
 
     if (!RegExp(r'^\d{4,6}$').hasMatch(pin)) {
-      setState(() => _errorMessage = t('settings.pinMustBeDigits'));
+      setState(() => _errorMessage = 'PIN must be 4-6 digits');
       return;
     }
     if (pin != confirm) {
-      setState(() => _errorMessage = t('settings.pinsDoNotMatch'));
+      setState(() => _errorMessage = 'PINs do not match');
       return;
     }
 
@@ -582,12 +567,12 @@ class _PinManagementTileState extends ConsumerState<_PinManagementTile> {
       final repo = ref.read(familyRepositoryProvider);
       await repo.setLearnerPin(widget.learnerId, pin);
       setState(() {
-        _successMessage = t('settings.pinUpdated');
+        _successMessage = 'PIN updated successfully';
         _pinController.clear();
         _confirmPinController.clear();
       });
     } catch (e) {
-      setState(() => _errorMessage = t('settings.pinFailed'));
+      setState(() => _errorMessage = 'Failed to set PIN');
     } finally {
       setState(() => _isUpdating = false);
     }
@@ -596,14 +581,13 @@ class _PinManagementTileState extends ConsumerState<_PinManagementTile> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final t = ref.t;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            t('settings.pinDescription'),
+            'Set or change the PIN your child uses to access their learning dashboard.',
             style: theme.textTheme.bodySmall,
           ),
           const SizedBox(height: 12),
@@ -614,11 +598,11 @@ class _PinManagementTileState extends ConsumerState<_PinManagementTile> {
             maxLength: 6,
             textAlign: TextAlign.center,
             style: const TextStyle(letterSpacing: 8, fontSize: 18),
-            decoration: InputDecoration(
-              labelText: t('settings.newPin'),
+            decoration: const InputDecoration(
+              labelText: 'New PIN',
               hintText: '••••',
               counterText: '',
-              prefixIcon: const Icon(Icons.pin_outlined),
+              prefixIcon: Icon(Icons.pin_outlined),
             ),
           ),
           const SizedBox(height: 8),
@@ -629,11 +613,11 @@ class _PinManagementTileState extends ConsumerState<_PinManagementTile> {
             maxLength: 6,
             textAlign: TextAlign.center,
             style: const TextStyle(letterSpacing: 8, fontSize: 18),
-            decoration: InputDecoration(
-              labelText: t('settings.confirmPin'),
+            decoration: const InputDecoration(
+              labelText: 'Confirm PIN',
               hintText: '••••',
               counterText: '',
-              prefixIcon: const Icon(Icons.pin_outlined),
+              prefixIcon: Icon(Icons.pin_outlined),
             ),
           ),
           const SizedBox(height: 12),
@@ -641,13 +625,13 @@ class _PinManagementTileState extends ConsumerState<_PinManagementTile> {
             Padding(
               padding: const EdgeInsets.only(bottom: 8),
               child: Text(_errorMessage!,
-                  style: TextStyle(color: theme.colorScheme.error, fontSize: 13)),
+                  style: TextStyle(color: theme.colorScheme.error, fontSize: 13),),
             ),
           if (_successMessage != null)
             Padding(
               padding: const EdgeInsets.only(bottom: 8),
               child: Text(_successMessage!,
-                  style: TextStyle(color: AivoColors.secondary, fontSize: 13)),
+                  style: const TextStyle(color: AivoColors.secondary, fontSize: 13),),
             ),
           ElevatedButton.icon(
             onPressed: _isUpdating ? null : _handleSetPin,
@@ -655,13 +639,38 @@ class _PinManagementTileState extends ConsumerState<_PinManagementTile> {
                 ? const SizedBox(
                     width: 16,
                     height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2))
+                    child: CircularProgressIndicator(strokeWidth: 2),)
                 : const Icon(Icons.lock_reset),
-            label: Text(t('settings.setPin')),
+            label: const Text('Set PIN'),
           ),
           const SizedBox(height: 16),
         ],
       ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Info tile (non-interactive)
+// ---------------------------------------------------------------------------
+
+class _InfoTile extends StatelessWidget {
+  const _InfoTile({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(title),
+      subtitle: Text(subtitle),
     );
   }
 }

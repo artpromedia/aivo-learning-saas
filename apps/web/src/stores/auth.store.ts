@@ -6,7 +6,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: "parent" | "learner" | "therapist" | "educator" | "admin" | "caregiver" | "platform_admin";
+  role: "parent" | "learner" | "teacher" | "educator" | "caregiver" | "admin" | "district_admin" | "platform_admin";
   avatarUrl?: string;
   platformRole?: PlatformRole;
 }

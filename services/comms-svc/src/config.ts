@@ -10,7 +10,7 @@ const configSchema = z.object({
   NATS_URL: z.string().default("nats://localhost:4222"),
   JWT_PUBLIC_KEY: z.string().min(1),
   OONRUMAIL_API_KEY: z.string().default(""),
-  OONRUMAIL_BASE_URL: z.string().url().default("https://api.oonrumail.com/v1"),
+  OONRUMAIL_BASE_URL: z.string().url().default("https://api.oonrumail.com/api/v1/transactional/aivolearning"),
   FIREBASE_PROJECT_ID: z.string().default(""),
   FIREBASE_CLIENT_EMAIL: z.string().default(""),
   FIREBASE_PRIVATE_KEY: z.string().default(""),

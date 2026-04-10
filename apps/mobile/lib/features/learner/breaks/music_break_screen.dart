@@ -114,7 +114,7 @@ class _MusicBreakScreenState extends ConsumerState<MusicBreakScreen>
         xFraction: 0.1 + _random.nextDouble() * 0.8,
         startDelay: Duration(milliseconds: _random.nextInt(4000)),
         durationSeconds: 4 + _random.nextInt(4),
-      ));
+      ),);
     }
   }
 
@@ -190,7 +190,7 @@ class _MusicBreakScreenState extends ConsumerState<MusicBreakScreen>
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const Text('\u{1F3B5}',
-                              style: TextStyle(fontSize: 28)),
+                              style: TextStyle(fontSize: 28),),
                           const SizedBox(width: 8),
                           Text(
                             'Calm Melody',
@@ -319,7 +319,7 @@ class _MusicBreakScreenState extends ConsumerState<MusicBreakScreen>
                   shape: BoxShape.circle,
                   color: Colors.white.withValues(alpha: 0.08),
                   border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.2), width: 1),
+                      color: Colors.white.withValues(alpha: 0.2), width: 1,),
                 ),
               ),
             ),
@@ -333,7 +333,7 @@ class _MusicBreakScreenState extends ConsumerState<MusicBreakScreen>
                   shape: BoxShape.circle,
                   color: Colors.white.withValues(alpha: 0.15),
                   border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.4), width: 2),
+                      color: Colors.white.withValues(alpha: 0.4), width: 2,),
                 ),
               ),
             ),

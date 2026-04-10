@@ -58,7 +58,7 @@ void main() {
     testWidgets('CURRICULUM_ADJUSTMENT shows tune icon and Learning Path label',
         (tester) async {
       await tester.pumpWidget(
-          buildApp(createRec(type: 'CURRICULUM_ADJUSTMENT')));
+          buildApp(createRec(type: 'CURRICULUM_ADJUSTMENT')),);
       await tester.pumpAndSettle();
 
       expect(find.text('Learning Path'), findsOneWidget);
@@ -121,7 +121,7 @@ void main() {
       await tester.pumpWidget(buildApp(createRec(
         type: 'CURRICULUM_ADJUSTMENT',
         payload: {'domain': 'Mathematics'},
-      )));
+      ),),);
       await tester.pumpAndSettle();
 
       expect(find.text('Mathematics'), findsOneWidget);
@@ -129,7 +129,7 @@ void main() {
 
     testWidgets('no domain badge when payload is null', (tester) async {
       await tester.pumpWidget(
-          buildApp(createRec(type: 'TUTOR_SUGGESTION', payload: null)));
+          buildApp(createRec(type: 'TUTOR_SUGGESTION', payload: null)),);
       await tester.pumpAndSettle();
 
       // Should not crash, just no Chip with domain

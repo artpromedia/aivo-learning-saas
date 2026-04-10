@@ -56,7 +56,7 @@ class AssessmentBreakNotifier extends StateNotifier<AssessmentBreakState> {
               (config ?? const BreakConfig()).preferredTypes.isNotEmpty
                   ? (config ?? const BreakConfig()).preferredTypes.first
                   : 'breathing',
-        ));
+        ),);
 
   /// Record that the learner answered a question.
   ///

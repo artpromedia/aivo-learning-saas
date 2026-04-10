@@ -489,7 +489,7 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
                           suffixIcon: IconButton(
                             icon: Icon(_obscurePin
                                 ? Icons.visibility_off
-                                : Icons.visibility),
+                                : Icons.visibility,),
                             onPressed: () {
                               setState(() => _obscurePin = !_obscurePin);
                             },
@@ -532,10 +532,10 @@ class _AddChildScreenState extends ConsumerState<AddChildScreen> {
                           suffixIcon: IconButton(
                             icon: Icon(_obscureConfirmPin
                                 ? Icons.visibility_off
-                                : Icons.visibility),
+                                : Icons.visibility,),
                             onPressed: () {
                               setState(() =>
-                                  _obscureConfirmPin = !_obscureConfirmPin);
+                                  _obscureConfirmPin = !_obscureConfirmPin,);
                             },
                           ),
                         ),

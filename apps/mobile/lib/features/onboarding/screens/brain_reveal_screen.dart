@@ -405,9 +405,9 @@ class _BrainRevealScreenState extends ConsumerState<BrainRevealScreen>
                     child: ElevatedButton.icon(
                       onPressed: _navigateToHome,
                       icon: Icon(
-                          isLearner ? Icons.rocket_launch : Icons.dashboard),
+                          isLearner ? Icons.rocket_launch : Icons.dashboard,),
                       label: Text(
-                          isLearner ? t('onboarding.startLearning') : t('onboarding.goToDashboard')),
+                          isLearner ? t('onboarding.startLearning') : t('onboarding.goToDashboard'),),
                     ),
                   ),
                 ),
@@ -418,12 +418,12 @@ class _BrainRevealScreenState extends ConsumerState<BrainRevealScreen>
                     onPressed: _viewFullProfile,
                     child: Text(isLearner
                         ? t('onboarding.viewMyProfile')
-                        : t('onboarding.viewFullProfile')),
+                        : t('onboarding.viewFullProfile'),),
                   ),
                 ),
               ],
             );
-          }),
+          },),
         ),
       ],
     );
