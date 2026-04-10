@@ -32,6 +32,10 @@ async function getLearnerWithParent(app: FastifyInstance, learnerId: string) {
 
 export async function setupSubscribers(app: FastifyInstance): Promise<void> {
   const nc = app.nats;
+  if (!nc) {
+    app.log.warn("NATS not available — skipping subscriber setup");
+    return;
+  }
   const config = getConfig();
   const emailService = new EmailService(app);
   const notificationService = new NotificationService(app);

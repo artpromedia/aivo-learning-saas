@@ -21,9 +21,22 @@ An AI-powered adaptive learning platform for children on the autism spectrum. Bu
 - `packages/feature-flags` — Feature flag utilities
 - `packages/observability` — Logging/tracing utilities
 
-### Services (microservices, Fastify/Node)
+### Services (15 microservices)
 - `services/identity-svc` — Auth gateway (port 3001), uses better-auth
-- `services/family-svc`, `billing-svc`, `learning-svc`, `tutor-svc`, etc.
+- `services/brain-svc` — Cognitive profiles (port 3002, Python/FastAPI)
+- `services/learning-svc` — Learning paths, curriculum (port 3003)
+- `services/engagement-svc` — XP, badges, quests (port 3004)
+- `services/family-svc` — Family management (port 3005)
+- `services/tutor-svc` — AI tutors (port 3006)
+- `services/comms-svc` — Notifications, email, push (port 3007)
+- `services/billing-svc` — Stripe billing (port 3008)
+- `services/admin-svc` — Platform admin (port 3009)
+- `services/integrations-svc` — LTI, Clever, webhooks (port 3010)
+- `services/i18n-svc` — Translations (port 3011)
+- `services/assessment-svc` — Assessments, IEP (port 3012)
+- `services/research-svc` — Research data (port 3013)
+- `services/status-page-svc` — Service health monitoring (port 3014)
+- `services/ai-svc` — AI generation, RAG, vision (port 3015, Python/FastAPI)
 
 ## Running the App
 
@@ -158,7 +171,15 @@ All backend services run as managed workflows:
 | engagement-svc | 3004 | Backend Services | XP, badges, quests |
 | family-svc | 3005 | Backend Services | Family management |
 | tutor-svc | 3006 | Backend Services | AI tutors |
+| comms-svc | 3007 | Backend Services | Notifications, email, push |
+| billing-svc | 3008 | Backend Services | Stripe billing |
+| admin-svc | 3009 | Backend Services | Platform admin |
+| integrations-svc | 3010 | Backend Services | LTI, Clever, webhooks |
+| i18n-svc | 3011 | Backend Services | Translations |
 | assessment-svc | 3012 | Backend Services | Assessments, IEP |
+| research-svc | 3013 | Backend Services | Research data |
+| status-page-svc | 3014 | Backend Services | Service health monitoring |
+| ai-svc | 3015 | Backend Services | AI generation, RAG (Python/FastAPI) |
 
 ### Infrastructure
 - **Redis**: Port 6379 (started by Backend Services workflow)

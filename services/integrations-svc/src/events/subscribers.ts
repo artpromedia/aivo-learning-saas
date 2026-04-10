@@ -6,9 +6,12 @@ const sc = StringCodec();
 
 export async function setupSubscribers(app: FastifyInstance) {
   const nc = app.nats;
+  if (!nc) {
+    app.log.warn("NATS not available — skipping subscriber setup");
+    return;
+  }
   const webhookService = new WebhookService(app);
 
-  // lesson.completed → trigger outbound webhooks
   const lessonSub = nc.subscribe("aivo.lesson.completed");
   (async () => {
     for await (const msg of lessonSub) {

@@ -7,8 +7,11 @@ const sc = StringCodec();
 
 export async function setupSubscribers(app: FastifyInstance) {
   const nc = app.nats;
+  if (!nc) {
+    app.log.warn("NATS not available — skipping subscriber setup");
+    return;
+  }
 
-  // Subscribe to brain.regression.detected → update rollout dashboard
   const regressionSub = nc.subscribe("aivo.brain.regression.detected");
   (async () => {
     for await (const msg of regressionSub) {
@@ -48,23 +51,22 @@ export async function setupSubscribers(app: FastifyInstance) {
         const data = JSON.parse(sc.decode(msg.data));
         app.log.info({ tenantId: data.tenantId }, "Subscription created event received");
         // Invalidate analytics cache so next request gets fresh data
-        await app.redis.del("admin:analytics:overview");
-        await app.redis.del("admin:analytics:revenue");
+        await app.redis?.del("admin:analytics:overview");
+        await app.redis?.del("admin:analytics:revenue");
       } catch (err) {
         app.log.error(err, "Failed to handle subscription created event");
       }
     }
   })();
 
-  // Subscribe to billing.subscription.cancelled → update tenant analytics
   const subCancelledSub = nc.subscribe("aivo.billing.subscription.cancelled");
   (async () => {
     for await (const msg of subCancelledSub) {
       try {
         const data = JSON.parse(sc.decode(msg.data));
         app.log.info({ tenantId: data.tenantId }, "Subscription cancelled event received");
-        await app.redis.del("admin:analytics:overview");
-        await app.redis.del("admin:analytics:revenue");
+        await app.redis?.del("admin:analytics:overview");
+        await app.redis?.del("admin:analytics:revenue");
       } catch (err) {
         app.log.error(err, "Failed to handle subscription cancelled event");
       }

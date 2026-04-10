@@ -6,8 +6,8 @@ loadDotenv();
 const configSchema = z.object({
   PORT: z.coerce.number().default(3010),
   DATABASE_URL: z.string().min(1),
-  REDIS_URL: z.string().min(1),
-  NATS_URL: z.string().min(1),
+  REDIS_URL: z.string().default("redis://localhost:6379"),
+  NATS_URL: z.string().default("nats://localhost:4222"),
   JWT_PUBLIC_KEY: z.string().min(1),
   LTI_PRIVATE_KEY: z.string().default(""),
   LTI_PUBLIC_KEY: z.string().default(""),
