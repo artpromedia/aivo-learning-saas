@@ -42,8 +42,16 @@ final _notificationsProvider =
     FutureProvider.family<List<NotificationItem>, String>((ref, userId) async {
   final api = ref.read(apiClientProvider);
   try {
-    final res = await api.get(Endpoints.notifications(userId));
-    final list = res.data as List<dynamic>? ?? [];
+    final res = await api.get(Endpoints.notifications);
+    final data = res.data;
+    final List<dynamic> list;
+    if (data is Map<String, dynamic>) {
+      list = (data['items'] ?? data['notifications'] ?? []) as List<dynamic>;
+    } else if (data is List<dynamic>) {
+      list = data;
+    } else {
+      list = [];
+    }
     return list.map((n) => NotificationItem.fromJson(n as Map<String, dynamic>)).toList();
   } catch (_) {
     return [

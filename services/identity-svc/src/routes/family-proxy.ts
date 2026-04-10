@@ -1,5 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import { loadConfig } from "../config.js";
+import { getToken } from "./proxy-utils.js";
 
 export async function familyProxyRoutes(app: FastifyInstance) {
   const config = loadConfig();
@@ -12,7 +13,10 @@ export async function familyProxyRoutes(app: FastifyInstance) {
     const headers: Record<string, string> = {
       "content-type": request.headers["content-type"] ?? "application/json",
     };
-    if (request.headers.authorization) {
+    const token = getToken(request as any);
+    if (token) {
+      headers.authorization = `Bearer ${token}`;
+    } else if (request.headers.authorization) {
       headers.authorization = request.headers.authorization;
     }
     if (request.headers["x-test-run"]) {

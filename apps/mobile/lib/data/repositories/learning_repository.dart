@@ -40,8 +40,7 @@ class LearningRepository {
   /// Returns the full learning path for a learner.
   Future<LearningPath> getLearningPath(String learnerId) async {
     final response = await _api.get(
-      Endpoints.learningPath,
-      queryParameters: {'learnerId': learnerId},
+      Endpoints.learningPath(learnerId),
     );
     return LearningPath.fromJson(response.data as Map<String, dynamic>);
   }
@@ -49,8 +48,7 @@ class LearningRepository {
   /// Returns the next recommended lesson on the learning path.
   Future<LearningPathItem> getNextLesson(String learnerId) async {
     final response = await _api.get(
-      Endpoints.learningPathNext,
-      queryParameters: {'learnerId': learnerId},
+      Endpoints.learningPathNext(learnerId),
     );
     return LearningPathItem.fromJson(response.data as Map<String, dynamic>);
   }
@@ -183,7 +181,7 @@ class LearningRepository {
 
   /// Returns a gradebook summary.
   Future<Map<String, dynamic>> getGradebookSummary() async {
-    final response = await _api.get(Endpoints.gradebookSummary);
+    final response = await _api.get(Endpoints.gradebook(''));
     return response.data as Map<String, dynamic>;
   }
 
@@ -195,8 +193,8 @@ class LearningRepository {
   /// locally via [LessonDao] so they are available offline.
   Future<void> preCacheLessons(String learnerId, {int count = 10}) async {
     final response = await _api.get(
-      Endpoints.learningPath,
-      queryParameters: {'learnerId': learnerId, 'limit': count},
+      Endpoints.learningPath(learnerId),
+      queryParameters: {'limit': count},
     );
 
     final data = response.data as Map<String, dynamic>;

@@ -5,10 +5,11 @@
 class Env {
   Env._();
 
-  /// Base URL of the REST API (no trailing slash).
+  /// Base URL of the REST API gateway (no trailing slash).
+  /// Points at identity-svc root; individual endpoints include /api prefix.
   static const String apiBaseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://localhost:3001/api',
+    defaultValue: 'http://localhost:3001',
   );
 
   /// WebSocket URL for real-time events.

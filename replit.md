@@ -35,6 +35,13 @@ Flutter app at feature parity with the web dashboard for all 4 roles:
 
 **API Pattern**: All screens use Riverpod FutureProviders that call the centralized Endpoints constants via ApiClient; screens fall back to mock data when backend APIs are unavailable
 
+**API Connectivity**:
+- Base URL points at identity-svc root (`http://localhost:3001`); endpoints include `/api` prefix
+- Family routes use root-level `/family/*` path (no `/api` prefix) matching the web app's proxy structure
+- Auth uses Bearer token via Dio AuthInterceptor (JWT stored in SecureStorage)
+- ApiClient supports GET, POST, PUT, PATCH, DELETE, upload, and SSE streaming
+- All identity-svc proxy routes support both cookie and Bearer header auth via `getToken()` utility
+
 ### Packages (shared)
 - `packages/brand` — Design tokens, brand assets (must build before web app)
 - `packages/db` — Database schema (Drizzle ORM + PostgreSQL)

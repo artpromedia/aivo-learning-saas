@@ -56,8 +56,7 @@ final _gradebookProvider =
     FutureProvider.family<GradebookData, String>((ref, learnerId) async {
   final api = ref.read(apiClientProvider);
   try {
-    final res = await api.get(Endpoints.gradebookSummary,
-        queryParameters: {'learnerId': learnerId});
+    final res = await api.get(Endpoints.gradebook(learnerId));
     return GradebookData.fromJson(res.data as Map<String, dynamic>);
   } catch (_) {
     return GradebookData(

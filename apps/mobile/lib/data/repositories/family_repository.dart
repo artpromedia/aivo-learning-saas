@@ -745,7 +745,7 @@ class FamilyRepository {
   /// Returns the unread notification count for a user.
   Future<int> getUnreadNotificationCount(String userId) async {
     final response = await _apiClient
-        .get(Endpoints.notifications(userId), queryParameters: {
+        .get(Endpoints.notifications, queryParameters: {
       'unreadOnly': true,
       'countOnly': true,
     },);

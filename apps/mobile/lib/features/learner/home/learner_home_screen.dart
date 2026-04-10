@@ -141,7 +141,7 @@ final _learnerHomeDataProvider =
   final results = await Future.wait([
     api.get(Endpoints.xp(learnerId)),
     api.get(Endpoints.streaks(learnerId)),
-    api.get(Endpoints.learningPath),
+    api.get(Endpoints.learningPath(learnerId)),
     api.get(Endpoints.dailyChallenges),
     api.get(Endpoints.learningPathSpacedReview),
   ]);

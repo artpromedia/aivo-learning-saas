@@ -80,6 +80,9 @@ import { learningProxyRoutes } from "./routes/learning-proxy.js";
 // Routes — Engagement Proxy (API Gateway → engagement-svc)
 import { engagementProxyRoutes } from "./routes/engagement-proxy.js";
 
+// Routes — Teacher Proxy (API Gateway → admin-svc)
+import { teacherProxyRoutes } from "./routes/teacher-proxy.js";
+
 // Routes — District Lookup
 import { districtLookupRoute } from "./routes/districts/lookup.js";
 
@@ -209,6 +212,7 @@ export async function buildApp() {
     await api.register(tutorProxyRoutes);
     await api.register(learningProxyRoutes);
     await api.register(engagementProxyRoutes);
+    await api.register(teacherProxyRoutes);
     await api.register(districtLookupRoute);
   }, { prefix: "/api" });
 
