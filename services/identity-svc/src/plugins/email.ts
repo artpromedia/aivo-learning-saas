@@ -24,15 +24,17 @@ class OonrumailClient implements EmailClient {
   ) {}
 
   async send(params: { to: string; subject: string; html: string; from?: string }): Promise<void> {
+    const fromEmail = params.from ?? "AIVO Learning <noreply@aivolearning.com>";
+
     const response = await fetch(`${this.baseUrl}/send`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${this.apiKey}`,
+        "X-API-Key": this.apiKey,
       },
       body: JSON.stringify({
-        from: params.from ?? "AIVO Learning <noreply@aivolearning.com>",
-        to: params.to,
+        from: { email: fromEmail },
+        to: [{ email: params.to }],
         subject: params.subject,
         html: params.html,
       }),

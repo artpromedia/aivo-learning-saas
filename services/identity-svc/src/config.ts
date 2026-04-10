@@ -17,7 +17,7 @@ const configSchema = z.object({
   APPLE_CLIENT_ID: z.string().default(""),
   APPLE_CLIENT_SECRET: z.string().default(""),
   OONRUMAIL_API_KEY: z.string().default(""),
-  OONRUMAIL_BASE_URL: z.string().url().default("https://api.oonrumail.com/v1"),
+  OONRUMAIL_BASE_URL: z.string().url().default("https://api.oonrumail.com/api/v1/transactional/aivolearning"),
   FAMILY_SVC_URL: z.string().url().default("http://localhost:3005"),
   BRAIN_SVC_URL: z.string().url().default("http://localhost:3002"),
   ASSESSMENT_SVC_URL: z.string().url().default("http://localhost:3012"),
