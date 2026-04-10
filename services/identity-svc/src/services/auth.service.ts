@@ -47,47 +47,48 @@ export class AuthService {
     const passwordHash = await hash(input.password);
     const userRole = input.role === "TEACHER" ? "TEACHER" : "PARENT";
     const slug = `${userRole === "TEACHER" ? "teacher" : "family"}-${nanoid(10)}`.toLowerCase();
-
-    // Create tenant
-    const [tenant] = await this.app.db
-      .insert(tenants)
-      .values({
-        name: userRole === "TEACHER" ? `${input.name}'s Classroom` : `${input.name}'s Family`,
-        slug,
-        type: "B2C_FAMILY",
-        status: "ACTIVE",
-      })
-      .returning();
-
-    // Create user
     const nameParts = input.name.trim().split(/\s+/);
     const firstName = nameParts[0] || "";
     const lastName = nameParts.slice(1).join(" ") || "";
-    const [user] = await this.app.db
-      .insert(users)
-      .values({
-        tenantId: tenant.id,
-        email: input.email.toLowerCase(),
-        name: input.name,
-        firstName,
-        lastName,
-        role: userRole,
-        status: "ACTIVE",
-      })
-      .returning();
 
-    // Create credential account
-    await this.app.db.insert(accounts).values({
-      userId: user.id,
-      providerId: "credential",
-      providerAccountId: user.id,
-      accessToken: passwordHash,
+    // Create tenant, user, and credential account in a transaction
+    const { tenant, user } = await this.app.db.transaction(async (tx) => {
+      const [tenant] = await tx
+        .insert(tenants)
+        .values({
+          name: userRole === "TEACHER" ? `${input.name}'s Classroom` : `${input.name}'s Family`,
+          slug,
+          type: "B2C_FAMILY",
+          status: "ACTIVE",
+        })
+        .returning();
+
+      const [user] = await tx
+        .insert(users)
+        .values({
+          tenantId: tenant.id,
+          email: input.email.toLowerCase(),
+          name: input.name,
+          firstName,
+          lastName,
+          role: userRole,
+          status: "ACTIVE",
+        })
+        .returning();
+
+      await tx.insert(accounts).values({
+        userId: user.id,
+        providerId: "credential",
+        providerAccountId: user.id,
+        accessToken: passwordHash,
+      });
+
+      return { tenant, user };
     });
 
     // Create session
     const session = await this.createSession(user.id);
 
-    // Publish event
     // Publish event (non-blocking — streams may not be provisioned yet)
     await publishEvent(this.app.nats, "identity.user.created", {
       userId: user.id,
