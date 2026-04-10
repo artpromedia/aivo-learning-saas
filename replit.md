@@ -12,7 +12,28 @@ An AI-powered adaptive learning platform for children on the autism spectrum. Bu
 ### Apps
 - `apps/web` — Main Next.js frontend (runs on port 5000)
 - `apps/marketing` — Marketing site
-- `apps/mobile` — Mobile app
+- `apps/mobile` — Flutter mobile app (Riverpod + GoRouter + Dio)
+
+### Mobile App (`apps/mobile`)
+Flutter app at feature parity with the web dashboard for all 4 roles:
+
+**Architecture**: Riverpod for state, GoRouter for routing, Dio for HTTP, SecureStorage for JWT tokens
+
+**Roles & Screens** (21 role-specific screens + shared):
+- **Parent**: Dashboard, child hub, gradebook (subject mastery bars), sessions history, collaboration/care team (invite/remove members), brain profile, accommodations, IEP goals
+- **Learner**: Dashboard, learning path, brain profile, quests, challenges, badges, settings
+- **Teacher**: Dashboard (classroom cards with stats), classroom detail (learner list with at-risk flags), learner hub with 6 sub-screens (brain, accommodations, IEP, gradebook, sessions, family), reports, settings
+- **Caregiver**: Dashboard (read-only child view), brain profile, accommodations, IEP goals, gradebook, sessions
+- **Shared**: Notifications screen, login, onboarding
+
+**Key Files**:
+- `lib/config/routes.dart` — GoRouter with role-based shell routes (4 roles: learner, parent, teacher, caregiver)
+- `lib/config/theme.dart` — AIVO design system (purple primary, warm backgrounds, kid-friendly)
+- `lib/core/api/api_client.dart` — Dio wrapper with auth interceptor
+- `lib/core/api/endpoints.dart` — Centralized API endpoint constants (identity, brain, learning, engagement, family, comms, billing, i18n, teacher, caregiver)
+- `lib/shared/widgets/` — AivoCard, ErrorView, LoadingShimmer, etc.
+
+**API Pattern**: All screens use Riverpod FutureProviders that call the centralized Endpoints constants via ApiClient; screens fall back to mock data when backend APIs are unavailable
 
 ### Packages (shared)
 - `packages/brand` — Design tokens, brand assets (must build before web app)
