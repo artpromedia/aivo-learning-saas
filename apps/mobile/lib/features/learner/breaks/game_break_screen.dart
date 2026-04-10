@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -111,7 +112,7 @@ class _GameBreakScreenState extends ConsumerState<GameBreakScreen>
     if (_completed) return;
 
     final size = MediaQuery.of(context).size;
-    final dt = 1.0 / 60.0; // assume ~60fps frame delta
+    const dt = 1.0 / 60.0; // assume ~60fps frame delta
 
     // Spawn bubbles.
     if (elapsed - _lastSpawn >= _spawnInterval) {
@@ -155,7 +156,7 @@ class _GameBreakScreenState extends ConsumerState<GameBreakScreen>
       radius: radius,
       speed: speed,
       color: _bubbleColors[_random.nextInt(_bubbleColors.length)],
-    ));
+    ),);
   }
 
   void _onTapDown(TapDownDetails details) {
@@ -193,7 +194,7 @@ class _GameBreakScreenState extends ConsumerState<GameBreakScreen>
         vy: sin(angle) * speed,
         color: bubble.color,
         life: 0.5,
-      ));
+      ),);
     }
   }
 
@@ -307,7 +308,7 @@ class _GameBreakScreenState extends ConsumerState<GameBreakScreen>
                       color: Colors.white.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.3)),
+                          color: Colors.white.withValues(alpha: 0.3),),
                     ),
                     child: Text(
                       "I'm Ready!",

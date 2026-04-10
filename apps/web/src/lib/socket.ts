@@ -1,18 +1,16 @@
 import { io, Socket } from "socket.io-client";
 
-const SOCKET_URL = typeof window !== "undefined" ? window.location.origin : "";
+const SOCKET_URL = globalThis.window === undefined ? "" : globalThis.window.location.origin;
 
 let socket: Socket | null = null;
 
 export function getSocket(): Socket {
-  if (!socket) {
-    socket = io(SOCKET_URL, {
-      autoConnect: false,
-      withCredentials: true,
-      transports: ["websocket", "polling"],
-      path: "/comms/ws",
-    });
-  }
+  socket ??= io(SOCKET_URL, {
+    autoConnect: false,
+    withCredentials: true,
+    transports: ["websocket", "polling"],
+    path: "/comms/ws",
+  });
   return socket;
 }
 

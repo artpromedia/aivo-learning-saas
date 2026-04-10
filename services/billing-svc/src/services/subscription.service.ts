@@ -35,9 +35,9 @@ export interface SubscriptionItemRow {
 export type SubscriptionWithItems = SubscriptionRow & { items: SubscriptionItemRow[] };
 
 export class SubscriptionService {
-  private stripeService: StripeService;
+  private readonly stripeService: StripeService;
 
-  constructor(private app: FastifyInstance) {
+  constructor(private readonly app: FastifyInstance) {
     this.stripeService = new StripeService(app);
   }
 

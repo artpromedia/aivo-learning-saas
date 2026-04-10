@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:aivo_mobile/core/auth/auth_provider.dart';
-import 'package:aivo_mobile/core/auth/auth_service.dart';
 import 'package:aivo_mobile/features/auth/screens/register_screen.dart';
 
 // ---------------------------------------------------------------------------
@@ -11,11 +10,14 @@ import 'package:aivo_mobile/features/auth/screens/register_screen.dart';
 // ---------------------------------------------------------------------------
 
 class _TestAuthNotifier extends AuthNotifier {
-  _TestAuthNotifier(AuthState initialState)
-      : _initialState = initialState,
-        super(authService: _FakeAuthService());
+  _TestAuthNotifier(this._initialState);
 
   final AuthState _initialState;
+
+  @override
+  AuthState build() {
+    return _initialState;
+  }
 
   @override
   Future<void> checkAuth() async {
@@ -23,17 +25,12 @@ class _TestAuthNotifier extends AuthNotifier {
   }
 }
 
-class _FakeAuthService extends Fake implements AuthService {
-  @override
-  Future<AuthUser?> getCurrentUser() async => null;
-}
-
 void main() {
   Widget buildApp({AuthState initialState = const AuthUnauthenticated()}) {
     return ProviderScope(
       overrides: [
         authProvider.overrideWith(
-          (ref) => _TestAuthNotifier(initialState),
+          () => _TestAuthNotifier(initialState),
         ),
       ],
       child: const MaterialApp(

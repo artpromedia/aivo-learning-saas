@@ -12,7 +12,7 @@ import { useLearnerStore } from "@/stores/learner.store";
 import { useAuth } from "@/hooks/useAuth";
 import { getDashboardPath, isLearnerRole } from "@/lib/redirect-after-onboarding";
 
-function ConfettiPiece({ delay, x }: { delay: number; x: number }) {
+function ConfettiPiece({ delay, x }: Readonly<{ delay: number; x: number }>) {
   const colors = ["#7C3AED", "#7C4DFF", "#38B2AC", "#F59E0B", "#EF4444", "#10B981"];
   const color = colors[Math.floor(Math.random() * colors.length)];
 
@@ -60,7 +60,8 @@ export default function OnboardingCompletePage() {
     completeOnboarding();
   }, []);
 
-  const confettiPieces = Array.from({ length: 50 }).map((_, i) => ({
+  const confettiPieces = Array.from({ length: 50 }).map(() => ({
+    id: crypto.randomUUID(),
     delay: Math.random() * 0.8,
     x: Math.random() * 100,
   }));
@@ -69,8 +70,8 @@ export default function OnboardingCompletePage() {
     <div className="relative overflow-hidden min-h-[60vh] flex items-center justify-center">
       {/* Confetti */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {confettiPieces.map((piece, i) => (
-          <ConfettiPiece key={i} delay={piece.delay} x={piece.x} />
+        {confettiPieces.map((piece) => (
+          <ConfettiPiece key={piece.id} delay={piece.delay} x={piece.x} />
         ))}
       </div>
 
@@ -84,7 +85,7 @@ export default function OnboardingCompletePage() {
           initial={{ y: -20 }}
           animate={{ y: 0 }}
           transition={{ type: "spring", stiffness: 200, damping: 10, delay: 0.5 }}
-          className="w-24 h-24 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#38B2AC] flex items-center justify-center mx-auto mb-6 shadow-xl shadow-[#7C3AED]/30"
+          className="w-24 h-24 rounded-full bg-linear-to-br from-[#7C3AED] to-[#38B2AC] flex items-center justify-center mx-auto mb-6 shadow-xl shadow-[#7C3AED]/30"
         >
           <PartyPopper className="text-white" size={48} />
         </motion.div>
@@ -93,7 +94,7 @@ export default function OnboardingCompletePage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
-          className="text-3xl font-bold text-[var(--aivo-text)] mb-3"
+          className="text-3xl font-bold text-(--aivo-text) mb-3"
         >
           {t("youreAllSet")}
         </motion.h1>
@@ -102,7 +103,7 @@ export default function OnboardingCompletePage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.9 }}
-          className="text-lg text-[var(--aivo-text-secondary)] mb-2"
+          className="text-lg text-(--aivo-text-secondary) mb-2"
         >
           {activeLearner?.name
             ? t("childJourneyReady", { name: activeLearner.name })
@@ -113,7 +114,7 @@ export default function OnboardingCompletePage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.1 }}
-          className="text-sm text-[var(--aivo-text-muted)] mb-8"
+          className="text-sm text-(--aivo-text-muted) mb-8"
         >
           {t("journeyReadyDescription")}
         </motion.p>
@@ -135,7 +136,7 @@ export default function OnboardingCompletePage() {
             onClick={() => router.push(dashboardPath)}
             loading={isCompleting}
             rightIcon={<Rocket size={20} />}
-            className="min-w-[200px]"
+            className="min-w-50"
           >
             {userIsLearner ? t("goToMyLearningDashboard") : t("goToDashboard")}
           </Button>

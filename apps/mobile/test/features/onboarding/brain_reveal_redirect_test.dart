@@ -17,13 +17,12 @@ class MockGoRouter extends Mock implements GoRouter {}
 
 class MockApiClient extends Mock implements ApiClient {}
 
-class _FakeAuthService extends Fake implements AuthService {
-  @override
-  Future<AuthUser?> getCurrentUser() async => null;
-}
-
 class _LearnerAuthNotifier extends AuthNotifier {
-  _LearnerAuthNotifier() : super(authService: _FakeAuthService());
+  @override
+  AuthState build() {
+    checkAuth();
+    return const AuthInitial();
+  }
 
   @override
   Future<void> checkAuth() async {
@@ -33,12 +32,16 @@ class _LearnerAuthNotifier extends AuthNotifier {
       name: 'Test Learner',
       role: 'learner',
       learnerId: 'learner-1',
-    ));
+    ),);
   }
 }
 
 class _ParentAuthNotifier extends AuthNotifier {
-  _ParentAuthNotifier() : super(authService: _FakeAuthService());
+  @override
+  AuthState build() {
+    checkAuth();
+    return const AuthInitial();
+  }
 
   @override
   Future<void> checkAuth() async {
@@ -47,7 +50,7 @@ class _ParentAuthNotifier extends AuthNotifier {
       email: 'parent@example.com',
       name: 'Test Parent',
       role: 'parent',
-    ));
+    ),);
   }
 }
 
@@ -62,7 +65,7 @@ void main() {
         .thenReturn(null);
   });
 
-  Widget buildApp({required AuthNotifier Function(Ref) authNotifierBuilder}) {
+  Widget buildApp({required AuthNotifier Function() authNotifierBuilder}) {
     return ProviderScope(
       overrides: [
         authProvider.overrideWith(authNotifierBuilder),
@@ -85,7 +88,7 @@ void main() {
           .thenThrow(Exception('test'));
 
       await tester.pumpWidget(
-        buildApp(authNotifierBuilder: (_) => _LearnerAuthNotifier()),
+        buildApp(authNotifierBuilder: () => _LearnerAuthNotifier()),
       );
       await tester.pumpAndSettle();
 
@@ -105,7 +108,7 @@ void main() {
           .thenThrow(Exception('test'));
 
       await tester.pumpWidget(
-        buildApp(authNotifierBuilder: (_) => _ParentAuthNotifier()),
+        buildApp(authNotifierBuilder: () => _ParentAuthNotifier()),
       );
       await tester.pumpAndSettle();
 
@@ -113,7 +116,7 @@ void main() {
       await tester.pumpAndSettle();
 
       verify(() =>
-              mockRouter.go('/parent/dashboard', extra: any(named: 'extra')))
+              mockRouter.go('/parent/dashboard', extra: any(named: 'extra')),)
           .called(1);
     });
   });

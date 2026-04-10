@@ -110,7 +110,7 @@ export default function ParentDashboardPage() {
         </div>
       </AnimatedCard>
 
-      {loading ? (
+      {loading && (
         <div className="grid gap-4 sm:grid-cols-2">
           {[1, 2].map((i) => (
             <Card key={i}>
@@ -125,7 +125,8 @@ export default function ParentDashboardPage() {
             </Card>
           ))}
         </div>
-      ) : learners.length === 0 ? (
+      )}
+      {!loading && learners.length === 0 && (
         <EmptyState
           icon={<Plus size={32} />}
           title={t("noChildrenYet")}
@@ -137,12 +138,13 @@ export default function ParentDashboardPage() {
           }
           delay={200}
         />
-      ) : (
+      )}
+      {!loading && learners.length > 0 && (
         <div className="grid gap-4 sm:grid-cols-2">
           {learners.map((learner, idx) => (
             <AnimatedCard key={learner.id} delay={200 + idx * 100}>
               <Link href={`/parent/${learner.id}`}>
-                <Card className="hover:shadow-[var(--shadow-hover)] transition-all cursor-pointer group hover:scale-[1.01]">
+                <Card className="hover:shadow-(--shadow-hover) transition-all cursor-pointer group hover:scale-[1.01]">
                   <CardBody>
                     <div className="flex items-start gap-4">
                       <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-xl font-bold shrink-0" style={{ background: "linear-gradient(135deg, #7C3AED, #A855F7, #2DD4BF)" }}>

@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:aivo_mobile/config/theme.dart';
 import 'package:aivo_mobile/core/auth/auth_provider.dart';
-import 'package:aivo_mobile/core/i18n/translation_ext.dart';
+import 'package:aivo_mobile/data/models/recommendation.dart';
 import 'package:aivo_mobile/data/repositories/family_repository.dart';
 
 // ---------------------------------------------------------------------------

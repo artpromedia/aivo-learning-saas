@@ -18,13 +18,12 @@ class MockApiClient extends Mock implements ApiClient {}
 
 class MockGoRouter extends Mock implements GoRouter {}
 
-class _FakeAuthService extends Fake implements AuthService {
-  @override
-  Future<AuthUser?> getCurrentUser() async => null;
-}
-
 class _TestAuthNotifier extends AuthNotifier {
-  _TestAuthNotifier() : super(authService: _FakeAuthService());
+  @override
+  AuthState build() {
+    checkAuth();
+    return const AuthInitial();
+  }
 
   @override
   Future<void> checkAuth() async {
@@ -34,7 +33,7 @@ class _TestAuthNotifier extends AuthNotifier {
       name: 'Learner',
       role: 'learner',
       learnerId: 'learner-1',
-    ));
+    ),);
   }
 }
 
@@ -58,7 +57,7 @@ void main() {
   }) {
     return ProviderScope(
       overrides: [
-        authProvider.overrideWith((ref) => _TestAuthNotifier()),
+        authProvider.overrideWith(() => _TestAuthNotifier()),
         apiClientProvider.overrideWithValue(mockApiClient),
         functioningLevelProvider.overrideWith(
           (ref) => FunctioningLevelNotifier()..setLevel(level),

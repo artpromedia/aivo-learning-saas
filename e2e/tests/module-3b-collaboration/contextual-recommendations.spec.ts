@@ -169,7 +169,7 @@ test.describe('Module 3b: Contextual Recommendations after Brain Clone', () => {
       parent.token,
       (n) =>
         n.type === 'recommendation_pending' ||
-        (n.body && n.body.includes('recommendation')),
+        (n.body?.includes('recommendation')),
       { timeoutMs: 10_000 },
     ).catch(() => null);
 

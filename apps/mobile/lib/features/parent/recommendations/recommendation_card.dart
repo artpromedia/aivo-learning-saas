@@ -578,7 +578,7 @@ class _AdjustmentSheetState extends ConsumerState<_AdjustmentSheet> {
               child: TextField(
                 controller: _notesController,
                 maxLines: 3,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintText: t('dashboard.adjustmentNotesHint'),
                 ),
               ),

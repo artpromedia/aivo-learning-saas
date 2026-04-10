@@ -5,7 +5,6 @@ import {
   Settings, User, Shield, Loader2, Save, CheckCircle,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Card, CardBody, CardHeader } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
 import { PageWrapper, BackLink, ExpandableCard } from "@/components/ui/PageDesign";
@@ -79,7 +78,7 @@ export default function LearnerSettingsPage() {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full px-3 py-2 border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-2xl bg-white dark:bg-[#2A1E45] text-[var(--aivo-text)] focus:outline-none focus:ring-2 focus:ring-[#7C3AED]"
+                className="w-full px-3 py-2 border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-2xl bg-white dark:bg-[#2A1E45] text-(--aivo-text) focus:outline-none focus:ring-2 focus:ring-[#7C3AED]"
               />
             </div>
             {error && <p className="text-sm text-red-500">{error}</p>}

@@ -49,9 +49,7 @@ export async function apiFetch<T>(path: string, options?: RequestInit): Promise<
       if (mock !== undefined) return mock as T;
     }
 
-    if (!refreshPromise) {
-      refreshPromise = tryRefreshToken().finally(() => { refreshPromise = null; });
-    }
+    refreshPromise ??= tryRefreshToken().finally(() => { refreshPromise = null; });
     const refreshed = await refreshPromise;
     if (refreshed) {
       const retry = await fetch(`${API_BASE}${path}`, {
@@ -65,10 +63,10 @@ export async function apiFetch<T>(path: string, options?: RequestInit): Promise<
       }
       return retry.json();
     }
-    if (typeof window !== "undefined") {
-      const currentPath = window.location.pathname;
+    if (globalThis.window !== undefined) {
+      const currentPath = globalThis.window.location.pathname;
       if (currentPath !== "/login" && currentPath !== "/register") {
-        window.location.href = "/login";
+        globalThis.window.location.href = "/login";
       }
     }
     throw new Error("Session expired. Please log in again.");

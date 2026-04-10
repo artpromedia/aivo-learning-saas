@@ -19,7 +19,7 @@ void main() {
     mockTts = MockFlutterTts();
     mockStorage = MockFlutterSecureStorage();
 
-    when(mockStorage.read(key: anyNamed('key')))
+    when(mockStorage.read(key: 'aivo_narration_enabled'))
         .thenAnswer((_) async => 'true');
     when(mockTts.setLanguage(any)).thenAnswer((_) async => 1);
     when(mockTts.setSpeechRate(any)).thenAnswer((_) async => 1);
@@ -83,7 +83,7 @@ void main() {
     });
 
     test('autoNarrateIfNeeded does not speak when disabled', () async {
-      when(mockStorage.read(key: anyNamed('key')))
+      when(mockStorage.read(key: 'aivo_narration_enabled'))
           .thenAnswer((_) async => 'false');
 
       final disabledNarrator = AudioNarrator(
@@ -128,7 +128,7 @@ void main() {
 
     test('setEnabled persists preference and stops speech when disabled',
         () async {
-      when(mockStorage.write(key: anyNamed('key'), value: anyNamed('value')))
+      when(mockStorage.write(key: 'aivo_narration_enabled', value: anyNamed('value')))
           .thenAnswer((_) async {
             return;
           });

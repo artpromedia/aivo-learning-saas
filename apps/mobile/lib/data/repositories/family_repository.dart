@@ -560,9 +560,7 @@ class FamilyRepository {
         response.data as Map<String, dynamic>,);
   }
 
-  /// Returns the functioning level and history for a learner.
-  ///
-  /// The backend returns `{ current: string, history: [...] }`.
+  /// Returns the functioning level data for a learner.
   Future<Map<String, dynamic>> getFunctioningLevel(String learnerId) async {
     final response = await _apiClient
         .get(Endpoints.familyBrainFunctioningLevel(learnerId));
@@ -705,7 +703,7 @@ class FamilyRepository {
 
   /// Verify a learner's PIN and return a session token.
   Future<Map<String, dynamic>> verifyLearnerPin(
-      String learnerId, String pin) async {
+      String learnerId, String pin,) async {
     final response = await _apiClient.post(
       Endpoints.learnerVerifyPin(learnerId),
       data: {'pin': pin},

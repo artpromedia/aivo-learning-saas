@@ -19,8 +19,18 @@ import 'package:aivo_mobile/features/learner/home/learner_home_screen.dart';
 class MockApiClient extends Mock implements ApiClient {}
 
 class _TestAuthNotifier extends AuthNotifier {
-  _TestAuthNotifier()
-      : super(authService: _FakeAuthService());
+  _TestAuthNotifier();
+
+  @override
+  AuthState build() {
+    return const AuthAuthenticated(AuthUser(
+      id: 'user-1',
+      email: 'learner@example.com',
+      name: 'Test Learner',
+      role: 'learner',
+      learnerId: 'learner-1',
+    ),);
+  }
 
   @override
   Future<void> checkAuth() async {
@@ -32,11 +42,6 @@ class _TestAuthNotifier extends AuthNotifier {
       learnerId: 'learner-1',
     ),);
   }
-}
-
-class _FakeAuthService extends Fake implements AuthService {
-  @override
-  Future<AuthUser?> getCurrentUser() async => null;
 }
 
 void main() {
@@ -55,7 +60,7 @@ void main() {
   }) {
     return ProviderScope(
       overrides: [
-        authProvider.overrideWith((ref) => _TestAuthNotifier()),
+        authProvider.overrideWith(() => _TestAuthNotifier()),
         apiClientProvider.overrideWithValue(mockApi),
         isOnlineProvider.overrideWithValue(isOnline),
         functioningLevelProvider.overrideWith(

@@ -20,7 +20,7 @@ interface SessionResponse {
 
 const PUBLIC_PATHS = ["/login", "/register", "/forgot-password", "/reset-password", "/verify-email", "/accept-invite"];
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export function AuthProvider({ children }: Readonly<{ children: React.ReactNode }>) {
   const { setUser, setToken, setLoading, logout } = useAuthStore();
   const router = useRouter();
   const pathname = usePathname();

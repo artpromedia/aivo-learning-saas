@@ -1,7 +1,7 @@
 "use client";
 
 import React, { Suspense, useCallback, useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import {
   CreditCard,
   Check,
@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Card, CardBody, CardHeader } from "@/components/ui/Card";
+import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -35,7 +35,6 @@ interface Plan {
 
 function CheckoutContent() {
   const t = useTranslations("billing");
-  const router = useRouter();
   const searchParams = useSearchParams();
   const preselectedPlanId = searchParams.get("plan");
 
@@ -80,7 +79,7 @@ function CheckoutContent() {
           body: JSON.stringify({ planId: selectedPlan }),
         },
       );
-      window.location.href = checkoutUrl;
+      globalThis.window.location.href = checkoutUrl;
     } catch (err) {
       setError(err instanceof Error ? err.message : t("failedToStartCheckout"));
       setSubscribing(false);
@@ -106,7 +105,7 @@ function CheckoutContent() {
     <div className="max-w-5xl mx-auto py-12 px-4">
       <Link
         href="/parent"
-        className="inline-flex items-center gap-1 text-sm text-[var(--aivo-text-secondary)] hover:text-[var(--aivo-text)] dark:text-[var(--aivo-text-muted)] dark:hover:text-[#A89BB5] mb-6"
+        className="inline-flex items-center gap-1 text-sm text-(--aivo-text-secondary) hover:text-(--aivo-text) dark:text-(--aivo-text-muted) dark:hover:text-[#A89BB5] mb-6"
       >
         <ArrowLeft size={16} />
         {t("backToDashboard")}
@@ -116,10 +115,10 @@ function CheckoutContent() {
         <div className="w-16 h-16 rounded-full bg-[#7C3AED]/10 flex items-center justify-center mx-auto mb-4">
           <CreditCard className="text-[#7C3AED]" size={32} />
         </div>
-        <h1 className="text-3xl font-bold text-[var(--aivo-text)] mb-2">
+        <h1 className="text-3xl font-bold text-(--aivo-text) mb-2">
           {t("chooseYourPlan")}
         </h1>
-        <p className="text-[var(--aivo-text-secondary)]">
+        <p className="text-(--aivo-text-secondary)">
           {t("choosePlanSubtitle")}
         </p>
       </div>
@@ -155,28 +154,28 @@ function CheckoutContent() {
             return (
               <Card
                 key={plan.id}
-                className="transition-all relative hover:shadow-[var(--shadow-card)] border-[#E8DDF0]"
+                className="transition-all relative hover:shadow-(--shadow-card) border-[#E8DDF0]"
               >
                 <CardBody className="text-center pt-8">
-                  <h3 className="text-lg font-bold text-[var(--aivo-text)] mb-1">
+                  <h3 className="text-lg font-bold text-(--aivo-text) mb-1">
                     {plan.name}
                   </h3>
-                  <p className="text-sm text-[var(--aivo-text-secondary)] mb-4">
+                  <p className="text-sm text-(--aivo-text-secondary) mb-4">
                     {plan.description}
                   </p>
                   <div className="mb-4">
-                    <span className="text-4xl font-bold text-[var(--aivo-text)]">
+                    <span className="text-4xl font-bold text-(--aivo-text)">
                       {t("contactUs")}
                     </span>
                   </div>
-                  <p className="text-xs text-[var(--aivo-text-secondary)] mb-6">
+                  <p className="text-xs text-(--aivo-text-secondary) mb-6">
                     {learnersLabel}
                   </p>
                   <ul className="space-y-2 text-left mb-6">
-                    {plan.features.map((feature, i) => (
+                    {plan.features.map((feature) => (
                       <li
-                        key={i}
-                        className="flex items-start gap-2 text-sm text-[var(--aivo-text-secondary)]"
+                        key={feature}
+                        className="flex items-start gap-2 text-sm text-(--aivo-text-secondary)"
                       >
                         <Check
                           className="text-[#7C3AED] shrink-0 mt-0.5"
@@ -190,7 +189,7 @@ function CheckoutContent() {
                     href="https://aivolearning.com/demo"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block w-full rounded-2xl bg-[var(--aivo-bg-alt,#FFF5EB)] px-4 py-2.5 text-center text-sm font-semibold text-[var(--aivo-text)] hover:bg-[#F0E6FF] dark:hover:bg-[#3D2D5C] transition-colors"
+                    className="block w-full rounded-2xl bg-(--aivo-bg-alt,#FFF5EB) px-4 py-2.5 text-center text-sm font-semibold text-(--aivo-text) hover:bg-[#F0E6FF] dark:hover:bg-[#3D2D5C] transition-colors"
                   >
                     {t("contactSales")}
                   </a>
@@ -204,8 +203,8 @@ function CheckoutContent() {
               key={plan.id}
               className={`cursor-pointer transition-all relative ${
                 selectedPlan === plan.id
-                  ? "ring-2 ring-[#7C3AED] shadow-[var(--shadow-playful)]"
-                  : "hover:shadow-[var(--shadow-card)]"
+                  ? "ring-2 ring-[#7C3AED] shadow-(--shadow-playful)"
+                  : "hover:shadow-(--shadow-card)"
               } ${plan.recommended ? "border-[#7C3AED]" : ""}`}
               onClick={() => setSelectedPlan(plan.id)}
             >
@@ -218,10 +217,10 @@ function CheckoutContent() {
                 </div>
               )}
               <CardBody className="text-center pt-8">
-                <h3 className="text-lg font-bold text-[var(--aivo-text)] mb-1">
+                <h3 className="text-lg font-bold text-(--aivo-text) mb-1">
                   {plan.name}
                 </h3>
-                <p className="text-sm text-[var(--aivo-text-secondary)] mb-4">
+                <p className="text-sm text-(--aivo-text-secondary) mb-4">
                   {plan.description}
                 </p>
                 {plan.trialDays > 0 && (
@@ -230,26 +229,26 @@ function CheckoutContent() {
                   </Badge>
                 )}
                 <div className="mb-4">
-                  <span className="text-4xl font-bold text-[var(--aivo-text)]">
+                  <span className="text-4xl font-bold text-(--aivo-text)">
                     ${displayPrice}
                   </span>
-                  <span className="text-[var(--aivo-text-secondary)]">
+                  <span className="text-(--aivo-text-secondary)">
                     {t("perInterval", { interval: plan.interval })}
                   </span>
                   {plan.trialDays > 0 && (
-                    <p className="text-xs text-[var(--aivo-text-secondary)] mt-1">
+                    <p className="text-xs text-(--aivo-text-secondary) mt-1">
                       {t("afterTrial", { days: plan.trialDays })}
                     </p>
                   )}
                 </div>
-                <p className="text-xs text-[var(--aivo-text-secondary)] mb-6">
+                <p className="text-xs text-(--aivo-text-secondary) mb-6">
                   {learnersLabel}
                 </p>
                 <ul className="space-y-2 text-left">
-                  {plan.features.map((feature, i) => (
+                  {plan.features.map((feature) => (
                     <li
-                      key={i}
-                      className="flex items-start gap-2 text-sm text-[var(--aivo-text-secondary)]"
+                      key={feature}
+                      className="flex items-start gap-2 text-sm text-(--aivo-text-secondary)"
                     >
                       <Check
                         className="text-[#7C3AED] shrink-0 mt-0.5"
@@ -271,16 +270,16 @@ function CheckoutContent() {
           onClick={handleSubscribe}
           loading={subscribing}
           disabled={!selectedPlan || selectedPlanData?.contactSales}
-          className="min-w-[240px]"
+          className="min-w-60"
         >
-          {selectedPlanData?.trialDays
-            ? t("startTrial", { days: selectedPlanData.trialDays })
-            : selectedPlanData?.contactSales
-              ? t("contactSales")
-              : t("continueToPayment")}
+          {(() => {
+            if (selectedPlanData?.trialDays) return t("startTrial", { days: selectedPlanData.trialDays });
+            if (selectedPlanData?.contactSales) return t("contactSales");
+            return t("continueToPayment");
+          })()}
         </Button>
         {selectedPlanData?.trialDays ? (
-          <p className="text-xs text-[var(--aivo-text-secondary)] mt-2">
+          <p className="text-xs text-(--aivo-text-secondary) mt-2">
             {t("trialReassurance", { days: selectedPlanData.trialDays })}
           </p>
         ) : null}

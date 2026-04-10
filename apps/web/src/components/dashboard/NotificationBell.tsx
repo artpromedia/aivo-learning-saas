@@ -23,7 +23,7 @@ function NotificationBell({
   initialNotifications = [],
   socketUrl,
   className = "",
-}: NotificationBellProps) {
+}: Readonly<NotificationBellProps>) {
   const [notifications, setNotifications] = useState<Notification[]>(initialNotifications);
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -78,12 +78,12 @@ function NotificationBell({
     <div className={`relative ${className}`} ref={dropdownRef}>
       <button
         onClick={() => setOpen(!open)}
-        className="relative p-2 rounded-2xl text-[var(--aivo-text-secondary)] dark:text-[var(--aivo-text-muted)] hover:bg-[#FFF5EB] dark:hover:bg-[#2A1E45] transition-colors"
-        aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ""}`}
+        className="relative p-2 rounded-2xl text-(--aivo-text-secondary) dark:text-(--aivo-text-muted) hover:bg-[#FFF5EB] dark:hover:bg-[#2A1E45] transition-colors"
+        aria-label={unreadCount > 0 ? `Notifications (${String(unreadCount)} unread)` : "Notifications"}
       >
         <Bell size={20} />
         {unreadCount > 0 && (
-          <span className="absolute top-1 right-1 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold text-white bg-red-500 rounded-full">
+          <span className="absolute top-1 right-1 flex items-center justify-center min-w-4.5 h-4.5 px-1 text-[10px] font-bold text-white bg-red-500 rounded-full">
             {unreadCount > 99 ? "99+" : unreadCount}
           </span>
         )}
@@ -92,7 +92,7 @@ function NotificationBell({
       {open && (
         <div className="absolute right-0 top-full mt-2 w-80 bg-white dark:bg-[#2A1E45] rounded-2xl shadow-xl border border-[#E8DDF0] dark:border-[#3D2D5C] z-50 overflow-hidden">
           <div className="flex items-center justify-between px-4 py-3 border-b border-[#E8DDF0] dark:border-[#3D2D5C]">
-            <h3 className="text-sm font-semibold text-[var(--aivo-text)] ">
+            <h3 className="text-sm font-semibold text-(--aivo-text) ">
               Notifications
             </h3>
             {unreadCount > 0 && (
@@ -107,7 +107,7 @@ function NotificationBell({
 
           <div className="max-h-80 overflow-y-auto">
             {notifications.length === 0 ? (
-              <div className="px-4 py-8 text-center text-sm text-[var(--aivo-text-secondary)] dark:text-[var(--aivo-text-muted)]">
+              <div className="px-4 py-8 text-center text-sm text-(--aivo-text-secondary) dark:text-(--aivo-text-muted)">
                 No notifications yet
               </div>
             ) : (
@@ -115,26 +115,26 @@ function NotificationBell({
                 <button
                   key={notification.id}
                   onClick={() => markAsRead(notification.id)}
-                  className={`w-full text-left px-4 py-3 border-b border-[#F0E6FF] dark:border-[#3D2D5C] hover:bg-[var(--aivo-bg)] dark:hover:bg-[#2A1E45]/50 transition-colors ${
-                    !notification.read ? "bg-[#7C3AED]/5" : ""
+                  className={`w-full text-left px-4 py-3 border-b border-[#F0E6FF] dark:border-[#3D2D5C] hover:bg-(--aivo-bg) dark:hover:bg-[#2A1E45]/50 transition-colors ${
+                    notification.read ? "" : "bg-[#7C3AED]/5"
                   }`}
                 >
                   <div className="flex items-start gap-3">
                     <span
                       className={`mt-1 w-2 h-2 rounded-full shrink-0 ${
-                        !notification.read
-                          ? typeColors[notification.type || "info"] || "bg-blue-500"
-                          : "bg-transparent"
+                        notification.read
+                          ? "bg-transparent"
+                          : typeColors[notification.type || "info"] || "bg-blue-500"
                       }`}
                     />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-[var(--aivo-text)]  truncate">
+                      <p className="text-sm font-medium text-(--aivo-text)  truncate">
                         {notification.title}
                       </p>
-                      <p className="text-xs text-[var(--aivo-text-secondary)] dark:text-[var(--aivo-text-muted)] mt-0.5 line-clamp-2">
+                      <p className="text-xs text-(--aivo-text-secondary) dark:text-(--aivo-text-muted) mt-0.5 line-clamp-2">
                         {notification.message}
                       </p>
-                      <p className="text-[10px] text-[var(--aivo-text-muted)] dark:text-[var(--aivo-text-secondary)] mt-1">
+                      <p className="text-[10px] text-(--aivo-text-muted) dark:text-(--aivo-text-secondary) mt-1">
                         {new Date(notification.createdAt).toLocaleDateString()}
                       </p>
                     </div>

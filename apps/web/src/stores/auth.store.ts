@@ -26,7 +26,7 @@ interface AuthState {
 
 export function hydrateTestUser(): boolean {
   if (typeof document === "undefined") return false;
-  const match = document.cookie.match(/(?:^|;\s*)user_role=(\w+)/);
+  const match = /(?:^|;\s*)user_role=(\w+)/.exec(document.cookie);
   if (!match) return false;
   const role = match[1];
   const names: Record<string, string> = { parent: "Sarah Johnson", learner: "Alex Johnson", teacher: "Ms. Rivera", admin: "Admin User", caregiver: "Jamie Rodriguez", platform_admin: "Platform Admin" };

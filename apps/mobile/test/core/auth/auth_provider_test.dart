@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -17,8 +18,19 @@ void main() {
     mockAuthService = MockAuthService();
   });
 
+  ProviderContainer createContainer() {
+    return ProviderContainer(
+      overrides: [
+        authServiceProvider.overrideWithValue(mockAuthService),
+      ],
+    );
+  }
+
   AuthNotifier createNotifier() {
-    return AuthNotifier(authService: mockAuthService);
+    final container = createContainer();
+    // Reading the provider triggers build() which calls checkAuth()
+    container.read(authProvider);
+    return container.read(authProvider.notifier);
   }
 
   const testUser = AuthUser(

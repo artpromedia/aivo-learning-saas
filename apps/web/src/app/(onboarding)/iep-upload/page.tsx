@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { Upload, FileText, CheckCircle, Loader2, X, AlertCircle, SkipForward } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardBody } from "@/components/ui/Card";
-import { apiFetch, assessmentApiFetch } from "@/lib/api";
+import { assessmentApiFetch } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
 
 type UploadStatus = "idle" | "uploading" | "parsing" | "parsed" | "error";
@@ -145,10 +145,10 @@ export default function IepUploadPage() {
         <div className="w-16 h-16 rounded-full bg-[#7C3AED]/10 flex items-center justify-center mx-auto mb-4">
           <FileText className="text-[#7C3AED]" size={32} />
         </div>
-        <h1 className="text-2xl font-extrabold text-[var(--aivo-text)]">
+        <h1 className="text-2xl font-extrabold text-(--aivo-text)">
           {t("uploadIepDocument")}
         </h1>
-        <p className="mt-2 text-[var(--aivo-text-secondary)]">
+        <p className="mt-2 text-(--aivo-text-secondary)">
           {t("uploadIepSubtitle")}
         </p>
       </div>
@@ -163,7 +163,8 @@ export default function IepUploadPage() {
               </div>
             )}
 
-            <div
+            <button
+              type="button"
               onDragOver={(e) => {
                 e.preventDefault();
                 setIsDragging(true);
@@ -171,20 +172,20 @@ export default function IepUploadPage() {
               onDragLeave={() => setIsDragging(false)}
               onDrop={onDrop}
               onClick={() => fileInputRef.current?.click()}
-              className={`border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-colors ${
+              className={`w-full border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-colors ${
                 isDragging
                   ? "border-[#7C3AED] bg-[#7C3AED]/5"
-                  : "border-[#E8DDF0] dark:border-[#3D2D5C] hover:border-[#7C3AED] hover:bg-[var(--aivo-bg)] dark:hover:bg-[#2A1E45]/50"
+                  : "border-[#E8DDF0] dark:border-[#3D2D5C] hover:border-[#7C3AED] hover:bg-(--aivo-bg) dark:hover:bg-[#2A1E45]/50"
               }`}
             >
               <Upload
                 className={`mx-auto mb-4 ${isDragging ? "text-[#7C3AED]" : "text-[#A89BB5]"}`}
                 size={40}
               />
-              <p className="text-lg font-medium text-[var(--aivo-text)] mb-1">
+              <p className="text-lg font-medium text-(--aivo-text) mb-1">
                 {t("dragDropIep")}
               </p>
-              <p className="text-sm text-[var(--aivo-text-secondary)]">
+              <p className="text-sm text-(--aivo-text-secondary)">
                 {t("browseFiles")}
               </p>
               <input
@@ -197,12 +198,12 @@ export default function IepUploadPage() {
                   if (f) handleFile(f);
                 }}
               />
-            </div>
+            </button>
 
             <div className="mt-6 text-center">
               <button
                 onClick={handleSkip}
-                className="inline-flex items-center gap-2 text-sm text-[var(--aivo-text-secondary)] hover:text-[var(--aivo-text)] dark:text-[var(--aivo-text-muted)] dark:hover:text-[#A89BB5] font-medium"
+                className="inline-flex items-center gap-2 text-sm text-(--aivo-text-secondary) hover:text-(--aivo-text) dark:text-(--aivo-text-muted) dark:hover:text-[#A89BB5] font-medium"
               >
                 <SkipForward size={16} />
                 {t("skipThisStep")}
@@ -219,10 +220,10 @@ export default function IepUploadPage() {
               className="mx-auto mb-4 text-[#7C3AED] animate-spin"
               size={48}
             />
-            <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-2">
+            <h2 className="text-lg font-bold text-(--aivo-text) mb-2">
               {status === "uploading" ? t("uploadingDocument") : t("analyzingIep")}
             </h2>
-            <p className="text-sm text-[var(--aivo-text-secondary)]">
+            <p className="text-sm text-(--aivo-text-secondary)">
               {status === "uploading"
                 ? t("uploadingFile", { name: file?.name ?? "" })
                 : t("aiAnalyzingIep")}
@@ -237,10 +238,10 @@ export default function IepUploadPage() {
             <div className="flex items-center gap-3 mb-6">
               <CheckCircle className="text-green-500" size={24} />
               <div>
-                <h2 className="text-lg font-bold text-[var(--aivo-text)]">
+                <h2 className="text-lg font-bold text-(--aivo-text)">
                   {t("iepAnalyzedSuccessfully")}
                 </h2>
-                <p className="text-sm text-[var(--aivo-text-secondary)]">
+                <p className="text-sm text-(--aivo-text-secondary)">
                   {t("reviewExtractedInfo")}
                 </p>
               </div>
@@ -249,19 +250,19 @@ export default function IepUploadPage() {
             <div className="space-y-6">
               {parsedData.goals.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-[var(--aivo-text)] mb-2 uppercase tracking-wide">
+                  <h3 className="text-sm font-semibold text-(--aivo-text) mb-2 uppercase tracking-wide">
                     {t("iepGoals")}
                   </h3>
                   <div className="space-y-2">
-                    {parsedData.goals.map((goal, i) => (
+                    {parsedData.goals.map((goal) => (
                       <div
-                        key={i}
-                        className="p-3 rounded-2xl bg-[var(--aivo-bg)] border border-[#E8DDF0] dark:border-[#3D2D5C]"
+                        key={`${goal.area}-${goal.description}`}
+                        className="p-3 rounded-2xl bg-(--aivo-bg) border border-[#E8DDF0] dark:border-[#3D2D5C]"
                       >
                         <span className="text-xs font-medium text-[#7C3AED] uppercase">
                           {goal.area}
                         </span>
-                        <p className="text-sm text-[var(--aivo-text)] mt-1">
+                        <p className="text-sm text-(--aivo-text) mt-1">
                           {goal.description}
                         </p>
                       </div>
@@ -272,13 +273,13 @@ export default function IepUploadPage() {
 
               {parsedData.accommodations.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-[var(--aivo-text)] mb-2 uppercase tracking-wide">
+                  <h3 className="text-sm font-semibold text-(--aivo-text) mb-2 uppercase tracking-wide">
                     {t("accommodations")}
                   </h3>
                   <div className="flex flex-wrap gap-2">
-                    {parsedData.accommodations.map((acc, i) => (
+                    {parsedData.accommodations.map((acc) => (
                       <span
-                        key={i}
+                        key={acc}
                         className="px-3 py-1 rounded-full text-sm bg-[#7C3AED]/10 text-[#7C3AED] font-medium"
                       >
                         {acc}
@@ -290,12 +291,12 @@ export default function IepUploadPage() {
 
               {parsedData.strengths.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-[var(--aivo-text)] mb-2 uppercase tracking-wide">
+                  <h3 className="text-sm font-semibold text-(--aivo-text) mb-2 uppercase tracking-wide">
                     {t("strengths")}
                   </h3>
-                  <ul className="list-disc list-inside text-sm text-[var(--aivo-text-secondary)] space-y-1">
-                    {parsedData.strengths.map((s, i) => (
-                      <li key={i}>{s}</li>
+                  <ul className="list-disc list-inside text-sm text-(--aivo-text-secondary) space-y-1">
+                    {parsedData.strengths.map((s) => (
+                      <li key={s}>{s}</li>
                     ))}
                   </ul>
                 </div>

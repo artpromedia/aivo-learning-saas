@@ -96,12 +96,17 @@ export async function buildApp() {
       app.log.error(error);
     }
 
+    let errorMessage: string;
+    if (statusCode === 503) {
+      errorMessage = (error as Error).message;
+    } else if (statusCode >= 500) {
+      errorMessage = "Internal server error";
+    } else {
+      errorMessage = (error as Error).message;
+    }
+
     return reply.status(statusCode).send({
-      error: statusCode === 503
-        ? (error as Error).message
-        : statusCode >= 500
-          ? "Internal server error"
-          : (error as Error).message,
+      error: errorMessage,
     });
   });
 

@@ -14,14 +14,12 @@ import 'package:aivo_mobile/data/repositories/learning_repository.dart';
 
 class MockLearningRepository extends Mock implements LearningRepository {}
 
-class _FakeAuthService extends Fake implements AuthService {
-  @override
-  Future<AuthUser?> getCurrentUser() async => null;
-}
-
 class _TestAuthNotifier extends AuthNotifier {
-  _TestAuthNotifier()
-      : super(authService: _FakeAuthService());
+  @override
+  AuthState build() {
+    checkAuth();
+    return const AuthInitial();
+  }
 
   @override
   Future<void> checkAuth() async {
@@ -50,7 +48,7 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authProvider.overrideWith((ref) => _TestAuthNotifier()),
+            authProvider.overrideWith(() => _TestAuthNotifier()),
             isOnlineProvider.overrideWithValue(true),
             learningRepositoryProvider.overrideWithValue(mockLearningRepo),
           ],
@@ -69,7 +67,7 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authProvider.overrideWith((ref) => _TestAuthNotifier()),
+            authProvider.overrideWith(() => _TestAuthNotifier()),
             isOnlineProvider.overrideWithValue(false),
           ],
           child: MaterialApp(

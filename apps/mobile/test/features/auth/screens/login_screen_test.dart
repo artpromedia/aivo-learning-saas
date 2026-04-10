@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocktail/mocktail.dart';
 
 import 'package:aivo_mobile/core/auth/auth_provider.dart';
-import 'package:aivo_mobile/core/auth/auth_service.dart';
 import 'package:aivo_mobile/core/auth/biometric_auth.dart';
 import 'package:aivo_mobile/features/auth/screens/login_screen.dart';
 
@@ -12,26 +11,23 @@ import 'package:aivo_mobile/features/auth/screens/login_screen.dart';
 // Mocks
 // ---------------------------------------------------------------------------
 
-class MockAuthService extends Mock implements AuthService {}
-
 class MockBiometricAuthService extends Mock implements BiometricAuthService {}
 
 class _TestAuthNotifier extends AuthNotifier {
   _TestAuthNotifier(AuthState initialState)
-      : _initialState = initialState,
-        super(authService: _FakeAuthService());
+      : _initialState = initialState;
 
   final AuthState _initialState;
+
+  @override
+  AuthState build() {
+    return _initialState;
+  }
 
   @override
   Future<void> checkAuth() async {
     state = _initialState;
   }
-}
-
-class _FakeAuthService extends Fake implements AuthService {
-  @override
-  Future<AuthUser?> getCurrentUser() async => null;
 }
 
 void main() {
@@ -49,7 +45,7 @@ void main() {
     return ProviderScope(
       overrides: [
         authProvider.overrideWith(
-          (ref) => _TestAuthNotifier(initialState),
+          () => _TestAuthNotifier(initialState),
         ),
         biometricAuthProvider.overrideWithValue(mockBiometric),
       ],

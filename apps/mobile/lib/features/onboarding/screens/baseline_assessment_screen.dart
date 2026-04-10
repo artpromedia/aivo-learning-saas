@@ -327,7 +327,6 @@ class _BaselineAssessmentScreenState
   bool _isOffline = false;
   String? _learnerId;
   BaselineQuestion? _currentApiQuestion;
-  double _apiProgress = 0.0;
 
   // For partner-assisted / observational checklist modes.
   final Map<String, String> _partnerAnswers = {};
@@ -378,7 +377,6 @@ class _BaselineAssessmentScreenState
               data['question'] as Map<String, dynamic>,
             );
           }
-          _apiProgress = (data['progress'] as num?)?.toDouble() ?? 0.0;
           if (data['breakConfig'] != null) {
             _breakConfig = BreakConfig.fromJson(
               data['breakConfig'] as Map<String, dynamic>,
@@ -455,85 +453,6 @@ class _BaselineAssessmentScreenState
       } else {
         _consecutiveWrong++;
       }
-    }
-  }
-
-  /// Submit an individual answer via API and receive the next question.
-  Future<void> _submitAnswerToApi(String questionId, String answer) async {
-    if (!_isApiMode || _learnerId == null) return;
-
-    try {
-      final apiClient = ref.read(apiClientProvider);
-      final response = await apiClient.post(
-        Endpoints.baselineAnswer(_learnerId!),
-        data: {'questionId': questionId, 'answer': answer},
-      );
-
-      final result = response.data as Map<String, dynamic>;
-      final correct = result['correct'] as bool? ?? true;
-      final serverBreak = result['shouldBreak'] as bool? ?? false;
-
-      // Update consecutive wrong tracking from server truth.
-      if (!correct) {
-        _consecutiveWrong++;
-      } else {
-        _consecutiveWrong = 0;
-      }
-
-      if (result['isComplete'] == true) {
-        await _completeApiAssessment();
-      } else if (serverBreak || _shouldTriggerBreak()) {
-        _showBreakScreen();
-      } else if (result['nextQuestion'] != null) {
-        setState(() {
-          _currentApiQuestion = BaselineQuestion.fromApiJson(
-            result['nextQuestion'] as Map<String, dynamic>,
-          );
-          _apiProgress = (result['progress'] as num?)?.toDouble() ?? _apiProgress;
-        });
-      }
-    } catch (_) {
-      // On API error, keep the current question and show error.
-      if (mounted) {
-        setState(() {
-          _errorMessage = 'Failed to submit answer. Please try again.';
-        });
-      }
-    }
-  }
-
-  bool _shouldTriggerBreak() {
-    _questionsAnsweredSinceBreak++;
-
-    if (_breakConfig.adaptiveBreaks && _consecutiveWrong >= 3) {
-      return true;
-    }
-    if (_questionsAnsweredSinceBreak > 0 &&
-        _questionsAnsweredSinceBreak % _breakConfig.frequencyQuestions == 0) {
-      return true;
-    }
-    return false;
-  }
-
-  void _showBreakScreen() {
-    final isAdaptive = _breakConfig.adaptiveBreaks && _consecutiveWrong >= 3;
-    setState(() {
-      _showBreak = true;
-      _breakType = isAdaptive ? 'breathing' : _getNextBreakType();
-      _consecutiveWrong = 0;
-      _questionsAnsweredSinceBreak = 0;
-    });
-  }
-
-  Future<void> _completeApiAssessment() async {
-    try {
-      final apiClient = ref.read(apiClientProvider);
-      await apiClient.post(Endpoints.baselineComplete(_learnerId!));
-    } catch (_) {
-      // Best-effort completion call.
-    }
-    if (mounted) {
-      context.go('/onboarding/brain-reveal');
     }
   }
 

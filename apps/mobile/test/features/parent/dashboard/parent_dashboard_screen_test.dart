@@ -16,13 +16,12 @@ import 'package:aivo_mobile/features/parent/dashboard/parent_dashboard_screen.da
 class MockFamilyRepository extends Mock implements FamilyRepository {}
 class MockGoRouter extends Mock implements GoRouter {}
 
-class _FakeAuthService extends Fake implements AuthService {
-  @override
-  Future<AuthUser?> getCurrentUser() async => null;
-}
-
 class _TestAuthNotifier extends AuthNotifier {
-  _TestAuthNotifier() : super(authService: _FakeAuthService());
+  @override
+  AuthState build() {
+    checkAuth();
+    return const AuthInitial();
+  }
 
   @override
   Future<void> checkAuth() async {
@@ -51,7 +50,7 @@ void main() {
   Widget buildApp() {
     return ProviderScope(
       overrides: [
-        authProvider.overrideWith((ref) => _TestAuthNotifier()),
+        authProvider.overrideWith(() => _TestAuthNotifier()),
         familyRepositoryProvider.overrideWithValue(mockFamilyRepo),
       ],
       child: InheritedGoRouter(

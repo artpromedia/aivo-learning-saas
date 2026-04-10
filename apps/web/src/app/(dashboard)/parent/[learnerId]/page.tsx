@@ -2,23 +2,20 @@
 
 import React, { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   Brain, Lightbulb, BookOpen, GraduationCap, Bot, TrendingUp, Trophy,
   Flame, Home, Activity, Users, Settings, FileText, MapPin,
 } from "lucide-react";
-import { Card, CardBody } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
-import { PageWrapper, BackLink, ExpandableCard, StatCard, SectionHeader, AnimatedCard } from "@/components/ui/PageDesign";
+import { PageWrapper, BackLink, ExpandableCard, StatCard } from "@/components/ui/PageDesign";
 import { useEngagement } from "@/hooks/useEngagement";
 import { apiFetch } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
 import { useLearnerStore } from "@/stores/learner.store";
-import { useRouter } from "next/navigation";
 
 interface LearnerDetail {
   id: string;
@@ -59,7 +56,7 @@ export default function ChildDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const { xp, streak, level, isLoading: engagementLoading } = useEngagement(learnerId);
+  const { xp, streak } = useEngagement(learnerId);
   const setActiveLearner = useLearnerStore((s) => s.setActiveLearner);
   const router = useRouter();
 
@@ -125,7 +122,7 @@ export default function ChildDashboardPage() {
     return (
       <div className="text-center py-16">
         <p className="text-red-500 mb-4">{error}</p>
-        <Button variant="outline" onClick={() => window.location.reload()}>
+        <Button variant="outline" onClick={() => globalThis.window.location.reload()}>
           {t("retry")}
         </Button>
       </div>
@@ -178,7 +175,7 @@ export default function ChildDashboardPage() {
                 {districtName}
                 {curriculumFramework && (
                   <span className="ml-1 px-1.5 py-0.5 rounded-full bg-white/15 text-[10px] font-medium">
-                    {curriculumFramework.replace(/_/g, " ")}
+                    {curriculumFramework.replaceAll("_", " ")}
                   </span>
                 )}
               </p>
@@ -206,9 +203,11 @@ export default function ChildDashboardPage() {
         <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
           {quickLinks.map((link, idx) =>
             "isLearnerView" in link ? (
-              <div
+              <button
+                type="button"
                 key={link.href}
                 onClick={learner ? handleViewLearnerDashboard : undefined}
+                disabled={!learner}
                 className={`rounded-3xl p-5 text-center transition-all cursor-pointer hover:scale-[1.03] ${learner ? "" : "opacity-50 cursor-not-allowed"}`}
                 style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}
               >
@@ -217,7 +216,7 @@ export default function ChildDashboardPage() {
                 </div>
                 <span className="text-sm font-bold block" style={{ color: "var(--aivo-text)" }}>{link.label}</span>
                 <span className="text-[10px]" style={{ color: "var(--aivo-text-muted)" }}>{link.description}</span>
-              </div>
+              </button>
             ) : (
               <Link key={link.href} href={link.href}>
                 <div className="rounded-3xl p-5 text-center transition-all cursor-pointer hover:scale-[1.03] h-full"
@@ -231,8 +230,10 @@ export default function ChildDashboardPage() {
               </Link>
             ),
           )}
-          <div
+          <button
+            type="button"
             onClick={learner ? handleViewLearnerDashboard : undefined}
+            disabled={!learner}
             className={`rounded-3xl p-5 text-center transition-all cursor-pointer hover:scale-[1.03] ${learner ? "" : "opacity-50 cursor-not-allowed"}`}
             style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}
           >
@@ -241,7 +242,7 @@ export default function ChildDashboardPage() {
             </div>
             <span className="text-sm font-bold block" style={{ color: "var(--aivo-text)" }}>{t("learnerDashboard", { defaultValue: "Learner View" })}</span>
             <span className="text-[10px]" style={{ color: "var(--aivo-text-muted)" }}>{t("seeAsLearner")}</span>
-          </div>
+          </button>
         </div>
       </ExpandableCard>
 
@@ -270,7 +271,7 @@ export default function ChildDashboardPage() {
                   </div>
                   <div className="w-full h-2.5 rounded-full overflow-hidden" style={{ backgroundColor: "var(--aivo-purple-50)" }}>
                     <div
-                      className="h-full bg-gradient-to-r from-[#7C3AED] to-[#A855F7] rounded-full transition-all duration-700"
+                      className="h-full bg-linear-to-r from-[#7C3AED] to-[#A855F7] rounded-full transition-all duration-700"
                       style={{ width: `${subject.mastery}%` }}
                     />
                   </div>

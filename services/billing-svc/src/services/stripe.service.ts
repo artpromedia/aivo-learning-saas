@@ -2,9 +2,9 @@ import type { FastifyInstance } from "fastify";
 import type Stripe from "stripe";
 
 export class StripeService {
-  private stripe: Stripe | null;
+  private readonly stripe: Stripe | null;
 
-  constructor(private app: FastifyInstance) {
+  constructor(private readonly app: FastifyInstance) {
     this.stripe = app.stripe;
 
     if (!this.stripe) {
