@@ -38,11 +38,18 @@ export default function LoginPage() {
     setServerError(null);
     try {
       const result = await login(data.email, data.password);
-      if (result.user.role.toLowerCase() === "parent") {
-        router.push("/parent");
-      } else {
-        router.push("/learner");
-      }
+      const role = result.user.role.toLowerCase();
+      const roleRoutes: Record<string, string> = {
+        parent: "/parent",
+        learner: "/learner",
+        teacher: "/teacher",
+        educator: "/teacher",
+        caregiver: "/caregiver",
+        admin: "/admin/district",
+        platform_admin: "/admin/platform",
+        district_admin: "/admin/district",
+      };
+      router.push(roleRoutes[role] ?? "/parent");
     } catch (err) {
       setServerError(
         err instanceof Error ? err.message : t("loginFailed"),

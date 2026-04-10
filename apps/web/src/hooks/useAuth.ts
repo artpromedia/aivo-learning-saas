@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useAuthStore } from "@/stores/auth.store";
+import { useAuthStore, type User } from "@/stores/auth.store";
 import { apiFetch } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
 
@@ -13,7 +13,7 @@ interface LoginResponse {
     tenantId?: string;
     preferredLanguage?: string;
   };
-  token?: string;
+  accessToken?: string;
 }
 
 export function useAuth() {
@@ -30,8 +30,8 @@ export function useAuth() {
         document.cookie = `NEXT_LOCALE=${data.user.preferredLanguage};path=/;max-age=31536000`;
       }
       storeLogin(
-        { ...data.user, role: data.user.role.toLowerCase() as "parent" | "learner" | "therapist" | "educator" | "admin" },
-        data.token ?? "",
+        { ...data.user, role: data.user.role.toLowerCase() as User["role"] },
+        data.accessToken ?? "",
       );
       return data;
     },
