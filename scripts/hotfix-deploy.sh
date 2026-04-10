@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # ═══════════════════════════════════════════════════════════════════
-# HOTFIX DEPLOY — Assessment Proxy + Service Discovery Fix
+# HOTFIX DEPLOY — Email API + Auth + i18n Login Improvements
 # ═══════════════════════════════════════════════════════════════════
 #
-# Deploys only the changed services (identity-svc, web, i18n-svc)
+# Deploys only the changed services (identity-svc, web, comms-svc)
 # to production without creating a full release. Unchanged services
 # remain on v1.2.1.
 #
@@ -105,15 +105,15 @@ if $BUILD; then
   echo "  ✓ web pushed as ${HOTFIX_TAG}"
   echo ""
 
-  # i18n-svc — backend service (context: repo root)
-  echo "[3/3] Building i18n-svc..."
+  # comms-svc — backend service (context: repo root)
+  echo "[3/3] Building comms-svc..."
   docker buildx build \
     --platform linux/amd64 \
-    -t "${IMAGE_PREFIX}/i18n-svc:${HOTFIX_TAG}" \
-    -f services/i18n-svc/Dockerfile \
+    -t "${IMAGE_PREFIX}/comms-svc:${HOTFIX_TAG}" \
+    -f services/comms-svc/Dockerfile \
     --push \
     .
-  echo "  ✓ i18n-svc pushed as ${HOTFIX_TAG}"
+  echo "  ✓ comms-svc pushed as ${HOTFIX_TAG}"
   echo ""
 
   echo "All images pushed to GHCR."
@@ -142,9 +142,9 @@ web:
   image:
     repository: ${IMAGE_PREFIX}/web
     tag: "${HOTFIX_TAG}"
-i18n-svc:
+comms-svc:
   image:
-    repository: ${IMAGE_PREFIX}/i18n-svc
+    repository: ${IMAGE_PREFIX}/comms-svc
     tag: "${HOTFIX_TAG}"
 
 # ── Unchanged services (pinned to ${CURRENT_RELEASE}) ──
@@ -172,9 +172,9 @@ engagement-svc:
   image:
     repository: ${IMAGE_PREFIX}/engagement-svc
     tag: "${CURRENT_RELEASE}"
-comms-svc:
+i18n-svc:
   image:
-    repository: ${IMAGE_PREFIX}/comms-svc
+    repository: ${IMAGE_PREFIX}/i18n-svc
     tag: "${CURRENT_RELEASE}"
 tutor-svc:
   image:
@@ -253,7 +253,7 @@ EOYAML
   echo "── Stage 4: Verifying rollout ──"
   echo ""
 
-  CHANGED_SVCS=(identity-svc web i18n-svc)
+  CHANGED_SVCS=(identity-svc web comms-svc)
   FAILED=0
 
   for svc in "${CHANGED_SVCS[@]}"; do
