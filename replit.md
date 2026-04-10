@@ -217,58 +217,26 @@ All backend services run as managed workflows:
 ### JSON Safety
 Brain-svc uses `ensure_dict()` / `ensure_list()` from `brain_svc.utils.json_coerce` to safely handle database JSONB fields that may be stored as strings. This is applied consistently across all routes (brain, mastery, accommodations, context, tutor_registry).
 
-## Test Login & Mock Data
+## Authentication
 
-In dev mode, the login page has "Test Accounts" buttons (Parent, Learner, Teacher, District Admin, Platform Admin, Caregiver) that authenticate via identity-svc and set JWT cookies (`access_token`, `refresh_token`, `user_role`) via `/api/test-login?role=<role>`, then redirect to the dashboard.
+The app uses real JWT-based authentication via identity-svc. No mock data or test login shortcuts exist.
 
 **Test credentials**: All seed accounts use password `password123`
+- Parent: `parent@test.aivo.com`
+- Teacher: `rivera@school.edu`
+- Caregiver: `jamie@email.com`
+- Learner PIN: `1234`
 
-When the backend APIs aren't running, the app falls back to **mock data** (`apps/web/src/lib/mock-data.ts`) for all dashboard pages. This includes:
-- Parent dashboard with 2 mock learners (Alex & Maya Johnson)
-- Learner profiles with brain data, gradebook, IEP, quests, tutors, badges, challenges
-- Teacher classrooms with learner data (6+ learners with mastery, at-risk flags, functioning levels), sortable tables, learner brain view with subjects/accommodations/IEP goals/sessions
-- Teacher learner hub (matching parent child hub design) with Quick Navigation grid, StatCards, sub-pages (brain, accommodations, iep, gradebook, sessions), Reports page, Settings page
-- Caregiver dashboard with read-only child view (brain profile, accommodations, IEP, gradebook, sessions)
-- Admin district overview with teachers, classrooms, licenses
-- **Platform admin dashboard** (`/admin/platform`) with RBAC sub-roles (super_admin, ops_manager, content_manager, support_agent, billing_manager):
-  - Overview dashboard with KPIs, system health, top districts, recent activity
-  - Districts management with search, detail drilldown (contact info, license usage, top teachers)
-  - Users management with search + role filter, status badges, platform role labels
-  - Subscriptions with revenue metrics (MRR/ARR), churn rate, subscription list
-  - Content library with type/search filters, usage/rating stats
-  - Audit log with severity filtering, actor/IP tracking
-  - Platform settings with general config + admin role management
-  - RBAC permissions system (`apps/web/src/lib/rbac.ts`) gates pages/actions per role
-- Notifications, engagement stats, shop items, collaboration members
-- Caregiver invite system (max 2 per child) on parent collaboration page with copy invite link
-- Caregiver onboarding wizard at `/accept-invite` (public route, no auth required): welcome → set PIN → review → complete
-- Bidirectional parent/teacher invite system:
-  - Parent-paid subscription: parent can invite teacher from collaboration page
-  - District-paid subscription: teacher can invite parent from `/teacher/learners/[id]/family`
-  - Subscription type returned by collaboration API (`subscriptionType: "parent" | "district"`)
-  - Teacher family page shows "Invite Parent" form with district context; parent collaboration page shows "Invite Teacher" form with parent context
-
-The mock system activates when:
-1. A `user_role` cookie is present (test login)
-2. The backend API call fails (connection refused or 401)
-
-Mock data covers all learner pages including:
-- **Learning path activities** — 4 activities (lesson, quest, practice, homework) for "Today's Learning Path"
-- **Quest worlds** — 4 worlds with chapters (Ocean Explorer, Space Adventure, Jungle Safari, Ancient Egypt)
-- **Tutor chat** — Mock session start (POST) and simulated streaming chat with per-persona responses for all 7 tutors (nova, sage, spark, chrono, pixel, harmony, echo)
-- **Challenges** — 4 challenges (1v1, team, global) with proper participants/duration data
-- **Shop items** — 8 avatar customization items with AI-generated images (`/assets/shop/*.png`) and rarity tiers (common/rare/epic/legendary); `ShopItemImage` component handles image load failures with emoji fallbacks
-- **Homework** — 3 assignments with proper status codes (READY/IN_PROGRESS/COMPLETED)
-- **Badges, Profile, Settings** — Full engagement/XP/streak/level data; avatar upload works in mock mode using data URIs (persists across reloads)
-
-Learner PIN: `1234` — handled in `getMockResponse` with body parsing
+**Auth flow**:
+- Login via `/api/auth/login` sets `access_token` and `refresh_token` cookies
+- Middleware reads JWT from `access_token` cookie to determine role for route-based access control
+- AuthProvider checks session on mount via `/api/auth/session`; redirects to `/login` on failure
+- Token refresh handled automatically by `apiFetch` (retries on 401)
 
 Key files:
-- `apps/web/src/lib/mock-data.ts` — All mock responses + `getMockTutorResponse()` for chat
-- `apps/web/src/lib/api.ts` — `apiFetch` with mock fallback
-- `apps/web/src/providers/AuthProvider.tsx` — Test user hydration + learner store population
-- `apps/web/src/stores/auth.store.ts` — `hydrateTestUser()` function
-- `apps/web/src/app/api/test-login/route.ts` — Server-side test login route
+- `apps/web/src/lib/api.ts` — `apiFetch` with auto-refresh, no fallbacks
+- `apps/web/src/providers/AuthProvider.tsx` — Session check on mount
+- `apps/web/src/middleware.ts` — JWT-based role routing (reads `access_token` cookie)
 
 ## Internationalization (i18n)
 

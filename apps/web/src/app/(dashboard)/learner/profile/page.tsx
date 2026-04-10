@@ -66,31 +66,15 @@ export default function LearnerProfilePage() {
         throw new Error(t("errorSelectImageFile"));
       }
 
-      const isMock = document.cookie.includes("user_role=");
-      if (isMock) {
-        const oldUrl = activeLearner.avatarUrl;
-        if (oldUrl?.startsWith("blob:")) {
-          URL.revokeObjectURL(oldUrl);
-        }
-
-        const reader = new FileReader();
-        const dataUrl = await new Promise<string>((resolve, reject) => {
-          reader.onload = () => resolve(reader.result as string);
-          reader.onerror = () => reject(new Error(t("failedToReadImage")));
-          reader.readAsDataURL(file);
-        });
-        updateLearner(activeLearner.id, { avatarUrl: dataUrl });
-      } else {
-        const formData = new FormData();
-        formData.append("avatar", file);
-        const res = await fetch(
-          `/api/learners/${activeLearner.id}/avatar`,
-          { method: "PUT", credentials: "include", body: formData }
-        );
-        if (!res.ok) throw new Error(t("avatarUploadFailed"));
-        const { avatarUrl } = await res.json();
-        updateLearner(activeLearner.id, { avatarUrl });
-      }
+      const formData = new FormData();
+      formData.append("avatar", file);
+      const res = await fetch(
+        `/api/learners/${activeLearner.id}/avatar`,
+        { method: "PUT", credentials: "include", body: formData }
+      );
+      if (!res.ok) throw new Error(t("avatarUploadFailed"));
+      const { avatarUrl } = await res.json();
+      updateLearner(activeLearner.id, { avatarUrl });
     } catch (err) {
       setError(err instanceof Error ? err.message : t("uploadFailed"));
     } finally {

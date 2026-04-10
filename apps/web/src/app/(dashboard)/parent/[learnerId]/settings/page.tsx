@@ -284,30 +284,17 @@ export default function LearnerSettingsPage() {
     setExporting(true);
     setError(null);
     try {
-      const isMock = document.cookie.includes("user_role=");
-      if (isMock) {
-        await new Promise((r) => setTimeout(r, 1500));
-        const mockExport = { learnerId, exportedAt: new Date().toISOString(), data: { note: "This is a demo export." } };
-        const blob = new Blob([JSON.stringify(mockExport, null, 2)], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `learner-${learnerId}-data.json`;
-        a.click();
-        URL.revokeObjectURL(url);
-      } else {
-        const blob = await fetch(
-          `/api/learners/${learnerId}/data-export`,
-          { credentials: "include" },
-        ).then((r) => r.blob());
+      const blob = await fetch(
+        `/api/learners/${learnerId}/data-export`,
+        { credentials: "include" },
+      ).then((r) => r.blob());
 
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `learner-${learnerId}-data.json`;
-        a.click();
-        URL.revokeObjectURL(url);
-      }
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `learner-${learnerId}-data.json`;
+      a.click();
+      URL.revokeObjectURL(url);
     } catch (err) {
       setError(err instanceof Error ? err.message : t("exportFailed"));
     } finally {

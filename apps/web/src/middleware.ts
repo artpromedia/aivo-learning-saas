@@ -54,6 +54,17 @@ function detectLocale(request: NextRequest): string {
   return DEFAULT_LOCALE;
 }
 
+function getRoleFromToken(token: string): string | null {
+  try {
+    const parts = token.split(".");
+    if (parts.length !== 3) return null;
+    const payload = JSON.parse(atob(parts[1].replace(/-/g, "+").replace(/_/g, "/")));
+    return payload.role ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const response = NextResponse.next();
@@ -76,13 +87,8 @@ export function middleware(request: NextRequest) {
     return response;
   }
 
-  const VALID_PREVIEW_ROLES = ["parent", "learner", "teacher", "admin", "platform_admin"];
-  const isPreview = request.nextUrl.searchParams.has("preview") && process.env.NODE_ENV !== "production";
-  const rawPreviewRole = isPreview ? (request.nextUrl.searchParams.get("role") || "parent") : null;
-  const previewRole = rawPreviewRole && VALID_PREVIEW_ROLES.includes(rawPreviewRole) ? rawPreviewRole : null;
-
-  const roleCookie = request.cookies.get("user_role")?.value;
-  const effectiveRole = roleCookie || previewRole;
+  const accessToken = request.cookies.get("access_token")?.value;
+  const effectiveRole = accessToken ? getRoleFromToken(accessToken) : null;
 
   if (!effectiveRole) {
     const isDashboard =

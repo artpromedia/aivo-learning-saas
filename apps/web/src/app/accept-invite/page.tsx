@@ -197,7 +197,7 @@ export default function AcceptInvitePage() {
             <p className="text-sm mb-6" style={{ color: "var(--aivo-text-secondary, #6B5A7D)" }}>
               You can now view {childName}&apos;s learning progress. Head to your dashboard to get started.
             </p>
-            <Button size="lg" className="w-full" onClick={() => { window.location.href = "/api/test-login?role=caregiver"; }} rightIcon={<ArrowRight size={16} />}>
+            <Button size="lg" className="w-full" onClick={() => { window.location.href = "/caregiver"; }} rightIcon={<ArrowRight size={16} />}>
               Go to Dashboard
             </Button>
           </div>

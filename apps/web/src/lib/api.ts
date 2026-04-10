@@ -1,13 +1,6 @@
-import { getMockResponse } from "./mock-data";
-
 const API_BASE = "";
 
 let refreshPromise: Promise<boolean> | null = null;
-
-function isTestMode(): boolean {
-  if (typeof document === "undefined") return false;
-  return document.cookie.split(";").some((c) => c.trim().startsWith("user_role="));
-}
 
 async function tryRefreshToken(): Promise<boolean> {
   try {
@@ -36,19 +29,10 @@ export async function apiFetch<T>(path: string, options?: RequestInit): Promise<
       ...options,
     });
   } catch {
-    if (isTestMode()) {
-      const mock = getMockResponse(path, method, typeof options?.body === "string" ? options.body : undefined);
-      if (mock !== undefined) return mock as T;
-    }
     throw new Error("Failed to fetch");
   }
 
   if (res.status === 401 && !path.includes("/auth/refresh") && !path.includes("/auth/login")) {
-    if (isTestMode()) {
-      const mock = getMockResponse(path, method, typeof options?.body === "string" ? options.body : undefined);
-      if (mock !== undefined) return mock as T;
-    }
-
     if (!refreshPromise) {
       refreshPromise = tryRefreshToken().finally(() => { refreshPromise = null; });
     }
@@ -74,10 +58,6 @@ export async function apiFetch<T>(path: string, options?: RequestInit): Promise<
     throw new Error("Session expired. Please log in again.");
   }
   if (!res.ok) {
-    if (isTestMode()) {
-      const mock = getMockResponse(path, method, typeof options?.body === "string" ? options.body : undefined);
-      if (mock !== undefined) return mock as T;
-    }
     const body = await res.json().catch(() => ({}));
     throw new Error(body.error ?? `API error: ${res.status}`);
   }
