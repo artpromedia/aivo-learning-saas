@@ -31,9 +31,7 @@ const LISTBOX_ID = "language-listbox";
 
 export function LanguageToggle() {
   const [open, setOpen] = useState(false);
-  const [current, setCurrent] = useState(() =>
-    typeof document !== "undefined" ? getCurrentLocale() : "en"
-  );
+  const [current, setCurrent] = useState("en");
   const [focusIndex, setFocusIndex] = useState(-1);
   const ref = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
