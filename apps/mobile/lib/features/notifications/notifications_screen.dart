@@ -83,7 +83,7 @@ class NotificationsScreen extends ConsumerWidget {
         ],
       ),
       body: notifications.when(
-        loading: () => const LoadingShimmer(),
+        loading: () => LoadingShimmer.list(),
         error: (err, _) => ErrorView(
           message: err.toString(),
           onRetry: () => ref.invalidate(_notificationsProvider(userId)),

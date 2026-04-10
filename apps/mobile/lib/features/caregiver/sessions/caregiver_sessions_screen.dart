@@ -39,7 +39,7 @@ class CaregiverSessionsScreen extends ConsumerWidget {
         leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => context.pop()),
       ),
       body: sessions.when(
-        loading: () => const LoadingShimmer(),
+        loading: () => LoadingShimmer.list(),
         error: (err, _) => ErrorView(message: err.toString(), onRetry: () => ref.invalidate(_sessionsProvider)),
         data: (data) {
           if (data.isEmpty) {

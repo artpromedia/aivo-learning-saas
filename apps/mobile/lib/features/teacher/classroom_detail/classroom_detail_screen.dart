@@ -107,7 +107,7 @@ class ClassroomDetailScreen extends ConsumerWidget {
         ],
       ),
       body: detail.when(
-        loading: () => const LoadingShimmer(),
+        loading: () => LoadingShimmer.list(),
         error: (err, _) => ErrorView(
           message: err.toString(),
           onRetry: () =>

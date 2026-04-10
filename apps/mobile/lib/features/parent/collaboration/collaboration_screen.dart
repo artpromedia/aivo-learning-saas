@@ -123,7 +123,7 @@ class _CollaborationScreenState extends ConsumerState<CollaborationScreen> {
         ),
       ),
       body: members.when(
-        loading: () => const LoadingShimmer(),
+        loading: () => LoadingShimmer.list(),
         error: (err, _) => ErrorView(
           message: err.toString(),
           onRetry: () =>

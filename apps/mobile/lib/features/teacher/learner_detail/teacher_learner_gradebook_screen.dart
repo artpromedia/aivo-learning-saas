@@ -51,7 +51,7 @@ class TeacherLearnerGradebookScreen extends ConsumerWidget {
         ),
       ),
       body: gradebook.when(
-        loading: () => const LoadingShimmer(),
+        loading: () => LoadingShimmer.list(),
         error: (err, _) => ErrorView(
           message: err.toString(),
           onRetry: () => ref.invalidate(_gradebookProvider(learnerId)),

@@ -47,7 +47,7 @@ class TeacherLearnerAccommodationsScreen extends ConsumerWidget {
         ),
       ),
       body: accommodations.when(
-        loading: () => const LoadingShimmer(),
+        loading: () => LoadingShimmer.list(),
         error: (err, _) => ErrorView(
           message: err.toString(),
           onRetry: () => ref.invalidate(_accommodationsProvider(learnerId)),

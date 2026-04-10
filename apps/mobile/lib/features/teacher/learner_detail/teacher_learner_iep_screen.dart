@@ -63,7 +63,7 @@ class TeacherLearnerIepScreen extends ConsumerWidget {
         ),
       ),
       body: goals.when(
-        loading: () => const LoadingShimmer(),
+        loading: () => LoadingShimmer.list(),
         error: (err, _) => ErrorView(
           message: err.toString(),
           onRetry: () => ref.invalidate(_iepGoalsProvider(learnerId)),

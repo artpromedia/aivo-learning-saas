@@ -40,7 +40,7 @@ class CaregiverIepScreen extends ConsumerWidget {
         ),
       ),
       body: goals.when(
-        loading: () => const LoadingShimmer(),
+        loading: () => LoadingShimmer.list(),
         error: (err, _) => ErrorView(message: err.toString(), onRetry: () => ref.invalidate(_iepProvider)),
         data: (data) => ListView(
           padding: const EdgeInsets.all(16),
