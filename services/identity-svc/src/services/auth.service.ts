@@ -60,12 +60,17 @@ export class AuthService {
       .returning();
 
     // Create user
+    const nameParts = input.name.trim().split(/\s+/);
+    const firstName = nameParts[0] || "";
+    const lastName = nameParts.slice(1).join(" ") || "";
     const [user] = await this.app.db
       .insert(users)
       .values({
         tenantId: tenant.id,
         email: input.email.toLowerCase(),
         name: input.name,
+        firstName,
+        lastName,
         role: userRole,
         status: "ACTIVE",
       })
