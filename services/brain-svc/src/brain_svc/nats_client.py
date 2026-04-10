@@ -22,7 +22,12 @@ async def connect_nats() -> tuple[NatsClient, JetStreamContext]:
     global _nc, _js
     if _nc is None or _nc.is_closed:
         settings = get_settings()
-        _nc = await nats.connect(settings.nats_url)
+        _nc = await nats.connect(
+            settings.nats_url,
+            max_reconnect_attempts=2,
+            reconnect_time_wait=1,
+            connect_timeout=3,
+        )
         _js = _nc.jetstream()
         logger.info("Connected to NATS at %s", settings.nats_url)
     assert _js is not None

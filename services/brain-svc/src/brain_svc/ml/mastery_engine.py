@@ -14,12 +14,21 @@ import copy
 import logging
 from dataclasses import dataclass, field
 
-import torch
-
-from brain_svc.ml.base_brain_model import (
-    FUNCTIONING_LEVEL_MAP,
-    BaseBrainModel,
-)
+try:
+    import torch
+    from brain_svc.ml.base_brain_model import (
+        FUNCTIONING_LEVEL_MAP,
+        BaseBrainModel,
+    )
+    _HAS_TORCH = True
+except ImportError:
+    torch = None  # type: ignore[assignment]
+    BaseBrainModel = None  # type: ignore[assignment, misc]
+    FUNCTIONING_LEVEL_MAP = {
+        "STANDARD": 0, "SUPPORTED": 1, "LOW_VERBAL": 2,
+        "NON_VERBAL": 3, "PRE_SYMBOLIC": 4,
+    }
+    _HAS_TORCH = False
 
 logger = logging.getLogger(__name__)
 
@@ -96,9 +105,10 @@ def sm2_update(state: SM2State, quality: int) -> SM2State:
 class MasteryEngine:
     """Orchestrates BKT updates and neural mastery prediction."""
 
-    def __init__(self, model: BaseBrainModel) -> None:
+    def __init__(self, model: "BaseBrainModel | None" = None) -> None:
         self.model = model
-        self.model.eval()
+        if self.model is not None:
+            self.model.eval()
         self._bkt_params: dict[str, BKTParams] = {}
         self._sm2_states: dict[str, SM2State] = {}
 
@@ -163,24 +173,25 @@ class MasteryEngine:
         # BKT update
         bkt_result = self.bkt_update(skill, sm.p_known, is_correct)
 
-        # Neural prediction (single interaction)
-        skill_idx = hash(skill) % self.model.num_skills
-        fl_idx = FUNCTIONING_LEVEL_MAP.get(functioning_level, 0)
+        if _HAS_TORCH and self.model is not None:
+            skill_idx = hash(skill) % self.model.num_skills
+            fl_idx = FUNCTIONING_LEVEL_MAP.get(functioning_level, 0)
 
-        time_since = max(0.0, timestamp - sm.last_interaction_ts) if sm.last_interaction_ts > 0 else 0.0
-        correct_ratio = sm.correct_count / max(1, sm.attempts)
+            time_since = max(0.0, timestamp - sm.last_interaction_ts) if sm.last_interaction_ts > 0 else 0.0
+            correct_ratio = sm.correct_count / max(1, sm.attempts)
 
-        with torch.no_grad():
-            skill_tensor = torch.tensor([[skill_idx]], dtype=torch.long)
-            fl_tensor = torch.tensor([[fl_idx]], dtype=torch.long)
-            numeric = torch.tensor(
-                [[[float(sm.attempts), correct_ratio, time_since, difficulty]]],
-                dtype=torch.float32,
-            )
-            neural_pred = self.model(skill_tensor, fl_tensor, numeric).item()
+            with torch.no_grad():
+                skill_tensor = torch.tensor([[skill_idx]], dtype=torch.long)
+                fl_tensor = torch.tensor([[fl_idx]], dtype=torch.long)
+                numeric = torch.tensor(
+                    [[[float(sm.attempts), correct_ratio, time_since, difficulty]]],
+                    dtype=torch.float32,
+                )
+                neural_pred = self.model(skill_tensor, fl_tensor, numeric).item()
 
-        # Blend BKT and neural: 60% BKT, 40% neural
-        blended = 0.6 * bkt_result + 0.4 * neural_pred
+            blended = 0.6 * bkt_result + 0.4 * neural_pred
+        else:
+            blended = bkt_result
 
         # Update skill mastery state
         sm.p_known = max(0.0, min(1.0, blended))

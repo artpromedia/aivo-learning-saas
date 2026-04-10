@@ -42,20 +42,20 @@ export function LanguageSelect({
   return (
     <div className={className}>
       {label && (
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+        <label className="block text-sm font-bold text-[var(--aivo-text)] mb-1.5">
           {label}
         </label>
       )}
       <div className="relative">
         <Globe
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A89BB5]"
           size={18}
         />
         <select
           value={value ?? ""}
           onChange={(e) => onChange(e.target.value)}
           disabled={disabled}
-          className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none"
+          className="w-full pl-10 pr-4 py-3 rounded-2xl border-2 border-[#E8DDF0] dark:border-[#3D2D5C] bg-[var(--aivo-bg)] text-[var(--aivo-text)] focus:ring-3 focus:ring-[#7C3AED]/20 focus:border-[#7C3AED] outline-none transition-all font-medium"
         >
           <option value="">Auto-detect</option>
           {locales.map((code) => {

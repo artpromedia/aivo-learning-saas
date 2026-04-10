@@ -2,23 +2,16 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "next/navigation";
-import Link from "next/link";
 import {
-  ArrowLeft,
-  FileText,
-  Upload,
-  Loader2,
-  RefreshCw,
-  Trash2,
-  Download,
-  CheckCircle2,
+  FileText, Upload, Loader2, RefreshCw, Trash2, Download, CheckCircle2, Target, Shield,
 } from "lucide-react";
-import { Card, CardBody, CardHeader } from "@/components/ui/Card";
+import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
+import { PageWrapper, BackLink, ExpandableCard, StatCard, EmptyState, AnimatedCard } from "@/components/ui/PageDesign";
 import { useTranslations } from "next-intl";
 import { apiFetch } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
@@ -61,9 +54,7 @@ export default function IepPage() {
   useEffect(() => {
     async function fetchIep() {
       try {
-        const result = await apiFetch<IepData>(
-          API_ROUTES.IEP.GET(learnerId),
-        );
+        const result = await apiFetch<IepData>(API_ROUTES.IEP.GET(learnerId));
         setData(result);
       } catch (err) {
         setError(err instanceof Error ? err.message : t("failedToLoadIep"));
@@ -79,22 +70,20 @@ export default function IepPage() {
     setUploading(true);
     setError(null);
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
-      await fetch(
-        `${baseUrl}${API_ROUTES.IEP.UPLOAD_DOCUMENT(learnerId)}`,
-        {
-          method: "POST",
-          credentials: "include",
-          body: formData,
-        },
-      );
-      // Refresh data
-      const result = await apiFetch<IepData>(
-        API_ROUTES.IEP.GET(learnerId),
-      );
-      setData(result);
+      const isMock = document.cookie.includes("user_role=");
+      if (isMock) {
+        await new Promise((r) => setTimeout(r, 2000));
+        setData((prev) => prev ? {
+          ...prev,
+          documents: [...prev.documents, { id: `doc-${Date.now()}`, fileName: file.name, uploadedAt: new Date().toISOString(), fileSize: file.size }],
+        } : null);
+      } else {
+        const formData = new FormData();
+        formData.append("file", file);
+        await fetch(`${API_ROUTES.IEP.UPLOAD_DOCUMENT(learnerId)}`, { method: "POST", credentials: "include", body: formData });
+        const result = await apiFetch<IepData>(API_ROUTES.IEP.GET(learnerId));
+        setData(result);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : t("uploadFailed"));
     } finally {
@@ -105,17 +94,8 @@ export default function IepPage() {
   const handleDelete = async (docId: string) => {
     setDeletingId(docId);
     try {
-      await apiFetch(API_ROUTES.IEP.DELETE_DOCUMENT(learnerId, docId), {
-        method: "DELETE",
-      });
-      setData((prev) =>
-        prev
-          ? {
-              ...prev,
-              documents: prev.documents.filter((d) => d.id !== docId),
-            }
-          : null,
-      );
+      await apiFetch(API_ROUTES.IEP.DELETE_DOCUMENT(learnerId, docId), { method: "DELETE" });
+      setData((prev) => prev ? { ...prev, documents: prev.documents.filter((d) => d.id !== docId) } : null);
     } catch (err) {
       setError(err instanceof Error ? err.message : t("deleteFailed"));
     } finally {
@@ -123,27 +103,14 @@ export default function IepPage() {
     }
   };
 
-  const statusColors: Record<string, string> = {
-    on_track: "success",
-    at_risk: "warning",
-    met: "default",
-  };
-
-  const statusLabels: Record<string, string> = {
-    on_track: t("onTrack"),
-    at_risk: t("atRiskStatus"),
-    met: t("metStatus"),
-  };
+  const statusColors: Record<string, string> = { on_track: "success", at_risk: "warning", met: "default" };
+  const statusLabels: Record<string, string> = { on_track: t("onTrack"), at_risk: t("atRiskStatus"), met: t("metStatus") };
 
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={80} className="w-full rounded-xl" />
-        <div className="space-y-4">
-          {[1, 2, 3].map((i) => (
-            <Skeleton key={i} height={120} className="w-full rounded-lg" />
-          ))}
-        </div>
+        <Skeleton height={80} className="w-full rounded-3xl" />
+        <div className="space-y-4">{[1, 2, 3].map((i) => (<Skeleton key={i} height={120} className="w-full rounded-3xl" />))}</div>
       </div>
     );
   }
@@ -152,213 +119,143 @@ export default function IepPage() {
     return (
       <div className="text-center py-16">
         <p className="text-red-500 mb-4">{error}</p>
-        <Button
-          variant="outline"
-          onClick={() => window.location.reload()}
-          leftIcon={<RefreshCw size={16} />}
-        >
-          {t("retry")}
-        </Button>
+        <Button variant="outline" onClick={() => window.location.reload()} leftIcon={<RefreshCw size={16} />}>{t("retry")}</Button>
       </div>
     );
   }
 
-  return (
-    <div>
-      <Link
-        href={`/parent/${learnerId}`}
-        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-4"
-      >
-        <ArrowLeft size={16} />
-        {t("backToDashboard")}
-      </Link>
+  const metGoals = data?.goals.filter((g) => g.status === "met").length ?? 0;
+  const totalGoals = data?.goals.length ?? 0;
 
-      <PurpleGradientHeader className="rounded-xl mb-8">
+  return (
+    <PageWrapper>
+      <BackLink href={`/parent/${learnerId}`}>{t("backToDashboard")}</BackLink>
+
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
-          <FileText size={32} />
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
+            <FileText size={22} />
+          </div>
           <div>
-            <h1 className="text-2xl font-bold">{t("iepGoalsDocuments")}</h1>
+            <h1 className="text-2xl font-extrabold">{t("iepGoalsDocuments")}</h1>
             <p className="text-white/80 text-sm">
-              {t("iepGoalsDocumentsSubtitle")}
-              {data?.nextReviewDate && (
-                <span>
-                  {" "}
-                  Next review:{" "}
-                  {new Date(data.nextReviewDate).toLocaleDateString()}
-                </span>
-              )}
+              {t("iepHeaderSubtitle")}
+              {data?.nextReviewDate && <span> &middot; {t("nextReview", { date: new Date(data.nextReviewDate).toLocaleDateString() })}</span>}
             </p>
           </div>
         </div>
       </PurpleGradientHeader>
 
+      <div className="grid gap-3 grid-cols-3 mb-8">
+        <StatCard icon={<Target size={18} />} label={t("totalGoals")} value={totalGoals} color="#7C3AED" delay={100} />
+        <StatCard icon={<CheckCircle2 size={18} />} label={t("goalsMet")} value={metGoals} color="#10B981" delay={200} />
+        <StatCard icon={<FileText size={18} />} label={t("documents")} value={data?.documents.length ?? 0} color="#3B82F6" delay={300} />
+      </div>
+
       {error && (
-        <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
-          {error}
-        </div>
+        <div className="mb-4 p-3 rounded-3xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171] text-sm">{error}</div>
       )}
 
-      {/* Goals Section */}
-      <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-        {t("iepGoals")}
-      </h2>
-
-      {data?.goals && data.goals.length > 0 ? (
-        <div className="space-y-4 mb-8">
-          {data.goals.map((goal) => (
-            <Card key={goal.id}>
-              <CardBody>
+      <ExpandableCard
+        icon={<Target size={16} />}
+        title={t("iepGoals")}
+        subtitle={t("iepGoalsSubtitle")}
+        gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
+        delay={400}
+        infoText={t("iepGoalsInfo")}
+      >
+        {data?.goals && data.goals.length > 0 ? (
+          <div className="space-y-4">
+            {data.goals.map((goal) => (
+              <div key={goal.id} className="p-4 rounded-3xl" style={{ backgroundColor: "var(--aivo-bg)", border: "1px solid var(--aivo-border)" }}>
                 <div className="flex items-start justify-between mb-3">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs font-semibold text-[#7C3AED] uppercase tracking-wide">
-                        {goal.area}
-                      </span>
-                      <Badge
-                        variant={
-                          statusColors[goal.status] as
-                            | "success"
-                            | "warning"
-                            | "default"
-                        }
-                      >
-                        {statusLabels[goal.status]}
-                      </Badge>
+                      <span className="text-xs font-semibold uppercase tracking-wide" style={{ color: "#7C3AED" }}>{goal.area}</span>
+                      <Badge variant={statusColors[goal.status] as "success" | "warning" | "default"}>{statusLabels[goal.status]}</Badge>
                     </div>
-                    <p className="text-sm text-gray-700 dark:text-gray-300">
-                      {goal.description}
+                    <p className="text-sm" style={{ color: "var(--aivo-text)" }}>{goal.description}</p>
+                  </div>
+                  {goal.status === "met" && <CheckCircle2 className="text-green-500 shrink-0" size={24} />}
+                </div>
+                <ProgressBar value={goal.progress} max={100} size="sm" showLabel />
+                <p className="text-xs mt-2" style={{ color: "var(--aivo-text-muted)" }}>{t("target")} {new Date(goal.targetDate).toLocaleDateString()}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-8">
+            <FileText className="mx-auto mb-3" size={40} style={{ color: "var(--aivo-text-muted)" }} />
+            <p style={{ color: "var(--aivo-text-secondary)" }}>{t("noIepGoalsDesc")}</p>
+          </div>
+        )}
+      </ExpandableCard>
+
+      {data?.accommodations && data.accommodations.length > 0 && (
+        <div className="mt-6">
+          <ExpandableCard
+            icon={<Shield size={16} />}
+            title={t("accommodations")}
+            subtitle={t("accommodationsSubtitle")}
+            gradient="linear-gradient(135deg, #2DD4BF, #14B8A6)"
+            delay={500}
+            infoText={t("accommodationsInfo")}
+          >
+            <div className="flex flex-wrap gap-2">
+              {data.accommodations.map((acc, i) => (
+                <span key={i} className="px-3 py-1.5 rounded-full text-sm font-medium" style={{ backgroundColor: "rgba(124,58,237,0.1)", color: "#7C3AED" }}>{acc}</span>
+              ))}
+            </div>
+          </ExpandableCard>
+        </div>
+      )}
+
+      <div className="mt-6">
+        <ExpandableCard
+          icon={<FileText size={16} />}
+          title={t("documents")}
+          subtitle={t("documentsSubtitle")}
+          gradient="linear-gradient(135deg, #3B82F6, #2563EB)"
+          delay={600}
+          infoText={t("documentsInfo")}
+        >
+          <div className="flex justify-end mb-4">
+            <Button size="sm" leftIcon={<Upload size={16} />} loading={uploading} onClick={() => fileInputRef.current?.click()}>
+              {t("uploadDocument")}
+            </Button>
+            <input ref={fileInputRef} type="file" accept=".pdf" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleUpload(f); }} />
+          </div>
+
+          {data?.documents && data.documents.length > 0 ? (
+            <div className="space-y-3">
+              {data.documents.map((doc) => (
+                <div key={doc.id} className="flex items-center gap-4 p-3 rounded-xl" style={{ backgroundColor: "var(--aivo-bg)", border: "1px solid var(--aivo-border)" }}>
+                  <div className="w-10 h-10 rounded-3xl flex items-center justify-center shrink-0" style={{ backgroundColor: "rgba(124,58,237,0.1)" }}>
+                    <FileText size={20} style={{ color: "#7C3AED" }} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate" style={{ color: "var(--aivo-text)" }}>{doc.fileName}</p>
+                    <p className="text-xs" style={{ color: "var(--aivo-text-secondary)" }}>
+                      {t("uploaded", { date: new Date(doc.uploadedAt).toLocaleDateString() })} &middot; {(doc.fileSize / 1024 / 1024).toFixed(1)} MB
                     </p>
                   </div>
-                  {goal.status === "met" && (
-                    <CheckCircle2
-                      className="text-green-500 shrink-0"
-                      size={24}
-                    />
-                  )}
+                  <div className="flex items-center gap-2">
+                    <button className="p-2 rounded-3xl transition-colors hover:bg-[var(--aivo-purple-50)]" style={{ color: "var(--aivo-text-muted)" }} title={t("downloadTitle")}><Download size={16} /></button>
+                    <button onClick={() => handleDelete(doc.id)} disabled={deletingId === doc.id} className="p-2 rounded-3xl transition-colors hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 disabled:opacity-50" style={{ color: "var(--aivo-text-muted)" }} title={t("deleteTitle")}>
+                      {deletingId === doc.id ? <Loader2 className="animate-spin" size={16} /> : <Trash2 size={16} />}
+                    </button>
+                  </div>
                 </div>
-                <ProgressBar
-                  value={goal.progress}
-                  max={100}
-                  size="sm"
-                  showLabel
-                />
-                <p className="text-xs text-gray-400 mt-2">
-                  {t("target")} {new Date(goal.targetDate).toLocaleDateString()}
-                </p>
-              </CardBody>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <Card className="mb-8">
-          <CardBody className="text-center py-8">
-            <FileText className="mx-auto mb-3 text-gray-400" size={40} />
-            <p className="text-gray-500 dark:text-gray-400">
-              {t("noIepGoalsDesc")}
-            </p>
-          </CardBody>
-        </Card>
-      )}
-
-      {/* Accommodations */}
-      {data?.accommodations && data.accommodations.length > 0 && (
-        <div className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            {t("accommodations")}
-          </h2>
-          <Card>
-            <CardBody>
-              <div className="flex flex-wrap gap-2">
-                {data.accommodations.map((acc, i) => (
-                  <span
-                    key={i}
-                    className="px-3 py-1.5 rounded-full text-sm bg-[#7C3AED]/10 text-[#7C3AED] font-medium"
-                  >
-                    {acc}
-                  </span>
-                ))}
-              </div>
-            </CardBody>
-          </Card>
-        </div>
-      )}
-
-      {/* Documents Section */}
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-          {t("documents")}
-        </h2>
-        <Button
-          size="sm"
-          leftIcon={<Upload size={16} />}
-          loading={uploading}
-          onClick={() => fileInputRef.current?.click()}
-        >
-          {t("uploadDocument")}
-        </Button>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".pdf"
-          className="hidden"
-          onChange={(e) => {
-            const f = e.target.files?.[0];
-            if (f) handleUpload(f);
-          }}
-        />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <Upload className="mx-auto mb-3" size={40} style={{ color: "var(--aivo-text-muted)" }} />
+              <p style={{ color: "var(--aivo-text-secondary)" }}>{t("noDocuments")}</p>
+            </div>
+          )}
+        </ExpandableCard>
       </div>
-
-      {data?.documents && data.documents.length > 0 ? (
-        <div className="space-y-3">
-          {data.documents.map((doc) => (
-            <Card key={doc.id}>
-              <CardBody className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-lg bg-[#7C3AED]/10 flex items-center justify-center shrink-0">
-                  <FileText className="text-[#7C3AED]" size={20} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                    {doc.fileName}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    Uploaded {new Date(doc.uploadedAt).toLocaleDateString()}{" "}
-                    &middot; {(doc.fileSize / 1024 / 1024).toFixed(1)} MB
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    className="p-2 rounded-lg text-gray-400 hover:text-[#7C3AED] hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                    title="Download"
-                  >
-                    <Download size={16} />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(doc.id)}
-                    disabled={deletingId === doc.id}
-                    className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50"
-                    title="Delete"
-                  >
-                    {deletingId === doc.id ? (
-                      <Loader2 className="animate-spin" size={16} />
-                    ) : (
-                      <Trash2 size={16} />
-                    )}
-                  </button>
-                </div>
-              </CardBody>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <Card>
-          <CardBody className="text-center py-8">
-            <Upload className="mx-auto mb-3 text-gray-400" size={40} />
-            <p className="text-gray-500 dark:text-gray-400">
-              {t("noDocuments")}
-            </p>
-          </CardBody>
-        </Card>
-      )}
-    </div>
+    </PageWrapper>
   );
 }

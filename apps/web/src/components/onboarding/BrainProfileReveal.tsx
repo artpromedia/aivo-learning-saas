@@ -28,7 +28,7 @@ function BrainProfileReveal({
       initial={{ opacity: 0, y: 30, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className={`w-full max-w-lg mx-auto rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-xl overflow-hidden ${className}`}
+      className={`w-full max-w-lg mx-auto rounded-2xl bg-white dark:bg-[#2A1E45] border border-[#E8DDF0] dark:border-[#3D2D5C] shadow-xl overflow-hidden ${className}`}
     >
       <div
         className="px-6 py-5 flex items-center gap-3"
@@ -57,10 +57,10 @@ function BrainProfileReveal({
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">
+          <h3 className="text-sm font-semibold text-[var(--aivo-text-secondary)] dark:text-[var(--aivo-text-muted)] uppercase tracking-wide mb-1">
             Summary
           </h3>
-          <p className="text-gray-800 dark:text-gray-200 leading-relaxed">
+          <p className="text-[var(--aivo-text)] dark:text-[#C4B5D0] leading-relaxed">
             {profileSummary}
           </p>
         </motion.div>
@@ -70,7 +70,7 @@ function BrainProfileReveal({
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.55 }}
         >
-          <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">
+          <h3 className="text-sm font-semibold text-[var(--aivo-text-secondary)] dark:text-[var(--aivo-text-muted)] uppercase tracking-wide mb-2">
             Recommended Accommodations
           </h3>
           <ul className="space-y-1.5">
@@ -80,7 +80,7 @@ function BrainProfileReveal({
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.6 + i * 0.08 }}
-                className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300"
+                className="flex items-start gap-2 text-sm text-[var(--aivo-text)] dark:text-[#A89BB5]"
               >
                 <span className="mt-0.5 w-1.5 h-1.5 rounded-full bg-[#7C3AED] shrink-0" />
                 {item}
@@ -94,12 +94,12 @@ function BrainProfileReveal({
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.7 }}
-        className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row gap-2"
+        className="px-6 py-4 border-t border-[#E8DDF0] dark:border-[#3D2D5C] flex flex-col sm:flex-row gap-2"
       >
         <button
           onClick={onApprove}
           disabled={loading !== null}
-          className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-white bg-green-600 hover:bg-green-700 active:bg-green-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl text-sm font-medium text-white bg-green-600 hover:bg-green-700 active:bg-green-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {loading === "approve" ? (
             <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -111,7 +111,7 @@ function BrainProfileReveal({
         <button
           onClick={onAddInsights}
           disabled={loading !== null}
-          className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {loading === "insights" ? (
             <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -123,7 +123,7 @@ function BrainProfileReveal({
         <button
           onClick={onDecline}
           disabled={loading !== null}
-          className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-white bg-red-600 hover:bg-red-700 active:bg-red-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl text-sm font-medium text-white bg-red-600 hover:bg-red-700 active:bg-red-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {loading === "decline" ? (
             <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />

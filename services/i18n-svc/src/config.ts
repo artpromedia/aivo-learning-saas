@@ -6,8 +6,8 @@ loadDotenv();
 const configSchema = z.object({
   PORT: z.coerce.number().default(3011),
   DATABASE_URL: z.string().min(1),
-  NATS_URL: z.string().min(1),
-  AI_SVC_URL: z.string().url().default("http://localhost:5000"),
+  NATS_URL: z.string().default("nats://localhost:4222"),
+  AI_SVC_URL: z.string().url().default("http://localhost:3015"),
   APP_URL: z.string().url().default("http://localhost:3000"),
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
 });

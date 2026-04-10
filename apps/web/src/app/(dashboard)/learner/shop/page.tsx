@@ -2,12 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import {
-  ShoppingBag,
-  Loader2,
-  RefreshCw,
-  Sparkles,
-  Coins,
-  Check,
+  ShoppingBag, RefreshCw, Coins, Check,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Card, CardBody } from "@/components/ui/Card";
@@ -16,6 +11,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Modal } from "@/components/ui/Modal";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
+import { PageWrapper, BackLink, EmptyState, AnimatedCard } from "@/components/ui/PageDesign";
 import { apiFetch } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
 import { useLearnerStore } from "@/stores/learner.store";
@@ -33,21 +29,31 @@ interface ShopItem {
   equipped: boolean;
 }
 
-// Category labels will be resolved via t() in the component
-
-const RARITY_COLORS: Record<string, string> = {
-  common: "secondary",
-  rare: "default",
-  epic: "warning",
-  legendary: "error",
+const categoryEmoji: Record<ShopItem["category"], string> = {
+  hair: "💇",
+  outfit: "👕",
+  accessory: "🎩",
+  background: "🖼️",
+  effect: "✨",
 };
 
-const RARITY_KEYS: Record<string, string> = {
-  common: "common",
-  rare: "rare",
-  epic: "epic",
-  legendary: "legendary",
-};
+function ShopItemImage({ item, size = "sm" }: { item: ShopItem; size?: "sm" | "lg" }) {
+  const [failed, setFailed] = useState(false);
+  const textSize = size === "lg" ? "text-5xl" : "text-4xl";
+  if (!item.imageUrl || failed) {
+    return <span className={textSize}>{categoryEmoji[item.category] ?? "🎁"}</span>;
+  }
+  return (
+    <img
+      src={item.imageUrl}
+      alt={item.name}
+      className="w-full h-full object-contain p-2"
+      onError={() => setFailed(true)}
+    />
+  );
+}
+
+const RARITY_COLORS: Record<string, string> = { common: "secondary", rare: "default", epic: "warning", legendary: "error" };
 
 export default function ShopPage() {
   const t = useTranslations("dashboard");
@@ -72,7 +78,6 @@ export default function ShopPage() {
         setLoading(false);
       }
     }
-
     fetchItems();
   }, []);
 
@@ -80,15 +85,8 @@ export default function ShopPage() {
     if (!selectedItem) return;
     setPurchasing(true);
     try {
-      await apiFetch(API_ROUTES.SHOP.PURCHASE, {
-        method: "POST",
-        body: JSON.stringify({ itemId: selectedItem.id }),
-      });
-      setItems((prev) =>
-        prev.map((i) =>
-          i.id === selectedItem.id ? { ...i, owned: true } : i,
-        ),
-      );
+      await apiFetch(API_ROUTES.SHOP.PURCHASE, { method: "POST", body: JSON.stringify({ itemId: selectedItem.id }) });
+      setItems((prev) => prev.map((i) => i.id === selectedItem.id ? { ...i, owned: true } : i));
       setSelectedItem(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : t("purchaseFailed"));
@@ -98,17 +96,15 @@ export default function ShopPage() {
   };
 
   const categories = Array.from(new Set(items.map((i) => i.category)));
-  const filteredItems = selectedCategory
-    ? items.filter((i) => i.category === selectedCategory)
-    : items;
+  const filteredItems = selectedCategory ? items.filter((i) => i.category === selectedCategory) : items;
 
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={80} className="w-full rounded-xl" />
+        <Skeleton height={80} className="w-full rounded-3xl" />
         <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-            <Skeleton key={i} height={200} className="w-full rounded-lg" />
+            <Skeleton key={i} height={200} className="w-full rounded-3xl" />
           ))}
         </div>
       </div>
@@ -119,28 +115,24 @@ export default function ShopPage() {
     return (
       <div className="text-center py-16">
         <p className="text-red-500 mb-4">{error}</p>
-        <Button
-          variant="outline"
-          onClick={() => window.location.reload()}
-          leftIcon={<RefreshCw size={16} />}
-        >
-          Retry
-        </Button>
+        <Button variant="outline" onClick={() => window.location.reload()} leftIcon={<RefreshCw size={16} />}>{t("retry")}</Button>
       </div>
     );
   }
 
   return (
-    <div>
-      <PurpleGradientHeader className="rounded-xl mb-8">
+    <PageWrapper>
+      <BackLink href="/learner">{t("backToHome", { defaultValue: "Back to Home" })}</BackLink>
+
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <ShoppingBag size={32} />
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
+              <ShoppingBag size={22} />
+            </div>
             <div>
-              <h1 className="text-2xl font-bold">{t("avatarShop")}</h1>
-              <p className="text-white/80 text-sm">
-                {t("shopSubtitle")}
-              </p>
+              <h1 className="text-2xl font-extrabold">{t("avatarShop")}</h1>
+              <p className="text-white/80 text-sm">{t("shopCustomizeDescription")}</p>
             </div>
           </div>
           <div className="flex items-center gap-2 bg-white/20 rounded-full px-4 py-2">
@@ -152,163 +144,115 @@ export default function ShopPage() {
       </PurpleGradientHeader>
 
       {error && (
-        <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
-          {error}
-        </div>
+        <div className="mb-4 p-3 rounded-3xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171] text-sm">{error}</div>
       )}
 
-      {/* Category Filter */}
-      <div className="flex flex-wrap gap-2 mb-6">
-        <button
-          onClick={() => setSelectedCategory(null)}
-          className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-            selectedCategory === null
-              ? "bg-[#7C3AED] text-white"
-              : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
-          }`}
-        >
-          All
-        </button>
-        {categories.map((cat) => (
+      <AnimatedCard delay={100}>
+        <div className="flex flex-wrap gap-2 mb-6">
           <button
-            key={cat}
-            onClick={() => setSelectedCategory(cat)}
+            onClick={() => setSelectedCategory(null)}
             className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-              selectedCategory === cat
+              selectedCategory === null
                 ? "bg-[#7C3AED] text-white"
-                : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
+                : "bg-[var(--aivo-bg-alt,#FFF5EB)] text-[var(--aivo-text-secondary)] hover:bg-[#F0E6FF] dark:hover:bg-[#3D2D5C]"
             }`}
           >
-            {t(cat === "outfit" ? "outfits" : cat === "accessory" ? "accessories" : cat === "background" ? "backgrounds" : cat === "effect" ? "effects" : cat)}
+            {t("shopAll")}
           </button>
-        ))}
-      </div>
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                selectedCategory === cat
+                  ? "bg-[#7C3AED] text-white"
+                  : "bg-[var(--aivo-bg-alt,#FFF5EB)] text-[var(--aivo-text-secondary)] hover:bg-[#F0E6FF] dark:hover:bg-[#3D2D5C]"
+              }`}
+            >
+              {t(cat === "outfit" ? "outfits" : cat === "accessory" ? "accessories" : cat === "background" ? "backgrounds" : cat === "effect" ? "effects" : cat)}
+            </button>
+          ))}
+        </div>
+      </AnimatedCard>
 
-      {/* Items Grid */}
       <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
-        {filteredItems.map((item) => (
-          <Card
-            key={item.id}
-            className={`hover:shadow-md transition-shadow cursor-pointer ${
-              item.owned ? "ring-2 ring-green-400" : ""
-            }`}
-            onClick={() => !item.owned && setSelectedItem(item)}
-          >
-            <div className="aspect-square bg-gray-100 dark:bg-gray-800 rounded-t-lg overflow-hidden relative">
-              <img
-                src={item.imageUrl}
-                alt={item.name}
-                className="w-full h-full object-cover"
-              />
-              {item.owned && (
-                <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
-                  <Check className="text-white" size={14} />
-                </div>
-              )}
-            </div>
-            <CardBody className="p-3">
-              <div className="flex items-center gap-1 mb-1">
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-white truncate">
-                  {item.name}
-                </h3>
-              </div>
-              <div className="flex items-center justify-between">
-                <Badge
-                  variant={
-                    RARITY_COLORS[item.rarity] as
-                      | "secondary"
-                      | "default"
-                      | "warning"
-                      | "error"
-                  }
-                >
-                  {item.rarity}
-                </Badge>
-                {item.owned ? (
-                  <span className="text-xs font-medium text-green-600">Owned</span>
-                ) : (
-                  <span className="text-xs font-bold text-[#7C3AED] flex items-center gap-1">
-                    <Coins size={12} />
-                    {item.price}
-                  </span>
+        {filteredItems.map((item, idx) => (
+          <AnimatedCard key={item.id} delay={200 + idx * 50}>
+            <Card
+              className={`hover:shadow-[var(--shadow-card)] transition-all cursor-pointer hover:scale-[1.03] ${
+                item.owned ? "ring-2 ring-green-400" : ""
+              }`}
+              onClick={() => !item.owned && setSelectedItem(item)}
+            >
+              <div className="aspect-square rounded-t-lg overflow-hidden relative flex items-center justify-center" style={{ backgroundColor: "var(--aivo-bg-alt, #FFF5EB)" }}>
+                <ShopItemImage item={item} size="sm" />
+                {item.owned && (
+                  <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
+                    <Check className="text-white" size={14} />
+                  </div>
                 )}
               </div>
-            </CardBody>
-          </Card>
+              <CardBody className="p-3">
+                <h3 className="text-sm font-bold truncate mb-1" style={{ color: "var(--aivo-text)" }}>{item.name}</h3>
+                <div className="flex items-center justify-between">
+                  <Badge variant={RARITY_COLORS[item.rarity] as "secondary" | "default" | "warning" | "error"}>{item.rarity}</Badge>
+                  {item.owned ? (
+                    <span className="text-xs font-medium text-green-600">{t("shopOwned")}</span>
+                  ) : (
+                    <span className="text-xs font-bold flex items-center gap-1" style={{ color: "#7C3AED" }}>
+                      <Coins size={12} /> {item.price}
+                    </span>
+                  )}
+                </div>
+              </CardBody>
+            </Card>
+          </AnimatedCard>
         ))}
       </div>
 
       {filteredItems.length === 0 && (
-        <Card>
-          <CardBody className="text-center py-12">
-            <ShoppingBag className="mx-auto mb-3 text-gray-400" size={48} />
-            <p className="text-gray-500 dark:text-gray-400">
-              No items in this category.
-            </p>
-          </CardBody>
-        </Card>
+        <EmptyState
+          icon={<ShoppingBag size={32} />}
+          title={t("shopNoItems")}
+          description={t("shopTryCategory")}
+          delay={200}
+        />
       )}
 
-      {/* Purchase Modal */}
       <Modal
         open={!!selectedItem}
         onClose={() => setSelectedItem(null)}
-        title="Purchase Item"
+        title={t("shopPurchaseItem")}
         footer={
           <div className="flex justify-end gap-2">
-            <Button variant="ghost" onClick={() => setSelectedItem(null)}>
-              Cancel
-            </Button>
-            <Button
-              onClick={handlePurchase}
-              loading={purchasing}
-              disabled={(xp?.totalXp ?? 0) < (selectedItem?.price ?? 0)}
-            >
-              Buy for {selectedItem?.price} XP
+            <Button variant="ghost" onClick={() => setSelectedItem(null)}>{t("shopCancel")}</Button>
+            <Button onClick={handlePurchase} loading={purchasing} disabled={(xp?.totalXp ?? 0) < (selectedItem?.price ?? 0)}>
+              {t("shopBuyFor", { price: selectedItem?.price ?? 0 })}
             </Button>
           </div>
         }
       >
         {selectedItem && (
           <div className="text-center">
-            <div className="w-32 h-32 mx-auto mb-4 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
-              <img
-                src={selectedItem.imageUrl}
-                alt={selectedItem.name}
-                className="w-full h-full object-cover"
-              />
+            <div className="w-32 h-32 mx-auto mb-4 rounded-3xl overflow-hidden flex items-center justify-center" style={{ backgroundColor: "var(--aivo-bg-alt, #FFF5EB)" }}>
+              <ShopItemImage item={selectedItem} size="lg" />
             </div>
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
-              {selectedItem.name}
-            </h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
-              {selectedItem.description}
-            </p>
+            <h3 className="text-lg font-bold mb-1" style={{ color: "var(--aivo-text)" }}>{selectedItem.name}</h3>
+            <p className="text-sm mb-3" style={{ color: "var(--aivo-text-secondary)" }}>{selectedItem.description}</p>
             <div className="flex items-center justify-center gap-2">
-              <Badge
-                variant={
-                  RARITY_COLORS[selectedItem.rarity] as
-                    | "secondary"
-                    | "default"
-                    | "warning"
-                    | "error"
-                }
-              >
-                {selectedItem.rarity}
-              </Badge>
-              <span className="font-bold text-[#7C3AED] flex items-center gap-1">
-                <Coins size={14} />
-                {selectedItem.price} XP
+              <Badge variant={RARITY_COLORS[selectedItem.rarity] as "secondary" | "default" | "warning" | "error"}>{selectedItem.rarity}</Badge>
+              <span className="font-bold flex items-center gap-1" style={{ color: "#7C3AED" }}>
+                <Coins size={14} /> {selectedItem.price} XP
               </span>
             </div>
             {(xp?.totalXp ?? 0) < selectedItem.price && (
               <p className="mt-3 text-sm text-red-500">
-                Not enough XP. You need {selectedItem.price - (xp?.totalXp ?? 0)} more XP.
+                {t("shopNotEnoughXp", { needed: selectedItem.price - (xp?.totalXp ?? 0) })}
               </p>
             )}
           </div>
         )}
       </Modal>
-    </div>
+    </PageWrapper>
   );
 }

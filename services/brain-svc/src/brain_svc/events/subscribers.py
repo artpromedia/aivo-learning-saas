@@ -14,7 +14,10 @@ from brain_svc.events.publishers import (
     publish_brain_cloned,
     publish_mastery_updated,
 )
-from brain_svc.ml.model_store import ModelStore
+try:
+    from brain_svc.ml.model_store import ModelStore
+except ImportError:
+    ModelStore = None  # type: ignore[assignment, misc]
 from brain_svc.nats_client import get_jetstream
 
 logger = logging.getLogger(__name__)
@@ -33,23 +36,26 @@ async def setup_subscriptions() -> None:
     """Set up all NATS JetStream subscriptions."""
     js = await get_jetstream()
 
-    # Ensure stream exists
+    # Ensure stream exists — handle cases where another service already created it
     try:
         await js.find_stream_name_by_subject("aivo.brain.*")
     except Exception:
-        await js.add_stream(
-            name="AIVO_BRAIN",
-            subjects=[
-                "aivo.brain.*",
-                "aivo.assessment.*",
-                "aivo.lesson.*",
-                "aivo.quiz.*",
-                "aivo.tutor.*",
-                "aivo.homework.*",
-            ],
-            max_age=365 * 24 * 60 * 60 * 10**9,  # 365 days in nanoseconds
-            max_bytes=50 * 1024**3,  # 50GB
-        )
+        try:
+            await js.add_stream(
+                name="AIVO_BRAIN",
+                subjects=[
+                    "aivo.brain.*",
+                    "aivo.assessment.*",
+                    "aivo.lesson.*",
+                    "aivo.quiz.*",
+                    "aivo.tutor.*",
+                    "aivo.homework.*",
+                ],
+                max_age=30 * 24 * 60 * 60,  # 30 days in seconds
+                max_bytes=1 * 1024**3,  # 1GB
+            )
+        except Exception as stream_err:
+            logger.warning("Could not create AIVO_BRAIN stream: %s", stream_err)
 
     # Subscribe to assessment baseline completed
     await js.subscribe(
@@ -145,6 +151,7 @@ async def _on_assessment_baseline_completed(msg: Msg) -> None:
                 disability_signals=data.get("disabilitySignals"),
                 iep_accommodations=data.get("iepAccommodations"),
                 iep_goals=data.get("iepGoals"),
+                curriculum_framework=data.get("curriculumFramework"),
             )
 
         await publish_brain_cloned(

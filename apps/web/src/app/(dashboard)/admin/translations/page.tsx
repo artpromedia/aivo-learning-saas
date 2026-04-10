@@ -4,6 +4,9 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Globe, Upload, Download, Languages } from "lucide-react";
+import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
+import { PageWrapper, BackLink, StatCard, ExpandableCard, AnimatedCard } from "@/components/ui/PageDesign";
+import { Button } from "@/components/ui/Button";
 import { getI18nServiceUrl } from "@/i18n/config";
 
 interface CoverageLocale {
@@ -29,7 +32,6 @@ export default function TranslationDashboardPage() {
           setCoverage(data.coverage);
         }
       } catch {
-        // silently fail
       } finally {
         setLoading(false);
       }
@@ -37,123 +39,72 @@ export default function TranslationDashboardPage() {
     fetchCoverage();
   }, []);
 
-  const namespaceKeys = coverage.length > 0
-    ? Object.keys(coverage[0].namespaces)
-    : [];
+  const namespaceKeys = coverage.length > 0 ? Object.keys(coverage[0].namespaces) : [];
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-            <Globe className="h-6 w-6 text-purple-600" />
-            {t("translationManagement")}
-          </h1>
-          <p className="mt-1 text-gray-500 dark:text-gray-400">
-            {t("translationManagementDesc")}
-          </p>
+    <PageWrapper>
+      <BackLink href="/admin/district">Back to District</BackLink>
+
+      <PurpleGradientHeader className="rounded-3xl mb-8">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
+              <Globe size={22} />
+            </div>
+            <div>
+              <h1 className="text-2xl font-extrabold">{t("translationManagement")}</h1>
+              <p className="mt-0.5 text-white/80 text-sm">{t("translationManagementDesc")}</p>
+            </div>
+          </div>
+          <Link href="/admin/translations/import-export">
+            <Button size="sm" variant="secondary" leftIcon={<Upload size={16} />} className="bg-white/20 hover:bg-white/30 text-white">
+              {t("importExport")}
+            </Button>
+          </Link>
         </div>
-        <Link
-          href="/admin/translations/import-export"
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors text-sm font-medium"
-        >
-          <Upload className="h-4 w-4" />
-          {t("importExport")}
-        </Link>
+      </PurpleGradientHeader>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8">
+        <StatCard icon={<Languages size={18} />} label={t("localesCount")} value={coverage.length} color="#7C3AED" delay={100} />
+        <StatCard icon={<Globe size={18} />} label={t("namespacesCount")} value={namespaceKeys.length} color="#2DD4BF" delay={200} />
+        <StatCard icon={<Download size={18} />} label={t("totalKeys")} value={coverage[0]?.totalKeys ?? 0} color="#3B82F6" delay={300} />
       </div>
 
-      {/* Quick stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30">
-              <Languages className="h-5 w-5 text-purple-600" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{t("localesCount")}</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                {coverage.length}
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-teal-100 dark:bg-teal-900/30">
-              <Globe className="h-5 w-5 text-teal-600" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{t("namespacesCount")}</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                {namespaceKeys.length}
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
-              <Download className="h-5 w-5 text-blue-600" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{t("totalKeys")}</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                {coverage[0]?.totalKeys ?? 0}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Coverage heatmap */}
-      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <div className="p-5 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-            {t("coverageMatrix")}
-          </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            {t("coverageMatrixDesc")}
-          </p>
-        </div>
-
+      <ExpandableCard
+        icon={<Globe size={16} />}
+        title={t("coverageMatrix")}
+        subtitle={t("coverageMatrixDesc")}
+        gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
+        delay={400}
+        infoText="This matrix shows translation coverage for each locale across all namespaces. Green indicates good coverage (90%+), yellow is moderate (60-89%), and red means low coverage."
+      >
         {loading ? (
-          <div className="p-10 text-center text-gray-400">{t("loadingCoverage")}</div>
+          <div className="p-10 text-center text-[#A89BB5]">{t("loadingCoverage")}</div>
         ) : coverage.length === 0 ? (
-          <div className="p-10 text-center text-gray-400">
-            {t("noTranslationData")}
-          </div>
+          <div className="p-10 text-center text-[#A89BB5]">{t("noTranslationData")}</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-gray-50 dark:bg-gray-800">
-                  <th className="px-4 py-3 text-left font-medium text-gray-600 dark:text-gray-400 sticky left-0 bg-gray-50 dark:bg-gray-800">
+                <tr style={{ backgroundColor: "var(--aivo-bg)" }}>
+                  <th className="px-4 py-3 text-left font-medium sticky left-0" style={{ color: "var(--aivo-text-secondary)", backgroundColor: "var(--aivo-bg)" }}>
                     {t("locale")}
                   </th>
-                  <th className="px-4 py-3 text-center font-medium text-gray-600 dark:text-gray-400">
-                    {t("overall")}
-                  </th>
+                  <th className="px-4 py-3 text-center font-medium" style={{ color: "var(--aivo-text-secondary)" }}>{t("overall")}</th>
                   {namespaceKeys.map((ns) => (
-                    <th key={ns} className="px-4 py-3 text-center font-medium text-gray-600 dark:text-gray-400">
-                      <Link
-                        href={`/admin/translations/${ns}`}
-                        className="hover:text-purple-600 transition-colors"
-                      >
-                        {ns}
-                      </Link>
+                    <th key={ns} className="px-4 py-3 text-center font-medium" style={{ color: "var(--aivo-text-secondary)" }}>
+                      <Link href={`/admin/translations/${ns}`} className="hover:text-purple-600 transition-colors">{ns}</Link>
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+              <tbody className="divide-y divide-[#F0E6FF] dark:divide-[#3D2D5C]">
                 {coverage.map((row) => (
-                  <tr key={row.locale} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
-                    <td className="px-4 py-3 font-medium text-gray-900 dark:text-white sticky left-0 bg-white dark:bg-gray-900">
+                  <tr key={row.locale} className="hover:bg-[var(--aivo-bg)] dark:hover:bg-[#2A1E45]/50">
+                    <td className="px-4 py-3 font-medium sticky left-0 bg-white dark:bg-[#2A1E45]" style={{ color: "var(--aivo-text)" }}>
                       {row.locale} — {row.name}
                     </td>
-                    <td className="px-4 py-3 text-center">
-                      <CoverageBadge percentage={row.overall} />
-                    </td>
+                    <td className="px-4 py-3 text-center"><CoverageBadge percentage={row.overall} /></td>
                     {namespaceKeys.map((ns) => {
                       const nsData = row.namespaces[ns];
                       return (
@@ -168,28 +119,31 @@ export default function TranslationDashboardPage() {
             </table>
           </div>
         )}
-      </div>
+      </ExpandableCard>
 
-      {/* Namespace links */}
-      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-          {t("editByNamespace")}
-        </h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {namespaceKeys.map((ns) => (
-            <Link
-              key={ns}
-              href={`/admin/translations/${ns}`}
-              className="flex items-center gap-2 px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/10 transition-colors"
-            >
-              <span className="font-medium text-gray-700 dark:text-gray-300 capitalize">
-                {ns}
-              </span>
-            </Link>
-          ))}
-        </div>
+      <div className="mt-6">
+        <ExpandableCard
+          icon={<Languages size={16} />}
+          title={t("editByNamespace")}
+          subtitle="Click a namespace to edit its translations"
+          gradient="linear-gradient(135deg, #2DD4BF, #14B8A6)"
+          delay={500}
+        >
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {namespaceKeys.map((ns, idx) => (
+              <AnimatedCard key={ns} delay={600 + idx * 50}>
+                <Link
+                  href={`/admin/translations/${ns}`}
+                  className="flex items-center gap-2 px-4 py-3 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] hover:border-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/10 transition-colors"
+                >
+                  <span className="font-medium capitalize" style={{ color: "var(--aivo-text)" }}>{ns}</span>
+                </Link>
+              </AnimatedCard>
+            ))}
+          </div>
+        </ExpandableCard>
       </div>
-    </div>
+    </PageWrapper>
   );
 }
 

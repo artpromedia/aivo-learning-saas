@@ -201,11 +201,18 @@ export const TEACHER_ROUTES = {
   LEARNER_BRAIN: (id: string) => `/api/teacher/learners/${id}/brain`,
   LEARNER_IEP_UPLOAD: (id: string) => `/api/teacher/learners/${id}/iep`,
   LEARNER_INSIGHTS: (id: string) => `/api/teacher/learners/${id}/insights`,
+  LEARNER_FAMILY: (id: string) => `/api/teacher/learners/${id}/family`,
+  LEARNER_FAMILY_INVITE: (id: string) => `/api/teacher/learners/${id}/family/invite`,
+  LEARNER_FAMILY_REMOVE: (id: string, memberId: string) => `/api/teacher/learners/${id}/family/${memberId}`,
 } as const;
 
 // Tutor subscription (parent dashboard)
 export const TUTOR_SUBSCRIPTION_ROUTES = {
   SUBSCRIBE: "/api/tutors/subscribe",
+} as const;
+
+export const DISTRICT_ROUTES = {
+  LOOKUP: "/api/districts/lookup",
 } as const;
 
 // Combined API_ROUTES re-export
@@ -234,4 +241,5 @@ export const API_ROUTES = {
   FAMILY: FAMILY_ROUTES,
   TEACHER: TEACHER_ROUTES,
   TUTOR_SUBSCRIPTION: TUTOR_SUBSCRIPTION_ROUTES,
+  DISTRICT: DISTRICT_ROUTES,
 } as const;

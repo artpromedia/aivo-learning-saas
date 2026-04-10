@@ -65,24 +65,22 @@ function ResetPasswordContent() {
       });
       setSuccess(true);
     } catch (err) {
-      setServerError(
-        err instanceof Error
-          ? err.message
-          : t("resetFailed"),
-      );
+      setServerError(err instanceof Error ? err.message : t("resetFailed"));
     }
   };
 
+  const inputStyle = { borderColor: "var(--aivo-border)", backgroundColor: "var(--aivo-bg)", color: "var(--aivo-text)" };
+
   if (!token) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 px-4">
+      <div className="min-h-screen flex items-center justify-center px-4 bg-bubbles" style={{ backgroundColor: "var(--aivo-bg)" }}>
         <div className="w-full max-w-md text-center">
           <AivoLogo size="lg" className="mx-auto mb-8" />
-          <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-8">
-            <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+          <div className="rounded-3xl shadow-[var(--shadow-playful)] p-8" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
+            <h1 className="text-xl font-extrabold mb-2" style={{ color: "var(--aivo-text)", fontFamily: "var(--font-display)" }}>
               {t("invalidResetLink")}
             </h1>
-            <p className="text-gray-500 dark:text-gray-400 mb-6">
+            <p className="mb-6 font-medium" style={{ color: "var(--aivo-text-secondary)" }}>
               {t("resetLinkExpired")}
             </p>
             <Link href="/forgot-password">
@@ -95,117 +93,70 @@ function ResetPasswordContent() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 px-4">
+    <div className="min-h-screen flex items-center justify-center px-4 bg-bubbles" style={{ backgroundColor: "var(--aivo-bg)" }}>
       <div className="w-full max-w-md">
         <div className="flex flex-col items-center mb-8">
           <AivoLogo size="lg" />
         </div>
 
-        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-8">
+        <div className="rounded-3xl shadow-[var(--shadow-playful)] p-8" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
           {success ? (
             <div className="text-center">
-              <CheckCircle
-                className="mx-auto mb-4 text-green-500"
-                size={48}
-              />
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: "var(--aivo-mint-light)" }}>
+                <CheckCircle size={32} style={{ color: "var(--aivo-mint)" }} />
+              </div>
+              <h1 className="text-xl font-extrabold mb-2" style={{ color: "var(--aivo-text)", fontFamily: "var(--font-display)" }}>
                 {t("passwordUpdated")}
               </h1>
-              <p className="text-gray-500 dark:text-gray-400 mb-6">
+              <p className="mb-6 font-medium" style={{ color: "var(--aivo-text-secondary)" }}>
                 {t("passwordUpdatedDescription")}
               </p>
               <Link href="/login">
-                <Button className="w-full" size="lg">
-                  {t("signIn")}
-                </Button>
+                <Button className="w-full" size="lg">{t("signIn")}</Button>
               </Link>
             </div>
           ) : (
             <>
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+              <h1 className="text-xl font-extrabold mb-2" style={{ color: "var(--aivo-text)", fontFamily: "var(--font-display)" }}>
                 {t("setNewPassword")}
               </h1>
-              <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm">
+              <p className="mb-6 text-sm font-medium" style={{ color: "var(--aivo-text-secondary)" }}>
                 {t("setNewPasswordSubtitle")}
               </p>
 
               {serverError && (
-                <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+                <div className="mb-4 p-3 rounded-2xl text-sm font-medium" style={{ backgroundColor: "#FFE0E0", color: "#991B1B", border: "1px solid #FECACA" }}>
                   {serverError}
                 </div>
               )}
 
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                 <div>
-                  <label
-                    htmlFor="password"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
-                  >
+                  <label htmlFor="password" className="block text-sm font-bold mb-2" style={{ color: "var(--aivo-text)" }}>
                     {t("newPassword")}
                   </label>
                   <div className="relative">
-                    <Lock
-                      className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                      size={18}
-                    />
-                    <input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      autoComplete="new-password"
-                      {...register("password")}
-                      className="w-full pl-10 pr-12 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-shadow"
-                      placeholder={t("passwordHint")}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                      aria-label={showPassword ? "Hide password" : "Show password"}
-                    >
+                    <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2" size={18} style={{ color: "var(--aivo-text-muted)" }} />
+                    <input id="password" type={showPassword ? "text" : "password"} autoComplete="new-password" {...register("password")} className="w-full pl-11 pr-12 py-3 rounded-2xl border-2 font-medium transition-all" style={inputStyle} placeholder={t("passwordHint")} />
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3.5 top-1/2 -translate-y-1/2" style={{ color: "var(--aivo-text-muted)" }} aria-label={showPassword ? "Hide password" : "Show password"}>
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
-                  {errors.password && (
-                    <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                      {errors.password.message}
-                    </p>
-                  )}
+                  {errors.password && <p className="mt-1.5 text-sm font-medium" style={{ color: "var(--aivo-error)" }}>{errors.password.message}</p>}
                 </div>
 
                 <div>
-                  <label
-                    htmlFor="confirmPassword"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
-                  >
+                  <label htmlFor="confirmPassword" className="block text-sm font-bold mb-2" style={{ color: "var(--aivo-text)" }}>
                     {t("confirmNewPassword")}
                   </label>
                   <div className="relative">
-                    <Lock
-                      className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                      size={18}
-                    />
-                    <input
-                      id="confirmPassword"
-                      type={showPassword ? "text" : "password"}
-                      autoComplete="new-password"
-                      {...register("confirmPassword")}
-                      className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-shadow"
-                      placeholder={t("confirmPasswordPlaceholder")}
-                    />
+                    <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2" size={18} style={{ color: "var(--aivo-text-muted)" }} />
+                    <input id="confirmPassword" type={showPassword ? "text" : "password"} autoComplete="new-password" {...register("confirmPassword")} className="w-full pl-11 pr-4 py-3 rounded-2xl border-2 font-medium transition-all" style={inputStyle} placeholder={t("confirmPasswordPlaceholder")} />
                   </div>
-                  {errors.confirmPassword && (
-                    <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                      {errors.confirmPassword.message}
-                    </p>
-                  )}
+                  {errors.confirmPassword && <p className="mt-1.5 text-sm font-medium" style={{ color: "var(--aivo-error)" }}>{errors.confirmPassword.message}</p>}
                 </div>
 
-                <Button
-                  type="submit"
-                  loading={isSubmitting}
-                  className="w-full"
-                  size="lg"
-                >
+                <Button type="submit" loading={isSubmitting} className="w-full" size="lg">
                   {t("resetPassword")}
                 </Button>
               </form>
@@ -219,7 +170,7 @@ function ResetPasswordContent() {
 
 export default function ResetPasswordPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Loader2 className="animate-spin text-[#7C3AED]" size={32} /></div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "var(--aivo-bg)" }}><Loader2 className="animate-spin" size={32} style={{ color: "var(--aivo-purple-500)" }} /></div>}>
       <ResetPasswordContent />
     </Suspense>
   );

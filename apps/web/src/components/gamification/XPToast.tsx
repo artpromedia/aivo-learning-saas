@@ -25,7 +25,7 @@ function XPToast({ visible, xpAmount, reason, onDismiss }: XPToastProps) {
           role="status"
           aria-live="polite"
         >
-          <div className="flex items-center gap-3 px-5 py-3 rounded-xl bg-gradient-to-r from-[#7C3AED] to-[#7C4DFF] text-white shadow-2xl shadow-purple-500/25 cursor-pointer">
+          <div className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-gradient-to-r from-[#7C3AED] to-[#A855F7] text-white shadow-2xl shadow-purple-500/25 cursor-pointer">
             <motion.div
               initial={{ rotate: -30, scale: 0 }}
               animate={{ rotate: 0, scale: 1 }}

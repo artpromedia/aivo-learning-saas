@@ -90,7 +90,7 @@ export default function FunctioningLevelPage() {
           <CardBody>
             <div className="flex items-center justify-center py-12">
               <Loader2 className="text-[#7C3AED] animate-spin mr-3" size={32} />
-              <p className="text-gray-500 dark:text-gray-400">
+              <p className="text-[var(--aivo-text-secondary)]">
                 {t("determiningLevel")}
               </p>
             </div>
@@ -106,10 +106,10 @@ export default function FunctioningLevelPage() {
         <div className="w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center mx-auto mb-4">
           <Brain className="text-red-500" size={32} />
         </div>
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+        <h2 className="text-xl font-extrabold text-[var(--aivo-text)] mb-2">
           {t("unableToDetermineLevel")}
         </h2>
-        <p className="text-gray-500 dark:text-gray-400 mb-6">{error}</p>
+        <p className="text-[var(--aivo-text-secondary)] mb-6">{error}</p>
         <Button variant="outline" onClick={() => window.location.reload()}>
           {t("tryAgain")}
         </Button>
@@ -123,10 +123,10 @@ export default function FunctioningLevelPage() {
         <div className="w-16 h-16 rounded-full bg-[#7C3AED]/10 flex items-center justify-center mx-auto mb-4">
           <Brain className="text-[#7C3AED]" size={32} />
         </div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+        <h1 className="text-2xl font-extrabold text-[var(--aivo-text)]">
           {t("functioningLevelDetermined")}
         </h1>
-        <p className="mt-2 text-gray-500 dark:text-gray-400">
+        <p className="mt-2 text-[var(--aivo-text-secondary)]">
           {t("functioningLevelDescription", { name: activeLearner?.name ?? t("yourChild") })}
         </p>
       </div>
@@ -140,7 +140,7 @@ export default function FunctioningLevelPage() {
               >
                 {result.label}
               </Badge>
-              <p className="text-gray-600 dark:text-gray-300 leading-relaxed max-w-md mx-auto">
+              <p className="text-[var(--aivo-text-secondary)] dark:text-[#A89BB5] leading-relaxed max-w-md mx-auto">
                 {result.description}
               </p>
             </CardBody>
@@ -149,14 +149,14 @@ export default function FunctioningLevelPage() {
           {result.recommendations.length > 0 && (
             <Card>
               <CardBody>
-                <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-3">
+                <h3 className="text-sm font-semibold text-[var(--aivo-text)] uppercase tracking-wide mb-3">
                   {t("whatThisMeans")}
                 </h3>
                 <ul className="space-y-2">
                   {result.recommendations.map((rec, i) => (
                     <li
                       key={i}
-                      className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-400"
+                      className="flex items-start gap-2 text-sm text-[var(--aivo-text-secondary)]"
                     >
                       <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#7C3AED] shrink-0" />
                       {rec}
@@ -169,7 +169,7 @@ export default function FunctioningLevelPage() {
 
           <Card>
             <CardBody className="text-center">
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+              <p className="text-sm text-[var(--aivo-text-secondary)] mb-2">
                 {t("assessmentType")}{" "}
                 <span className="font-medium text-[#7C3AED]">
                   {result.assessmentType === "STANDARD"
@@ -177,8 +177,8 @@ export default function FunctioningLevelPage() {
                     : t("pictureBasedInteractive")}
                 </span>
               </p>
-              <p className="text-xs text-gray-400 dark:text-gray-500 mb-4">
-                {t("autoRedirect", { seconds: autoRedirectCountdown })}
+              <p className="text-xs text-[var(--aivo-text-muted)] mb-4">
+                {t("autoRedirect", { countdown: autoRedirectCountdown })}
               </p>
               <Button onClick={handleContinue} rightIcon={<ArrowRight size={18} />}>
                 {t("continueToAssessment")}

@@ -18,31 +18,31 @@ function StreakWidget({
 
   return (
     <div
-      className={`flex items-center gap-3 px-4 py-3 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-sm ${className}`}
+      className={`flex items-center gap-3 px-4 py-3 rounded-2xl bg-white dark:bg-[#2A1E45] border border-[#E8DDF0] dark:border-[#3D2D5C] shadow-sm ${className}`}
     >
       <div
         className={`flex items-center justify-center w-12 h-12 rounded-full ${
           isActive
             ? "bg-orange-100 dark:bg-orange-900/30"
-            : "bg-gray-100 dark:bg-gray-800"
+            : "bg-[#FFF5EB] dark:bg-[#2A1E45]"
         }`}
       >
         <Flame
           size={24}
-          className={isActive ? "text-orange-500" : "text-gray-400"}
+          className={isActive ? "text-orange-500" : "text-[var(--aivo-text-muted)]"}
           fill={isActive ? "currentColor" : "none"}
         />
       </div>
       <div>
         <div className="flex items-baseline gap-1.5">
-          <span className="text-2xl font-bold text-gray-900 dark:text-white">
+          <span className="text-2xl font-bold text-[var(--aivo-text)] ">
             {currentStreak}
           </span>
-          <span className="text-sm text-gray-500 dark:text-gray-400">
+          <span className="text-sm text-[var(--aivo-text-secondary)] dark:text-[var(--aivo-text-muted)]">
             {currentStreak === 1 ? "day" : "days"}
           </span>
         </div>
-        <p className="text-xs text-gray-500 dark:text-gray-400">
+        <p className="text-xs text-[var(--aivo-text-secondary)] dark:text-[var(--aivo-text-muted)]">
           {isActive ? "Current streak" : "No active streak"}
           {longestStreak !== undefined && longestStreak > 0 && (
             <span className="ml-1.5">

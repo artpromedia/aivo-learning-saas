@@ -2,6 +2,7 @@
 
 from brain_svc.routes.accommodations import router as accommodations_router
 from brain_svc.routes.brain import router as brain_router
+from brain_svc.routes.context import router as context_router
 from brain_svc.routes.functional import router as functional_router
 from brain_svc.routes.health import router as health_router
 from brain_svc.routes.iep import router as iep_router
@@ -16,6 +17,7 @@ from brain_svc.routes.data_lifecycle import router as data_lifecycle_router
 all_routers = [
     health_router,
     brain_router,
+    context_router,
     main_brain_router,
     mastery_router,
     recommendations_router,

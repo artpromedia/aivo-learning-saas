@@ -5,25 +5,15 @@ import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import {
-  Brain,
-  Lightbulb,
-  BookOpen,
-  GraduationCap,
-  Bot,
-  TrendingUp,
-  Trophy,
-  Flame,
-  Loader2,
-  ArrowLeft,
-  Home,
-  Activity,
+  Brain, Lightbulb, BookOpen, GraduationCap, Bot, TrendingUp, Trophy,
+  Flame, Home, Activity, Users, Settings, FileText, MapPin,
 } from "lucide-react";
-import { Card, CardBody, CardHeader } from "@/components/ui/Card";
+import { Card, CardBody } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { ProgressBar } from "@/components/ui/ProgressBar";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
+import { PageWrapper, BackLink, ExpandableCard, StatCard, SectionHeader, AnimatedCard } from "@/components/ui/PageDesign";
 import { useEngagement } from "@/hooks/useEngagement";
 import { apiFetch } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
@@ -39,6 +29,9 @@ interface LearnerDetail {
   enrolledGrade?: string;
   enrolledSubjects?: string[];
   languagePreference?: string;
+  state?: string;
+  zipCode?: string;
+  districtId?: string;
   preferences?: {
     theme?: string;
     reduceAnimations?: boolean;
@@ -61,6 +54,8 @@ export default function ChildDashboardPage() {
 
   const [learner, setLearner] = useState<LearnerDetail | null>(null);
   const [progress, setProgress] = useState<ProgressData | null>(null);
+  const [districtName, setDistrictName] = useState<string | null>(null);
+  const [curriculumFramework, setCurriculumFramework] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -94,8 +89,17 @@ export default function ChildDashboardPage() {
         ]);
         setLearner(learnerRes.learner);
         setProgress(progressData);
+
+        if (learnerRes.learner.zipCode) {
+          apiFetch<{ district: { name: string; curriculumFramework: string } }>(
+            `${API_ROUTES.DISTRICT.LOOKUP}?zip=${encodeURIComponent(learnerRes.learner.zipCode)}`,
+          ).then((res) => {
+            setDistrictName(res.district.name);
+            setCurriculumFramework(res.district.curriculumFramework);
+          }).catch(() => {});
+        }
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load data");
+        setError(err instanceof Error ? err.message : t("failedToLoadData"));
       } finally {
         setLoading(false);
       }
@@ -107,10 +111,10 @@ export default function ChildDashboardPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={120} className="w-full rounded-xl" />
+        <Skeleton height={120} className="w-full rounded-3xl" />
         <div className="grid gap-4 sm:grid-cols-4">
           {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} height={100} className="w-full rounded-lg" />
+            <Skeleton key={i} height={100} className="w-full rounded-3xl" />
           ))}
         </div>
       </div>
@@ -122,165 +126,160 @@ export default function ChildDashboardPage() {
       <div className="text-center py-16">
         <p className="text-red-500 mb-4">{error}</p>
         <Button variant="outline" onClick={() => window.location.reload()}>
-          Retry
+          {t("retry")}
         </Button>
       </div>
     );
   }
 
+  const levelLabel = (fl: string) => {
+    switch (fl) {
+      case "STANDARD": return t("standard");
+      case "SUPPORTED": return t("supported");
+      case "LOW_VERBAL": return t("lowVerbal");
+      case "NON_VERBAL": return t("nonVerbal");
+      case "PRE_SYMBOLIC": return t("preSymbolic");
+      default: return fl;
+    }
+  };
+
   const quickLinks = [
-    { href: `/parent/${learnerId}/brain`, label: t("brainProfile"), icon: <Brain size={20} />, color: "text-[#7C3AED]" },
-    { href: `/parent/${learnerId}/functioning-level`, label: t("functioningLevel"), icon: <Activity size={20} />, color: "text-purple-500" },
-    { href: `/parent/${learnerId}/recommendations`, label: t("recommendations"), icon: <Lightbulb size={20} />, color: "text-amber-500" },
-    { href: `/parent/${learnerId}/gradebook`, label: t("gradebook"), icon: <GraduationCap size={20} />, color: "text-[#38B2AC]" },
-    { href: `/parent/${learnerId}/tutors`, label: t("tutors"), icon: <Bot size={20} />, color: "text-blue-500" },
-    { href: "/learner", label: t("learnerDashboard"), icon: <Home size={20} />, color: "text-green-500", isLearnerView: true },
-  ] as const;
+    { href: `/parent/${learnerId}/brain`, label: t("brainProfile"), icon: <Brain size={20} />, gradient: "linear-gradient(135deg, #7C3AED, #A855F7)", description: t("aiLearningInsights") },
+    { href: `/parent/${learnerId}/functioning-level`, label: t("functioningLevel", { defaultValue: "Functioning Level" }), icon: <Activity size={20} />, gradient: "linear-gradient(135deg, #8B5CF6, #6D28D9)", description: t("supportLevel") },
+    { href: `/parent/${learnerId}/recommendations`, label: t("recommendations"), icon: <Lightbulb size={20} />, gradient: "linear-gradient(135deg, #F59E0B, #D97706)", description: t("aiSuggestions") },
+    { href: `/parent/${learnerId}/gradebook`, label: t("gradebook"), icon: <GraduationCap size={20} />, gradient: "linear-gradient(135deg, #2DD4BF, #14B8A6)", description: t("subjectMastery") },
+    { href: `/parent/${learnerId}/iep`, label: t("iepGoals"), icon: <FileText size={20} />, gradient: "linear-gradient(135deg, #3B82F6, #2563EB)", description: t("goalsAndDocuments") },
+    { href: `/parent/${learnerId}/tutors`, label: t("tutors"), icon: <Bot size={20} />, gradient: "linear-gradient(135deg, #38BDF8, #0EA5E9)", description: t("aiTutorsShort") },
+    { href: `/parent/${learnerId}/collaboration`, label: t("team"), icon: <Users size={20} />, gradient: "linear-gradient(135deg, #10B981, #059669)", description: t("careTeam") },
+    { href: `/parent/${learnerId}/settings`, label: t("settings"), icon: <Settings size={20} />, gradient: "linear-gradient(135deg, #6B7280, #4B5563)", description: t("privacyAndData") },
+  ];
 
   return (
-    <div>
-      <Link
-        href="/parent"
-        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-4"
-      >
-        <ArrowLeft size={16} />
-        {t("backToAllChildren")}
-      </Link>
+    <PageWrapper>
+      <BackLink href="/parent">{t("backToAllChildren")}</BackLink>
 
-      <PurpleGradientHeader className="rounded-xl mb-8">
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center text-2xl font-bold">
+          <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center text-2xl font-extrabold">
             {learner?.avatarUrl ? (
-              <img
-                src={learner.avatarUrl}
-                alt={learner.name}
-                className="w-full h-full rounded-full object-cover"
-              />
+              <img src={learner.avatarUrl} alt={learner.name} className="w-full h-full rounded-full object-cover" />
             ) : (
               learner?.name.charAt(0).toUpperCase()
             )}
           </div>
           <div>
-            <h1 className="text-2xl font-bold">{learner?.name}</h1>
+            <h1 className="text-2xl font-extrabold">{learner?.name}</h1>
             <p className="text-white/80 text-sm">
-              {learner?.enrolledGrade ?? t("gradeNotSet")} &middot;{" "}
-              {learner?.functioningLevel === "STANDARD"
-                ? t("standard")
-                : learner?.functioningLevel === "SUPPORTED"
-                  ? t("supported")
-                  : learner?.functioningLevel === "LOW_VERBAL"
-                    ? t("lowVerbal")
-                    : learner?.functioningLevel === "NON_VERBAL"
-                      ? t("nonVerbal")
-                      : t("preSymbolic")}
+              {learner?.enrolledGrade ?? t("gradeNotSet")} &middot; {levelLabel(learner?.functioningLevel ?? "STANDARD")}
             </p>
+            {districtName && (
+              <p className="text-white/70 text-xs mt-0.5 flex items-center gap-1">
+                <MapPin size={11} />
+                {districtName}
+                {curriculumFramework && (
+                  <span className="ml-1 px-1.5 py-0.5 rounded-full bg-white/15 text-[10px] font-medium">
+                    {curriculumFramework.replace(/_/g, " ")}
+                  </span>
+                )}
+              </p>
+            )}
+            <p className="text-white/60 text-xs mt-0.5">{t("childLearningHub")}</p>
           </div>
         </div>
       </PurpleGradientHeader>
 
-      {/* Stats cards */}
-      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4 mb-8">
-        <Card>
-          <CardBody className="text-center">
-            <Trophy className="mx-auto mb-2 text-[#7C3AED]" size={24} />
-            <p className="text-2xl font-bold text-gray-900 dark:text-white">
-              {xp?.totalXp ?? "--"}
-            </p>
-            <p className="text-xs text-gray-500">Total XP</p>
-          </CardBody>
-        </Card>
-        <Card>
-          <CardBody className="text-center">
-            <Flame className="mx-auto mb-2 text-orange-500" size={24} />
-            <p className="text-2xl font-bold text-gray-900 dark:text-white">
-              {streak?.currentStreak ?? "--"}
-            </p>
-            <p className="text-xs text-gray-500">Day Streak</p>
-          </CardBody>
-        </Card>
-        <Card>
-          <CardBody className="text-center">
-            <TrendingUp className="mx-auto mb-2 text-[#38B2AC]" size={24} />
-            <p className="text-2xl font-bold text-gray-900 dark:text-white">
-              {progress?.averageAccuracy ?? "--"}%
-            </p>
-            <p className="text-xs text-gray-500">Accuracy</p>
-          </CardBody>
-        </Card>
-        <Card>
-          <CardBody className="text-center">
-            <BookOpen className="mx-auto mb-2 text-blue-500" size={24} />
-            <p className="text-2xl font-bold text-gray-900 dark:text-white">
-              {progress?.sessionsThisWeek ?? "--"}
-            </p>
-            <p className="text-xs text-gray-500">Sessions This Week</p>
-          </CardBody>
-        </Card>
+      <div className="grid gap-3 grid-cols-2 lg:grid-cols-4 mb-8">
+        <StatCard icon={<Trophy size={18} />} label={t("totalXp")} value={xp?.totalXp ?? "--"} color="#7C3AED" delay={100} />
+        <StatCard icon={<Flame size={18} />} label={t("dayStreak")} value={streak?.currentStreak ?? "--"} color="#FB923C" delay={200} />
+        <StatCard icon={<TrendingUp size={18} />} label={t("accuracy")} value={`${progress?.averageAccuracy ?? "--"}%`} color="#2DD4BF" delay={300} />
+        <StatCard icon={<BookOpen size={18} />} label={t("sessionsThisWeek")} value={progress?.sessionsThisWeek ?? "--"} color="#3B82F6" delay={400} />
       </div>
 
-      {/* Quick links */}
-      <div className="grid gap-3 grid-cols-2 lg:grid-cols-5 mb-8">
-        {quickLinks.map((link) =>
-          "isLearnerView" in link && link.isLearnerView ? (
-            <div
-              key={link.href}
-              onClick={learner ? handleViewLearnerDashboard : undefined}
-              className={learner ? "cursor-pointer" : "opacity-50 cursor-not-allowed"}
-            >
-              <Card className="hover:shadow-md transition-shadow h-full">
-                <CardBody className="flex flex-col items-center justify-center text-center py-6">
-                  <div className={`mb-2 ${link.color}`}>{link.icon}</div>
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    {link.label}
-                  </span>
-                </CardBody>
-              </Card>
-            </div>
-          ) : (
-            <Link key={link.href} href={link.href}>
-              <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
-                <CardBody className="flex flex-col items-center justify-center text-center py-6">
-                  <div className={`mb-2 ${link.color}`}>{link.icon}</div>
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    {link.label}
-                  </span>
-                </CardBody>
-              </Card>
-            </Link>
-          ),
-        )}
-      </div>
-
-      {/* Subject mastery */}
-      {progress?.recentSubjects && progress.recentSubjects.length > 0 && (
-        <Card>
-          <CardHeader>
-            <h3 className="font-semibold text-gray-900 dark:text-white">
-              Subject Mastery
-            </h3>
-          </CardHeader>
-          <CardBody className="space-y-4">
-            {progress.recentSubjects.map((subject) => (
-              <div key={subject.name}>
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    {subject.name}
-                  </span>
-                  <span className="text-sm font-semibold text-[#7C3AED]">
-                    {subject.mastery}%
-                  </span>
+      <ExpandableCard
+        icon={<Brain size={16} />}
+        title={t("quickNavigation")}
+        subtitle={t("quickNavigationSubtitle")}
+        gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
+        delay={500}
+        infoText={t("quickNavigationInfo")}
+      >
+        <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
+          {quickLinks.map((link, idx) =>
+            "isLearnerView" in link ? (
+              <div
+                key={link.href}
+                onClick={learner ? handleViewLearnerDashboard : undefined}
+                className={`rounded-3xl p-5 text-center transition-all cursor-pointer hover:scale-[1.03] ${learner ? "" : "opacity-50 cursor-not-allowed"}`}
+                style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}
+              >
+                <div className="w-10 h-10 rounded-xl mx-auto mb-2 flex items-center justify-center text-white" style={{ background: link.gradient }}>
+                  {link.icon}
                 </div>
-                <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-[#7C3AED] to-[#7C4DFF] rounded-full transition-all duration-700"
-                    style={{ width: `${subject.mastery}%` }}
-                  />
-                </div>
+                <span className="text-sm font-bold block" style={{ color: "var(--aivo-text)" }}>{link.label}</span>
+                <span className="text-[10px]" style={{ color: "var(--aivo-text-muted)" }}>{link.description}</span>
               </div>
-            ))}
-          </CardBody>
-        </Card>
+            ) : (
+              <Link key={link.href} href={link.href}>
+                <div className="rounded-3xl p-5 text-center transition-all cursor-pointer hover:scale-[1.03] h-full"
+                  style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
+                  <div className="w-10 h-10 rounded-xl mx-auto mb-2 flex items-center justify-center text-white" style={{ background: link.gradient }}>
+                    {link.icon}
+                  </div>
+                  <span className="text-sm font-bold block" style={{ color: "var(--aivo-text)" }}>{link.label}</span>
+                  <span className="text-[10px]" style={{ color: "var(--aivo-text-muted)" }}>{link.description}</span>
+                </div>
+              </Link>
+            ),
+          )}
+          <div
+            onClick={learner ? handleViewLearnerDashboard : undefined}
+            className={`rounded-3xl p-5 text-center transition-all cursor-pointer hover:scale-[1.03] ${learner ? "" : "opacity-50 cursor-not-allowed"}`}
+            style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}
+          >
+            <div className="w-10 h-10 rounded-xl mx-auto mb-2 flex items-center justify-center text-white" style={{ background: "linear-gradient(135deg, #34D399, #10B981)" }}>
+              <Home size={20} />
+            </div>
+            <span className="text-sm font-bold block" style={{ color: "var(--aivo-text)" }}>{t("learnerDashboard", { defaultValue: "Learner View" })}</span>
+            <span className="text-[10px]" style={{ color: "var(--aivo-text-muted)" }}>{t("seeAsLearner")}</span>
+          </div>
+        </div>
+      </ExpandableCard>
+
+      {progress?.recentSubjects && progress.recentSubjects.length > 0 && (
+        <div className="mt-6">
+          <ExpandableCard
+            icon={<GraduationCap size={16} />}
+            title={t("subjectMastery")}
+            subtitle={t("subjectMasterySubtitle")}
+            gradient="linear-gradient(135deg, #2DD4BF, #14B8A6)"
+            delay={600}
+            infoText={t("subjectMasteryInfo")}
+            linkHref={`/parent/${learnerId}/gradebook`}
+            linkLabel={t("viewFullGradebook")}
+          >
+            <div className="space-y-4">
+              {progress.recentSubjects.map((subject) => (
+                <div key={subject.name}>
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-sm font-medium" style={{ color: "var(--aivo-text)" }}>
+                      {subject.name}
+                    </span>
+                    <span className="text-sm font-semibold" style={{ color: "#7C3AED" }}>
+                      {subject.mastery}%
+                    </span>
+                  </div>
+                  <div className="w-full h-2.5 rounded-full overflow-hidden" style={{ backgroundColor: "var(--aivo-purple-50)" }}>
+                    <div
+                      className="h-full bg-gradient-to-r from-[#7C3AED] to-[#A855F7] rounded-full transition-all duration-700"
+                      style={{ width: `${subject.mastery}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </ExpandableCard>
+        </div>
       )}
-    </div>
+    </PageWrapper>
   );
 }

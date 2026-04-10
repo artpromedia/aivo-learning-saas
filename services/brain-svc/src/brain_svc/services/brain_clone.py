@@ -11,9 +11,14 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from brain_svc.ml.base_brain_model import BaseBrainModel
 from brain_svc.ml.mastery_engine import MasteryEngine, SkillMastery
-from brain_svc.ml.model_store import ModelStore
+
+try:
+    from brain_svc.ml.base_brain_model import BaseBrainModel
+    from brain_svc.ml.model_store import ModelStore
+except ImportError:
+    BaseBrainModel = None  # type: ignore[assignment, misc]
+    ModelStore = None  # type: ignore[assignment, misc]
 from brain_svc.models.brain_state import BrainState
 from brain_svc.models.episode import BrainEpisode
 from brain_svc.models.snapshot import BrainStateSnapshot
@@ -39,6 +44,7 @@ async def clone_brain(
     disability_signals: dict[str, Any] | None = None,
     iep_accommodations: list[str] | None = None,
     iep_goals: list[dict[str, Any]] | None = None,
+    curriculum_framework: str | None = None,
 ) -> dict[str, Any]:
     """Execute the full Brain clone pipeline.
 
@@ -59,8 +65,8 @@ async def clone_brain(
     """
     learner_uuid = uuid.UUID(learner_id)
 
-    # Step 1: Select seed
-    resolved_seed = resolve_seed_for_learner(enrolled_grade, functioning_level)
+    # Step 1: Select seed (with optional district curriculum override)
+    resolved_seed = resolve_seed_for_learner(enrolled_grade, functioning_level, curriculum_framework)
     main_brain_version = resolved_seed["version"]
     logger.info("Cloning brain for learner %s from seed %s", learner_id, main_brain_version)
 
@@ -70,6 +76,7 @@ async def clone_brain(
         "domain_scores": {},
         "active_accommodations": [],
         "curriculum_alignment": resolved_seed.get("active_curriculum", []),
+        "curriculum_framework": resolved_seed.get("curriculum_framework", "DEFAULT"),
         "disability_signals": {},
     }
 
@@ -173,10 +180,12 @@ async def clone_brain(
     )
     session.add(episode)
 
-    # Step 12: Clone PyTorch model
-    seed_model = BaseBrainModel()
-    seed_engine = MasteryEngine(seed_model)
-    model_store.clone_seed(learner_id, seed_engine)
+    if BaseBrainModel is not None and ModelStore is not None:
+        seed_model = BaseBrainModel()
+        seed_engine = MasteryEngine(seed_model)
+        model_store.clone_seed(learner_id, seed_engine)
+    else:
+        logger.info("PyTorch unavailable — skipping model clone for learner %s", learner_id)
 
     await session.flush()
 

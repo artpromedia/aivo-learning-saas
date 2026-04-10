@@ -47,24 +47,24 @@ function TopBar({
 
   return (
     <header
-      className={`flex items-center justify-between h-16 px-4 sm:px-6 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 ${className}`}
+      className={`flex items-center justify-between h-16 px-4 sm:px-6 bg-white dark:bg-[#2A1E45] border-b border-[#E8DDF0] dark:border-[#3D2D5C] ${className}`}
     >
       {/* Breadcrumbs */}
       <nav className="hidden sm:flex items-center gap-1 text-sm" aria-label="Breadcrumb">
         {breadcrumbs.map((crumb, i) => (
           <React.Fragment key={i}>
             {i > 0 && (
-              <ChevronRight size={14} className="text-gray-400 mx-1" />
+              <ChevronRight size={14} className="text-[var(--aivo-text-muted)] mx-1" />
             )}
             {crumb.href ? (
               <a
                 href={crumb.href}
-                className="text-gray-500 dark:text-gray-400 hover:text-[#7C3AED] transition-colors"
+                className="text-[var(--aivo-text-secondary)] dark:text-[var(--aivo-text-muted)] hover:text-[#7C3AED] transition-colors"
               >
                 {crumb.label}
               </a>
             ) : (
-              <span className="text-gray-900 dark:text-white font-medium">
+              <span className="text-[var(--aivo-text)]  font-medium">
                 {crumb.label}
               </span>
             )}
@@ -78,14 +78,14 @@ function TopBar({
         <form onSubmit={handleSearchSubmit} className="hidden md:block relative">
           <Search
             size={16}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--aivo-text-muted)]"
           />
           <input
             type="text"
             placeholder="Search..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 pr-4 py-2 w-56 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent transition-shadow"
+            className="pl-9 pr-4 py-2 w-56 text-sm rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] bg-[var(--aivo-bg)] dark:bg-[#2A1E45] text-[var(--aivo-text)]  placeholder-[#A89BB5] focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent transition-shadow"
           />
         </form>
 
@@ -96,7 +96,7 @@ function TopBar({
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="flex items-center gap-2 p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            className="flex items-center gap-2 p-1 rounded-2xl hover:bg-[#FFF5EB] dark:hover:bg-[#2A1E45] transition-colors"
             aria-label="User menu"
           >
             {userAvatarUrl ? (
@@ -113,22 +113,22 @@ function TopBar({
           </button>
 
           {dropdownOpen && (
-            <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-gray-900 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-50">
-              <div className="px-4 py-2 border-b border-gray-100 dark:border-gray-700">
-                <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+            <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-[#2A1E45] rounded-2xl shadow-lg border border-[#E8DDF0] dark:border-[#3D2D5C] py-1 z-50">
+              <div className="px-4 py-2 border-b border-[#F0E6FF] dark:border-[#3D2D5C]">
+                <p className="text-sm font-medium text-[var(--aivo-text)]  truncate">
                   {userName}
                 </p>
               </div>
               <a
                 href="/dashboard/profile"
-                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+                className="flex items-center gap-2 px-4 py-2 text-sm text-[var(--aivo-text)] dark:text-[#A89BB5] hover:bg-[var(--aivo-bg)] dark:hover:bg-[#2A1E45]"
               >
                 <User size={16} />
                 Profile
               </a>
               <a
                 href="/dashboard/settings"
-                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+                className="flex items-center gap-2 px-4 py-2 text-sm text-[var(--aivo-text)] dark:text-[#A89BB5] hover:bg-[var(--aivo-bg)] dark:hover:bg-[#2A1E45]"
               >
                 <Settings size={16} />
                 Settings

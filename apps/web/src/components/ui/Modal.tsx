@@ -37,7 +37,7 @@ function Modal({ open, onClose, title, children, footer, className = "" }: Modal
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <motion.div
-            className="fixed inset-0 bg-black/50"
+            className="fixed inset-0 bg-[#2D1B4E]/40 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -48,25 +48,25 @@ function Modal({ open, onClose, title, children, footer, className = "" }: Modal
             role="dialog"
             aria-modal="true"
             aria-label={title}
-            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 10 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            transition={{ duration: 0.25, ease: [0.175, 0.885, 0.32, 1.275] }}
             className={`
               relative z-10 w-full max-w-lg
-              bg-white dark:bg-gray-900 rounded-xl shadow-xl
-              border border-gray-200 dark:border-gray-700
+              bg-white dark:bg-[#2A1E45] rounded-3xl shadow-[var(--shadow-playful)]
+              border border-[#E8DDF0] dark:border-[#3D2D5C]
               ${className}
             `}
           >
             {title && (
-              <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+              <div className="flex items-center justify-between px-6 py-5 border-b border-[#E8DDF0] dark:border-[#3D2D5C]">
+                <h2 className="text-lg font-bold text-[var(--aivo-text)]" style={{ fontFamily: "var(--font-display)" }}>
                   {title}
                 </h2>
                 <button
                   onClick={onClose}
-                  className="p-1 rounded-md text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  className="p-2 rounded-2xl text-[#A89BB5] hover:text-[#7C3AED] hover:bg-[#F0E6FF] dark:hover:bg-[#3D2D5C] transition-colors"
                   aria-label="Close dialog"
                 >
                   <X size={20} />
@@ -76,15 +76,15 @@ function Modal({ open, onClose, title, children, footer, className = "" }: Modal
             {!title && (
               <button
                 onClick={onClose}
-                className="absolute top-3 right-3 p-1 rounded-md text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                className="absolute top-4 right-4 p-2 rounded-2xl text-[#A89BB5] hover:text-[#7C3AED] hover:bg-[#F0E6FF] dark:hover:bg-[#3D2D5C] transition-colors"
                 aria-label="Close dialog"
               >
                 <X size={20} />
               </button>
             )}
-            <div className="px-6 py-4">{children}</div>
+            <div className="px-6 py-5">{children}</div>
             {footer && (
-              <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="px-6 py-4 border-t border-[#E8DDF0] dark:border-[#3D2D5C]">
                 {footer}
               </div>
             )}

@@ -221,15 +221,15 @@ export function SpeechPracticeRecorder({
         </span>
       </div>
 
-      <p className="text-lg font-bold text-gray-800 mt-2">
+      <p className="text-lg font-bold text-[var(--aivo-text)] mt-2">
         Try saying: {targetSound}
       </p>
 
       {/* PERMISSION DENIED */}
       {state === "permission_denied" && (
         <div className="mt-6 text-center">
-          <ShieldAlert className="mx-auto h-8 w-8 text-gray-400" />
-          <p className="text-sm text-gray-600 mt-3">
+          <ShieldAlert className="mx-auto h-8 w-8 text-[#A89BB5]" />
+          <p className="text-sm text-[var(--aivo-text-secondary)] mt-3">
             To practice sounds with Echo, please allow microphone access in your
             browser settings.
           </p>
@@ -256,8 +256,8 @@ export function SpeechPracticeRecorder({
           >
             <Mic className="h-7 w-7" />
           </button>
-          <p className="text-xs text-gray-400 mt-3">Tap to record</p>
-          <p className="text-xs text-gray-400 italic mt-4">
+          <p className="text-xs text-[var(--aivo-text-muted)] mt-3">Tap to record</p>
+          <p className="text-xs text-[var(--aivo-text-muted)] italic mt-4">
             {"\u{1F512}"} Your recording is only used for this practice session
             and is not stored permanently.
           </p>
@@ -321,7 +321,7 @@ export function SpeechPracticeRecorder({
             ))}
           </div>
 
-          <p className="text-sm text-gray-600 text-center mb-3">
+          <p className="text-sm text-[var(--aivo-text-secondary)] text-center mb-3">
             {formatTime(elapsedMs)} recorded
           </p>
 
@@ -339,7 +339,7 @@ export function SpeechPracticeRecorder({
               )}
             </button>
             <div
-              className="flex-1 h-1.5 rounded-full bg-gray-200 overflow-hidden"
+              className="flex-1 h-1.5 rounded-full bg-[#F0E6FF] overflow-hidden"
               role="progressbar"
               aria-valuemin={0}
               aria-valuemax={elapsedMs}
@@ -355,7 +355,7 @@ export function SpeechPracticeRecorder({
                 }}
               />
             </div>
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-[#A89BB5]">
               {formatTime(elapsedMs)}
             </span>
           </div>
@@ -364,14 +364,14 @@ export function SpeechPracticeRecorder({
           <div className="flex gap-3 mt-4">
             <button
               onClick={resetToIdle}
-              className="flex-1 text-sm font-medium text-gray-500 border border-gray-200 rounded-lg px-4 py-2 hover:bg-gray-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2"
+              className="flex-1 text-sm font-medium text-[var(--aivo-text-secondary)] border border-[#E8DDF0] rounded-2xl px-4 py-2 hover:bg-[var(--aivo-bg)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2"
             >
               Try Again
             </button>
             <button
               onClick={handleSend}
               aria-label={`Submit your recording of ${targetSound} to Echo`}
-              className="flex-1 text-sm font-semibold text-white bg-pink-500 rounded-lg px-4 py-2 hover:bg-pink-600 shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-400 focus-visible:ring-offset-2"
+              className="flex-1 text-sm font-semibold text-white bg-pink-500 rounded-2xl px-4 py-2 hover:bg-pink-600 shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-400 focus-visible:ring-offset-2"
             >
               Send to Echo {"\u2728"}
             </button>

@@ -9,6 +9,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { tenants, users } from "./identity";
+import { schoolDistricts } from "./districts";
 import { functioningLevelEnum, communicationModeEnum, userStatusEnum } from "./enums";
 
 // ─── Learners ───────────────────────────────────────────────────────────────────
@@ -28,6 +29,10 @@ export const learners = pgTable(
     dateOfBirth: timestamp("date_of_birth", { mode: "date" }),
     enrolledGrade: integer("enrolled_grade"),
     schoolName: varchar("school_name", { length: 255 }),
+    state: varchar("state", { length: 2 }),
+    zipCode: varchar("zip_code", { length: 10 }),
+    districtId: uuid("district_id")
+      .references(() => schoolDistricts.id, { onDelete: "set null" }),
     functioningLevel: functioningLevelEnum("functioning_level").notNull().default("STANDARD"),
     communicationMode: communicationModeEnum("communication_mode").notNull().default("VERBAL"),
     preferredLanguage: varchar("preferred_language", { length: 10 }).notNull().default("en"),
@@ -92,6 +97,7 @@ export const learnersRelations = relations(learners, ({ one, many }) => ({
   tenant: one(tenants, { fields: [learners.tenantId], references: [tenants.id] }),
   user: one(users, { fields: [learners.userId], references: [users.id], relationName: "learnerUser" }),
   parent: one(users, { fields: [learners.parentId], references: [users.id], relationName: "learnerParent" }),
+  district: one(schoolDistricts, { fields: [learners.districtId], references: [schoolDistricts.id] }),
   caregivers: many(learnerCaregivers),
   teachers: many(learnerTeachers),
 }));

@@ -156,12 +156,12 @@ export function PuzzleBreak({ durationSeconds, functioningLevel = "STANDARD", on
         <p className="text-sm font-medium text-purple-700 dark:text-purple-300">
           Match the pairs! Tap two cards with the same icon.
         </p>
-        <span className="text-xs text-gray-500 dark:text-gray-400">
+        <span className="text-xs text-[var(--aivo-text-secondary)]">
           Moves: {moves}
         </span>
       </div>
 
-      <div className="text-center text-xs text-gray-500 dark:text-gray-400 mb-3" aria-live="polite">
+      <div className="text-center text-xs text-[var(--aivo-text-secondary)] mb-3" aria-live="polite">
         {matchCount} of {pairCount} pairs matched
       </div>
 
@@ -193,10 +193,10 @@ export function PuzzleBreak({ durationSeconds, functioningLevel = "STANDARD", on
               >
                 {/* Card back (face-down) */}
                 <div
-                  className={`absolute inset-0 rounded-xl border-2 flex items-center justify-center backface-hidden
+                  className={`absolute inset-0 rounded-2xl border-2 flex items-center justify-center backface-hidden
                     ${card.matched
                       ? "border-transparent"
-                      : "border-purple-300 dark:border-purple-600 bg-gradient-to-br from-[#7C3AED] to-[#7C4DFF] shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all"
+                      : "border-purple-300 dark:border-purple-600 bg-gradient-to-br from-[#7C3AED] to-[#A855F7] shadow-md hover:shadow-[var(--shadow-hover)] hover:scale-[1.02] active:scale-95 transition-all"
                     }`}
                 >
                   <span className="text-white text-2xl sm:text-3xl font-bold select-none" aria-hidden="true">
@@ -206,10 +206,10 @@ export function PuzzleBreak({ durationSeconds, functioningLevel = "STANDARD", on
 
                 {/* Card front (face-up) */}
                 <div
-                  className={`absolute inset-0 rounded-xl border-2 flex items-center justify-center backface-hidden
+                  className={`absolute inset-0 rounded-2xl border-2 flex items-center justify-center backface-hidden
                     ${card.matched
                       ? "border-green-400 bg-green-50 dark:bg-green-900/20 shadow-green-200/50 dark:shadow-green-800/30 shadow-md"
-                      : "border-purple-300 dark:border-purple-600 bg-white dark:bg-gray-800 shadow-md"
+                      : "border-purple-300 dark:border-purple-600 bg-white dark:bg-[#2A1E45] shadow-md"
                     }`}
                   style={{ transform: "rotateY(180deg)" }}
                 >

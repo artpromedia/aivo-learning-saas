@@ -11,11 +11,12 @@ const ROLE_REDIRECTS: Record<string, string> = {
   educator: "/teacher",
   DISTRICT_ADMIN: "/admin/district",
   admin: "/admin/district",
-  PLATFORM_ADMIN: "/admin/district",
+  PLATFORM_ADMIN: "/admin/platform",
+  platform_admin: "/admin/platform",
   LEARNER: "/learner",
   learner: "/learner",
-  CAREGIVER: "/parent",
-  caregiver: "/parent",
+  CAREGIVER: "/caregiver",
+  caregiver: "/caregiver",
 };
 
 const ROLE_ALLOWED_PREFIXES: Record<string, string[]> = {
@@ -24,23 +25,22 @@ const ROLE_ALLOWED_PREFIXES: Record<string, string[]> = {
   TEACHER: ["/teacher"],
   teacher: ["/teacher"],
   educator: ["/teacher"],
-  DISTRICT_ADMIN: ["/admin"],
-  admin: ["/admin"],
-  PLATFORM_ADMIN: ["/admin", "/teacher", "/parent", "/learner"],
+  DISTRICT_ADMIN: ["/admin/district", "/admin/translations"],
+  admin: ["/admin/district", "/admin/translations"],
+  PLATFORM_ADMIN: ["/admin", "/teacher", "/parent", "/learner", "/caregiver"],
+  platform_admin: ["/admin", "/teacher", "/parent", "/learner", "/caregiver"],
   LEARNER: ["/learner"],
   learner: ["/learner"],
-  CAREGIVER: ["/parent", "/learner", "/notifications"],
-  caregiver: ["/parent", "/learner", "/notifications"],
+  CAREGIVER: ["/caregiver", "/notifications"],
+  caregiver: ["/caregiver", "/notifications"],
 };
 
 function detectLocale(request: NextRequest): string {
-  // 1. Explicit cookie preference
   const cookieLocale = request.cookies.get("NEXT_LOCALE")?.value;
   if (cookieLocale && SUPPORTED_LOCALES.includes(cookieLocale)) {
     return cookieLocale;
   }
 
-  // 2. Accept-Language header
   const acceptLanguage = request.headers.get("accept-language") ?? "";
   const preferred = acceptLanguage
     .split(",")
@@ -51,7 +51,6 @@ function detectLocale(request: NextRequest): string {
     return preferred;
   }
 
-  // 3. Default
   return DEFAULT_LOCALE;
 }
 
@@ -59,11 +58,9 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const response = NextResponse.next();
 
-  // Detect and set locale
   const locale = detectLocale(request);
   response.headers.set("x-locale", locale);
 
-  // Skip auth/onboarding/billing/marketing and static assets
   if (
     pathname.startsWith("/login") ||
     pathname.startsWith("/register") ||
@@ -79,15 +76,21 @@ export function middleware(request: NextRequest) {
     return response;
   }
 
-  // Check for role cookie/header
+  const VALID_PREVIEW_ROLES = ["parent", "learner", "teacher", "admin", "platform_admin"];
+  const isPreview = request.nextUrl.searchParams.has("preview") && process.env.NODE_ENV !== "production";
+  const rawPreviewRole = isPreview ? (request.nextUrl.searchParams.get("role") || "parent") : null;
+  const previewRole = rawPreviewRole && VALID_PREVIEW_ROLES.includes(rawPreviewRole) ? rawPreviewRole : null;
+
   const roleCookie = request.cookies.get("user_role")?.value;
-  if (!roleCookie) {
-    // Redirect unauthenticated users away from dashboard routes
+  const effectiveRole = roleCookie || previewRole;
+
+  if (!effectiveRole) {
     const isDashboard =
       pathname.startsWith("/parent") ||
       pathname.startsWith("/learner") ||
       pathname.startsWith("/teacher") ||
       pathname.startsWith("/admin") ||
+      pathname.startsWith("/caregiver") ||
       pathname.startsWith("/notifications") ||
       pathname.startsWith("/manage") ||
       pathname.startsWith("/checkout") ||
@@ -100,14 +103,12 @@ export function middleware(request: NextRequest) {
     return response;
   }
 
-  const role = roleCookie;
-
-  // Check if user is accessing a dashboard route
   const isDashboardRoute =
     pathname.startsWith("/parent") ||
     pathname.startsWith("/learner") ||
     pathname.startsWith("/teacher") ||
     pathname.startsWith("/admin") ||
+    pathname.startsWith("/caregiver") ||
     pathname.startsWith("/notifications") ||
     pathname.startsWith("/manage") ||
     pathname.startsWith("/checkout") ||
@@ -117,13 +118,11 @@ export function middleware(request: NextRequest) {
     return response;
   }
 
-  // Check if role has access to this path
-  const allowedPrefixes = ROLE_ALLOWED_PREFIXES[role] ?? [];
+  const allowedPrefixes = ROLE_ALLOWED_PREFIXES[effectiveRole] ?? [];
   const hasAccess = allowedPrefixes.some((prefix) => pathname.startsWith(prefix));
 
   if (!hasAccess) {
-    // Redirect to role's default page
-    const defaultPath = ROLE_REDIRECTS[role] ?? "/parent";
+    const defaultPath = ROLE_REDIRECTS[effectiveRole] ?? "/parent";
     const url = request.nextUrl.clone();
     url.pathname = defaultPath;
     return NextResponse.redirect(url);

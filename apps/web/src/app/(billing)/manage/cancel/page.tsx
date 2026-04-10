@@ -142,9 +142,9 @@ export default function CancelSubscriptionPage() {
   if (loading) {
     return (
       <div className="max-w-3xl mx-auto py-8 px-4 space-y-6">
-        <Skeleton height={80} className="w-full rounded-xl" />
-        <Skeleton height={200} className="w-full rounded-lg" />
-        <Skeleton height={150} className="w-full rounded-lg" />
+        <Skeleton height={80} className="w-full rounded-2xl" />
+        <Skeleton height={200} className="w-full rounded-2xl" />
+        <Skeleton height={150} className="w-full rounded-2xl" />
       </div>
     );
   }
@@ -168,7 +168,7 @@ export default function CancelSubscriptionPage() {
     <div className="max-w-3xl mx-auto py-8 px-4">
       <Link
         href="/manage"
-        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-4"
+        className="inline-flex items-center gap-1 text-sm text-[var(--aivo-text-secondary)] hover:text-[var(--aivo-text)] dark:text-[var(--aivo-text-muted)] dark:hover:text-[#A89BB5] mb-4"
       >
         <ArrowLeft size={16} />
         {t("backToSubscription")}
@@ -178,20 +178,20 @@ export default function CancelSubscriptionPage() {
       {pageState === "cancelled" && subscription && (
         <div className="space-y-6">
           <div className="text-center py-8">
-            <div className="w-16 h-16 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center mx-auto mb-4">
-              <XCircle size={32} className="text-amber-600 dark:text-amber-400" />
+            <div className="w-16 h-16 rounded-full bg-[#FEF3C7] dark:bg-[#92400E]/30 flex items-center justify-center mx-auto mb-4">
+              <XCircle size={32} className="text-[#D97706] dark:text-amber-400" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+            <h1 className="text-2xl font-extrabold text-[var(--aivo-text)] mb-2">
               {t("subscriptionCancelled")}
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto">
+            <p className="text-[var(--aivo-text-secondary)] max-w-md mx-auto">
               {t("cancelledGraceInfo", { date: new Date(subscription.currentPeriodEnd).toLocaleDateString() })}
             </p>
           </div>
 
           <Card>
             <CardBody className="text-center py-6">
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+              <p className="text-sm text-[var(--aivo-text-secondary)] mb-4">
                 {t("reactivateGraceInfo")}
               </p>
               <Button
@@ -205,7 +205,7 @@ export default function CancelSubscriptionPage() {
           </Card>
 
           {error && (
-            <div className="p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+            <div className="p-3 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171] text-sm">
               {error}
             </div>
           )}
@@ -214,11 +214,11 @@ export default function CancelSubscriptionPage() {
             <CardBody>
               <div className="flex items-center gap-3 mb-3">
                 <Download size={18} className="text-[#7C3AED]" />
-                <h3 className="font-semibold text-gray-900 dark:text-white">
+                <h3 className="font-semibold text-[var(--aivo-text)]">
                   {t("exportYourData")}
                 </h3>
               </div>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+              <p className="text-sm text-[var(--aivo-text-secondary)] mb-4">
                 {t("exportDataDesc")}
               </p>
               <Link href="/parent">
@@ -240,10 +240,10 @@ export default function CancelSubscriptionPage() {
               className="text-green-600 dark:text-green-400"
             />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+          <h1 className="text-2xl font-extrabold text-[var(--aivo-text)] mb-2">
             {t("welcomeBack")}
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto mb-6">
+          <p className="text-[var(--aivo-text-secondary)] max-w-md mx-auto mb-6">
             {t("reactivatedDesc")}
           </p>
           <Link href="/manage">
@@ -255,11 +255,11 @@ export default function CancelSubscriptionPage() {
       {/* Confirmation State */}
       {pageState === "confirm" && subscription && (
         <>
-          <PurpleGradientHeader className="rounded-xl mb-8">
+          <PurpleGradientHeader className="rounded-2xl mb-8">
             <div className="flex items-center gap-3">
               <AlertTriangle size={32} />
               <div>
-                <h1 className="text-2xl font-bold">{t("cancelSubscription")}</h1>
+                <h1 className="text-2xl font-extrabold">{t("cancelSubscription")}</h1>
                 <p className="text-white/80 text-sm">
                   {t("cancelReviewSubtitle")}
                 </p>
@@ -268,7 +268,7 @@ export default function CancelSubscriptionPage() {
           </PurpleGradientHeader>
 
           {error && (
-            <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+            <div className="mb-4 p-3 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171] text-sm">
               {error}
             </div>
           )}
@@ -279,13 +279,13 @@ export default function CancelSubscriptionPage() {
               <CardBody>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                    <p className="text-sm text-[var(--aivo-text-secondary)]">
                       {t("currentPlanLabel")}
                     </p>
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                    <h3 className="text-lg font-bold text-[var(--aivo-text)]">
                       {subscription.plan.name}
                     </h3>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-[var(--aivo-text-secondary)]">
                       {t("activeLearnerCount", { count: subscription.learnerCount })}
                     </p>
                   </div>
@@ -293,7 +293,7 @@ export default function CancelSubscriptionPage() {
                     <Badge variant="success">
                       {subscription.status === "trialing" ? t("trial") : t("active")}
                     </Badge>
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="text-sm text-[var(--aivo-text-secondary)] mt-1">
                       ${(subscription.plan.price / 100).toFixed(2)}/{subscription.plan.interval}
                     </p>
                   </div>
@@ -313,21 +313,21 @@ export default function CancelSubscriptionPage() {
                 <div className="space-y-4">
                   {loseFeatures.map((feature, index) => (
                     <div key={index} className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-500 shrink-0">
+                      <div className="w-8 h-8 rounded-2xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-500 shrink-0">
                         {feature.icon}
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                        <p className="text-sm font-medium text-[var(--aivo-text)]">
                           {feature.label}
                         </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                        <p className="text-xs text-[var(--aivo-text-secondary)]">
                           {feature.description}
                         </p>
                       </div>
                     </div>
                   ))}
                 </div>
-                <div className="mt-4 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
+                <div className="mt-4 p-3 rounded-2xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
                   <p className="text-sm text-amber-700 dark:text-amber-300">
                     {t("dataRetentionNotice", { days: 30 })}
                   </p>
@@ -339,14 +339,14 @@ export default function CancelSubscriptionPage() {
             <Card className="border-[#7C3AED]/30">
               <CardBody>
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 rounded-2xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center shrink-0">
                     <Brain size={20} className="text-[#7C3AED]" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+                    <h3 className="font-semibold text-[var(--aivo-text)] mb-1">
                       {t("exportBrainDataFirst")}
                     </h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
+                    <p className="text-sm text-[var(--aivo-text-secondary)] mb-3">
                       {t("exportBrainDataDesc")}
                     </p>
                     <Link href="/parent">
@@ -364,7 +364,7 @@ export default function CancelSubscriptionPage() {
             </Card>
 
             {/* Confirm Cancellation */}
-            <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between pt-4 border-t border-[#E8DDF0] dark:border-[#3D2D5C]">
               <Link href="/manage">
                 <Button variant="ghost">{t("keepMySubscription")}</Button>
               </Link>

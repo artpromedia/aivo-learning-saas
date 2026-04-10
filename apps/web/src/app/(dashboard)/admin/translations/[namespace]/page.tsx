@@ -2,8 +2,9 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
-import Link from "next/link";
-import { ArrowLeft, Check, Languages, Wand2 } from "lucide-react";
+import { Check, Languages, Wand2 } from "lucide-react";
+import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
+import { PageWrapper, BackLink } from "@/components/ui/PageDesign";
 import { getI18nServiceUrl } from "@/i18n/config";
 
 interface LocaleInfo {
@@ -39,15 +40,11 @@ export default function NamespaceEditorPage() {
       const allKeys = new Set<string>();
 
       for (const locale of localesData) {
-        const res = await fetch(
-          `${getI18nServiceUrl()}/i18n/translations/${locale.code}/${namespace}`,
-        );
+        const res = await fetch(`${getI18nServiceUrl()}/i18n/translations/${locale.code}/${namespace}`);
         if (res.ok) {
           const data = (await res.json()) as Record<string, string>;
           allTranslations[locale.code] = data;
-          for (const key of Object.keys(data)) {
-            allKeys.add(key);
-          }
+          for (const key of Object.keys(data)) allKeys.add(key);
         }
       }
 
@@ -55,44 +52,28 @@ export default function NamespaceEditorPage() {
       setRows(
         sortedKeys.map((key) => ({
           key,
-          values: Object.fromEntries(
-            localesData.map((l) => [l.code, allTranslations[l.code]?.[key] ?? ""]),
-          ),
+          values: Object.fromEntries(localesData.map((l) => [l.code, allTranslations[l.code]?.[key] ?? ""])),
           editing: {},
         })),
       );
     } catch {
-      // silently fail
     } finally {
       setLoading(false);
     }
   }, [namespace]);
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  useEffect(() => { fetchData(); }, [fetchData]);
 
   const handleSave = async (key: string, localeCode: string, value: string) => {
     setSaving(`${key}-${localeCode}`);
     try {
       await fetch(
         `${getI18nServiceUrl()}/i18n/translations/${localeCode}/${namespace}/${encodeURIComponent(key)}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ value, isVerified: true }),
-        },
+        { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ value, isVerified: true }) },
       );
-
       setRows((prev) =>
         prev.map((row) =>
-          row.key === key
-            ? {
-                ...row,
-                values: { ...row.values, [localeCode]: value },
-                editing: { ...row.editing, [localeCode]: false },
-              }
-            : row,
+          row.key === key ? { ...row, values: { ...row.values, [localeCode]: value }, editing: { ...row.editing, [localeCode]: false } } : row,
         ),
       );
     } finally {
@@ -106,31 +87,20 @@ export default function NamespaceEditorPage() {
       const untranslatedKeys = rows
         .filter((row) => !row.values[targetLocale] && row.values["en"])
         .map((row) => `${namespace}.${row.key}`);
-
       if (untranslatedKeys.length === 0) return;
 
       const res = await fetch(`${getI18nServiceUrl()}/i18n/translate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sourceLocale: "en",
-          targetLocale,
-          keys: untranslatedKeys,
-        }),
+        body: JSON.stringify({ sourceLocale: "en", targetLocale, keys: untranslatedKeys }),
       });
-
       if (res.ok) {
         const data = (await res.json()) as { translations: Record<string, string> };
         setRows((prev) =>
           prev.map((row) => {
             const fullKey = `${namespace}.${row.key}`;
             const translated = data.translations[fullKey];
-            if (translated) {
-              return {
-                ...row,
-                values: { ...row.values, [targetLocale]: translated },
-              };
-            }
+            if (translated) return { ...row, values: { ...row.values, [targetLocale]: translated } };
             return row;
           }),
         );
@@ -143,37 +113,28 @@ export default function NamespaceEditorPage() {
   const toggleEdit = (key: string, localeCode: string) => {
     setRows((prev) =>
       prev.map((row) =>
-        row.key === key
-          ? {
-              ...row,
-              editing: { ...row.editing, [localeCode]: !row.editing[localeCode] },
-            }
-          : row,
+        row.key === key ? { ...row, editing: { ...row.editing, [localeCode]: !row.editing[localeCode] } } : row,
       ),
     );
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Link
-          href="/admin/translations"
-          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-        >
-          <ArrowLeft className="h-5 w-5 text-gray-500" />
-        </Link>
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white capitalize">
-            {namespace}
-          </h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            {rows.length} translation keys
-          </p>
-        </div>
-      </div>
+    <PageWrapper>
+      <BackLink href="/admin/translations">Back to Translations</BackLink>
 
-      {/* Bulk translate buttons */}
-      <div className="flex flex-wrap gap-2">
+      <PurpleGradientHeader className="rounded-3xl mb-8">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
+            <Languages size={22} />
+          </div>
+          <div>
+            <h1 className="text-2xl font-extrabold capitalize">{namespace}</h1>
+            <p className="mt-0.5 text-white/80 text-sm">{rows.length} translation keys</p>
+          </div>
+        </div>
+      </PurpleGradientHeader>
+
+      <div className="flex flex-wrap gap-2 mb-6">
         {locales
           .filter((l) => l.code !== "en")
           .map((locale) => (
@@ -181,7 +142,8 @@ export default function NamespaceEditorPage() {
               key={locale.code}
               onClick={() => handleBulkTranslate(locale.code)}
               disabled={translating}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-purple-900/10 hover:border-purple-300 transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] text-sm font-medium hover:bg-purple-50 dark:hover:bg-purple-900/10 hover:border-purple-300 transition-colors disabled:opacity-50"
+              style={{ color: "var(--aivo-text)" }}
             >
               <Wand2 className="h-3.5 w-3.5" />
               AI Translate → {locale.code.toUpperCase()}
@@ -190,30 +152,27 @@ export default function NamespaceEditorPage() {
       </div>
 
       {loading ? (
-        <div className="p-10 text-center text-gray-400">Loading translations...</div>
+        <div className="p-10 text-center text-[#A89BB5]">Loading translations...</div>
       ) : (
-        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="bg-white dark:bg-[#2A1E45] rounded-2xl border border-[#E8DDF0] dark:border-[#3D2D5C] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-gray-50 dark:bg-gray-800">
-                  <th className="px-4 py-3 text-left font-medium text-gray-600 dark:text-gray-400 sticky left-0 bg-gray-50 dark:bg-gray-800 min-w-[200px]">
+                <tr style={{ backgroundColor: "var(--aivo-bg)" }}>
+                  <th className="px-4 py-3 text-left font-medium sticky left-0 min-w-[200px]" style={{ color: "var(--aivo-text-secondary)", backgroundColor: "var(--aivo-bg)" }}>
                     Key
                   </th>
                   {locales.map((locale) => (
-                    <th
-                      key={locale.code}
-                      className="px-4 py-3 text-left font-medium text-gray-600 dark:text-gray-400 min-w-[250px]"
-                    >
+                    <th key={locale.code} className="px-4 py-3 text-left font-medium min-w-[250px]" style={{ color: "var(--aivo-text-secondary)" }}>
                       {locale.code.toUpperCase()} — {locale.name}
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+              <tbody className="divide-y divide-[#F0E6FF] dark:divide-[#3D2D5C]">
                 {rows.map((row) => (
-                  <tr key={row.key} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
-                    <td className="px-4 py-3 font-mono text-xs text-gray-600 dark:text-gray-400 sticky left-0 bg-white dark:bg-gray-900">
+                  <tr key={row.key} className="hover:bg-[var(--aivo-bg)] dark:hover:bg-[#2A1E45]/50">
+                    <td className="px-4 py-3 font-mono text-xs sticky left-0 bg-white dark:bg-[#2A1E45]" style={{ color: "var(--aivo-text-secondary)" }}>
                       {row.key}
                     </td>
                     {locales.map((locale) => (
@@ -228,12 +187,11 @@ export default function NamespaceEditorPage() {
                         ) : (
                           <button
                             onClick={() => toggleEdit(row.key, locale.code)}
-                            className="text-left w-full text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded px-2 py-1 -mx-2 -my-1 transition-colors"
+                            className="text-left w-full hover:bg-[#FFF5EB] dark:hover:bg-[#3D2D5C] rounded px-2 py-1 -mx-2 -my-1 transition-colors"
+                            style={{ color: "var(--aivo-text)" }}
                           >
                             {row.values[locale.code] || (
-                              <span className="text-gray-300 dark:text-gray-600 italic">
-                                untranslated
-                              </span>
+                              <span className="text-[#A89BB5] dark:text-[#7B6A94] italic">untranslated</span>
                             )}
                           </button>
                         )}
@@ -246,21 +204,13 @@ export default function NamespaceEditorPage() {
           </div>
         </div>
       )}
-    </div>
+    </PageWrapper>
   );
 }
 
 function EditableCell({
-  value: initialValue,
-  saving,
-  onSave,
-  onCancel,
-}: {
-  value: string;
-  saving: boolean;
-  onSave: (value: string) => void;
-  onCancel: () => void;
-}) {
+  value: initialValue, saving, onSave, onCancel,
+}: { value: string; saving: boolean; onSave: (value: string) => void; onCancel: () => void; }) {
   const [value, setValue] = useState(initialValue);
 
   return (
@@ -269,19 +219,13 @@ function EditableCell({
         type="text"
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") onSave(value);
-          if (e.key === "Escape") onCancel();
-        }}
-        className="flex-1 px-2 py-1 rounded border border-purple-300 dark:border-purple-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-purple-500 outline-none"
+        onKeyDown={(e) => { if (e.key === "Enter") onSave(value); if (e.key === "Escape") onCancel(); }}
+        className="flex-1 px-2 py-1 rounded border border-purple-300 dark:border-purple-600 bg-white dark:bg-[#2A1E45] text-sm focus:ring-2 focus:ring-purple-500 outline-none"
+        style={{ color: "var(--aivo-text)" }}
         autoFocus
         disabled={saving}
       />
-      <button
-        onClick={() => onSave(value)}
-        disabled={saving}
-        className="p-1 rounded hover:bg-green-100 dark:hover:bg-green-900/30 text-green-600 disabled:opacity-50"
-      >
+      <button onClick={() => onSave(value)} disabled={saving} className="p-1 rounded hover:bg-green-100 dark:hover:bg-green-900/30 text-green-600 disabled:opacity-50">
         <Check className="h-4 w-4" />
       </button>
     </div>

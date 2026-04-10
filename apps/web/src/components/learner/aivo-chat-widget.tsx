@@ -105,7 +105,7 @@ export function AivoChatWidget() {
         <div
           className={cn(
             "fixed bottom-20 right-4 z-50 w-80 sm:w-96 max-h-[28rem] rounded-2xl",
-            "bg-white dark:bg-gray-900 shadow-2xl border border-gray-200 dark:border-gray-700",
+            "bg-white dark:bg-[#2A1E45] shadow-2xl border border-[#E8DDF0] dark:border-[#3D2D5C]",
             "flex flex-col overflow-hidden",
           )}
         >
@@ -129,7 +129,7 @@ export function AivoChatWidget() {
           {/* Messages */}
           <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 min-h-0 max-h-72">
             {messages.length === 0 && !isStarting && !sessionError && (
-              <p className="text-center text-gray-400 dark:text-gray-500 text-sm py-6">
+              <p className="text-center text-[var(--aivo-text-muted)] dark:text-[var(--aivo-text-secondary)] text-sm py-6">
                 {t("aivoChatWelcome")}
               </p>
             )}
@@ -150,10 +150,10 @@ export function AivoChatWidget() {
               <div
                 key={msg.id}
                 className={cn(
-                  "max-w-[85%] rounded-xl px-3 py-2 text-sm leading-relaxed",
+                  "max-w-[85%] rounded-2xl px-3 py-2 text-sm leading-relaxed",
                   msg.role === "user"
                     ? "ml-auto bg-[#7C3AED] text-white"
-                    : "mr-auto bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100",
+                    : "mr-auto bg-[#FFF5EB] dark:bg-[#2A1E45] text-[var(--aivo-text)] ",
                 )}
               >
                 {msg.content || (
@@ -168,7 +168,7 @@ export function AivoChatWidget() {
           </div>
 
           {/* Input */}
-          <div className="flex items-center gap-2 px-3 py-2 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex items-center gap-2 px-3 py-2 border-t border-[#E8DDF0] dark:border-[#3D2D5C]">
             <input
               type="text"
               value={input}
@@ -177,8 +177,8 @@ export function AivoChatWidget() {
               placeholder={t("aivoChatPlaceholder")}
               disabled={isStreaming || !sessionId}
               className={cn(
-                "flex-1 text-sm bg-transparent outline-none placeholder:text-gray-400",
-                "text-gray-900 dark:text-gray-100",
+                "flex-1 text-sm bg-transparent outline-none placeholder:text-[var(--aivo-text-muted)]",
+                "text-[var(--aivo-text)] ",
               )}
             />
             <Button

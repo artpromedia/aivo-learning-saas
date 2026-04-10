@@ -6,8 +6,8 @@ loadDotenv();
 const configSchema = z.object({
   PORT: z.coerce.number().default(3007),
   DATABASE_URL: z.string().min(1),
-  REDIS_URL: z.string().min(1),
-  NATS_URL: z.string().min(1),
+  REDIS_URL: z.string().default("redis://localhost:6379"),
+  NATS_URL: z.string().default("nats://localhost:4222"),
   JWT_PUBLIC_KEY: z.string().min(1),
   OONRUMAIL_API_KEY: z.string().default(""),
   OONRUMAIL_BASE_URL: z.string().url().default("https://api.oonrumail.com/v1"),

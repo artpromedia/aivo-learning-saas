@@ -55,11 +55,11 @@ function Sidebar({
 
   const sidebarContent = (
     <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between px-4 py-5 border-b border-gray-200 dark:border-gray-700">
+      <div className="flex items-center justify-between px-4 py-5 border-b border-[#E8DDF0] dark:border-[#3D2D5C]">
         {!collapsed && <AivoLogo size="sm" />}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="hidden lg:flex p-1.5 rounded-md text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          className="hidden lg:flex p-1.5 rounded-md text-[var(--aivo-text-muted)] hover:text-[var(--aivo-text-secondary)] dark:hover:text-[#A89BB5] hover:bg-[#FFF5EB] dark:hover:bg-[#2A1E45] transition-colors"
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
@@ -74,10 +74,10 @@ function Sidebar({
               key={item.href}
               href={item.href}
               className={`
-                flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium transition-colors
                 ${isActive
                   ? "bg-[#7C3AED]/10 text-[#7C3AED] dark:bg-[#7C4DFF]/20 dark:text-[#7C4DFF]"
-                  : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                  : "text-[var(--aivo-text)] dark:text-[#A89BB5] hover:bg-[#FFF5EB] dark:hover:bg-[#2A1E45]"
                 }
               `}
               title={collapsed ? item.label : undefined}
@@ -94,7 +94,7 @@ function Sidebar({
         })}
       </nav>
 
-      <div className="px-3 py-4 border-t border-gray-200 dark:border-gray-700">
+      <div className="px-3 py-4 border-t border-[#E8DDF0] dark:border-[#3D2D5C]">
         <div className="flex items-center gap-3 px-3 py-2">
           {userAvatarUrl ? (
             <img
@@ -109,11 +109,11 @@ function Sidebar({
           )}
           {!collapsed && (
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+              <p className="text-sm font-medium text-[var(--aivo-text)]  truncate">
                 {userName}
               </p>
               {userEmail && (
-                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                <p className="text-xs text-[var(--aivo-text-secondary)] dark:text-[var(--aivo-text-muted)] truncate">
                   {userEmail}
                 </p>
               )}
@@ -122,7 +122,7 @@ function Sidebar({
           {!collapsed && onLogout && (
             <button
               onClick={onLogout}
-              className="p-1.5 rounded-md text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+              className="p-1.5 rounded-md text-[var(--aivo-text-muted)] hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
               aria-label="Log out"
             >
               <LogOut size={16} />
@@ -138,10 +138,10 @@ function Sidebar({
       {/* Mobile toggle */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="lg:hidden fixed top-4 left-4 z-40 p-2 rounded-lg bg-white dark:bg-gray-900 shadow-md border border-gray-200 dark:border-gray-700"
+        className="lg:hidden fixed top-4 left-4 z-40 p-2 rounded-2xl bg-white dark:bg-[#2A1E45] shadow-md border border-[#E8DDF0] dark:border-[#3D2D5C]"
         aria-label="Open menu"
       >
-        <Menu size={20} className="text-gray-700 dark:text-gray-300" />
+        <Menu size={20} className="text-[var(--aivo-text)] dark:text-[#A89BB5]" />
       </button>
 
       {/* Mobile overlay */}
@@ -156,14 +156,14 @@ function Sidebar({
       <aside
         className={`
           lg:hidden fixed inset-y-0 left-0 z-50 w-64
-          bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700
+          bg-white dark:bg-[#2A1E45] border-r border-[#E8DDF0] dark:border-[#3D2D5C]
           transform transition-transform duration-200 ease-in-out
           ${mobileOpen ? "translate-x-0" : "-translate-x-full"}
         `}
       >
         <button
           onClick={() => setMobileOpen(false)}
-          className="absolute top-4 right-4 p-1.5 rounded-md text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+          className="absolute top-4 right-4 p-1.5 rounded-md text-[var(--aivo-text-muted)] hover:text-[var(--aivo-text-secondary)] dark:hover:text-[#A89BB5]"
           aria-label="Close menu"
         >
           <X size={18} />
@@ -176,8 +176,8 @@ function Sidebar({
         className={`
           hidden lg:flex flex-col shrink-0
           ${collapsed ? "w-[72px]" : "w-64"}
-          h-screen bg-white dark:bg-gray-900
-          border-r border-gray-200 dark:border-gray-700
+          h-screen bg-white dark:bg-[#2A1E45]
+          border-r border-[#E8DDF0] dark:border-[#3D2D5C]
           transition-[width] duration-200 ease-in-out
           ${className}
         `}

@@ -13,6 +13,7 @@ import {
   Play,
   Star,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -43,6 +44,7 @@ interface QuestWorldDetail {
 
 export default function QuestWorldPage() {
   const params = useParams();
+  const t = useTranslations("dashboard");
   const worldSlug = params.worldSlug as string;
   const activeLearner = useLearnerStore((s) => s.activeLearner);
 
@@ -61,7 +63,7 @@ export default function QuestWorldPage() {
         setWorld(data);
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "Failed to load quest world",
+          err instanceof Error ? err.message : t("failedToLoadQuestWorld"),
         );
       } finally {
         setLoading(false);
@@ -76,23 +78,23 @@ export default function QuestWorldPage() {
     { icon: React.ReactNode; badge: string; variant: "default" | "success" | "warning" | "secondary" }
   > = {
     locked: {
-      icon: <Lock size={20} className="text-gray-400" />,
-      badge: "Locked",
+      icon: <Lock size={20} className="text-[#A89BB5]" />,
+      badge: t("locked"),
       variant: "secondary",
     },
     available: {
       icon: <Play size={20} className="text-[#7C3AED]" />,
-      badge: "Ready",
+      badge: t("questReady"),
       variant: "default",
     },
     in_progress: {
       icon: <Play size={20} className="text-orange-500" />,
-      badge: "In Progress",
+      badge: t("questInProgress"),
       variant: "warning",
     },
     completed: {
       icon: <CheckCircle size={20} className="text-green-500" />,
-      badge: "Complete",
+      badge: t("questComplete"),
       variant: "success",
     },
   };
@@ -100,10 +102,10 @@ export default function QuestWorldPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={80} className="w-full rounded-xl" />
+        <Skeleton height={80} className="w-full rounded-3xl" />
         <div className="space-y-4">
           {[1, 2, 3, 4, 5].map((i) => (
-            <Skeleton key={i} height={100} className="w-full rounded-lg" />
+            <Skeleton key={i} height={100} className="w-full rounded-3xl" />
           ))}
         </div>
       </div>
@@ -119,7 +121,7 @@ export default function QuestWorldPage() {
           onClick={() => window.location.reload()}
           leftIcon={<RefreshCw size={16} />}
         >
-          Retry
+          {t("retry")}
         </Button>
       </div>
     );
@@ -129,17 +131,17 @@ export default function QuestWorldPage() {
     <div>
       <Link
         href="/learner/quests"
-        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-4"
+        className="inline-flex items-center gap-1 text-sm text-[var(--aivo-text-secondary)] hover:text-[var(--aivo-text)] dark:text-[var(--aivo-text-muted)] dark:hover:text-[#A89BB5] mb-4"
       >
         <ArrowLeft size={16} />
-        Back to Quest Worlds
+        {t("backToQuestWorlds")}
       </Link>
 
-      <PurpleGradientHeader className="rounded-xl mb-8">
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
           <Compass size={32} />
           <div>
-            <h1 className="text-2xl font-bold">{world?.name}</h1>
+            <h1 className="text-2xl font-extrabold">{world?.name}</h1>
             <p className="text-white/80 text-sm">{world?.description}</p>
           </div>
         </div>
@@ -148,7 +150,7 @@ export default function QuestWorldPage() {
       {/* Chapter Path */}
       <div className="relative">
         {/* Vertical line connecting chapters */}
-        <div className="absolute left-[27px] top-8 bottom-8 w-0.5 bg-gray-200 dark:bg-gray-700" />
+        <div className="absolute left-[27px] top-8 bottom-8 w-0.5 bg-[#F0E6FF] dark:bg-[#3D2D5C]" />
 
         <div className="space-y-4">
           {world?.chapters.map((chapter) => {
@@ -165,32 +167,32 @@ export default function QuestWorldPage() {
               <Card
                 className={`relative ${
                   isPlayable
-                    ? "hover:shadow-lg transition-shadow cursor-pointer"
+                    ? "hover:shadow-[var(--shadow-hover)] transition-all cursor-pointer"
                     : chapter.status === "locked"
                       ? "opacity-50"
                       : ""
                 }`}
               >
                 <CardBody className="flex items-start gap-4">
-                  <div className="relative z-10 w-14 h-14 rounded-full bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-700 flex items-center justify-center shrink-0">
+                  <div className="relative z-10 w-14 h-14 rounded-full bg-white dark:bg-[#2A1E45] border-2 border-[#E8DDF0] dark:border-[#3D2D5C] flex items-center justify-center shrink-0">
                     {config.icon}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
-                      <span className="text-xs font-semibold text-gray-400 uppercase">
-                        Chapter {chapter.order}
+                      <span className="text-xs font-semibold text-[var(--aivo-text-muted)] uppercase">
+                        {t("chapterNumber", { number: chapter.order })}
                       </span>
                       <Badge variant={config.variant}>{config.badge}</Badge>
                     </div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+                    <h3 className="font-semibold text-[var(--aivo-text)] mb-1">
                       {chapter.title}
                     </h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                    <p className="text-sm text-[var(--aivo-text-secondary)] mb-2">
                       {chapter.description}
                     </p>
-                    <div className="flex items-center gap-4 text-xs text-gray-500">
+                    <div className="flex items-center gap-4 text-xs text-[var(--aivo-text-secondary)]">
                       <span>
-                        {chapter.completedLessons}/{chapter.lessonsCount} lessons
+                        {t("lessonsProgress", { completed: chapter.completedLessons, total: chapter.lessonsCount })}
                       </span>
                       <span className="flex items-center gap-1 text-[#7C3AED]">
                         <Star size={12} />
@@ -198,9 +200,9 @@ export default function QuestWorldPage() {
                       </span>
                     </div>
                     {chapter.status !== "locked" && (
-                      <div className="mt-2 w-full h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                      <div className="mt-2 w-full h-1.5 bg-[#F0E6FF] dark:bg-[#3D2D5C] rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-gradient-to-r from-[#7C3AED] to-[#7C4DFF] rounded-full transition-all"
+                          className="h-full bg-gradient-to-r from-[#7C3AED] to-[#A855F7] rounded-full transition-all"
                           style={{ width: `${progress}%` }}
                         />
                       </div>

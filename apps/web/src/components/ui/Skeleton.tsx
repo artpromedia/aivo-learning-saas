@@ -11,9 +11,9 @@ export interface SkeletonProps {
 
 const roundedClasses: Record<NonNullable<SkeletonProps["rounded"]>, string> = {
   none: "rounded-none",
-  sm: "rounded-sm",
-  md: "rounded-md",
-  lg: "rounded-lg",
+  sm: "rounded-2xl",
+  md: "rounded-2xl",
+  lg: "rounded-2xl",
   full: "rounded-full",
 };
 
@@ -25,7 +25,7 @@ function Skeleton({
 }: SkeletonProps) {
   return (
     <div
-      className={`animate-pulse bg-gray-200 dark:bg-gray-700 ${roundedClasses[rounded]} ${className}`}
+      className={`bg-shimmer ${roundedClasses[rounded]} ${className}`}
       style={{
         width: typeof width === "number" ? `${width}px` : width,
         height: typeof height === "number" ? `${height}px` : height,
@@ -37,7 +37,7 @@ function Skeleton({
 
 function SkeletonText({ lines = 3, className = "" }: { lines?: number; className?: string }) {
   return (
-    <div className={`space-y-2 ${className}`} aria-hidden="true">
+    <div className={`space-y-2.5 ${className}`} aria-hidden="true">
       {Array.from({ length: lines }).map((_, i) => (
         <Skeleton
           key={i}

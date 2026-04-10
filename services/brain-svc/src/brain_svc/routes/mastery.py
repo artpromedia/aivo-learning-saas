@@ -9,9 +9,13 @@ from pydantic import BaseModel, Field
 
 from brain_svc.db import get_session
 from brain_svc.middleware.auth import require_auth
-from brain_svc.ml.model_store import ModelStore
+try:
+    from brain_svc.ml.model_store import ModelStore
+except ImportError:
+    ModelStore = None  # type: ignore[assignment, misc]
 from brain_svc.config import get_settings
 from brain_svc.services.brain_state import get_brain_state
+from brain_svc.utils.json_coerce import ensure_dict
 from brain_svc.services.mastery import (
     detect_regression,
     process_batch_mastery_update,
@@ -115,7 +119,7 @@ async def get_mastery_levels(
         bs = await get_brain_state(session, learner_id)
         if not bs:
             raise HTTPException(status_code=404, detail="Brain state not found")
-        state = bs.state or {}
+        state = ensure_dict(bs.state)
         return {
             "learner_id": learner_id,
             "mastery_levels": state.get("mastery_levels", {}),

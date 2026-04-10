@@ -2,14 +2,14 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { Compass, Loader2, RefreshCw, Lock, Star, ChevronRight } from "lucide-react";
+import { Compass, RefreshCw, Lock, Star, ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { ProgressBar } from "@/components/ui/ProgressBar";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
+import { PageWrapper, BackLink, EmptyState, AnimatedCard } from "@/components/ui/PageDesign";
 import { apiFetch } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
 import { useLearnerStore } from "@/stores/learner.store";
@@ -30,11 +30,11 @@ interface QuestWorld {
 }
 
 const WORLD_GRADIENTS = [
-  "from-purple-500 to-indigo-600",
-  "from-teal-500 to-cyan-600",
-  "from-orange-500 to-red-600",
-  "from-green-500 to-emerald-600",
-  "from-pink-500 to-rose-600",
+  "linear-gradient(135deg, #7C3AED, #6366F1)",
+  "linear-gradient(135deg, #2DD4BF, #06B6D4)",
+  "linear-gradient(135deg, #FB923C, #EF4444)",
+  "linear-gradient(135deg, #10B981, #059669)",
+  "linear-gradient(135deg, #F472B6, #E11D48)",
 ];
 
 export default function QuestsPage() {
@@ -66,10 +66,10 @@ export default function QuestsPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton height={80} className="w-full rounded-xl" />
+        <Skeleton height={80} className="w-full rounded-3xl" />
         <div className="space-y-6">
           {[1, 2, 3].map((i) => (
-            <Skeleton key={i} height={180} className="w-full rounded-xl" />
+            <Skeleton key={i} height={180} className="w-full rounded-3xl" />
           ))}
         </div>
       </div>
@@ -80,11 +80,7 @@ export default function QuestsPage() {
     return (
       <div className="text-center py-16">
         <p className="text-red-500 mb-4">{error}</p>
-        <Button
-          variant="outline"
-          onClick={() => window.location.reload()}
-          leftIcon={<RefreshCw size={16} />}
-        >
+        <Button variant="outline" onClick={() => window.location.reload()} leftIcon={<RefreshCw size={16} />}>
           {t("retry")}
         </Button>
       </div>
@@ -92,55 +88,46 @@ export default function QuestsPage() {
   }
 
   return (
-    <div>
-      <PurpleGradientHeader className="rounded-xl mb-8">
+    <PageWrapper>
+      <BackLink href="/learner">{t("backToHome")}</BackLink>
+
+      <PurpleGradientHeader className="rounded-3xl mb-8">
         <div className="flex items-center gap-3">
-          <Compass size={32} />
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
+            <Compass size={22} />
+          </div>
           <div>
-            <h1 className="text-2xl font-bold">{t("questWorlds")}</h1>
-            <p className="text-white/80 text-sm">
-              {t("questWorldsDescription")}
-            </p>
+            <h1 className="text-2xl font-extrabold">{t("questWorlds")}</h1>
+            <p className="text-white/80 text-sm">{t("questWorldsSubtitle")}</p>
           </div>
         </div>
       </PurpleGradientHeader>
 
       {worlds.length === 0 ? (
-        <Card>
-          <CardBody className="text-center py-12">
-            <Compass className="mx-auto mb-3 text-gray-400" size={48} />
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              {t("noQuestsAvailable")}
-            </h3>
-            <p className="text-gray-500 dark:text-gray-400">
-              {t("questsWillBeUnlocked")}
-            </p>
-          </CardBody>
-        </Card>
+        <EmptyState
+          icon={<Compass size={32} />}
+          title={t("noQuestsAvailable")}
+          description={t("questsWillBeUnlocked")}
+          delay={200}
+        />
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-4">
           {worlds.map((world, idx) => {
-            const progress =
-              world.totalChapters > 0
-                ? (world.completedChapters / world.totalChapters) * 100
-                : 0;
+            const progress = world.totalChapters > 0 ? (world.completedChapters / world.totalChapters) * 100 : 0;
+            const gradient = WORLD_GRADIENTS[idx % WORLD_GRADIENTS.length];
 
             return (
-              <div key={world.id}>
+              <AnimatedCard key={world.id} delay={200 + idx * 100}>
                 {world.isLocked ? (
                   <Card className="opacity-60">
                     <CardBody>
                       <div className="flex items-center gap-4">
-                        <div
-                          className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${WORLD_GRADIENTS[idx % WORLD_GRADIENTS.length]} flex items-center justify-center shrink-0`}
-                        >
-                          <Lock className="text-white" size={28} />
+                        <div className="w-14 h-14 rounded-3xl flex items-center justify-center shrink-0 text-white" style={{ background: gradient }}>
+                          <Lock size={24} />
                         </div>
                         <div className="flex-1">
-                          <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                            {world.name}
-                          </h3>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                          <h3 className="text-lg font-bold" style={{ color: "var(--aivo-text)" }}>{world.name}</h3>
+                          <p className="text-sm" style={{ color: "var(--aivo-text-secondary)" }}>
                             {t("requiresLevel", { level: world.requiredLevel })}
                           </p>
                         </div>
@@ -150,66 +137,45 @@ export default function QuestsPage() {
                   </Card>
                 ) : (
                   <Link href={`/learner/quests/${world.slug}`}>
-                    <Card className="hover:shadow-lg transition-shadow cursor-pointer group overflow-hidden">
-                      <div
-                        className={`h-2 bg-gradient-to-r ${WORLD_GRADIENTS[idx % WORLD_GRADIENTS.length]}`}
-                      />
+                    <Card className="hover:shadow-[var(--shadow-hover)] transition-all cursor-pointer group overflow-hidden hover:scale-[1.01]">
+                      <div className="h-2" style={{ background: gradient }} />
                       <CardBody>
                         <div className="flex items-start gap-4">
-                          <div
-                            className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${WORLD_GRADIENTS[idx % WORLD_GRADIENTS.length]} flex items-center justify-center shrink-0 shadow-lg`}
-                          >
+                          <div className="w-14 h-14 rounded-3xl flex items-center justify-center shrink-0 shadow-lg text-white" style={{ background: gradient }}>
                             {world.iconUrl ? (
-                              <img
-                                src={world.iconUrl}
-                                alt={world.name}
-                                className="w-10 h-10"
-                              />
+                              <img src={world.iconUrl} alt={world.name} className="w-9 h-9" />
                             ) : (
-                              <Compass className="text-white" size={28} />
+                              <Compass size={24} />
                             )}
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1">
-                              <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                                {world.name}
-                              </h3>
+                              <h3 className="text-lg font-bold" style={{ color: "var(--aivo-text)" }}>{world.name}</h3>
                               <Badge>{world.theme}</Badge>
                             </div>
-                            <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
-                              {world.description}
-                            </p>
-                            <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
-                              <span>
-                                {world.completedChapters}/{world.totalChapters}{" "}
-                                {t("chapters")}
-                              </span>
-                              <span className="flex items-center gap-1 text-[#7C3AED]">
+                            <p className="text-sm mb-3" style={{ color: "var(--aivo-text-secondary)" }}>{world.description}</p>
+                            <div className="flex items-center justify-between text-xs mb-1" style={{ color: "var(--aivo-text-secondary)" }}>
+                              <span>{world.completedChapters}/{world.totalChapters} {t("chapters")}</span>
+                              <span className="flex items-center gap-1" style={{ color: "#7C3AED" }}>
                                 <Star size={12} />
                                 {world.xpReward} XP
                               </span>
                             </div>
-                            <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                              <div
-                                className={`h-full rounded-full bg-gradient-to-r ${WORLD_GRADIENTS[idx % WORLD_GRADIENTS.length]} transition-all duration-700`}
-                                style={{ width: `${progress}%` }}
-                              />
+                            <div className="w-full h-2.5 rounded-full overflow-hidden" style={{ backgroundColor: "var(--aivo-purple-50)" }}>
+                              <div className="h-full rounded-full transition-all duration-700" style={{ width: `${progress}%`, background: gradient }} />
                             </div>
                           </div>
-                          <ChevronRight
-                            className="text-gray-400 group-hover:text-[#7C3AED] transition-colors shrink-0 mt-2"
-                            size={20}
-                          />
+                          <ChevronRight className="shrink-0 mt-2 transition-all group-hover:translate-x-1" size={20} style={{ color: "var(--aivo-text-muted)" }} />
                         </div>
                       </CardBody>
                     </Card>
                   </Link>
                 )}
-              </div>
+              </AnimatedCard>
             );
           })}
         </div>
       )}
-    </div>
+    </PageWrapper>
   );
 }

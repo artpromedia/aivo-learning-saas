@@ -6,37 +6,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Eye, EyeOff, Check, Brain, BookOpen, Sparkles, Shield } from "lucide-react";
+import { Eye, EyeOff, Check, Brain, BookOpen, Sparkles, Shield, User, Mail, Lock } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { AivoLogo } from "@/components/brand/AivoLogo";
 import { Button } from "@/components/ui/Button";
 import { LanguageSelect } from "@/components/ui/LanguageSelect";
 import { apiFetch } from "@/lib/api";
 import { API_ROUTES } from "@/lib/api-routes";
-
-const benefits = [
-  {
-    icon: Brain,
-    title: "Adaptive AI Learning",
-    description:
-      "Lessons that adjust in real-time to your child's pace and style.",
-  },
-  {
-    icon: BookOpen,
-    title: "Full Curriculum Coverage",
-    description: "Aligned to national standards across all core subjects.",
-  },
-  {
-    icon: Sparkles,
-    title: "Engaging Quest-Based Learning",
-    description: "Adventure-driven lessons that keep learners motivated.",
-  },
-  {
-    icon: Shield,
-    title: "COPPA & FERPA Compliant",
-    description: "Built with student privacy and safety as a top priority.",
-  },
-];
 
 type AccountType = "parent" | "teacher" | "district";
 
@@ -62,7 +38,8 @@ function createRegisterSchema(t: (key: string) => string) {
 type RegisterForm = z.infer<ReturnType<typeof createRegisterSchema>>;
 
 export default function GetStartedPage() {
-  const t = useTranslations("auth");
+  const tAuth = useTranslations("auth");
+  const t = useTranslations("landing");
   const router = useRouter();
   const [accountType, setAccountType] = useState<AccountType>("parent");
   const [showPassword, setShowPassword] = useState(false);
@@ -70,7 +47,7 @@ export default function GetStartedPage() {
   const [submitted, setSubmitted] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
 
-  const registerSchema = createRegisterSchema(t);
+  const registerSchema = createRegisterSchema(tAuth);
 
   const {
     register,
@@ -95,289 +72,174 @@ export default function GetStartedPage() {
       });
       setSubmitted(true);
     } catch (err) {
-      setServerError(
-        err instanceof Error ? err.message : t("registrationFailed"),
-      );
+      setServerError(err instanceof Error ? err.message : tAuth("registrationFailed"));
     }
   };
 
+  const benefits = [
+    { icon: Brain, titleKey: "benefitAdaptiveAi", descKey: "benefitAdaptiveAiDesc", color: "#7C3AED", bgColor: "#F0E6FF" },
+    { icon: BookOpen, titleKey: "benefitCurriculum", descKey: "benefitCurriculumDesc", color: "#2DD4BF", bgColor: "#CCFBF1" },
+    { icon: Sparkles, titleKey: "benefitQuests", descKey: "benefitQuestsDesc", color: "#F472B6", bgColor: "#FCE7F3" },
+    { icon: Shield, titleKey: "benefitCompliance", descKey: "benefitComplianceDesc", color: "#38BDF8", bgColor: "#E0F2FE" },
+  ];
+
+  const inputClasses = "w-full pl-11 pr-4 py-3 rounded-2xl border-2 font-medium transition-all";
+  const inputStyle = { borderColor: "var(--aivo-border)", backgroundColor: "var(--aivo-bg)", color: "var(--aivo-text)" };
+
   return (
-    <main className="min-h-screen" style={{ backgroundColor: "var(--aivo-purple-50, #F5F0FF)" }}>
-      {/* Header */}
+    <main className="min-h-screen bg-bubbles" style={{ backgroundColor: "var(--aivo-bg)" }}>
       <header className="px-4 sm:px-6 lg:px-8 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <Link href="/">
             <AivoLogo size="md" />
           </Link>
-          <Link
-            href="/login"
-            className="text-sm font-medium transition-colors"
-            style={{ color: "var(--aivo-purple-600, #6B3FE8)" }}
-          >
-            {t("signIn")}
+          <Link href="/login" className="text-sm font-bold transition-colors" style={{ color: "var(--aivo-purple-500)" }}>
+            {tAuth("signIn")}
           </Link>
         </div>
       </header>
 
-      {/* Hero */}
       <section className="pt-12 pb-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
-          <h1
-            className="text-4xl sm:text-5xl font-extrabold tracking-tight"
-            style={{
-              color: "var(--aivo-text, #212529)",
-              fontFamily: "var(--font-display)",
-            }}
-          >
-            Start Your Child&apos;s{" "}
-            <span style={{ color: "var(--aivo-purple-600, #6B3FE8)" }}>
-              Learning Journey
+          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight" style={{ color: "var(--aivo-text)", fontFamily: "var(--font-display)" }}>
+            {t("startChildJourney")}{" "}
+            <span style={{ background: "linear-gradient(135deg, #7C3AED, #A855F7, #2DD4BF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+              {t("learningJourney")}
             </span>
           </h1>
-          <p
-            className="mt-4 text-lg max-w-2xl mx-auto"
-            style={{ color: "var(--aivo-text-secondary, #6C757D)" }}
-          >
-            Create your free account in seconds. No credit card required.
+          <p className="mt-4 text-lg max-w-2xl mx-auto font-medium" style={{ color: "var(--aivo-text-secondary)" }}>
+            {t("createFreeAccountSubtitle")}
           </p>
         </div>
       </section>
 
-      {/* Content */}
       <section className="pb-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 items-start">
-          {/* Benefits */}
           <div className="space-y-8">
-            <h2
-              className="text-2xl font-bold"
-              style={{ color: "var(--aivo-text, #212529)" }}
-            >
-              Why families love AIVO
+            <h2 className="text-2xl font-extrabold" style={{ color: "var(--aivo-text)", fontFamily: "var(--font-display)" }}>
+              {t("whyFamiliesLove")}
             </h2>
             <div className="space-y-6">
               {benefits.map((b) => (
-                <div key={b.title} className="flex gap-4">
-                  <div
-                    className="shrink-0 w-10 h-10 rounded-lg flex items-center justify-center"
-                    style={{ backgroundColor: "var(--aivo-purple-100, #EDE5FF)" }}
-                  >
-                    <b.icon
-                      className="w-5 h-5"
-                      style={{ color: "var(--aivo-purple-600, #6B3FE8)" }}
-                    />
+                <div key={b.titleKey} className="flex gap-4">
+                  <div className="shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center" style={{ backgroundColor: b.bgColor }}>
+                    <b.icon className="w-6 h-6" style={{ color: b.color }} />
                   </div>
                   <div>
-                    <h3
-                      className="font-semibold"
-                      style={{ color: "var(--aivo-text, #212529)" }}
-                    >
-                      {b.title}
-                    </h3>
-                    <p
-                      className="text-sm mt-0.5"
-                      style={{ color: "var(--aivo-text-secondary, #6C757D)" }}
-                    >
-                      {b.description}
-                    </p>
+                    <h3 className="font-bold" style={{ color: "var(--aivo-text)" }}>{t(b.titleKey)}</h3>
+                    <p className="text-sm mt-0.5 font-medium" style={{ color: "var(--aivo-text-secondary)" }}>{t(b.descKey)}</p>
                   </div>
                 </div>
               ))}
             </div>
 
-            <div
-              className="rounded-xl p-6 border"
-              style={{
-                backgroundColor: "var(--aivo-purple-50, #F5F0FF)",
-                borderColor: "var(--aivo-purple-100, #EDE5FF)",
-              }}
-            >
-              <p
-                className="italic"
-                style={{ color: "var(--aivo-text, #212529)" }}
-              >
-                &ldquo;AIVO transformed homework from a battle into something my
-                daughter actually looks forward to. The AI knows exactly where she
-                needs help.&rdquo;
+            <div className="rounded-3xl p-6 border-2" style={{ backgroundColor: "var(--aivo-purple-50)", borderColor: "var(--aivo-purple-100, #E0CCFF)" }}>
+              <p className="italic font-medium" style={{ color: "var(--aivo-text)" }}>
+                &ldquo;{t("testimonial")}&rdquo;
               </p>
-              <p
-                className="mt-3 text-sm font-medium"
-                style={{ color: "var(--aivo-text-secondary, #6C757D)" }}
-              >
-                — Parent of a 3rd grader, Washington DC
+              <p className="mt-3 text-sm font-bold" style={{ color: "var(--aivo-text-secondary)" }}>
+                {t("testimonialAuthor")}
               </p>
             </div>
           </div>
 
-          {/* Form Card */}
-          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-8">
+          <div className="rounded-3xl shadow-[var(--shadow-playful)] p-8" style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}>
             {submitted ? (
               <div className="text-center py-12">
-                <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
-                  <Check className="w-8 h-8 text-green-600" />
+                <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: "#D1FAE5" }}>
+                  <Check className="w-8 h-8" style={{ color: "#34D399" }} />
                 </div>
-                <h3
-                  className="text-2xl font-bold"
-                  style={{ color: "var(--aivo-text, #212529)" }}
-                >
-                  Welcome to AIVO!
+                <h3 className="text-2xl font-extrabold" style={{ color: "var(--aivo-text)", fontFamily: "var(--font-display)" }}>
+                  {t("welcomeToAivo")}
                 </h3>
-                <p
-                  className="mt-2"
-                  style={{ color: "var(--aivo-text-secondary, #6C757D)" }}
-                >
-                  Check your email to verify your account and get started.
+                <p className="mt-2 font-medium" style={{ color: "var(--aivo-text-secondary)" }}>
+                  {t("checkEmailToVerify")}
                 </p>
-                <Link
-                  href="/login"
-                  className="mt-6 inline-block font-medium hover:underline"
-                  style={{ color: "var(--aivo-purple-600, #6B3FE8)" }}
-                >
-                  Sign in
+                <Link href="/login" className="mt-6 inline-block font-bold hover:underline" style={{ color: "var(--aivo-purple-500)" }}>
+                  {tAuth("signIn")}
                 </Link>
               </div>
             ) : (
               <>
-                <h2
-                  className="text-2xl font-bold mb-6"
-                  style={{ color: "var(--aivo-text, #212529)" }}
-                >
-                  Create your free account
+                <h2 className="text-2xl font-extrabold mb-6" style={{ color: "var(--aivo-text)", fontFamily: "var(--font-display)" }}>
+                  {t("createFreeAccount")}
                 </h2>
 
-                {/* Account type selector */}
                 <div className="flex gap-2 mb-6">
-                  {(
-                    [
-                      { key: "parent", label: "Parent" },
-                      { key: "teacher", label: "Teacher" },
-                      { key: "district", label: "District" },
-                    ] as const
-                  ).map(({ key, label }) => (
+                  {([
+                    { key: "parent", labelKey: "accountTypeParent" },
+                    { key: "teacher", labelKey: "accountTypeTeacher" },
+                    { key: "district", labelKey: "accountTypeDistrict" },
+                  ] as const).map(({ key, labelKey }) => (
                     <button
                       key={key}
                       type="button"
                       onClick={() => setAccountType(key)}
-                      className="flex-1 rounded-lg py-2.5 text-sm font-medium transition-colors"
+                      className="flex-1 rounded-2xl py-2.5 text-sm font-bold transition-all"
                       style={
                         accountType === key
-                          ? {
-                              backgroundColor: "var(--aivo-purple-600, #6B3FE8)",
-                              color: "#fff",
-                            }
-                          : {
-                              backgroundColor: "var(--aivo-bg-alt, #F8F9FA)",
-                              color: "var(--aivo-text-secondary, #6C757D)",
-                            }
+                          ? { background: "linear-gradient(135deg, #7C3AED, #A855F7)", color: "#fff", boxShadow: "0 4px 14px rgba(124,58,237,0.3)" }
+                          : { backgroundColor: "var(--aivo-bg)", color: "var(--aivo-text-secondary)", border: "2px solid var(--aivo-border)" }
                       }
                     >
-                      {label}
+                      {t(labelKey)}
                     </button>
                   ))}
                 </div>
 
                 {serverError && (
-                  <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+                  <div className="mb-4 p-3 rounded-2xl flex items-center gap-2 text-sm font-medium" style={{ backgroundColor: "#FFE0E0", color: "#991B1B", border: "1px solid #FECACA" }}>
+                    <span className="shrink-0">&#9888;</span>
                     {serverError}
                   </div>
                 )}
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                   <div>
-                    <label
-                      htmlFor="name"
-                      className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                    >
-                      {t("fullName")} <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      id="name"
-                      type="text"
-                      autoComplete="name"
-                      {...register("name")}
-                      placeholder="Enter your full name"
-                      className="mt-1.5 block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2.5 text-gray-900 dark:text-white placeholder:text-gray-400 focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-shadow"
-                    />
-                    {errors.name && (
-                      <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                        {errors.name.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="email"
-                      className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                    >
-                      {t("emailAddress")} <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      id="email"
-                      type="email"
-                      autoComplete="email"
-                      {...register("email")}
-                      placeholder="you@example.com"
-                      className="mt-1.5 block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2.5 text-gray-900 dark:text-white placeholder:text-gray-400 focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-shadow"
-                    />
-                    {errors.email && (
-                      <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                        {errors.email.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="password"
-                      className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                    >
-                      {t("password")} <span className="text-red-500">*</span>
+                    <label htmlFor="name" className="block text-sm font-bold mb-2" style={{ color: "var(--aivo-text)" }}>
+                      {tAuth("fullName")} <span style={{ color: "var(--aivo-coral)" }}>*</span>
                     </label>
                     <div className="relative">
-                      <input
-                        id="password"
-                        type={showPassword ? "text" : "password"}
-                        autoComplete="new-password"
-                        {...register("password")}
-                        placeholder="At least 8 characters"
-                        className="mt-1.5 block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2.5 pr-12 text-gray-900 dark:text-white placeholder:text-gray-400 focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-shadow"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 mt-[3px]"
-                        aria-label={showPassword ? "Hide password" : "Show password"}
-                      >
+                      <User className="absolute left-3.5 top-1/2 -translate-y-1/2" size={18} style={{ color: "var(--aivo-text-muted)" }} />
+                      <input id="name" type="text" autoComplete="name" {...register("name")} placeholder={t("fullNamePlaceholder")} className={inputClasses} style={inputStyle} />
+                    </div>
+                    {errors.name && <p className="mt-1.5 text-sm font-medium" style={{ color: "var(--aivo-error)" }}>{errors.name.message}</p>}
+                  </div>
+
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-bold mb-2" style={{ color: "var(--aivo-text)" }}>
+                      {tAuth("emailAddress")} <span style={{ color: "var(--aivo-coral)" }}>*</span>
+                    </label>
+                    <div className="relative">
+                      <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2" size={18} style={{ color: "var(--aivo-text-muted)" }} />
+                      <input id="email" type="email" autoComplete="email" {...register("email")} placeholder={t("emailPlaceholder")} className={inputClasses} style={inputStyle} />
+                    </div>
+                    {errors.email && <p className="mt-1.5 text-sm font-medium" style={{ color: "var(--aivo-error)" }}>{errors.email.message}</p>}
+                  </div>
+
+                  <div>
+                    <label htmlFor="password" className="block text-sm font-bold mb-2" style={{ color: "var(--aivo-text)" }}>
+                      {tAuth("password")} <span style={{ color: "var(--aivo-coral)" }}>*</span>
+                    </label>
+                    <div className="relative">
+                      <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2" size={18} style={{ color: "var(--aivo-text-muted)" }} />
+                      <input id="password" type={showPassword ? "text" : "password"} autoComplete="new-password" {...register("password")} placeholder={t("passwordPlaceholder")} className="w-full pl-11 pr-12 py-3 rounded-2xl border-2 font-medium transition-all" style={inputStyle} />
+                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3.5 top-1/2 -translate-y-1/2" style={{ color: "var(--aivo-text-muted)" }} aria-label={showPassword ? tAuth("hidePassword") : tAuth("showPassword")}>
                         {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
                     </div>
-                    {errors.password && (
-                      <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                        {errors.password.message}
-                      </p>
-                    )}
+                    {errors.password && <p className="mt-1.5 text-sm font-medium" style={{ color: "var(--aivo-error)" }}>{errors.password.message}</p>}
                   </div>
 
                   <div>
-                    <label
-                      htmlFor="confirmPassword"
-                      className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                    >
-                      {t("confirmPassword")} <span className="text-red-500">*</span>
+                    <label htmlFor="confirmPassword" className="block text-sm font-bold mb-2" style={{ color: "var(--aivo-text)" }}>
+                      {tAuth("confirmPassword")} <span style={{ color: "var(--aivo-coral)" }}>*</span>
                     </label>
-                    <input
-                      id="confirmPassword"
-                      type={showPassword ? "text" : "password"}
-                      autoComplete="new-password"
-                      {...register("confirmPassword")}
-                      placeholder="Confirm your password"
-                      className="mt-1.5 block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2.5 text-gray-900 dark:text-white placeholder:text-gray-400 focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent outline-none transition-shadow"
-                    />
-                    {errors.confirmPassword && (
-                      <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                        {errors.confirmPassword.message}
-                      </p>
-                    )}
+                    <div className="relative">
+                      <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2" size={18} style={{ color: "var(--aivo-text-muted)" }} />
+                      <input id="confirmPassword" type={showPassword ? "text" : "password"} autoComplete="new-password" {...register("confirmPassword")} placeholder={t("confirmPasswordPlaceholder")} className={inputClasses} style={inputStyle} />
+                    </div>
+                    {errors.confirmPassword && <p className="mt-1.5 text-sm font-medium" style={{ color: "var(--aivo-error)" }}>{errors.confirmPassword.message}</p>}
                   </div>
 
                   <LanguageSelect
@@ -388,46 +250,24 @@ export default function GetStartedPage() {
                         document.cookie = `NEXT_LOCALE=${locale};path=/;max-age=31536000`;
                       }
                     }}
-                    label={t("preferredLanguage")}
+                    label={tAuth("preferredLanguage")}
                   />
 
-                  <Button
-                    type="submit"
-                    loading={isSubmitting}
-                    className="w-full"
-                    size="lg"
-                  >
-                    Create Free Account
+                  <Button type="submit" loading={isSubmitting} className="w-full" size="lg">
+                    <Sparkles size={18} className="mr-1" />
+                    {t("createFreeAccountButton")}
                   </Button>
 
-                  <p className="text-xs text-center text-gray-500 dark:text-gray-400 mt-4">
-                    By creating an account, you agree to our{" "}
-                    <a
-                      href="https://aivolearning.com/legal/terms"
-                      className="underline hover:text-[#7C3AED]"
-                    >
-                      Terms of Service
-                    </a>{" "}
-                    and{" "}
-                    <a
-                      href="https://aivolearning.com/legal/privacy"
-                      className="underline hover:text-[#7C3AED]"
-                    >
-                      Privacy Policy
-                    </a>
-                    .
+                  <p className="text-xs text-center font-medium mt-4" style={{ color: "var(--aivo-text-muted)" }}>
+                    {t("termsAgreementGetStarted")}{" "}
+                    <a href="https://aivolearning.com/legal/terms" className="underline" style={{ color: "var(--aivo-purple-500)" }}>{tAuth("termsOfService")}</a>{" "}&{" "}
+                    <a href="https://aivolearning.com/legal/privacy" className="underline" style={{ color: "var(--aivo-purple-500)" }}>{tAuth("privacyPolicy")}</a>.
                   </p>
                 </form>
 
-                <div className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
-                  Already have an account?{" "}
-                  <Link
-                    href="/login"
-                    className="font-medium hover:underline"
-                    style={{ color: "var(--aivo-purple-600, #6B3FE8)" }}
-                  >
-                    Sign in
-                  </Link>
+                <div className="mt-6 text-center text-sm font-medium" style={{ color: "var(--aivo-text-secondary)" }}>
+                  {t("alreadyHaveAccount")}{" "}
+                  <Link href="/login" className="font-bold" style={{ color: "var(--aivo-purple-500)" }}>{tAuth("signIn")}</Link>
                 </div>
               </>
             )}
@@ -435,12 +275,8 @@ export default function GetStartedPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer
-        className="py-8 text-center text-sm"
-        style={{ color: "var(--aivo-text-muted, #ADB5BD)" }}
-      >
-        &copy; {new Date().getFullYear()} AIVO Learning. All rights reserved.
+      <footer className="py-8 text-center text-sm font-medium" style={{ color: "var(--aivo-text-muted)" }}>
+        {t("copyright", { year: new Date().getFullYear().toString() })}
       </footer>
     </main>
   );

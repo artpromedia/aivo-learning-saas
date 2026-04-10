@@ -6,10 +6,10 @@ loadDotenv();
 const configSchema = z.object({
   PORT: z.coerce.number().default(3012),
   DATABASE_URL: z.string().min(1),
-  REDIS_URL: z.string().min(1),
-  NATS_URL: z.string().min(1),
+  REDIS_URL: z.string().min(1).default("redis://localhost:6379"),
+  NATS_URL: z.string().min(1).default("nats://localhost:4222"),
   JWT_PUBLIC_KEY: z.string().min(1),
-  AI_SVC_URL: z.string().url().default("http://localhost:5000"),
+  AI_SVC_URL: z.string().url().default("http://localhost:3015"),
   UPLOAD_DIR: z.string().default("/tmp/aivo-uploads"),
   S3_BUCKET: z.string().default(""),
   S3_REGION: z.string().default("us-east-1"),

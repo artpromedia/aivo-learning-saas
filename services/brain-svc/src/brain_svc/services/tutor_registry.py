@@ -11,13 +11,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from brain_svc.models.brain_state import BrainState
 from brain_svc.models.episode import BrainEpisode
 from brain_svc.services.brain_state import update_brain_state
+from brain_svc.utils.json_coerce import ensure_list
 
 logger = logging.getLogger(__name__)
 
 
 async def get_active_tutors(brain_state: BrainState) -> list[dict[str, Any]]:
     """Get list of active tutors for a brain state."""
-    return brain_state.active_tutors or []
+    return ensure_list(brain_state.active_tutors)
 
 
 async def activate_tutor(
@@ -28,7 +29,7 @@ async def activate_tutor(
     subject: str | None = None,
 ) -> list[dict[str, Any]]:
     """Add a tutor to the active tutors list."""
-    tutors = list(brain_state.active_tutors or [])
+    tutors = list(ensure_list(brain_state.active_tutors))
 
     # Check if already active
     if any(t.get("tutor_id") == tutor_id for t in tutors):
@@ -61,7 +62,7 @@ async def deactivate_tutor(
     tutor_id: str,
 ) -> list[dict[str, Any]]:
     """Remove a tutor from active tutors."""
-    tutors = [t for t in (brain_state.active_tutors or []) if t.get("tutor_id") != tutor_id]
+    tutors = [t for t in ensure_list(brain_state.active_tutors) if isinstance(t, dict) and t.get("tutor_id") != tutor_id]
     await update_brain_state(session, brain_state, {"active_tutors": tutors})
 
     episode = BrainEpisode(

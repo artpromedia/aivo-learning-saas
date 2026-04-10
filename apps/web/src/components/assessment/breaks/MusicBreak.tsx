@@ -150,7 +150,7 @@ export function MusicBreak({ soundEnabled = true, durationSeconds, onComplete }:
 
       {/* "Now Playing" header */}
       <div className="absolute top-4 left-0 right-0 text-center z-10">
-        <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/70 dark:bg-gray-800/70 rounded-full shadow-sm text-sm font-semibold text-purple-700 dark:text-purple-300">
+        <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/70 dark:bg-[#2A1E45]/70 rounded-full shadow-sm text-sm font-semibold text-purple-700 dark:text-purple-300">
           <span aria-hidden="true">🎵</span>
           Now Playing: Calm Melody
         </span>
@@ -205,7 +205,7 @@ export function MusicBreak({ soundEnabled = true, durationSeconds, onComplete }:
       <button
         type="button"
         onClick={() => setMuted((m) => !m)}
-        className="absolute bottom-4 right-4 z-10 p-2 rounded-full bg-white/70 dark:bg-gray-800/70 shadow-sm hover:bg-white dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-400"
+        className="absolute bottom-4 right-4 z-10 p-2 rounded-full bg-white/70 dark:bg-[#2A1E45]/70 shadow-sm hover:bg-white dark:hover:bg-[#3D2D5C] transition-colors focus:outline-none focus:ring-2 focus:ring-purple-400"
         aria-label={muted ? "Unmute music" : "Mute music"}
       >
         <span className="text-lg" aria-hidden="true">{muted ? "🔇" : "🔊"}</span>

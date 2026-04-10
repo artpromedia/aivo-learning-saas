@@ -1,6 +1,6 @@
 import { eq, and } from "drizzle-orm";
 import type { FastifyInstance } from "fastify";
-import { learners } from "@aivo/db";
+import { learners, districtZipCodes } from "@aivo/db";
 import { publishEvent } from "@aivo/events";
 import bcrypt from "bcryptjs";
 
@@ -9,6 +9,9 @@ export interface CreateLearnerInput {
   dateOfBirth?: Date;
   enrolledGrade?: number;
   schoolName?: string;
+  state?: string;
+  zipCode?: string;
+  districtId?: string;
   functioningLevel?: "STANDARD" | "SUPPORTED" | "LOW_VERBAL" | "NON_VERBAL" | "PRE_SYMBOLIC";
   communicationMode?: "VERBAL" | "LIMITED_VERBAL" | "NON_VERBAL_AAC" | "NON_VERBAL_PARTNER" | "PRE_INTENTIONAL";
 }
@@ -16,7 +19,23 @@ export interface CreateLearnerInput {
 export class LearnerService {
   constructor(private readonly app: FastifyInstance) {}
 
+  async resolveDistrictId(zipCode?: string, districtId?: string): Promise<string | undefined> {
+    if (zipCode) {
+      const [match] = await this.app.db
+        .select({ districtId: districtZipCodes.districtId })
+        .from(districtZipCodes)
+        .where(eq(districtZipCodes.zipCode, zipCode))
+        .limit(1);
+
+      return match?.districtId ?? undefined;
+    }
+
+    return undefined;
+  }
+
   async create(parentId: string, tenantId: string, input: CreateLearnerInput) {
+    const resolvedDistrictId = await this.resolveDistrictId(input.zipCode, input.districtId);
+
     const [learner] = await this.app.db
       .insert(learners)
       .values({
@@ -26,6 +45,9 @@ export class LearnerService {
         dateOfBirth: input.dateOfBirth,
         enrolledGrade: input.enrolledGrade,
         schoolName: input.schoolName,
+        state: input.state,
+        zipCode: input.zipCode,
+        districtId: resolvedDistrictId,
         functioningLevel: input.functioningLevel ?? "STANDARD",
         communicationMode: input.communicationMode ?? "VERBAL",
         status: "ACTIVE",

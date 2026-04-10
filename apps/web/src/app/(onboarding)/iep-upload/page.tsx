@@ -145,10 +145,10 @@ export default function IepUploadPage() {
         <div className="w-16 h-16 rounded-full bg-[#7C3AED]/10 flex items-center justify-center mx-auto mb-4">
           <FileText className="text-[#7C3AED]" size={32} />
         </div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+        <h1 className="text-2xl font-extrabold text-[var(--aivo-text)]">
           {t("uploadIepDocument")}
         </h1>
-        <p className="mt-2 text-gray-500 dark:text-gray-400">
+        <p className="mt-2 text-[var(--aivo-text-secondary)]">
           {t("uploadIepSubtitle")}
         </p>
       </div>
@@ -157,7 +157,7 @@ export default function IepUploadPage() {
         <Card>
           <CardBody>
             {error && (
-              <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm flex items-center gap-2">
+              <div className="mb-4 p-3 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171] text-sm flex items-center gap-2">
                 <AlertCircle size={16} />
                 {error}
               </div>
@@ -171,20 +171,20 @@ export default function IepUploadPage() {
               onDragLeave={() => setIsDragging(false)}
               onDrop={onDrop}
               onClick={() => fileInputRef.current?.click()}
-              className={`border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-colors ${
+              className={`border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-colors ${
                 isDragging
                   ? "border-[#7C3AED] bg-[#7C3AED]/5"
-                  : "border-gray-300 dark:border-gray-600 hover:border-[#7C3AED] hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                  : "border-[#E8DDF0] dark:border-[#3D2D5C] hover:border-[#7C3AED] hover:bg-[var(--aivo-bg)] dark:hover:bg-[#2A1E45]/50"
               }`}
             >
               <Upload
-                className={`mx-auto mb-4 ${isDragging ? "text-[#7C3AED]" : "text-gray-400"}`}
+                className={`mx-auto mb-4 ${isDragging ? "text-[#7C3AED]" : "text-[#A89BB5]"}`}
                 size={40}
               />
-              <p className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <p className="text-lg font-medium text-[var(--aivo-text)] mb-1">
                 {t("dragDropIep")}
               </p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-[var(--aivo-text-secondary)]">
                 {t("browseFiles")}
               </p>
               <input
@@ -202,7 +202,7 @@ export default function IepUploadPage() {
             <div className="mt-6 text-center">
               <button
                 onClick={handleSkip}
-                className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 font-medium"
+                className="inline-flex items-center gap-2 text-sm text-[var(--aivo-text-secondary)] hover:text-[var(--aivo-text)] dark:text-[var(--aivo-text-muted)] dark:hover:text-[#A89BB5] font-medium"
               >
                 <SkipForward size={16} />
                 {t("skipThisStep")}
@@ -219,10 +219,10 @@ export default function IepUploadPage() {
               className="mx-auto mb-4 text-[#7C3AED] animate-spin"
               size={48}
             />
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            <h2 className="text-lg font-bold text-[var(--aivo-text)] mb-2">
               {status === "uploading" ? t("uploadingDocument") : t("analyzingIep")}
             </h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-[var(--aivo-text-secondary)]">
               {status === "uploading"
                 ? t("uploadingFile", { name: file?.name ?? "" })
                 : t("aiAnalyzingIep")}
@@ -237,10 +237,10 @@ export default function IepUploadPage() {
             <div className="flex items-center gap-3 mb-6">
               <CheckCircle className="text-green-500" size={24} />
               <div>
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                <h2 className="text-lg font-bold text-[var(--aivo-text)]">
                   {t("iepAnalyzedSuccessfully")}
                 </h2>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
+                <p className="text-sm text-[var(--aivo-text-secondary)]">
                   {t("reviewExtractedInfo")}
                 </p>
               </div>
@@ -249,19 +249,19 @@ export default function IepUploadPage() {
             <div className="space-y-6">
               {parsedData.goals.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">
+                  <h3 className="text-sm font-semibold text-[var(--aivo-text)] mb-2 uppercase tracking-wide">
                     {t("iepGoals")}
                   </h3>
                   <div className="space-y-2">
                     {parsedData.goals.map((goal, i) => (
                       <div
                         key={i}
-                        className="p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
+                        className="p-3 rounded-2xl bg-[var(--aivo-bg)] border border-[#E8DDF0] dark:border-[#3D2D5C]"
                       >
                         <span className="text-xs font-medium text-[#7C3AED] uppercase">
                           {goal.area}
                         </span>
-                        <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
+                        <p className="text-sm text-[var(--aivo-text)] mt-1">
                           {goal.description}
                         </p>
                       </div>
@@ -272,7 +272,7 @@ export default function IepUploadPage() {
 
               {parsedData.accommodations.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">
+                  <h3 className="text-sm font-semibold text-[var(--aivo-text)] mb-2 uppercase tracking-wide">
                     {t("accommodations")}
                   </h3>
                   <div className="flex flex-wrap gap-2">
@@ -290,10 +290,10 @@ export default function IepUploadPage() {
 
               {parsedData.strengths.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">
+                  <h3 className="text-sm font-semibold text-[var(--aivo-text)] mb-2 uppercase tracking-wide">
                     {t("strengths")}
                   </h3>
-                  <ul className="list-disc list-inside text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                  <ul className="list-disc list-inside text-sm text-[var(--aivo-text-secondary)] space-y-1">
                     {parsedData.strengths.map((s, i) => (
                       <li key={i}>{s}</li>
                     ))}
@@ -302,7 +302,7 @@ export default function IepUploadPage() {
               )}
             </div>
 
-            <div className="flex items-center gap-3 mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex items-center gap-3 mt-8 pt-6 border-t border-[#E8DDF0] dark:border-[#3D2D5C]">
               <Button variant="ghost" onClick={resetUpload} leftIcon={<X size={16} />}>
                 {t("reUpload")}
               </Button>

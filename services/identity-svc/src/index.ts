@@ -80,6 +80,9 @@ import { learningProxyRoutes } from "./routes/learning-proxy.js";
 // Routes — Engagement Proxy (API Gateway → engagement-svc)
 import { engagementProxyRoutes } from "./routes/engagement-proxy.js";
 
+// Routes — District Lookup
+import { districtLookupRoute } from "./routes/districts/lookup.js";
+
 // Routes — Test support (non-production only)
 import { testSupportRoutes } from "./routes/test-support.js";
 
@@ -206,6 +209,7 @@ export async function buildApp() {
     await api.register(tutorProxyRoutes);
     await api.register(learningProxyRoutes);
     await api.register(engagementProxyRoutes);
+    await api.register(districtLookupRoute);
   }, { prefix: "/api" });
 
   // Register at root level for direct /family/* access (used by e2e + family-svc clients)

@@ -4,6 +4,10 @@ import { DistrictContractEndService } from "../services/district-contract-end.se
 
 export async function setupSubscribers(app: FastifyInstance): Promise<void> {
   const nc = app.nats;
+  if (!nc) {
+    app.log.warn("NATS not available — skipping subscriber setup");
+    return;
+  }
   const subs: Subscription[] = [];
 
   // billing.payment.succeeded

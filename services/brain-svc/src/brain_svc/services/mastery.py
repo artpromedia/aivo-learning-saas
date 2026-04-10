@@ -9,7 +9,11 @@ from typing import Any
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from brain_svc.ml.mastery_engine import MasteryEngine, MasteryUpdate, SkillMastery
-from brain_svc.ml.model_store import ModelStore
+
+try:
+    from brain_svc.ml.model_store import ModelStore
+except ImportError:
+    ModelStore = None  # type: ignore[assignment, misc]
 from brain_svc.models.brain_state import BrainState
 from brain_svc.models.episode import BrainEpisode
 from brain_svc.services.brain_state import update_brain_state
@@ -70,10 +74,13 @@ async def process_mastery_update(
     now = time.time()
 
     # Load engine
-    engine = model_store.load(learner_id)
+    engine = model_store.load(learner_id) if model_store is not None else None
     if engine is None:
-        from brain_svc.ml.base_brain_model import BaseBrainModel
-        engine = MasteryEngine(BaseBrainModel())
+        try:
+            from brain_svc.ml.base_brain_model import BaseBrainModel
+            engine = MasteryEngine(BaseBrainModel())
+        except ImportError:
+            engine = MasteryEngine()
 
     # Convert state
     state = dict(brain_state.state) if brain_state.state else {}
@@ -126,10 +133,13 @@ async def process_batch_mastery_update(
     learner_id = str(brain_state.learner_id)
     fl = (brain_state.functioning_level_profile or {}).get("level", "STANDARD")
 
-    engine = model_store.load(learner_id)
+    engine = model_store.load(learner_id) if model_store is not None else None
     if engine is None:
-        from brain_svc.ml.base_brain_model import BaseBrainModel
-        engine = MasteryEngine(BaseBrainModel())
+        try:
+            from brain_svc.ml.base_brain_model import BaseBrainModel
+            engine = MasteryEngine(BaseBrainModel())
+        except ImportError:
+            engine = MasteryEngine()
 
     state = dict(brain_state.state) if brain_state.state else {}
     skill_masteries = _state_to_skill_masteries(state)

@@ -87,3 +87,23 @@ class TestResolveSeed:
         result = resolve_seed_for_learner(3, "NON_VERBAL")
         assert len(result["active_accommodations"]) > 0
         assert "partner_assisted" in result["active_accommodations"]
+
+    def test_resolve_with_common_core_framework(self):
+        result = resolve_seed_for_learner(4, "STANDARD", curriculum_framework="COMMON_CORE")
+        assert result["curriculum_framework"] == "COMMON_CORE"
+        assert "multiplication" in result["active_curriculum"]
+        assert "fractions" in result["active_curriculum"]
+
+    def test_resolve_with_teks_framework(self):
+        result = resolve_seed_for_learner(1, "SUPPORTED", curriculum_framework="TEKS")
+        assert result["curriculum_framework"] == "TEKS"
+        assert "number_sense" in result["active_curriculum"]
+
+    def test_resolve_with_unknown_framework_falls_back(self):
+        result = resolve_seed_for_learner(4, "STANDARD", curriculum_framework="UNKNOWN_STATE")
+        assert result["curriculum_framework"] == "DEFAULT"
+        assert result["active_curriculum"] == ["multiplication", "reading_comprehension", "basic_science"]
+
+    def test_resolve_without_framework_uses_default(self):
+        result = resolve_seed_for_learner(4, "STANDARD")
+        assert result["curriculum_framework"] == "DEFAULT"

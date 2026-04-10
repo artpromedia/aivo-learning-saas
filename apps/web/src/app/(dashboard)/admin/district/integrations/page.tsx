@@ -3,11 +3,13 @@
 import React, { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { RefreshCw, CheckCircle, XCircle, Clock, Link2, Key, Webhook, FileSearch } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { PurpleGradientHeader } from "@/components/brand/PurpleGradientHeader";
+import { PageWrapper, BackLink, ExpandableCard, AnimatedCard } from "@/components/ui/PageDesign";
 import { apiFetch } from "@/lib/api";
 
 interface SyncHistoryEntry {
@@ -27,6 +29,7 @@ interface IntegrationStatus {
 }
 
 export default function IntegrationsPage() {
+  const t = useTranslations("districtAdmin");
   const [data, setData] = useState<IntegrationStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -38,7 +41,7 @@ export default function IntegrationsPage() {
       const res = await apiFetch<IntegrationStatus>("/api/integrations/status");
       setData(res);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load integration status");
+      setError(err instanceof Error ? err.message : t("failedToLoadIntegrationStatus"));
     } finally {
       setLoading(false);
     }
@@ -54,10 +57,10 @@ export default function IntegrationsPage() {
 
     try {
       await apiFetch("/api/integrations/sync", { method: "POST" });
-      setSyncMessage("Sync triggered successfully. It may take a few minutes to complete.");
+      setSyncMessage(t("syncTriggeredSuccess"));
       await fetchStatus();
     } catch (err) {
-      setSyncMessage(err instanceof Error ? err.message : "Failed to trigger sync");
+      setSyncMessage(err instanceof Error ? err.message : t("failedToTriggerSync"));
     } finally {
       setSyncing(false);
     }
@@ -69,14 +72,10 @@ export default function IntegrationsPage() {
 
   const statusIcon = (status: string) => {
     switch (status) {
-      case "success":
-        return <CheckCircle size={16} className="text-green-500" />;
-      case "failed":
-        return <XCircle size={16} className="text-red-500" />;
-      case "in_progress":
-        return <RefreshCw size={16} className="text-yellow-500 animate-spin" />;
-      default:
-        return <Clock size={16} className="text-gray-400" />;
+      case "success": return <CheckCircle size={16} className="text-green-500" />;
+      case "failed": return <XCircle size={16} className="text-red-500" />;
+      case "in_progress": return <RefreshCw size={16} className="text-yellow-500 animate-spin" />;
+      default: return <Clock size={16} className="text-[#A89BB5]" />;
     }
   };
 
@@ -88,182 +87,146 @@ export default function IntegrationsPage() {
     }
   };
 
+  const latestSyncId = data?.syncHistory?.[0]?.id ?? "";
+  const quickLinks = [
+    { href: "/admin/district/integrations/lti", icon: Key, label: t("ltiConfigLabel"), desc: t("ltiConfigDesc"), gradient: "linear-gradient(135deg, #7C3AED, #A855F7)" },
+    { href: "/admin/district/integrations/webhooks", icon: Webhook, label: t("webhooksLabel"), desc: t("webhooksDesc"), gradient: "linear-gradient(135deg, #3B82F6, #2563EB)" },
+    { href: `/admin/district/integrations/sync?id=${latestSyncId}`, icon: FileSearch, label: t("syncErrorDashboardLabel"), desc: t("syncErrorDashboardDesc"), gradient: "linear-gradient(135deg, #2DD4BF, #14B8A6)" },
+  ];
+
   return (
-    <div>
-      <PurpleGradientHeader className="rounded-xl mb-8">
-        <h1 className="text-2xl font-bold">SIS Integrations</h1>
-        <p className="mt-1 text-white/80">
-          Manage your Student Information System sync settings.
-        </p>
+    <PageWrapper>
+      <BackLink href="/admin/district">{t("backToDistrict")}</BackLink>
+
+      <PurpleGradientHeader className="rounded-3xl mb-8">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/20">
+            <Link2 size={22} />
+          </div>
+          <div>
+            <h1 className="text-2xl font-extrabold">{t("integrationsTitle")}</h1>
+            <p className="mt-0.5 text-white/80 text-sm">
+              {t("integrationsSubtitle")}
+            </p>
+          </div>
+        </div>
       </PurpleGradientHeader>
 
       {error && (
-        <div className="mb-6 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400">
+        <div className="mb-6 p-4 rounded-3xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171]">
           {error}
         </div>
       )}
 
       {loading ? (
         <div className="space-y-6">
-          <Card>
-            <CardBody className="space-y-4">
-              <Skeleton height={24} className="w-48" />
-              <Skeleton height={16} className="w-72" />
-              <Skeleton height={40} className="w-40" />
-            </CardBody>
-          </Card>
-          <Card>
-            <CardBody className="space-y-3">
-              <Skeleton height={20} className="w-32" />
-              {[1, 2, 3].map((i) => (
-                <Skeleton key={i} height={48} className="w-full" rounded="lg" />
-              ))}
-            </CardBody>
-          </Card>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[1, 2, 3].map((i) => (<Skeleton key={i} height={80} className="w-full rounded-3xl" />))}
+          </div>
+          <Skeleton height={120} className="w-full rounded-3xl" />
         </div>
       ) : data ? (
         <div className="space-y-6">
-          {/* Quick navigation */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Link href="/admin/district/integrations/lti">
-              <Card className="hover:border-[#7C3AED] transition-colors cursor-pointer">
-                <CardBody className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#7C3AED]/10 flex items-center justify-center">
-                    <Key size={20} className="text-[#7C3AED]" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-900 dark:text-white">LTI Configuration</p>
-                    <p className="text-xs text-gray-500">Manage LTI 1.3 platforms</p>
-                  </div>
-                </CardBody>
-              </Card>
-            </Link>
-            <Link href="/admin/district/integrations/webhooks">
-              <Card className="hover:border-[#7C3AED] transition-colors cursor-pointer">
-                <CardBody className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#7C3AED]/10 flex items-center justify-center">
-                    <Webhook size={20} className="text-[#7C3AED]" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-900 dark:text-white">Outbound Webhooks</p>
-                    <p className="text-xs text-gray-500">Endpoints & delivery logs</p>
-                  </div>
-                </CardBody>
-              </Card>
-            </Link>
-            <Link href={`/admin/district/integrations/sync?id=${data.syncHistory[0]?.id ?? ""}`}>
-              <Card className="hover:border-[#7C3AED] transition-colors cursor-pointer">
-                <CardBody className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#7C3AED]/10 flex items-center justify-center">
-                    <FileSearch size={20} className="text-[#7C3AED]" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-900 dark:text-white">Sync Error Dashboard</p>
-                    <p className="text-xs text-gray-500">Drill into sync details</p>
-                  </div>
-                </CardBody>
-              </Card>
-            </Link>
+            {quickLinks.map(({ href, icon: Icon, label, desc, gradient }, idx) => (
+              <AnimatedCard key={href} delay={100 + idx * 80}>
+                <Link href={href}>
+                  <Card className="hover:shadow-[var(--shadow-hover)] transition-all cursor-pointer hover:scale-[1.02]">
+                    <CardBody className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-3xl flex items-center justify-center text-white shrink-0" style={{ background: gradient }}>
+                        <Icon size={20} />
+                      </div>
+                      <div>
+                        <p className="font-medium" style={{ color: "var(--aivo-text)" }}>{label}</p>
+                        <p className="text-xs" style={{ color: "var(--aivo-text-secondary)" }}>{desc}</p>
+                      </div>
+                    </CardBody>
+                  </Card>
+                </Link>
+              </AnimatedCard>
+            ))}
           </div>
 
-          <Card>
-            <CardBody>
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-lg bg-[#7C3AED]/10 flex items-center justify-center text-[#7C3AED] shrink-0">
-                  <Link2 size={24} />
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-1">
-                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                      {data.provider === "clever"
-                        ? "Clever"
-                        : data.provider === "classlink"
-                          ? "ClassLink"
-                          : "No SIS Connected"}
-                    </h2>
-                    {data.connected ? (
-                      <Badge variant="success">Connected</Badge>
-                    ) : (
-                      <Badge variant="secondary">Disconnected</Badge>
-                    )}
-                  </div>
-                  {data.lastSyncAt && (
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Last synced: {formatDate(data.lastSyncAt)}
-                    </p>
-                  )}
-                  {!data.lastSyncAt && data.connected && (
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      No syncs have been performed yet.
-                    </p>
-                  )}
-                </div>
-                <Button
-                  leftIcon={<RefreshCw size={16} />}
-                  loading={syncing}
-                  disabled={!data.connected}
-                  onClick={handleSync}
-                >
-                  Trigger Manual Sync
-                </Button>
-              </div>
-              {syncMessage && (
-                <p className="mt-3 text-sm text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
-                  {syncMessage}
-                </p>
-              )}
-            </CardBody>
-          </Card>
+          <ExpandableCard
+            icon={<Link2 size={16} />}
+            title={data.provider === "clever" ? t("clever") : data.provider === "classlink" ? t("classLink") : t("noSisConnected")}
+            subtitle={data.lastSyncAt ? t("lastSynced", { date: formatDate(data.lastSyncAt) }) : data.connected ? t("noSyncsPerformed") : t("connectSisProvider")}
+            gradient="linear-gradient(135deg, #7C3AED, #A855F7)"
+            delay={400}
+            infoText={t("sisConnectionInfo")}
+          >
+            <div className="flex items-center justify-between">
+              <Badge variant={data.connected ? "success" : "secondary"}>
+                {data.connected ? t("connected") : t("disconnected")}
+              </Badge>
+              <Button
+                leftIcon={<RefreshCw size={16} />}
+                loading={syncing}
+                disabled={!data.connected}
+                onClick={handleSync}
+              >
+                {t("triggerManualSync")}
+              </Button>
+            </div>
+            {syncMessage && (
+              <p className="mt-3 text-sm p-3 rounded-3xl" style={{ backgroundColor: "var(--aivo-bg)", color: "var(--aivo-text-secondary)" }}>
+                {syncMessage}
+              </p>
+            )}
+          </ExpandableCard>
 
-          <Card>
-            <CardBody>
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Sync History
-              </h2>
-              {data.syncHistory.length === 0 ? (
-                <p className="text-gray-500 dark:text-gray-400 text-sm py-4 text-center">
-                  No sync history available.
-                </p>
-              ) : (
-                <div className="space-y-3">
-                  {data.syncHistory.map((entry) => (
-                    <Link
-                      key={entry.id}
-                      href={`/admin/district/integrations/sync?id=${entry.id}`}
-                      className="flex items-center gap-4 p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-[#7C3AED] transition-colors"
-                    >
-                      {statusIcon(entry.status)}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium text-gray-900 dark:text-white">
-                            {formatDate(entry.triggeredAt)}
-                          </span>
-                          <Badge variant={statusVariant(entry.status)}>
-                            {entry.status === "in_progress" ? "In Progress" : entry.status}
-                          </Badge>
-                        </div>
-                        {entry.recordsSynced !== undefined && (
-                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                            {entry.recordsSynced} records synced
-                          </p>
-                        )}
-                        {entry.errorMessage && (
-                          <p className="text-xs text-red-500 mt-0.5">{entry.errorMessage}</p>
-                        )}
-                      </div>
-                      {entry.completedAt && (
-                        <span className="text-xs text-gray-400 shrink-0">
-                          Completed: {formatDate(entry.completedAt)}
+          <ExpandableCard
+            icon={<Clock size={16} />}
+            title={t("syncHistory")}
+            subtitle={t("syncRecords", { count: data.syncHistory?.length ?? 0 })}
+            gradient="linear-gradient(135deg, #6B7280, #4B5563)"
+            delay={500}
+            defaultExpanded={false}
+            infoText={t("syncHistoryInfo")}
+          >
+            {!data.syncHistory || data.syncHistory.length === 0 ? (
+              <p className="text-sm py-4 text-center" style={{ color: "var(--aivo-text-secondary)" }}>
+                {t("noSyncHistory")}
+              </p>
+            ) : (
+              <div className="space-y-3">
+                {(data.syncHistory ?? []).map((entry) => (
+                  <Link
+                    key={entry.id}
+                    href={`/admin/district/integrations/sync?id=${entry.id}`}
+                    className="flex items-center gap-4 p-3 border border-[#E8DDF0] dark:border-[#3D2D5C] rounded-3xl hover:border-[#7C3AED] transition-colors"
+                  >
+                    {statusIcon(entry.status)}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium" style={{ color: "var(--aivo-text)" }}>
+                          {formatDate(entry.triggeredAt)}
                         </span>
+                        <Badge variant={statusVariant(entry.status)}>
+                          {entry.status === "in_progress" ? t("inProgress") : entry.status}
+                        </Badge>
+                      </div>
+                      {entry.recordsSynced !== undefined && (
+                        <p className="text-xs mt-0.5" style={{ color: "var(--aivo-text-secondary)" }}>
+                          {t("recordsSynced", { count: entry.recordsSynced })}
+                        </p>
                       )}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </CardBody>
-          </Card>
+                      {entry.errorMessage && (
+                        <p className="text-xs text-red-500 mt-0.5">{entry.errorMessage}</p>
+                      )}
+                    </div>
+                    {entry.completedAt && (
+                      <span className="text-xs shrink-0" style={{ color: "var(--aivo-text-muted)" }}>
+                        {t("completedLabel", { date: formatDate(entry.completedAt) })}
+                      </span>
+                    )}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </ExpandableCard>
         </div>
       ) : null}
-    </div>
+    </PageWrapper>
   );
 }

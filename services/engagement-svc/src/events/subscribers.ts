@@ -22,6 +22,7 @@ import { DailyChallengeService } from "../services/daily-challenge.service.js";
 
 export async function setupSubscribers(app: FastifyInstance): Promise<void> {
   const nc = app.nats;
+  if (!nc) { app.log.warn("NATS unavailable — skipping event subscriptions"); return; }
   const xpEngine = new XpEngine(app);
   const streakEngine = new StreakEngine(app);
   const badgeEngine = new BadgeEngine(app);

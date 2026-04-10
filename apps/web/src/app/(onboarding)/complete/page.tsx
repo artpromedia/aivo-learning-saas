@@ -93,7 +93,7 @@ export default function OnboardingCompletePage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
-          className="text-3xl font-bold text-gray-900 dark:text-white mb-3"
+          className="text-3xl font-bold text-[var(--aivo-text)] mb-3"
         >
           {t("youreAllSet")}
         </motion.h1>
@@ -102,7 +102,7 @@ export default function OnboardingCompletePage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.9 }}
-          className="text-lg text-gray-500 dark:text-gray-400 mb-2"
+          className="text-lg text-[var(--aivo-text-secondary)] mb-2"
         >
           {activeLearner?.name
             ? t("childJourneyReady", { name: activeLearner.name })
@@ -113,13 +113,13 @@ export default function OnboardingCompletePage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.1 }}
-          className="text-sm text-gray-400 dark:text-gray-500 mb-8"
+          className="text-sm text-[var(--aivo-text-muted)] mb-8"
         >
           {t("journeyReadyDescription")}
         </motion.p>
 
         {error && (
-          <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+          <div className="mb-4 p-3 rounded-2xl bg-[#FFE0E0] dark:bg-[#991B1B]/10 border border-[#FECACA] dark:border-[#991B1B]/30 text-[#991B1B] dark:text-[#F87171] text-sm">
             {error}
           </div>
         )}
@@ -137,7 +137,7 @@ export default function OnboardingCompletePage() {
             rightIcon={<Rocket size={20} />}
             className="min-w-[200px]"
           >
-            {userIsLearner ? "Go to My Learning Dashboard" : t("goToDashboard")}
+            {userIsLearner ? t("goToMyLearningDashboard") : t("goToDashboard")}
           </Button>
         </motion.div>
       </motion.div>
