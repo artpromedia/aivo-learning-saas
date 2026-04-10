@@ -39,3 +39,6 @@ scripts/diag-*.mjs
 # Temporary helm artifacts
 infra/helm/aivo-ingress.yaml
 infra/helm/values/image-overrides.yaml
+
+# Security scan reports
+gitleaks-report.json

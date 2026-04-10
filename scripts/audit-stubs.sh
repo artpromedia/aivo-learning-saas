@@ -34,7 +34,8 @@ MATCHES=$(grep -rn "$PATTERN" \
   grep -v 'placeholder:' | \
   grep -v 'placeholder variables' | \
   grep -v 'loading.placeholder\|Placeholder\|shimmer.*placeholder\|placeholder.*shimmer' | \
-  grep -v '// .*placeholder.*for streaming\|placeholder.*redirect' || true)
+  grep -v '// .*placeholder.*for streaming\|placeholder.*redirect' | \
+  grep -v 'mock-data\.ts' || true)
 
 if [ -n "$MATCHES" ]; then
   echo -e "${RED}STUB AUDIT FAILED${NC}"

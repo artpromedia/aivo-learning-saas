@@ -6,12 +6,12 @@ import { coverageTracker } from '../../helpers/coverage-tracker';
 import { waitForNotification } from '../../helpers/wait-for-nats';
 
 const API_BASE = process.env.API_BASE_URL || 'http://localhost:3101';
-const BRAIN_API = process.env.BRAIN_API_URL || 'http://localhost:3102';
+const _BRAIN_API = process.env.BRAIN_API_URL || 'http://localhost:3102';
 
 test.describe('Module 3b: Contextual Recommendations after Brain Clone', () => {
   let parent: TestUser;
   let learner: TestLearner;
-  let brainState: BrainState;
+  let _brainState: BrainState;
   let brainUp = false;
 
   test.beforeAll(async () => {
@@ -19,7 +19,7 @@ test.describe('Module 3b: Contextual Recommendations after Brain Clone', () => {
     parent = await createTestParent();
     learner = await createTestLearner(parent.token, 4);
     if (brainUp) {
-      brainState = await getPreClonedBrainState(parent.token, learner.id);
+      _brainState = await getPreClonedBrainState(parent.token, learner.id);
     }
   });
 
@@ -165,7 +165,7 @@ test.describe('Module 3b: Contextual Recommendations after Brain Clone', () => {
     await coverageTracker.attach(page);
 
     // Check for notification about recommendations
-    const notification = await waitForNotification(
+    const _notification = await waitForNotification(
       parent.token,
       (n) =>
         n.type === 'recommendation_pending' ||

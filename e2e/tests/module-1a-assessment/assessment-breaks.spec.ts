@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { createTestParent, type TestUser } from '../../fixtures/auth.fixture';
-import { createTestLearner, type TestLearner } from '../../fixtures/learner.fixture';
+import { createTestLearner } from '../../fixtures/learner.fixture';
 import { coverageTracker } from '../../helpers/coverage-tracker';
 import { isAssessmentAvailable } from '../../fixtures/assessment.fixture';
 
@@ -30,7 +30,7 @@ test.describe('Module 1a: Assessment Engagement Breaks', () => {
     const learner = await createTestLearner(parent.token, 5);
 
     // Submit parent assessment with break preferences
-    const parentAssessmentRes = await page.request.post(`${API_BASE}/family/learners/${learner.id}/assessment`, {
+    const _parentAssessmentRes = await page.request.post(`${API_BASE}/family/learners/${learner.id}/assessment`, {
       data: {
         responses: [
           { questionId: 'verbal-communication', answer: 'full-sentences' },
