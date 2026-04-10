@@ -90,6 +90,7 @@ export async function testSupportRoutes(app: FastifyInstance) {
 
     await app.db.insert(accounts).values({
       userId: user.id,
+      accountId: user.id,
       providerId: "credential",
       providerAccountId: user.id,
       accessToken: passwordHash,

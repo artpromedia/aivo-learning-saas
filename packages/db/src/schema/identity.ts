@@ -85,8 +85,9 @@ export const accounts = pgTable(
     userId: uuid("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    providerId: varchar("provider_id", { length: 128 }).notNull(),
-    providerAccountId: varchar("provider_account_id", { length: 512 }).notNull(),
+    accountId: text("account_id").notNull(),
+    providerId: text("provider_id").notNull(),
+    providerAccountId: varchar("provider_account_id", { length: 512 }),
     accessToken: varchar("access_token", { length: 4096 }),
     refreshToken: varchar("refresh_token", { length: 4096 }),
     accessTokenExpiresAt: timestamp("access_token_expires_at", { withTimezone: true }),

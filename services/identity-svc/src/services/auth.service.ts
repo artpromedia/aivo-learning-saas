@@ -78,6 +78,7 @@ export class AuthService {
 
       await tx.insert(accounts).values({
         userId: user.id,
+        accountId: user.id,
         providerId: "credential",
         providerAccountId: user.id,
         accessToken: passwordHash,
@@ -183,6 +184,7 @@ export class AuthService {
       // Link OAuth account to existing user
       await this.app.db.insert(accounts).values({
         userId: existingUser.id,
+        accountId: existingUser.id,
         providerId: profile.providerId,
         providerAccountId: profile.providerAccountId,
         accessToken: profile.accessToken,
@@ -221,6 +223,7 @@ export class AuthService {
 
     await this.app.db.insert(accounts).values({
       userId: user.id,
+      accountId: user.id,
       providerId: profile.providerId,
       providerAccountId: profile.providerAccountId,
       accessToken: profile.accessToken,
