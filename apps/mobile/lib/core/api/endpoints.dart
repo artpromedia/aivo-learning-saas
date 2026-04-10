@@ -211,6 +211,26 @@ class Endpoints {
   static const String billingAddons = '/billing/addons';
 
   // ---------------------------------------------------------------------------
+  // Teacher
+  // ---------------------------------------------------------------------------
+  static const String teacherClassrooms = '/teacher/classrooms';
+  static String teacherClassroomDetail(String id) => '/teacher/classrooms/$id';
+  static String teacherLearnerBrain(String learnerId) =>
+      '/teacher/learners/$learnerId/brain';
+  static String teacherLearnerInsights(String learnerId) =>
+      '/teacher/learners/$learnerId/insights';
+
+  // ---------------------------------------------------------------------------
+  // Caregiver
+  // ---------------------------------------------------------------------------
+  static const String caregiverChild = '/caregiver/child';
+  static const String caregiverBrain = '/caregiver/brain';
+  static const String caregiverAccommodations = '/caregiver/accommodations';
+  static const String caregiverIep = '/caregiver/iep';
+  static const String caregiverGradebook = '/caregiver/gradebook';
+  static const String caregiverSessions = '/caregiver/sessions';
+
+  // ---------------------------------------------------------------------------
   // i18n
   // ---------------------------------------------------------------------------
   static const String i18nLocales = '/i18n/locales';
