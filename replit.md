@@ -483,6 +483,14 @@ Benchmark script at `scripts/benchmark-rls.sql`:
 - Reports index usage on `tenant_id` columns
 - Lists RLS policies and table sizes for partition planning
 
+## Dynamic School District Lookup
+
+The `/api/districts/lookup?zip=XXXXX` endpoint dynamically finds school districts for any US zip code using a two-step API approach:
+1. **Zippopotam.us** (free, no API key): Converts zip code to GPS coordinates + state abbreviation
+2. **US Census Bureau Geocoder** (free, no API key): Resolves coordinates to school district boundaries (Unified/Secondary/Elementary)
+
+Results are cached in the local `school_districts` and `district_zip_codes` tables — subsequent lookups for the same zip are instant from the database. Only real Census-verified districts are cached (no synthetic/fabricated data). Curriculum framework is inferred from state (TEKS for TX, COMMON_CORE for CA/IL/MA, STATE_SPECIFIC for others).
+
 ## Notes
 
 - The web app requires the `@aivo/brand` package to be built before starting
