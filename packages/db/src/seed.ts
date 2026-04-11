@@ -26,6 +26,9 @@ const DISTRICT_CA_ID = "40000000-0000-4000-8000-000000000001";
 const DISTRICT_TX_ID = "40000000-0000-4000-8000-000000000002";
 const DISTRICT_NY_ID = "40000000-0000-4000-8000-000000000003";
 const DISTRICT_FL_ID = "40000000-0000-4000-8000-000000000004";
+const DISTRICT_MN_ANOKA_ID = "40000000-0000-4000-8000-000000000005";
+const DISTRICT_MN_MPLS_ID = "40000000-0000-4000-8000-000000000006";
+const DISTRICT_MN_STP_ID = "40000000-0000-4000-8000-000000000007";
 
 const now = new Date().toISOString();
 const hourAgo = new Date(Date.now() - 3600000).toISOString();
@@ -44,7 +47,10 @@ async function seed() {
       (${DISTRICT_CA_ID}, 'Los Angeles Unified School District', 'CA', '0622710', 'COMMON_CORE'),
       (${DISTRICT_TX_ID}, 'Houston Independent School District', 'TX', '4819380', 'TEKS'),
       (${DISTRICT_NY_ID}, 'New York City Department of Education', 'NY', '3620580', 'NYSLS'),
-      (${DISTRICT_FL_ID}, 'Miami-Dade County Public Schools', 'FL', '1200390', 'BEST')
+      (${DISTRICT_FL_ID}, 'Miami-Dade County Public Schools', 'FL', '1200390', 'BEST'),
+      (${DISTRICT_MN_ANOKA_ID}, 'Anoka-Hennepin School District', 'MN', '2703000', 'STATE_SPECIFIC'),
+      (${DISTRICT_MN_MPLS_ID}, 'Minneapolis Public Schools', 'MN', '2718370', 'STATE_SPECIFIC'),
+      (${DISTRICT_MN_STP_ID}, 'St. Paul Public Schools', 'MN', '2724480', 'STATE_SPECIFIC')
   `;
 
   await sql`
@@ -67,7 +73,22 @@ async function seed() {
       (gen_random_uuid(), ${DISTRICT_FL_ID}, '33101'),
       (gen_random_uuid(), ${DISTRICT_FL_ID}, '33102'),
       (gen_random_uuid(), ${DISTRICT_FL_ID}, '33125'),
-      (gen_random_uuid(), ${DISTRICT_FL_ID}, '33130')
+      (gen_random_uuid(), ${DISTRICT_FL_ID}, '33130'),
+      (gen_random_uuid(), ${DISTRICT_MN_ANOKA_ID}, '55449'),
+      (gen_random_uuid(), ${DISTRICT_MN_ANOKA_ID}, '55303'),
+      (gen_random_uuid(), ${DISTRICT_MN_ANOKA_ID}, '55304'),
+      (gen_random_uuid(), ${DISTRICT_MN_ANOKA_ID}, '55014'),
+      (gen_random_uuid(), ${DISTRICT_MN_ANOKA_ID}, '55434'),
+      (gen_random_uuid(), ${DISTRICT_MN_MPLS_ID}, '55401'),
+      (gen_random_uuid(), ${DISTRICT_MN_MPLS_ID}, '55402'),
+      (gen_random_uuid(), ${DISTRICT_MN_MPLS_ID}, '55403'),
+      (gen_random_uuid(), ${DISTRICT_MN_MPLS_ID}, '55404'),
+      (gen_random_uuid(), ${DISTRICT_MN_MPLS_ID}, '55405'),
+      (gen_random_uuid(), ${DISTRICT_MN_STP_ID}, '55101'),
+      (gen_random_uuid(), ${DISTRICT_MN_STP_ID}, '55102'),
+      (gen_random_uuid(), ${DISTRICT_MN_STP_ID}, '55103'),
+      (gen_random_uuid(), ${DISTRICT_MN_STP_ID}, '55104'),
+      (gen_random_uuid(), ${DISTRICT_MN_STP_ID}, '55106')
   `;
 
   const curriculumStandards = [

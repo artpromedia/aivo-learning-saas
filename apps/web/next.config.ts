@@ -29,6 +29,7 @@ const proxiedApiPrefixes = [
   "family",
   "invitations",
   "tenants",
+  "districts",
 ];
 
 const nextConfig: NextConfig = {
