@@ -57,7 +57,7 @@ services/tutor-svc     — Fastify tutor management (port 3006)
 - `GET /api/users/learners` — List learners
 - `POST /api/users/learners` — Create learner (with COPPA consent + curriculum auto-detection)
 - `GET /api/curriculum/lookup?zipCode=&country=` — Lookup curriculum by zip/country
-- `POST /api/assessments/parent` — Parent assessment → functioning level
+- `POST /api/assessments/parent` — Parent assessment → functioning level (49 questions, 11 categories)
 - `POST /api/brain/clone` — Clone brain state
 - `GET /api/brain/:learnerId` — Get brain state
 - `POST /api/brain/:learnerId/rollback` — Rollback to snapshot
@@ -73,6 +73,18 @@ services/tutor-svc     — Fastify tutor management (port 3006)
 - `POST /api/tutor/session/start` — Start tutor chat session
 - `POST /api/tutor/session/:id/message` — Send message in tutor chat
 - `POST /api/tutor/session/:id/complete` — Complete tutor session
+
+### Frontend Pages
+- `/` — Landing page (parallax tutor carousel)
+- `/login` — Email login + Learner PIN login
+- `/register` — Parent registration
+- `/dashboard/parent` — Parent dashboard (learner cards, store link)
+- `/dashboard/parent/store` — Tutor Store (bundles + individual subscribe)
+- `/dashboard/parent/learner/[id]/assessment` — Parent Baseline Assessment (49 questions, 11 categories)
+- `/dashboard/parent/learner/[id]/gradebook` — Gradebook (mastery bars, sessions, XP)
+- `/dashboard/learner` — Learner dashboard (tutor grid)
+- `/dashboard/learner/assessment` — Learner Baseline Assessment (18 questions: math/ela/science)
+- `/dashboard/learner/lesson/[tutorKey]` — Lesson Chat UI
 
 ### GitHub Repository
 - **New repo**: `artpromedia/aivo-ai-learning` (pushed Phase 0+1 — 125 files, 17,627 lines)
