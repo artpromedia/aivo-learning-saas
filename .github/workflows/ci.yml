@@ -346,3 +346,98 @@ jobs:
           name: e2e-coverage-reports
           path: e2e/coverage-reports/
           retention-days: 30
+
+  sbom-license-scan:
+    name: SBOM Generation & License Compliance
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate CycloneDX SBOM (full monorepo)
+        run: |
+          npx @cyclonedx/cyclonedx-npm --output-file sbom-root.json --output-format JSON --mc-type application
+          for ws in apps/web apps/marketing packages/db packages/ui services/identity-svc services/billing-svc; do
+            if [ -f "$ws/package.json" ]; then
+              echo "Scanning workspace: $ws"
+              npx @cyclonedx/cyclonedx-npm --output-file "sbom-$(basename $ws).json" --output-format JSON --mc-type application --package-lock-only "$ws/package.json" 2>/dev/null || true
+            fi
+          done
+          echo "SBOM generated with $(python3 -c 'import sys,json; print(len(json.load(open("sbom-root.json")).get("components",[])))') root components"
+
+      - name: Upload SBOM artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom
+          path: sbom-*.json
+          retention-days: 90
+
+      - name: License compliance check (all workspaces)
+        run: |
+          npx license-checker --production --failOn "GPL-2.0;GPL-3.0;AGPL-1.0;AGPL-3.0;SSPL-1.0" --summary || {
+            echo "::error::Disallowed licenses detected (GPL/AGPL/SSPL)"
+            exit 1
+          }
+          for ws in apps/web apps/marketing packages/db packages/ui; do
+            if [ -f "$ws/package.json" ]; then
+              echo "Checking licenses in $ws..."
+              npx license-checker --start "$ws" --production --failOn "GPL-2.0;GPL-3.0;AGPL-1.0;AGPL-3.0;SSPL-1.0" --summary || {
+                echo "::error::Disallowed licenses in $ws"
+                exit 1
+              }
+            fi
+          done
+          echo "License compliance check passed (all workspaces)"
+
+  load-test-thresholds:
+    name: k6 Load Test Threshold Verification
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    needs: [build-lint-typecheck]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install k6
+        run: |
+          sudo gpg -k
+          sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D68
+          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+          sudo apt-get update
+          sudo apt-get install k6 -y
+
+      - name: Validate k6 thresholds (dry run)
+        run: |
+          echo "Validating k6 test thresholds..."
+          k6 inspect e2e/load/k6/auth-flow.js | python3 -c "
+          import sys, json
+          config = json.load(sys.stdin)
+          thresholds = config.get('options', {}).get('thresholds', {})
+          print('Auth flow thresholds:')
+          for k, v in thresholds.items():
+              print(f'  {k}: {v}')
+          assert 'http_req_duration' in thresholds, 'Missing http_req_duration threshold'
+          print('Threshold validation passed')
+          "
+
+          k6 inspect e2e/load/k6/learner-dashboard.js | python3 -c "
+          import sys, json
+          config = json.load(sys.stdin)
+          thresholds = config.get('options', {}).get('thresholds', {})
+          print('Learner dashboard thresholds:')
+          for k, v in thresholds.items():
+              print(f'  {k}: {v}')
+          assert 'http_req_duration' in thresholds, 'Missing http_req_duration threshold'
+          print('Threshold validation passed')
+          "

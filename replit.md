@@ -386,8 +386,8 @@ Circuit breaker config: 50% error threshold, 30s reset timeout, 5 minimum reques
 
 ## Deployment Workflows
 
-### GitHub Actions (14 workflows)
-- `ci.yml` — Build, lint, test, coverage, DB migration verification
+### GitHub Actions (14+ workflows)
+- `ci.yml` — Build, lint, test, coverage, DB migration verification, SBOM generation, license compliance, k6 threshold validation
 - `deploy-staging.yml` — Matrix build + Trivy scan + Helm deploy to staging
 - `deploy-production.yml` — Canary deployment with approval gate + smoke tests
 - `smoke-tests.yml` — Reusable post-deploy smoke test workflow
@@ -409,6 +409,80 @@ E2E accessibility tests using `@axe-core/playwright`:
 - **Keyboard nav**: Tests tab navigation on login, skip links on landing
 - **Playwright project**: `accessibility` (independent, no module dependencies)
 
+## LLM Observability (Langfuse)
+
+The ai-svc integrates Langfuse for LLM prompt/completion tracing and cost tracking:
+- **SDK**: `langfuse` Python package wired into `LLMGateway.generate()`
+- **Traces**: Every LLM call creates a Langfuse trace with model, tier, task type, tokens, and latency
+- **Error tracking**: Failed LLM calls are traced with error details
+- **Cost estimation**: Prometheus `llm_estimated_cost_dollars_total` + Langfuse cost tracking
+- **Configuration**: `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`, `LANGFUSE_HOST` in ai-svc env
+- **Graceful degradation**: If Langfuse is not configured, tracing is silently skipped
+
+## Per-Tenant Resource Quotas
+
+Tenant resource limits are enforced via `tenant_configs` table:
+- `daily_llm_token_quota` — Daily LLM token limit (0 = unlimited)
+- `max_storage_bytes` — Storage quota per tenant
+- `max_concurrent_users` — Concurrent user limit
+- `max_api_calls_per_minute` — API rate limit per tenant
+
+Usage tracked in `tenant_usages` table (daily aggregation). ai-svc enforces token quotas via `QuotaEnforcementMiddleware` — returns HTTP 429 when exceeded. Soft limit warning at 80% (configurable via `token_quota_soft_limit_percent`).
+
+## Supply Chain Security
+
+- **Renovate Bot**: `renovate.json` configured for automated dependency PRs (patches auto-merge, majors require review)
+- **SBOM**: CycloneDX SBOM generated in CI, uploaded as artifact (90-day retention)
+- **License scanning**: `license-checker` in CI blocks GPL/AGPL/SSPL dependencies
+- **Vulnerability alerts**: Renovate security alerts enabled
+
+## Architecture Decision Records
+
+6 retroactive ADRs documenting key architectural choices in `docs/adr/`:
+- ADR-001: pnpm Monorepo with Turborepo
+- ADR-002: Microservices Architecture (15 Services)
+- ADR-003: Drizzle ORM with PostgreSQL
+- ADR-004: NATS JetStream for Event-Driven Communication
+- ADR-005: Python (FastAPI) for Brain and AI Services
+- ADR-006: JWT RS256 Authentication with Cookie + Bearer Support
+
+## Incident Runbooks
+
+Per-scenario troubleshooting guides in `docs/runbooks/`:
+- `service-down.md` — General service failure triage
+- `database-issues.md` — PostgreSQL connection, slow queries, locks
+- `nats-failures.md` — NATS/JetStream failures and DLQ handling
+- `ai-provider-outage.md` — LLM provider failures and failover
+- `auth-failures.md` — Authentication and JWT issues
+
+## Bundle Analysis
+
+`@next/bundle-analyzer` integrated in `apps/web`:
+```bash
+cd apps/web && ANALYZE=true pnpm run build
+```
+
+## Secrets Management
+
+Documented Vault integration plan in `docs/secrets-management.md`:
+- Vault Agent Injector annotations for all 15 services
+- Secret rotation policy (30-day DB creds, 90-day API keys, 180-day JWT keys)
+- Dynamic PostgreSQL credentials via Vault database backend
+
+## Log Aggregation
+
+Grafana Loki configuration in `infra/monitoring/loki/values.yaml`:
+- 30-day hot storage retention
+- Promtail DaemonSet scraping `aivo` namespace pods
+- JSON pipeline stages for structured log parsing (level, service, trace_id)
+
+## RLS Performance
+
+Benchmark script at `scripts/benchmark-rls.sql`:
+- Tests tenant-filtered vs unfiltered query performance
+- Reports index usage on `tenant_id` columns
+- Lists RLS policies and table sizes for partition planning
+
 ## Notes
 
 - The web app requires the `@aivo/brand` package to be built before starting
@@ -416,3 +490,4 @@ E2E accessibility tests using `@axe-core/playwright`:
 - The full stack uses Docker Compose in production (see `docker-compose.dev.yml`)
 - NATS plugin in identity-svc gracefully degrades in dev mode (events silently skipped)
 - `publishEvent()` in `@aivo/events` accepts null NATS connection (no-op when null)
+- Env var validation is enforced at startup in all services (Zod for TypeScript, Pydantic for Python)

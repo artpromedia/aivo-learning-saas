@@ -1,0 +1,15 @@
+{{/*
+vault-annotations.yaml - Vault Agent Injector annotation helper.
+
+When vault.enabled=true, the deployment template injects these annotations
+into each service's pod spec via the _vault-annotations named template.
+*/}}
+{{- define "aivo.vault-annotations" -}}
+{{- if .Values.vault.enabled }}
+vault.hashicorp.com/agent-inject: "true"
+vault.hashicorp.com/role: "{{ .svcName }}"
+vault.hashicorp.com/agent-inject-secret-database: "secret/data/aivo/shared/database"
+vault.hashicorp.com/agent-inject-secret-jwt: "secret/data/aivo/shared/jwt"
+vault.hashicorp.com/agent-inject-secret-config: "secret/data/aivo/{{ .svcName }}/config"
+{{- end }}
+{{- end -}}

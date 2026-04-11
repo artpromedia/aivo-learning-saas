@@ -3,6 +3,9 @@
 # Override per-environment via values/<env>.yaml
 # ─────────────────────────────────────────────
 
+vault:
+  enabled: false
+
 global:
   registry: ghcr.io/artpromedia
   imageTag: latest

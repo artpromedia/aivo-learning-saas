@@ -21,6 +21,9 @@ export const tenantConfigs = pgTable(
       .notNull()
       .references(() => tenants.id, { onDelete: "cascade" }),
     dailyLlmTokenQuota: integer("daily_llm_token_quota").notNull().default(0),
+    maxStorageBytes: integer("max_storage_bytes").notNull().default(0),
+    maxConcurrentUsers: integer("max_concurrent_users").notNull().default(0),
+    maxApiCallsPerMinute: integer("max_api_calls_per_minute").notNull().default(0),
     features: jsonb("features").notNull().default({}),
     llmProviderOverride: varchar("llm_provider_override", { length: 128 }),
     llmModelOverride: varchar("llm_model_override", { length: 128 }),

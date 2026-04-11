@@ -30,6 +30,14 @@ spec:
         app.kubernetes.io/name: {{ $svc }}
         app.kubernetes.io/instance: aivo-learning-saas
         app.kubernetes.io/part-of: aivo-learning-saas
+      {{- if $.Values.vault.enabled }}
+      annotations:
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/role: "{{ $svc }}"
+        vault.hashicorp.com/agent-inject-secret-database: "secret/data/aivo/shared/database"
+        vault.hashicorp.com/agent-inject-secret-jwt: "secret/data/aivo/shared/jwt"
+        vault.hashicorp.com/agent-inject-secret-config: "secret/data/aivo/{{ $svc }}/config"
+      {{- end }}
     spec:
       containers:
         - name: {{ $svc }}
