@@ -83,7 +83,7 @@ services/tutor-svc     — Fastify tutor management (port 3006)
 - `/dashboard/parent/learner/[id]/assessment` — Parent Baseline Assessment (49 questions, 11 categories)
 - `/dashboard/parent/learner/[id]/gradebook` — Gradebook (mastery bars, sessions, XP)
 - `/dashboard/learner` — Learner dashboard (tutor grid)
-- `/dashboard/learner/assessment` — Learner Baseline Assessment (18 questions: math/ela/science)
+- `/dashboard/learner/assessment` — Learner Baseline Assessment (42 questions: math, reading, science, speech, SEL, life skills, executive function)
 - `/dashboard/learner/lesson/[tutorKey]` — Lesson Chat UI
 
 ### GitHub Repository
