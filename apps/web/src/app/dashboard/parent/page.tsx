@@ -244,7 +244,7 @@ export default function ParentDashboard() {
                 {l.districtName && (
                   <p className="text-xs text-slate-400 mt-0.5">{l.districtName}</p>
                 )}
-                <div className="mt-4 flex gap-2">
+                <div className="mt-4 flex gap-2 flex-wrap">
                   <button onClick={() => router.push(`/dashboard/parent/learner/${l.id}`)}
                     className="px-4 py-2 text-sm rounded-full bg-purple-50 text-primary font-bold hover:bg-purple-100 transition">
                     View Profile
@@ -253,6 +253,10 @@ export default function ParentDashboard() {
                     className="px-4 py-2 text-sm rounded-full bg-cyan-50 text-secondary font-bold hover:bg-cyan-100 transition">
                     Start Assessment
                   </button>
+                  <button onClick={() => router.push(`/dashboard/parent/learner/${l.id}/gradebook`)}
+                    className="px-4 py-2 text-sm rounded-full bg-green-50 text-green-700 font-bold hover:bg-green-100 transition">
+                    Gradebook
+                  </button>
                 </div>
               </div>
             ))}
@@ -260,7 +264,13 @@ export default function ParentDashboard() {
         )}
 
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
-          <h2 className="text-xl font-heading font-bold text-slate-900 mb-2">Available Tutors</h2>
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-xl font-heading font-bold text-slate-900">Available Tutors</h2>
+            <button onClick={() => router.push("/dashboard/parent/store")}
+              className="px-4 py-2 text-sm rounded-full bg-primary text-white font-bold hover:bg-primary-dark transition">
+              Tutor Store
+            </button>
+          </div>
           <p className="text-sm text-slate-500 mb-6">7 core tutors + 7 expansion specialists</p>
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-4">
             {Object.entries(TUTORS).map(([key, tutor]) => (

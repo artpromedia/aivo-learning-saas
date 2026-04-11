@@ -7,3 +7,4 @@ export * from "./brain";
 export * from "./engagement";
 export * from "./billing";
 export * from "./audit";
+export * from "./learning";

@@ -16,12 +16,15 @@ packages/security  — JWT RS256 sign/verify (jose)
 services/identity-svc  — Fastify auth service (port 3001)
 services/assessment-svc — Fastify assessment API (port 3003)
 services/brain-svc     — Python FastAPI brain clone (port 3002)
+services/ai-svc        — Python FastAPI LLM gateway (port 3004)
+services/learning-svc  — Fastify lesson sessions (port 3005)
+services/tutor-svc     — Fastify tutor management (port 3006)
 ```
 
 ### Tech Stack
 - **Frontend**: Next.js 15 + Tailwind CSS v4 + TypeScript
 - **Backend (TS)**: Fastify 5 + Drizzle ORM + PostgreSQL 16
-- **Backend (Python)**: FastAPI + SQLAlchemy + Uvicorn
+- **Backend (Python)**: FastAPI + LiteLLM + Uvicorn
 - **Auth**: JWT RS256 (jose library), refresh tokens, PIN login
 - **Database**: PostgreSQL 16 with JSONB brain states
 - **Styling**: AIVO brand system (purple primary #7C3AED), game-themed Fredoka + Nunito fonts
@@ -36,8 +39,9 @@ services/brain-svc     — Python FastAPI brain clone (port 3002)
 
 ### Running Services
 1. **Start application** (port 5000): Next.js frontend
-2. **Identity Service** (ports 3001 + 3003): Identity + Assessment services
+2. **Identity Service** (ports 3001, 3003, 3005, 3006): Identity + Assessment + Learning + Tutor services
 3. **Brain Service** (port 3002): Python FastAPI brain-svc
+4. **ai-svc** (port 3004): Python FastAPI LLM gateway (start separately)
 
 ### Database
 - Schema managed by Drizzle ORM in `packages/db/src/schema/`
@@ -57,6 +61,18 @@ services/brain-svc     — Python FastAPI brain clone (port 3002)
 - `POST /api/brain/clone` — Clone brain state
 - `GET /api/brain/:learnerId` — Get brain state
 - `POST /api/brain/:learnerId/rollback` — Rollback to snapshot
+- `POST /api/ai/generate` — Generate lesson/practice content via LLM
+- `POST /api/ai/tutor/chat` — Tutor chat completion
+- `POST /api/learning/sessions` — Start lesson session
+- `POST /api/learning/sessions/:id/complete` — Complete session + mastery write-back
+- `GET /api/learning/gradebook/:learnerId` — Gradebook entries
+- `GET /api/learning/path/:learnerId/:subject` — Learning path
+- `GET /api/tutors/catalog` — Tutor catalog with bundles
+- `POST /api/tutors/subscribe` — Subscribe to individual tutor
+- `POST /api/tutors/subscribe-bundle` — Subscribe to tutor bundle
+- `POST /api/tutor/session/start` — Start tutor chat session
+- `POST /api/tutor/session/:id/message` — Send message in tutor chat
+- `POST /api/tutor/session/:id/complete` — Complete tutor session
 
 ### GitHub Repository
 - **New repo**: `artpromedia/aivo-ai-learning` (pushed Phase 0+1 — 125 files, 17,627 lines)

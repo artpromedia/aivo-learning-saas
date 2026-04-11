@@ -36,6 +36,7 @@ export default function LearnerDashboard() {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {allTutors.map(([key, tutor]) => (
             <button key={key}
+              onClick={() => router.push(`/dashboard/learner/lesson/${key}`)}
               className="bg-white rounded-2xl p-6 shadow-sm border-2 border-transparent hover:shadow-xl transition text-center space-y-3 group"
               style={{ borderColor: "transparent" }}
               onMouseEnter={(e) => (e.currentTarget.style.borderColor = tutor.color)}

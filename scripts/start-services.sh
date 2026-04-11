@@ -11,4 +11,12 @@ echo "Starting assessment-svc on port 3003..."
 cd /home/runner/workspace/services/assessment-svc
 ASSESSMENT_PORT=3003 NODE_ENV=development npx tsx src/index.ts &
 
+echo "Starting learning-svc on port 3005..."
+cd /home/runner/workspace/services/learning-svc
+LEARNING_PORT=3005 NODE_ENV=development npx tsx src/index.ts &
+
+echo "Starting tutor-svc on port 3006..."
+cd /home/runner/workspace/services/tutor-svc
+TUTOR_PORT=3006 NODE_ENV=development npx tsx src/index.ts &
+
 wait

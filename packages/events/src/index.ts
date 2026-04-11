@@ -17,6 +17,13 @@ export const EVENTS = {
   STREAK_UPDATED: "engagement.streak_updated",
   TUTOR_ACTIVATED: "tutor.activated",
   TUTOR_DEACTIVATED: "tutor.deactivated",
+  TUTOR_SESSION_STARTED: "tutor.session.started",
+  TUTOR_SESSION_COMPLETED: "tutor.session.completed",
+  LESSON_SESSION_STARTED: "learner.session.started",
+  LESSON_SESSION_COMPLETED: "learner.session.completed",
+  CONTENT_GENERATED: "content.generated",
+  CONTENT_QUALITY_FAILED: "content.quality.failed",
+  MASTERY_UPDATED: "brain.mastery.updated",
   CONSENT_GRANTED: "consent.granted",
   CONSENT_REVOKED: "consent.revoked",
   SUBSCRIPTION_CHANGED: "subscription.changed",
@@ -60,4 +67,46 @@ export interface LearnerLevelChangedPayload {
   previousLevel: string;
   newLevel: string;
   reason: string;
+}
+
+export interface TutorSessionCompletedPayload {
+  sessionId: string;
+  learnerId: string;
+  tutorSku: string;
+  tutorName: string;
+  skillsFocused: string[];
+  masteryUpdates: Record<string, number>;
+  durationSeconds: number;
+  completionQuality: number;
+  xpEarned: number;
+}
+
+export interface LessonSessionCompletedPayload {
+  sessionId: string;
+  learnerId: string;
+  subject: string;
+  contentType: string;
+  masteryBefore: Record<string, number>;
+  masteryAfter: Record<string, number>;
+  xpEarned: number;
+  durationSeconds: number;
+}
+
+export interface ContentGeneratedPayload {
+  sessionId: string;
+  learnerId: string;
+  subject: string;
+  model: string;
+  promptTokens: number;
+  completionTokens: number;
+  qualityScore: number;
+}
+
+export interface MasteryUpdatedPayload {
+  learnerId: string;
+  subject: string;
+  skill: string;
+  previousScore: number;
+  newScore: number;
+  source: string;
 }
