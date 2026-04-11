@@ -52,6 +52,18 @@ def clone_brain(db: Session, request: BrainCloneRequest) -> dict:
     brain_state_id = str(uuid.uuid4())
     now = datetime.utcnow()
 
+    learner_row = db.execute(
+        text("SELECT curriculum_alignment, curriculum_framework, district_name, district_id, zip_code, country FROM learners WHERE id = :lid"),
+        {"lid": request.learner_id}
+    ).first()
+
+    curriculum_alignment = {}
+    if learner_row and learner_row[0]:
+        try:
+            curriculum_alignment = learner_row[0] if isinstance(learner_row[0], dict) else json.loads(learner_row[0])
+        except (json.JSONDecodeError, TypeError):
+            curriculum_alignment = {}
+
     brain_data = {
         "mastery_levels": template["mastery_levels"],
         "disability_signals": {},
@@ -59,7 +71,7 @@ def clone_brain(db: Session, request: BrainCloneRequest) -> dict:
         "iep_profile": {},
         "sensory_profile": {},
         "active_accommodations": template["active_accommodations"],
-        "curriculum_alignment": {},
+        "curriculum_alignment": curriculum_alignment,
         "active_tutors": template["active_tutors"],
         "functional_curriculum": template.get("functional_curriculum", {}),
         "episodic_memory": [],

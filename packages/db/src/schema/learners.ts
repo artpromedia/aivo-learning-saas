@@ -14,6 +14,13 @@ export const learners = pgTable("learners", {
   functioningLevel: functioningLevelEnum("functioning_level").default("STANDARD"),
   communicationMode: varchar("communication_mode", { length: 50 }),
   diagnoses: jsonb("diagnoses").default([]),
+  zipCode: varchar("zip_code", { length: 20 }),
+  country: varchar("country", { length: 10 }).default("US"),
+  region: varchar("region", { length: 100 }),
+  districtId: varchar("district_id", { length: 100 }),
+  districtName: varchar("district_name", { length: 255 }),
+  curriculumFramework: varchar("curriculum_framework", { length: 100 }),
+  curriculumAlignment: jsonb("curriculum_alignment").default({}),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

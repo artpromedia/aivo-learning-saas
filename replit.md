@@ -24,7 +24,7 @@ services/brain-svc     — Python FastAPI brain clone (port 3002)
 - **Backend (Python)**: FastAPI + SQLAlchemy + Uvicorn
 - **Auth**: JWT RS256 (jose library), refresh tokens, PIN login
 - **Database**: PostgreSQL 16 with JSONB brain states
-- **Styling**: AIVO brand system (purple primary #7C3AED)
+- **Styling**: AIVO brand system (purple primary #7C3AED), game-themed Fredoka + Nunito fonts
 
 ### Key Concepts
 - **14 Tutors**: 7 core (Nova/Math, Sage/ELA, Spark/Science, Chrono/History, Pixel/Coding, Echo/Speech, Harmony/SEL) + 7 expansion
@@ -49,7 +49,8 @@ services/brain-svc     — Python FastAPI brain clone (port 3002)
 - `POST /api/auth/refresh` — Refresh access token
 - `GET /api/users/me` — Current user profile
 - `GET /api/users/learners` — List learners
-- `POST /api/users/learners` — Create learner (with COPPA consent)
+- `POST /api/users/learners` — Create learner (with COPPA consent + curriculum auto-detection)
+- `GET /api/curriculum/lookup?zipCode=&country=` — Lookup curriculum by zip/country
 - `POST /api/assessments/parent` — Parent assessment → functioning level
 - `POST /api/brain/clone` — Clone brain state
 - `GET /api/brain/:learnerId` — Get brain state

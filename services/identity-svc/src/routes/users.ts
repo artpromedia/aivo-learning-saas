@@ -2,6 +2,7 @@ import { FastifyInstance } from "fastify";
 import { users, learners, consentRecords } from "@aivo/db";
 import { verifyJWT } from "@aivo/security";
 import { eq } from "drizzle-orm";
+import { lookupCurriculum } from "../services/curriculum-lookup";
 
 async function authenticate(req: any, reply: any) {
   const auth = req.headers.authorization;
@@ -54,6 +55,9 @@ export async function registerUserRoutes(app: FastifyInstance) {
           gradeLevel: { type: "string" },
           pin: { type: "string", minLength: 4, maxLength: 6 },
           diagnoses: { type: "array", items: { type: "string" } },
+          zipCode: { type: "string" },
+          country: { type: "string" },
+          region: { type: "string" },
         },
       },
     },
@@ -74,6 +78,11 @@ export async function registerUserRoutes(app: FastifyInstance) {
       pin: body.pin,
     }).returning();
 
+    const curriculum = lookupCurriculum({
+      zipCode: body.zipCode,
+      country: body.country,
+    });
+
     const [learner] = await db.insert(learners).values({
       tenantId: user.tenantId,
       userId: learnerUser.id,
@@ -82,6 +91,13 @@ export async function registerUserRoutes(app: FastifyInstance) {
       dateOfBirth: body.dateOfBirth ? new Date(body.dateOfBirth) : undefined,
       gradeLevel: body.gradeLevel,
       diagnoses: body.diagnoses || [],
+      zipCode: body.zipCode,
+      country: body.country || "US",
+      region: body.region,
+      districtId: curriculum.districtId,
+      districtName: curriculum.districtName,
+      curriculumFramework: curriculum.curriculumFramework,
+      curriculumAlignment: curriculum.curriculumAlignment,
     }).returning();
 
     await db.insert(consentRecords).values({

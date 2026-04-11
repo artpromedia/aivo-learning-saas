@@ -19,8 +19,8 @@ export const BRAND = {
     border: "#E2E8F0",
   },
   fonts: {
-    heading: "'Plus Jakarta Sans', sans-serif",
-    body: "'Inter', sans-serif",
+    heading: "'Fredoka', sans-serif",
+    body: "'Nunito', sans-serif",
     mono: "'JetBrains Mono', monospace",
   },
   radii: {

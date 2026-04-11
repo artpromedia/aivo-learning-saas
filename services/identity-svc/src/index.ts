@@ -11,6 +11,7 @@ import { registerAuthRoutes } from "./routes/auth.js";
 import { registerUserRoutes } from "./routes/users.js";
 import { registerHealthRoutes } from "./routes/health.js";
 import { registerConsentRoutes } from "./routes/consent.js";
+import { registerCurriculumRoutes } from "./routes/curriculum.js";
 
 const logger = createLogger("identity-svc");
 const PORT = parseInt(process.env.PORT || "3001", 10);
@@ -68,6 +69,7 @@ async function start() {
   await registerAuthRoutes(app);
   await registerUserRoutes(app);
   await registerConsentRoutes(app);
+  await registerCurriculumRoutes(app);
 
   await app.listen({ port: PORT, host: "0.0.0.0" });
   logger.info(`Identity service listening on port ${PORT}`);
