@@ -55,6 +55,18 @@ services/brain-svc     — Python FastAPI brain clone (port 3002)
 - `GET /api/brain/:learnerId` — Get brain state
 - `POST /api/brain/:learnerId/rollback` — Rollback to snapshot
 
+### GitHub Repository
+- **New repo**: `artpromedia/aivo-ai-learning` (pushed Phase 0+1 — 125 files, 17,627 lines)
+- **Branch**: `main`
+
+### Security
+- Argon2id password hashing (via `argon2` npm package)
+- Refresh tokens stored as SHA-256 hashes in DB
+- PIN login scoped to parent's own learners only
+- Consent revocation requires ownership verification
+- Unique email constraint on users table
+
 ### Environment
 - `DATABASE_URL` — PostgreSQL connection string
 - `JWT_PRIVATE_KEY` / `JWT_PUBLIC_KEY` — RS256 key pair (in .replit userenv)
+- `NEWBUILD` — GitHub PAT for artpromedia/aivo-ai-learning repo

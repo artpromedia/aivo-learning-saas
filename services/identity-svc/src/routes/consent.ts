@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { consentRecords } from "@aivo/db";
+import { consentRecords, learners } from "@aivo/db";
 import { verifyJWT } from "@aivo/security";
 import { eq, and, isNull } from "drizzle-orm";
 
@@ -41,6 +41,12 @@ export async function registerConsentRoutes(app: FastifyInstance) {
     const body = req.body as any;
 
     if (user.role !== "PARENT") throw { statusCode: 403, message: "Only parents can grant consent" };
+
+    const [child] = await db.select().from(learners)
+      .where(and(eq(learners.id, body.childId), eq(learners.parentId, user.sub)))
+      .limit(1);
+
+    if (!child) throw { statusCode: 403, message: "Child does not belong to this parent" };
 
     const [record] = await db.insert(consentRecords).values({
       parentId: user.sub,
