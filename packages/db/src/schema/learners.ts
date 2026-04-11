@@ -1,113 +1,82 @@
-import {
-  pgTable,
-  uuid,
-  varchar,
-  integer,
-  timestamp,
-  index,
-  uniqueIndex,
-} from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
-import { tenants, users } from "./identity";
-import { schoolDistricts } from "./districts";
-import { functioningLevelEnum, communicationModeEnum, userStatusEnum } from "./enums";
+import { pgTable, uuid, varchar, timestamp, integer, jsonb, text } from "drizzle-orm/pg-core";
+import { functioningLevelEnum } from "./enums";
+import { users } from "./users";
+import { tenants } from "./tenants";
 
-// ─── Learners ───────────────────────────────────────────────────────────────────
-export const learners = pgTable(
-  "learners",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-    userId: uuid("user_id")
-      .references(() => users.id, { onDelete: "set null" }),
-    tenantId: uuid("tenant_id")
-      .notNull()
-      .references(() => tenants.id, { onDelete: "cascade" }),
-    parentId: uuid("parent_id")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-    name: varchar("name", { length: 255 }).notNull(),
-    dateOfBirth: timestamp("date_of_birth", { mode: "date" }),
-    enrolledGrade: integer("enrolled_grade"),
-    schoolName: varchar("school_name", { length: 255 }),
-    state: varchar("state", { length: 2 }),
-    zipCode: varchar("zip_code", { length: 10 }),
-    districtId: uuid("district_id")
-      .references(() => schoolDistricts.id, { onDelete: "set null" }),
-    functioningLevel: functioningLevelEnum("functioning_level").notNull().default("STANDARD"),
-    communicationMode: communicationModeEnum("communication_mode").notNull().default("VERBAL"),
-    preferredLanguage: varchar("preferred_language", { length: 10 }).notNull().default("en"),
-    status: userStatusEnum("status").notNull().default("ACTIVE"),
-    /** Hashed 4–6 digit PIN for learner dashboard access */
-    pinHash: varchar("pin_hash", { length: 255 }),
-    pinSetAt: timestamp("pin_set_at", { withTimezone: true }),
-    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
-  },
-  (t) => [
-    index("learners_tenant_id_idx").on(t.tenantId),
-    index("learners_parent_id_idx").on(t.parentId),
-    index("learners_user_id_idx").on(t.userId),
-  ],
-);
+export const learners = pgTable("learners", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  tenantId: uuid("tenant_id").references(() => tenants.id).notNull(),
+  userId: uuid("user_id").references(() => users.id).notNull(),
+  parentId: uuid("parent_id").references(() => users.id).notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  dateOfBirth: timestamp("date_of_birth"),
+  gradeLevel: varchar("grade_level", { length: 20 }),
+  functioningLevel: functioningLevelEnum("functioning_level").default("STANDARD"),
+  communicationMode: varchar("communication_mode", { length: 50 }),
+  diagnoses: jsonb("diagnoses").default([]),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
 
-// ─── Learner Caregivers ─────────────────────────────────────────────────────────
-export const learnerCaregivers = pgTable(
-  "learner_caregivers",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-    learnerId: uuid("learner_id")
-      .notNull()
-      .references(() => learners.id, { onDelete: "cascade" }),
-    caregiverUserId: uuid("caregiver_user_id")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-    relationship: varchar("relationship", { length: 64 }).notNull(),
-    invitedAt: timestamp("invited_at", { withTimezone: true }).notNull().defaultNow(),
-    acceptedAt: timestamp("accepted_at", { withTimezone: true }),
-  },
-  (t) => [
-    uniqueIndex("learner_caregivers_compound_idx").on(t.learnerId, t.caregiverUserId),
-    index("learner_caregivers_learner_id_idx").on(t.learnerId),
-  ],
-);
+export const sensoryProfiles = pgTable("sensory_profiles", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  learnerId: uuid("learner_id").references(() => learners.id).notNull(),
+  visual: varchar("visual", { length: 20 }).default("typical"),
+  auditory: varchar("auditory", { length: 20 }).default("typical"),
+  tactile: varchar("tactile", { length: 20 }).default("typical"),
+  vestibular: varchar("vestibular", { length: 20 }).default("typical"),
+  proprioceptive: varchar("proprioceptive", { length: 20 }).default("typical"),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
 
-// ─── Learner Teachers ───────────────────────────────────────────────────────────
-export const learnerTeachers = pgTable(
-  "learner_teachers",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-    learnerId: uuid("learner_id")
-      .notNull()
-      .references(() => learners.id, { onDelete: "cascade" }),
-    teacherUserId: uuid("teacher_user_id")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-    classroomId: varchar("classroom_id", { length: 128 }),
-    invitedAt: timestamp("invited_at", { withTimezone: true }).notNull().defaultNow(),
-    acceptedAt: timestamp("accepted_at", { withTimezone: true }),
-  },
-  (t) => [
-    uniqueIndex("learner_teachers_compound_idx").on(t.learnerId, t.teacherUserId),
-    index("learner_teachers_learner_id_idx").on(t.learnerId),
-  ],
-);
+export const iepDocuments = pgTable("iep_documents", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  learnerId: uuid("learner_id").references(() => learners.id).notNull(),
+  fileName: varchar("file_name", { length: 255 }).notNull(),
+  fileUrl: text("file_url"),
+  parsedData: jsonb("parsed_data"),
+  status: varchar("status", { length: 20 }).default("uploaded"),
+  uploadedAt: timestamp("uploaded_at").defaultNow().notNull(),
+});
 
-// ─── Relations ──────────────────────────────────────────────────────────────────
-export const learnersRelations = relations(learners, ({ one, many }) => ({
-  tenant: one(tenants, { fields: [learners.tenantId], references: [tenants.id] }),
-  user: one(users, { fields: [learners.userId], references: [users.id], relationName: "learnerUser" }),
-  parent: one(users, { fields: [learners.parentId], references: [users.id], relationName: "learnerParent" }),
-  district: one(schoolDistricts, { fields: [learners.districtId], references: [schoolDistricts.id] }),
-  caregivers: many(learnerCaregivers),
-  teachers: many(learnerTeachers),
-}));
+export const iepProfiles = pgTable("iep_profiles", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  learnerId: uuid("learner_id").references(() => learners.id).notNull(),
+  disabilityCategories: jsonb("disability_categories").default([]),
+  accommodations: jsonb("accommodations").default([]),
+  goals: jsonb("goals").default([]),
+  gradeLevel: varchar("grade_level", { length: 20 }),
+  communicationSystem: varchar("communication_system", { length: 100 }),
+  assistiveTechnology: jsonb("assistive_technology").default([]),
+  recommendedFunctioningLevel: functioningLevelEnum("recommended_functioning_level"),
+  reviewDate: timestamp("review_date"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
 
-export const learnerCaregiversRelations = relations(learnerCaregivers, ({ one }) => ({
-  learner: one(learners, { fields: [learnerCaregivers.learnerId], references: [learners.id] }),
-  caregiver: one(users, { fields: [learnerCaregivers.caregiverUserId], references: [users.id] }),
-}));
+export const iepGoals = pgTable("iep_goals", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  learnerId: uuid("learner_id").references(() => learners.id).notNull(),
+  iepProfileId: uuid("iep_profile_id").references(() => iepProfiles.id),
+  goalText: text("goal_text").notNull(),
+  domain: varchar("domain", { length: 100 }),
+  baseline: varchar("baseline", { length: 255 }),
+  targetCriteria: varchar("target_criteria", { length: 255 }),
+  currentProgress: integer("current_progress").default(0),
+  status: varchar("status", { length: 20 }).default("active"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
 
-export const learnerTeachersRelations = relations(learnerTeachers, ({ one }) => ({
-  learner: one(learners, { fields: [learnerTeachers.learnerId], references: [learners.id] }),
-  teacher: one(users, { fields: [learnerTeachers.teacherUserId], references: [users.id] }),
-}));
+export const learnerFunctioningLevels = pgTable("learner_functioning_levels", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  learnerId: uuid("learner_id").references(() => learners.id).notNull(),
+  level: functioningLevelEnum("level").notNull(),
+  determinedBy: varchar("determined_by", { length: 50 }).notNull(),
+  parentSignals: jsonb("parent_signals").default({}),
+  iepSignals: jsonb("iep_signals").default({}),
+  confidence: integer("confidence").default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});

@@ -1,171 +1,87 @@
 "use client";
-
+import { useAuth } from "@/providers/auth-provider";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { Brain, Palette, BarChart3, Shield, Heart, Sparkles } from "lucide-react";
-import { useTranslations } from "next-intl";
-import { AivoLogo } from "@/components/brand/AivoLogo";
-import { LanguageToggle } from "@/components/ui/LanguageToggle";
 
-export default function LandingPage() {
-  const t = useTranslations("landing");
+const ROLE_DASHBOARDS: Record<string, string> = {
+  PARENT: "/dashboard/parent",
+  LEARNER: "/dashboard/learner",
+  TEACHER: "/dashboard/teacher",
+  CAREGIVER: "/dashboard/caregiver",
+  THERAPIST: "/dashboard/therapist",
+  PLATFORM_ADMIN: "/dashboard/admin",
+  DISTRICT_ADMIN: "/dashboard/admin",
+};
 
-  const features = [
-    { icon: <Brain size={28} />, titleKey: "adaptiveAi", descKey: "adaptiveAiDescription", color: "#7C3AED", bgColor: "#F0E6FF" },
-    { icon: <Palette size={28} />, titleKey: "sensoryFriendly", descKey: "sensoryFriendlyDescription", color: "#2DD4BF", bgColor: "#CCFBF1" },
-    { icon: <BarChart3 size={28} />, titleKey: "progressTracking", descKey: "progressTrackingDescription", color: "#F472B6", bgColor: "#FCE7F3" },
-    { icon: <Shield size={28} />, titleKey: "coppaFerpa", descKey: "coppaFerpaDescription", color: "#38BDF8", bgColor: "#E0F2FE" },
-    { icon: <Heart size={28} />, titleKey: "iepIntegration", descKey: "iepIntegrationDescription", color: "#FF6B6B", bgColor: "#FFE0E0" },
-    { icon: <Sparkles size={28} />, titleKey: "questBasedLearning", descKey: "questBasedLearningDescription", color: "#FBBF24", bgColor: "#FEF3C7" },
-  ];
+export default function Home() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && user) {
+      router.push(ROLE_DASHBOARDS[user.role] || "/dashboard/parent");
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-cyan-50">
+        <div className="animate-pulse">
+          <Image src="/images/aivo-logo-purple.png" alt="AIVO" width={200} height={60} priority />
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <main className="min-h-screen flex flex-col relative bg-bubbles" style={{ backgroundColor: "var(--aivo-bg)" }}>
-      <div className="pointer-events-none fixed inset-0 overflow-hidden z-0" aria-hidden="true">
-        <div className="absolute -top-6 -right-6 w-48 h-48 rounded-full opacity-[0.04] blur-2xl" style={{ background: "linear-gradient(135deg, #7C3AED, #A855F7)" }} />
-        <div className="absolute bottom-[15%] -left-8 w-40 h-40 rounded-full opacity-[0.04] blur-2xl" style={{ background: "linear-gradient(135deg, #2DD4BF, #38BDF8)" }} />
-        <div className="absolute top-[45%] right-[5%] w-28 h-28 rounded-full opacity-[0.03] blur-xl" style={{ background: "linear-gradient(135deg, #F472B6, #FB923C)" }} />
-      </div>
-
-      <nav className="sticky top-0 z-20 px-6 py-3 backdrop-blur-md" style={{ backgroundColor: "rgba(255,251,247,0.8)", borderBottom: "1px solid var(--aivo-border)" }}>
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <AivoLogo size="md" />
-          <div className="flex items-center gap-3">
-            <LanguageToggle />
-            <Link href="/login" className="px-5 py-2.5 text-sm font-bold rounded-2xl transition-colors" style={{ color: "var(--aivo-purple-600)" }}>
-              {t("signIn")}
-            </Link>
-            <Link href="/get-started" className="px-5 py-2.5 text-sm font-bold text-white rounded-2xl transition-all shadow-[0_4px_14px_rgba(124,58,237,0.3)] hover:shadow-[0_6px_20px_rgba(124,58,237,0.4)]" style={{ background: "linear-gradient(135deg, #7C3AED, #A855F7)" }}>
-              {t("getStartedFree")}
-            </Link>
-          </div>
-        </div>
-      </nav>
-
-      <section className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 py-20 text-center overflow-hidden">
-        <div className="absolute top-10 left-10 w-32 h-32 rounded-full opacity-20 animate-float" style={{ background: "linear-gradient(135deg, #7C3AED, #A855F7)" }} />
-        <div className="absolute bottom-20 right-16 w-24 h-24 rounded-full opacity-15 animate-float" style={{ background: "linear-gradient(135deg, #2DD4BF, #38BDF8)", animationDelay: "1s" }} />
-        <div className="absolute top-32 right-1/4 w-16 h-16 rounded-full opacity-10 animate-float" style={{ background: "linear-gradient(135deg, #F472B6, #FB923C)", animationDelay: "2s" }} />
-
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6" style={{ backgroundColor: "var(--aivo-purple-50)" }}>
-          <Sparkles size={16} style={{ color: "var(--aivo-purple-500)" }} />
-          <span className="text-sm font-bold" style={{ color: "var(--aivo-purple-600)" }}>
-            {t("aiPoweredBadge")}
-          </span>
-        </div>
-
-        <h1 className="text-5xl md:text-7xl font-extrabold mb-6 tracking-tight max-w-4xl" style={{ fontFamily: "var(--font-display)", color: "var(--aivo-text)" }}>
-          {t("heroTitle")}{" "}
-          <span style={{ background: "linear-gradient(135deg, #7C3AED, #A855F7, #2DD4BF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-            {t("heroTitleHighlight")}
-          </span>
-        </h1>
-        <p className="text-lg md:text-xl max-w-2xl mb-10 leading-relaxed" style={{ color: "var(--aivo-text-secondary)" }}>
-          {t("heroDescription")}
-        </p>
-
-        <div className="flex flex-col sm:flex-row gap-4">
-          <Link
-            href="/get-started"
-            className="inline-flex items-center justify-center rounded-2xl px-8 py-4 text-lg font-bold text-white transition-all shadow-[0_4px_14px_rgba(124,58,237,0.3)] hover:shadow-[0_8px_30px_rgba(124,58,237,0.4)] hover:scale-105"
-            style={{ background: "linear-gradient(135deg, #7C3AED, #A855F7)" }}
-          >
-            {t("startLearningFree")}
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-cyan-50">
+      <header className="flex items-center justify-between px-8 py-4 border-b border-slate-100">
+        <Image src="/images/aivo-logo-purple.png" alt="AIVO" width={140} height={42} priority />
+        <div className="flex gap-3">
+          <Link href="/login" className="px-5 py-2 rounded-lg text-primary font-medium hover:bg-purple-50 transition">
+            Log In
           </Link>
-          <Link
-            href="/login"
-            className="inline-flex items-center justify-center rounded-2xl border-2 px-8 py-4 text-lg font-bold transition-all hover:scale-105"
-            style={{ borderColor: "var(--aivo-purple-300)", color: "var(--aivo-purple-600)", backgroundColor: "var(--aivo-purple-50)" }}
-          >
-            {t("signIn")}
+          <Link href="/signup" className="px-5 py-2 rounded-lg bg-primary text-white font-medium hover:bg-primary-dark transition">
+            Get Started
           </Link>
         </div>
-      </section>
+      </header>
 
-      <section className="relative z-10 py-20 px-6" style={{ backgroundColor: "var(--aivo-bg-alt)" }}>
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-4" style={{ fontFamily: "var(--font-display)", color: "var(--aivo-text)" }}>
-            {t("builtForEveryLearner")}
-          </h2>
-          <p className="text-center mb-14 text-lg" style={{ color: "var(--aivo-text-secondary)" }}>
-            {t("builtForEveryLearnerSubtitle")}
+      <main className="max-w-6xl mx-auto px-8 py-20">
+        <div className="text-center space-y-8">
+          <h1 className="text-5xl font-heading font-bold text-slate-900 leading-tight">
+            AI-Powered Adaptive Learning
+            <br />
+            <span className="text-primary">for Every Child</span>
+          </h1>
+          <p className="text-xl text-slate-500 max-w-2xl mx-auto">
+            AIVO meets each learner where they are — from standard curriculum to pre-symbolic communication — with 14 specialized AI tutors and a brain-clone architecture that truly adapts.
           </p>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {features.map((f) => (
-              <FeatureCard
-                key={f.titleKey}
-                icon={f.icon}
-                title={t(f.titleKey)}
-                description={t(f.descKey)}
-                color={f.color}
-                bgColor={f.bgColor}
-              />
-            ))}
+          <div className="flex gap-4 justify-center">
+            <Link href="/signup" className="px-8 py-3 rounded-xl bg-primary text-white font-semibold text-lg hover:bg-primary-dark transition shadow-lg shadow-purple-200">
+              Start Free Trial
+            </Link>
+            <Link href="/about" className="px-8 py-3 rounded-xl border-2 border-slate-200 text-slate-700 font-semibold text-lg hover:border-primary hover:text-primary transition">
+              Learn More
+            </Link>
           </div>
         </div>
-      </section>
 
-      <section className="relative z-10 py-20 px-6" style={{ backgroundColor: "var(--aivo-bg)" }}>
-        <div className="max-w-3xl mx-auto text-center">
-          <div className="rounded-3xl p-10 relative overflow-hidden" style={{ background: "linear-gradient(135deg, #7C3AED 0%, #A855F7 50%, #2DD4BF 100%)" }}>
-            <div className="absolute inset-0 opacity-10">
-              <div className="absolute top-4 right-12 w-24 h-24 rounded-full bg-white/20" />
-              <div className="absolute bottom-6 left-8 w-16 h-16 rounded-full bg-white/15" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-24">
+          {[
+            { title: "5 Functioning Levels", desc: "From standard academics to pre-symbolic cause-and-effect — every child has a path.", color: "bg-purple-50 text-primary" },
+            { title: "14 AI Tutors", desc: "Seven core tutors plus seven expansion specialists covering every learning domain.", color: "bg-cyan-50 text-secondary" },
+            { title: "Brain Clone", desc: "An adaptive brain state that evolves with each learner, with versioned snapshots and rollback.", color: "bg-amber-50 text-accent" },
+          ].map((f) => (
+            <div key={f.title} className={`p-8 rounded-2xl ${f.color} space-y-3`}>
+              <h3 className="text-xl font-heading font-bold">{f.title}</h3>
+              <p className="text-slate-600">{f.desc}</p>
             </div>
-            <div className="relative">
-              <h2 className="text-3xl font-extrabold text-white mb-4" style={{ fontFamily: "var(--font-display)" }}>
-                {t("readyToStart")}
-              </h2>
-              <p className="text-white/90 text-lg mb-8">
-                {t("readyToStartDescription")}
-              </p>
-              <Link
-                href="/get-started"
-                className="inline-flex items-center justify-center rounded-2xl px-8 py-4 text-lg font-bold transition-all hover:scale-105"
-                style={{ backgroundColor: "white", color: "#7C3AED" }}
-              >
-                {t("getStartedFree")}
-              </Link>
-            </div>
-          </div>
+          ))}
         </div>
-      </section>
-
-      <footer className="relative z-10 py-8 text-center text-sm font-medium" style={{ color: "var(--aivo-text-muted)" }}>
-        {t("copyright", { year: new Date().getFullYear().toString() })}
-      </footer>
-    </main>
-  );
-}
-
-function FeatureCard({
-  icon,
-  title,
-  description,
-  color,
-  bgColor,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-  color: string;
-  bgColor: string;
-}) {
-  return (
-    <div
-      className="rounded-3xl p-6 transition-all duration-200 hover:shadow-[var(--shadow-hover)] hover:scale-[1.02]"
-      style={{ backgroundColor: "var(--aivo-bg-card)", border: "1px solid var(--aivo-border)" }}
-    >
-      <div
-        className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
-        style={{ backgroundColor: bgColor, color }}
-      >
-        {icon}
-      </div>
-      <h3 className="text-lg font-bold mb-2" style={{ color: "var(--aivo-text)", fontFamily: "var(--font-display)" }}>
-        {title}
-      </h3>
-      <p className="text-sm leading-relaxed" style={{ color: "var(--aivo-text-secondary)" }}>{description}</p>
+      </main>
     </div>
   );
 }

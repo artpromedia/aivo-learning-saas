@@ -1,30 +1,12 @@
 {
   "name": "@aivo/security",
-  "version": "0.1.0",
+  "version": "1.0.0",
+  "private": true,
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    }
-  },
-  "scripts": {
-    "build": "tsup src/index.ts --format esm --dts",
-    "dev": "tsup src/index.ts --format esm --watch"
-  },
+  "main": "src/index.ts",
+  "scripts": { "build": "tsc" },
   "dependencies": {
-    "fastify-plugin": "^5.0.0"
+    "jose": "^6.0.11"
   },
-  "peerDependencies": {
-    "@fastify/cookie": "^10.0.0",
-    "fastify": "^5.0.0"
-  },
-  "devDependencies": {
-    "@types/node": "^25.5.0",
-    "tsup": "^8.5.1",
-    "typescript": "^6.0.2",
-    "vitest": "^4.1.2"
-  }
+  "devDependencies": { "typescript": "^5.7.3" }
 }

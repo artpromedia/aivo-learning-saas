@@ -1,33 +1,21 @@
 import { pgEnum } from "drizzle-orm/pg-core";
 
-// Identity & Tenancy
+export const userRoleEnum = pgEnum("user_role", [
+  "PARENT",
+  "LEARNER",
+  "TEACHER",
+  "CAREGIVER",
+  "THERAPIST",
+  "PLATFORM_ADMIN",
+  "DISTRICT_ADMIN",
+]);
+
 export const tenantTypeEnum = pgEnum("tenant_type", [
   "B2C_FAMILY",
+  "B2B_SCHOOL",
   "B2B_DISTRICT",
 ]);
 
-export const tenantStatusEnum = pgEnum("tenant_status", [
-  "ACTIVE",
-  "SUSPENDED",
-  "CANCELLED",
-]);
-
-export const userRoleEnum = pgEnum("user_role", [
-  "PARENT",
-  "TEACHER",
-  "CAREGIVER",
-  "LEARNER",
-  "DISTRICT_ADMIN",
-  "PLATFORM_ADMIN",
-]);
-
-export const userStatusEnum = pgEnum("user_status", [
-  "ACTIVE",
-  "INVITED",
-  "SUSPENDED",
-]);
-
-// Learner Profiles
 export const functioningLevelEnum = pgEnum("functioning_level", [
   "STANDARD",
   "SUPPORTED",
@@ -36,91 +24,36 @@ export const functioningLevelEnum = pgEnum("functioning_level", [
   "PRE_SYMBOLIC",
 ]);
 
-export const communicationModeEnum = pgEnum("communication_mode", [
-  "VERBAL",
-  "LIMITED_VERBAL",
-  "NON_VERBAL_AAC",
-  "NON_VERBAL_PARTNER",
-  "PRE_INTENTIONAL",
-]);
-
-// Brain
-export const cognitiveLoadEnum = pgEnum("cognitive_load", [
-  "LOW",
-  "MEDIUM",
-  "HIGH",
-]);
-
-export const snapshotTriggerEnum = pgEnum("snapshot_trigger", [
-  "INITIAL_CLONE",
-  "MAIN_BRAIN_UPGRADE",
-  "PARENT_APPROVED",
-  "MASTERY_THRESHOLD",
-  "REBASELINE",
-  "TUTOR_ADDON_ACTIVATED",
-  "TUTOR_ADDON_DEACTIVATED",
-  "FUNCTIONING_LEVEL_CHANGE",
-  "IEP_UPDATE",
-  "ROLLBACK",
-]);
-
-// IEP
-export const iepParseStatusEnum = pgEnum("iep_parse_status", [
-  "PENDING",
-  "PARSING",
-  "PARSED",
-  "CONFIRMED",
-  "FAILED",
-  "PENDING_TEACHER_UPLOAD",
-]);
-
-export const iepGoalStatusEnum = pgEnum("iep_goal_status", [
-  "ACTIVE",
-  "MET",
-  "DEFERRED",
-]);
-
-// Parent Assessment Type (determined by routing algorithm)
-export const parentAssessmentTypeEnum = pgEnum("parent_assessment_type", [
-  "STANDARD",
-  "STANDARD_WITH_ACCOMMODATIONS",
-  "MODIFIED",
-  "ALTERNATE",
-]);
-
-// Assessment
 export const assessmentModeEnum = pgEnum("assessment_mode", [
   "STANDARD",
   "MODIFIED",
   "PICTURE_BASED",
   "SWITCH_SCAN",
-  "EYE_GAZE",
   "PARTNER_ASSISTED",
   "OBSERVATIONAL",
 ]);
 
 export const assessmentStatusEnum = pgEnum("assessment_status", [
+  "NOT_STARTED",
   "IN_PROGRESS",
   "COMPLETED",
-  "ABANDONED",
+  "EXPIRED",
 ]);
 
-// Recommendations
 export const recommendationTypeEnum = pgEnum("recommendation_type", [
-  "CURRICULUM_ADJUSTMENT",
-  "ACCOMMODATION_CHANGE",
-  "FUNCTIONING_LEVEL_CHANGE",
-  "TUTOR_ADDON",
-  "IEP_GOAL_UPDATE",
-  "ENGAGEMENT_BOOST",
-  "PARENT_MEDIATED_ACTIVITY",
-  "ASSESSMENT_REBASELINE",
-  "DIFFICULTY_ADJUSTMENT",
-  "MODALITY_SWITCH",
-  "BREAK_SUGGESTION",
-  "CELEBRATION",
-  "REGRESSION_ALERT",
-  "TEACHER_INSIGHT",
+  "brain_profile_review",
+  "path_adjustment",
+  "accommodation_add",
+  "accommodation_remove",
+  "goal_suggestion",
+  "curriculum_shift",
+  "rebaseline",
+  "brain_upgrade",
+  "regression_alert",
+  "tutor_suggestion",
+  "functioning_level_change",
+  "iep_goal_met",
+  "iep_refresh",
 ]);
 
 export const recommendationStatusEnum = pgEnum("recommendation_status", [
@@ -130,110 +63,26 @@ export const recommendationStatusEnum = pgEnum("recommendation_status", [
   "ADJUSTED",
 ]);
 
-// Tutor
-export const tutorSkuEnum = pgEnum("tutor_sku", [
-  "ADDON_TUTOR_MATH",
-  "ADDON_TUTOR_ELA",
-  "ADDON_TUTOR_SCIENCE",
-  "ADDON_TUTOR_HISTORY",
-  "ADDON_TUTOR_CODING",
-  "ADDON_TUTOR_SEL",
-  "ADDON_TUTOR_SPEECH",
-  "ADDON_TUTOR_BUNDLE",
-]);
-
-export const tutorSubscriptionStatusEnum = pgEnum("tutor_subscription_status", [
-  "ACTIVE",
-  "GRACE_PERIOD",
-  "CANCELLED",
-  "EXPIRED",
-]);
-
-export const tutorSessionTypeEnum = pgEnum("tutor_session_type", [
-  "LESSON",
-  "REVIEW",
-  "PRACTICE",
-]);
-
-// Homework
-export const homeworkModeEnum = pgEnum("homework_mode", [
-  "PRACTICE",
-  "MODIFIED",
-  "PARENT_MEDIATED",
-  "PARENT_GUIDE",
-]);
-
-export const homeworkStatusEnum = pgEnum("homework_status", [
-  "PROCESSING",
-  "READY",
-  "IN_PROGRESS",
-  "COMPLETED",
-  "FAILED",
-]);
-
-// Learning
-export const learningSessionTypeEnum = pgEnum("learning_session_type", [
-  "LESSON",
-  "QUIZ",
-  "READING",
-  "WRITING",
-  "TUTOR",
-  "HOMEWORK",
-]);
-
-// Billing
-export const subscriptionStatusEnum = pgEnum("subscription_status", [
-  "ACTIVE",
-  "TRIALING",
-  "PAST_DUE",
-  "CANCELLED",
-  "GRACE_PERIOD",
-  "EXPIRED",
-  "SUSPENDED",
-]);
-
-// Engagement
-export const questStatusEnum = pgEnum("quest_status", [
-  "ACTIVE",
-  "COMPLETED",
-  "ABANDONED",
+export const snapshotTriggerEnum = pgEnum("snapshot_trigger", [
+  "initial_clone",
+  "parent_approved",
+  "mastery_threshold",
+  "rebaseline",
+  "main_brain_upgrade",
+  "tutor_addon_activated",
+  "tutor_addon_deactivated",
 ]);
 
 export const milestoneStatusEnum = pgEnum("milestone_status", [
-  "NOT_STARTED",
-  "EMERGING",
-  "DEVELOPING",
-  "ACHIEVED",
+  "not_started",
+  "emerging",
+  "developing",
+  "achieved",
 ]);
 
-export const functionalDomainEnum = pgEnum("functional_domain", [
-  "COMMUNICATION",
-  "SELF_CARE",
-  "SOCIAL_EMOTIONAL",
-  "PRE_ACADEMIC",
-  "MOTOR_SENSORY",
-]);
-
-// Curriculum Framework
-export const curriculumFrameworkEnum = pgEnum("curriculum_framework", [
-  "COMMON_CORE",
-  "TEKS",
-  "NGSS",
-  "BEST",
-  "NYSLS",
-  "SOL",
-  "CCAS",
-  "STATE_SPECIFIC",
-]);
-
-// i18n
-export const localeDirectionEnum = pgEnum("locale_direction", [
-  "LTR",
-  "RTL",
-]);
-
-export const translationExportFormatEnum = pgEnum("translation_export_format", [
-  "JSON",
-  "ARB",
-  "ICU",
+export const subscriptionStatusEnum = pgEnum("subscription_status", [
+  "ACTIVE",
+  "PAST_DUE",
+  "CANCELLED",
+  "TRIALING",
 ]);

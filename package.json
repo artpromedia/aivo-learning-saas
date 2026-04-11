@@ -1,39 +1,20 @@
 {
-  "name": "aivo-learning-saas",
+  "name": "aivo-ai-learning",
   "private": true,
-  "packageManager": "pnpm@10.6.5",
-  "engines": {
-    "node": ">=22",
-    "pnpm": ">=10"
-  },
   "scripts": {
+    "dev": "turbo dev",
     "build": "turbo build",
-    "build:all": "pnpm --filter @aivo/brand build && pnpm --filter @aivo/ui build && pnpm --filter @aivo/marketing build",
     "lint": "turbo lint",
-    "lint:all": "eslint .",
-    "type-check:all": "pnpm -r --filter './packages/*' type-check",
     "test": "turbo test",
-    "test:all": "pnpm -r --filter './packages/*' --filter './services/*' --filter './apps/marketing' test",
-    "dev": "turbo dev --concurrency=25",
-    "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "db:push": "pnpm --filter @aivo/db db:push",
+    "db:seed": "pnpm --filter @aivo/db db:seed"
   },
   "devDependencies": {
-    "@eslint/js": "^9.0.0",
-    "eslint": "^9.0.0",
-    "prettier": "^3.4.0",
-    "turbo": "^2.4.0",
-    "typescript": "~5.7.3",
-    "typescript-eslint": "^8.0.0"
+    "turbo": "^2.5.0",
+    "typescript": "^5.7.3"
   },
-  "pnpm": {
-    "overrides": {
-      "drizzle-orm": "0.44.2",
-      "fastify": "5.8.4",
-      "postgres": "3.4.5"
-    },
-    "onlyBuiltDependencies": [
-      "esbuild"
-    ]
+  "packageManager": "pnpm@10.6.5",
+  "engines": {
+    "node": ">=22"
   }
 }

@@ -1,114 +1,96 @@
-"""Brain state routes — CRUD for learner brain states."""
-
-from __future__ import annotations
-
-from typing import Any
-
+import uuid
+import json
+from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel, Field
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
+from sqlalchemy import text
+from brain_svc.models.database import get_db
+from brain_svc.models.schemas import BrainCloneRequest, BrainRollbackRequest
+from brain_svc.services.clone_pipeline import clone_brain
 
-from brain_svc.db import get_session
-from brain_svc.middleware.auth import require_auth
-from brain_svc.utils.json_coerce import ensure_dict, ensure_list
-from brain_svc.services.brain_state import (
-    delete_brain_state,
-    get_brain_state,
-    get_brain_state_by_id,
-    update_brain_state,
-)
+router = APIRouter()
 
-router = APIRouter(prefix="/brain", tags=["brain"])
+@router.post("/clone")
+async def clone_brain_endpoint(request: BrainCloneRequest, db: Session = Depends(get_db)):
+    result = clone_brain(db, request)
+    return result
 
+@router.get("/{learner_id}")
+async def get_brain_state(learner_id: str, db: Session = Depends(get_db)):
+    result = db.execute(
+        text("SELECT * FROM brain_states WHERE learner_id = :lid ORDER BY version DESC LIMIT 1"),
+        {"lid": learner_id}
+    ).mappings().first()
 
-class BrainStateResponse(BaseModel):
-    id: str
-    learner_id: str
-    main_brain_version: str | None = None
-    seed_version: str | None = None
-    state: dict[str, Any] = Field(default_factory=dict)
-    functioning_level_profile: dict[str, Any] | None = None
-    iep_profile: dict[str, Any] | None = None
-    active_tutors: list[dict[str, Any]] | None = None
-    delivery_levels: dict[str, Any] | None = None
-    preferred_modality: str | None = None
-    attention_span_minutes: int | None = None
-    cognitive_load: str | None = None
+    if not result:
+        raise HTTPException(status_code=404, detail="Brain state not found")
 
-    model_config = {"from_attributes": True}
+    return dict(result)
 
+@router.get("/{learner_id}/history")
+async def get_brain_history(learner_id: str, db: Session = Depends(get_db)):
+    results = db.execute(
+        text("SELECT * FROM brain_state_snapshots WHERE learner_id = :lid ORDER BY version DESC"),
+        {"lid": learner_id}
+    ).mappings().all()
+    return [dict(r) for r in results]
 
-class BrainStateUpdateRequest(BaseModel):
-    state: dict[str, Any] | None = None
-    preferred_modality: str | None = None
-    attention_span_minutes: int | None = None
-    cognitive_load: str | None = None
+@router.post("/{learner_id}/rollback")
+async def rollback_brain(learner_id: str, request: BrainRollbackRequest, db: Session = Depends(get_db)):
+    snapshot = db.execute(
+        text("SELECT * FROM brain_state_snapshots WHERE id = :sid AND learner_id = :lid"),
+        {"sid": request.snapshot_id, "lid": learner_id}
+    ).mappings().first()
 
+    if not snapshot:
+        raise HTTPException(status_code=404, detail="Snapshot not found")
 
-def _to_response(bs) -> BrainStateResponse:
-    return BrainStateResponse(
-        id=str(bs.id),
-        learner_id=str(bs.learner_id),
-        main_brain_version=bs.main_brain_version,
-        seed_version=bs.seed_version,
-        state=ensure_dict(bs.state),
-        functioning_level_profile=ensure_dict(bs.functioning_level_profile, default=None),
-        iep_profile=ensure_dict(bs.iep_profile, default=None),
-        active_tutors=ensure_list(bs.active_tutors),
-        delivery_levels=ensure_dict(bs.delivery_levels, default=None),
-        preferred_modality=bs.preferred_modality,
-        attention_span_minutes=bs.attention_span_minutes,
-        cognitive_load=bs.cognitive_load,
+    snapshot_data = snapshot["snapshot"]
+    if isinstance(snapshot_data, str):
+        snapshot_data = json.loads(snapshot_data)
+
+    current = db.execute(
+        text("SELECT * FROM brain_states WHERE learner_id = :lid ORDER BY version DESC LIMIT 1"),
+        {"lid": learner_id}
+    ).mappings().first()
+
+    new_version = (current["version"] if current else 0) + 1
+
+    db.execute(
+        text("""UPDATE brain_states SET
+            mastery_levels = :ml, disability_signals = :ds, functioning_level_profile = :flp,
+            iep_profile = :ip, sensory_profile = :sp, active_accommodations = :aa,
+            active_tutors = :at, version = :v, updated_at = :now
+            WHERE learner_id = :lid AND id = :bsid"""),
+        {
+            "ml": json.dumps(snapshot_data.get("mastery_levels", {})),
+            "ds": json.dumps(snapshot_data.get("disability_signals", {})),
+            "flp": json.dumps(snapshot_data.get("functioning_level_profile", {})),
+            "ip": json.dumps(snapshot_data.get("iep_profile", {})),
+            "sp": json.dumps(snapshot_data.get("sensory_profile", {})),
+            "aa": json.dumps(snapshot_data.get("active_accommodations", [])),
+            "at": json.dumps(snapshot_data.get("active_tutors", [])),
+            "v": new_version,
+            "now": datetime.utcnow(),
+            "lid": learner_id,
+            "bsid": current["id"] if current else None,
+        }
     )
 
+    new_snap_id = str(uuid.uuid4())
+    db.execute(
+        text("""INSERT INTO brain_state_snapshots
+            (id, brain_state_id, learner_id, version, trigger, snapshot, created_at)
+            VALUES (:id, :bsid, :lid, :v, 'rebaseline', :snap, :now)"""),
+        {
+            "id": new_snap_id,
+            "bsid": current["id"] if current else None,
+            "lid": learner_id,
+            "v": new_version,
+            "snap": json.dumps(snapshot_data),
+            "now": datetime.utcnow(),
+        }
+    )
 
-@router.get("/learner/{learner_id}", response_model=BrainStateResponse)
-async def get_learner_brain(
-    learner_id: str,
-    _claims: dict = Depends(require_auth),
-):
-    async with get_session() as session:
-        bs = await get_brain_state(session, learner_id)
-        if not bs:
-            raise HTTPException(status_code=404, detail="Brain state not found")
-        return _to_response(bs)
-
-
-@router.get("/{brain_state_id}", response_model=BrainStateResponse)
-async def get_brain_by_id(
-    brain_state_id: str,
-    _claims: dict = Depends(require_auth),
-):
-    async with get_session() as session:
-        bs = await get_brain_state_by_id(session, brain_state_id)
-        if not bs:
-            raise HTTPException(status_code=404, detail="Brain state not found")
-        return _to_response(bs)
-
-
-@router.patch("/{brain_state_id}", response_model=BrainStateResponse)
-async def patch_brain_state(
-    brain_state_id: str,
-    body: BrainStateUpdateRequest,
-    _claims: dict = Depends(require_auth),
-):
-    async with get_session() as session:
-        bs = await get_brain_state_by_id(session, brain_state_id)
-        if not bs:
-            raise HTTPException(status_code=404, detail="Brain state not found")
-        updates = body.model_dump(exclude_none=True)
-        if updates:
-            bs = await update_brain_state(session, bs, updates)
-        return _to_response(bs)
-
-
-@router.delete("/{brain_state_id}", status_code=204)
-async def remove_brain_state(
-    brain_state_id: str,
-    _claims: dict = Depends(require_auth),
-):
-    async with get_session() as session:
-        bs = await get_brain_state_by_id(session, brain_state_id)
-        if not bs:
-            raise HTTPException(status_code=404, detail="Brain state not found")
-        await delete_brain_state(session, bs)
+    db.commit()
+    return {"status": "rolled_back", "version": new_version, "snapshot_id": new_snap_id}

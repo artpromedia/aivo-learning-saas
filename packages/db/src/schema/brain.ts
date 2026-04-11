@@ -1,93 +1,87 @@
-import {
-  pgTable,
-  uuid,
-  varchar,
-  integer,
-  timestamp,
-  jsonb,
-  index,
-  uniqueIndex,
-} from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
+import { pgTable, uuid, varchar, timestamp, jsonb, text, integer, real } from "drizzle-orm/pg-core";
+import { snapshotTriggerEnum, recommendationTypeEnum, recommendationStatusEnum, milestoneStatusEnum } from "./enums";
 import { learners } from "./learners";
-import { cognitiveLoadEnum, snapshotTriggerEnum } from "./enums";
+import { tenants } from "./tenants";
 
-// ─── Brain States ───────────────────────────────────────────────────────────────
-export const brainStates = pgTable(
-  "brain_states",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-    learnerId: uuid("learner_id")
-      .notNull()
-      .references(() => learners.id, { onDelete: "cascade" }),
-    mainBrainVersion: varchar("main_brain_version", { length: 64 }),
-    seedVersion: varchar("seed_version", { length: 64 }),
-    state: jsonb("state").notNull().default({}),
-    functioningLevelProfile: jsonb("functioning_level_profile").default({}),
-    iepProfile: jsonb("iep_profile").default({}),
-    activeTutors: jsonb("active_tutors").default([]),
-    deliveryLevels: jsonb("delivery_levels").default({}),
-    preferredModality: varchar("preferred_modality", { length: 64 }),
-    attentionSpanMinutes: integer("attention_span_minutes"),
-    cognitiveLoad: cognitiveLoadEnum("cognitive_load").default("MEDIUM"),
-    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
-  },
-  (t) => [
-    uniqueIndex("brain_states_learner_id_idx").on(t.learnerId),
-  ],
-);
+export const brainSeedTemplates = pgTable("brain_seed_templates", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  gradeBand: varchar("grade_band", { length: 50 }).notNull(),
+  functioningLevel: varchar("functioning_level", { length: 50 }).notNull(),
+  template: jsonb("template").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
 
-// ─── Brain State Snapshots ──────────────────────────────────────────────────────
-export const brainStateSnapshots = pgTable(
-  "brain_state_snapshots",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-    brainStateId: uuid("brain_state_id")
-      .notNull()
-      .references(() => brainStates.id, { onDelete: "cascade" }),
-    snapshot: jsonb("snapshot").notNull(),
-    trigger: snapshotTriggerEnum("trigger").notNull(),
-    triggerMetadata: jsonb("trigger_metadata").default({}),
-    versionNumber: integer("version_number").notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-  },
-  (t) => [
-    index("brain_snapshots_brain_state_id_idx").on(t.brainStateId),
-    index("brain_snapshots_created_at_idx").on(t.createdAt),
-  ],
-);
+export const brainStates = pgTable("brain_states", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  tenantId: uuid("tenant_id").references(() => tenants.id).notNull(),
+  learnerId: uuid("learner_id").references(() => learners.id).notNull(),
+  masteryLevels: jsonb("mastery_levels").default({}),
+  disabilitySignals: jsonb("disability_signals").default({}),
+  functioningLevelProfile: jsonb("functioning_level_profile").default({}),
+  iepProfile: jsonb("iep_profile").default({}),
+  sensoryProfile: jsonb("sensory_profile").default({}),
+  activeAccommodations: jsonb("active_accommodations").default([]),
+  curriculumAlignment: jsonb("curriculum_alignment").default({}),
+  activeTutors: jsonb("active_tutors").default([]),
+  functionalCurriculum: jsonb("functional_curriculum").default({}),
+  episodicMemory: jsonb("episodic_memory").default([]),
+  version: integer("version").default(1),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
 
-// ─── Brain Episodes ─────────────────────────────────────────────────────────────
-export const brainEpisodes = pgTable(
-  "brain_episodes",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-    brainStateId: uuid("brain_state_id")
-      .notNull()
-      .references(() => brainStates.id, { onDelete: "cascade" }),
-    eventType: varchar("event_type", { length: 128 }).notNull(),
-    payload: jsonb("payload").notNull().default({}),
-    sessionId: uuid("session_id"),
-    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-  },
-  (t) => [
-    index("brain_episodes_brain_state_id_created_at_idx").on(t.brainStateId, t.createdAt),
-    index("brain_episodes_session_id_idx").on(t.sessionId),
-  ],
-);
+export const brainStateSnapshots = pgTable("brain_state_snapshots", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  brainStateId: uuid("brain_state_id").references(() => brainStates.id).notNull(),
+  learnerId: uuid("learner_id").references(() => learners.id).notNull(),
+  version: integer("version").notNull(),
+  trigger: snapshotTriggerEnum("trigger").notNull(),
+  snapshot: jsonb("snapshot").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
 
-// ─── Relations ──────────────────────────────────────────────────────────────────
-export const brainStatesRelations = relations(brainStates, ({ one, many }) => ({
-  learner: one(learners, { fields: [brainStates.learnerId], references: [learners.id] }),
-  snapshots: many(brainStateSnapshots),
-  episodes: many(brainEpisodes),
-}));
+export const brainRecommendations = pgTable("brain_recommendations", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  tenantId: uuid("tenant_id").references(() => tenants.id).notNull(),
+  learnerId: uuid("learner_id").references(() => learners.id).notNull(),
+  type: recommendationTypeEnum("type").notNull(),
+  status: recommendationStatusEnum("status").default("PENDING"),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  payload: jsonb("payload").default({}),
+  parentNotes: text("parent_notes"),
+  resolvedAt: timestamp("resolved_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
 
-export const brainStateSnapshotsRelations = relations(brainStateSnapshots, ({ one }) => ({
-  brainState: one(brainStates, { fields: [brainStateSnapshots.brainStateId], references: [brainStates.id] }),
-}));
+export const brainInsights = pgTable("brain_insights", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  learnerId: uuid("learner_id").references(() => learners.id).notNull(),
+  source: varchar("source", { length: 50 }).notNull(),
+  sourceUserId: uuid("source_user_id"),
+  insightText: text("insight_text").notNull(),
+  domain: varchar("domain", { length: 100 }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
 
-export const brainEpisodesRelations = relations(brainEpisodes, ({ one }) => ({
-  brainState: one(brainStates, { fields: [brainEpisodes.brainStateId], references: [brainStates.id] }),
-}));
+export const functionalMilestones = pgTable("functional_milestones", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  learnerId: uuid("learner_id").references(() => learners.id).notNull(),
+  domain: varchar("domain", { length: 100 }).notNull(),
+  milestone: varchar("milestone", { length: 255 }).notNull(),
+  status: milestoneStatusEnum("status").default("not_started"),
+  evidenceNotes: text("evidence_notes"),
+  achievedAt: timestamp("achieved_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const parentReportedEvents = pgTable("parent_reported_events", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  learnerId: uuid("learner_id").references(() => learners.id).notNull(),
+  eventType: varchar("event_type", { length: 100 }).notNull(),
+  description: text("description"),
+  occurredAt: timestamp("occurred_at").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});

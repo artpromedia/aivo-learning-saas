@@ -1,127 +1,13 @@
 @import "tailwindcss";
 
-:root {
-  --aivo-purple-50: #F0E6FF;
-  --aivo-purple-100: #E0CCFF;
-  --aivo-purple-200: #C9A6FF;
-  --aivo-purple-300: #B080FF;
-  --aivo-purple-400: #9B5FFF;
-  --aivo-purple-500: #7C3AED;
-  --aivo-purple-600: #6D28D9;
-  --aivo-purple-700: #5B21B6;
-  --aivo-purple-800: #4C1D95;
-  --aivo-purple-900: #3B1080;
-
-  --aivo-coral: #FF6B6B;
-  --aivo-coral-light: #FFE0E0;
-  --aivo-teal: #2DD4BF;
-  --aivo-teal-light: #CCFBF1;
-  --aivo-sunny: #FBBF24;
-  --aivo-sunny-light: #FEF3C7;
-  --aivo-sky: #38BDF8;
-  --aivo-sky-light: #E0F2FE;
-  --aivo-mint: #34D399;
-  --aivo-mint-light: #D1FAE5;
-  --aivo-pink: #F472B6;
-  --aivo-pink-light: #FCE7F3;
-  --aivo-orange: #FB923C;
-  --aivo-orange-light: #FFF7ED;
-
-  --aivo-cta: #7C3AED;
-  --aivo-cta-hover: #6D28D9;
-  --aivo-bg: #FFFBF7;
-  --aivo-bg-alt: #FFF5EB;
-  --aivo-bg-card: #FFFFFF;
-  --aivo-text: #2D1B4E;
-  --aivo-text-secondary: #6B5B7B;
-  --aivo-text-muted: #A89BB5;
-  --aivo-success: #34D399;
-  --aivo-warning: #FBBF24;
-  --aivo-error: #F87171;
-  --aivo-border: #E8DDF0;
-
-  --font-display: 'Nunito', 'Segoe UI', sans-serif;
-  --font-body: 'Nunito', 'Inter', 'Segoe UI', sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
-
-  --radius-soft: 1rem;
-  --radius-round: 1.5rem;
-  --radius-pill: 9999px;
-
-  --shadow-soft: 0 4px 20px rgba(124, 58, 237, 0.08);
-  --shadow-card: 0 2px 12px rgba(124, 58, 237, 0.06), 0 0 0 1px rgba(124, 58, 237, 0.04);
-  --shadow-hover: 0 8px 30px rgba(124, 58, 237, 0.12);
-  --shadow-playful: 0 6px 24px rgba(124, 58, 237, 0.15);
-}
-
-.dark {
-  --aivo-bg: #1A1030;
-  --aivo-bg-alt: #231740;
-  --aivo-bg-card: #2A1E45;
-  --aivo-text: #F0E6FF;
-  --aivo-text-secondary: #B8A5D0;
-  --aivo-text-muted: #7B6A94;
-  --aivo-border: #3D2D5C;
-}
-
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
-
-body {
-  font-family: var(--font-body);
-  background-color: var(--aivo-bg);
-  color: var(--aivo-text);
-}
-
-::selection {
-  background-color: var(--aivo-purple-200);
-  color: var(--aivo-purple-900);
-}
-
-input:focus, select:focus, textarea:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-}
-
-@keyframes wiggle {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(-3deg); }
-  75% { transform: rotate(3deg); }
-}
-
-@keyframes pop-in {
-  0% { transform: scale(0.8); opacity: 0; }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-.animate-float { animation: float 3s ease-in-out infinite; }
-.animate-wiggle { animation: wiggle 1s ease-in-out; }
-.animate-pop-in { animation: pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-
-.bg-shimmer {
-  background: linear-gradient(90deg, var(--aivo-purple-50) 25%, var(--aivo-purple-100) 50%, var(--aivo-purple-50) 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-}
-
-.bg-dots {
-  background-image: radial-gradient(circle, var(--aivo-purple-200) 1px, transparent 1px);
-  background-size: 24px 24px;
-}
-
-.bg-bubbles {
-  background-image:
-    radial-gradient(circle at 20% 50%, rgba(124, 58, 237, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(45, 212, 191, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 60% 80%, rgba(251, 191, 36, 0.05) 0%, transparent 50%);
+@theme {
+  --color-primary: #7C3AED;
+  --color-primary-light: #A78BFA;
+  --color-primary-dark: #5B21B6;
+  --color-secondary: #06B6D4;
+  --color-accent: #F59E0B;
+  --color-surface: #F8FAFC;
+  --color-surface-hover: #F1F5F9;
+  --font-heading: 'Plus Jakarta Sans', sans-serif;
+  --font-body: 'Inter', sans-serif;
 }

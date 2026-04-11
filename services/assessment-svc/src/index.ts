@@ -1,134 +1,45 @@
 import Fastify from "fastify";
-import cookie from "@fastify/cookie";
-import multipart from "@fastify/multipart";
+import cors from "@fastify/cors";
 import swagger from "@fastify/swagger";
-import swaggerUi from "@fastify/swagger-ui";
-import { ZodError } from "zod";
-import { loadConfig } from "./config.js";
-import { observabilityPlugin } from "@aivo/observability";
+import swaggerUI from "@fastify/swagger-ui";
+import { createLogger } from "@aivo/observability";
+import { createDb } from "@aivo/db";
+import { registerHealthRoutes } from "./routes/health.js";
+import { registerParentAssessmentRoutes } from "./routes/parent-assessment.js";
+import { registerAssessmentRoutes } from "./routes/assessments.js";
+import { registerIepRoutes } from "./routes/iep.js";
 
-// Plugins
-import dbPlugin from "./plugins/db.js";
-import natsPlugin from "./plugins/nats.js";
-import redisPlugin from "./plugins/redis.js";
-import aiClientPlugin from "./plugins/ai-client.js";
+const logger = createLogger("assessment-svc");
+const PORT = parseInt(process.env.ASSESSMENT_PORT || "3003", 10);
 
-// Routes — Health
-import { healthRoutes } from "./routes/health.js";
+async function start() {
+  const db = createDb(process.env.DATABASE_URL!);
+  const app = Fastify({ logger: false });
 
-// Routes — Parent Assessment
-import { parentAssessmentRoute } from "./routes/parent/submit.js";
-import { parentQuestionsRoute } from "./routes/parent/questions.js";
-
-// Routes — IEP
-import { iepUploadRoute } from "./routes/iep/upload.js";
-import { iepStatusRoute } from "./routes/iep/status.js";
-import { iepConfirmRoute } from "./routes/iep/confirm.js";
-
-// Routes — Baseline
-import { baselineStartRoute } from "./routes/baseline/start.js";
-import { baselineAnswerRoute } from "./routes/baseline/answer.js";
-import { baselineCompleteRoute } from "./routes/baseline/complete.js";
-import { baselineStatusRoute } from "./routes/baseline/status.js";
-
-// Subscribers
-import { setupSubscribers } from "./subscribers/iep-parse.js";
-
-export async function buildApp() {
-  const config = loadConfig();
-
-  const app = Fastify({
-    logger: {
-      level: config.NODE_ENV === "production" ? "info" : "debug",
-    },
-  });
-
+  await app.register(cors, { origin: true, credentials: true });
   await app.register(swagger, {
     openapi: {
-      info: { title: "Assessment Service", version: "1.0.0", description: "Assessment and IEP processing service" },
-      servers: [{ url: `http://localhost:${config.PORT}` }],
+      info: { title: "AIVO Assessment Service", version: "1.0.0" },
+      servers: [{ url: `http://localhost:${PORT}` }],
+      components: {
+        securitySchemes: { bearerAuth: { type: "http", scheme: "bearer", bearerFormat: "JWT" } },
+      },
     },
   });
-  await app.register(swaggerUi, { routePrefix: "/docs" });
+  await app.register(swaggerUI, { routePrefix: "/docs" });
 
-  // Error handler
-  app.setErrorHandler((error, request, reply) => {
-    if (error instanceof ZodError || error.name === "ZodError") {
-      const zodErrors = (error as ZodError).errors;
-      app.log.warn({ body: request.body, zodErrors }, "Validation error");
-      return reply.status(400).send({
-        error: "Validation error",
-        details: zodErrors.map((e) => ({
-          path: e.path.join("."),
-          message: e.message,
-        })),
-      });
-    }
+  app.decorate("db", db);
 
-    const statusCode = (error as { statusCode?: number }).statusCode ?? 500;
-    app.log.warn({ err: error.message, statusCode, url: request.url, method: request.method, body: request.body }, "Request error");
-    return reply.status(statusCode).send({
-      error: statusCode >= 500 ? "Internal server error" : (error as Error).message,
-    });
-  });
+  await registerHealthRoutes(app);
+  await registerParentAssessmentRoutes(app);
+  await registerAssessmentRoutes(app);
+  await registerIepRoutes(app);
 
-  // Multipart support for file uploads
-  await app.register(multipart, {
-    limits: {
-      fileSize: 20 * 1024 * 1024, // 20MB
-    },
-  });
-
-  // Infrastructure plugins
-  await app.register(dbPlugin);
-  await app.register(natsPlugin);
-  await app.register(redisPlugin);
-  await app.register(aiClientPlugin);
-
-  await app.register(observabilityPlugin, {
-    serviceName: 'assessment-svc',
-    environment: config.NODE_ENV,
-    sentryDsn: process.env.SENTRY_DSN,
-  });
-
-  // Cookie parsing (required for auth)
-  await app.register(cookie);
-
-  // Health
-  await app.register(healthRoutes);
-
-  // Parent assessment
-  await app.register(parentAssessmentRoute);
-  await app.register(parentQuestionsRoute);
-
-  // IEP routes
-  await app.register(iepUploadRoute);
-  await app.register(iepStatusRoute);
-  await app.register(iepConfirmRoute);
-
-  // Baseline assessment routes
-  await app.register(baselineStartRoute);
-  await app.register(baselineAnswerRoute);
-  await app.register(baselineCompleteRoute);
-  await app.register(baselineStatusRoute);
-
-  // NATS subscribers
-  try {
-    await setupSubscribers(app);
-  } catch {
-    app.log.warn("NATS subscribers could not be set up");
-  }
-
-  return app;
+  await app.listen({ port: PORT, host: "0.0.0.0" });
+  logger.info(`Assessment service listening on port ${PORT}`);
 }
 
-const config = loadConfig();
-const app = await buildApp();
-
-try {
-  await app.listen({ port: config.PORT, host: "0.0.0.0" });
-  app.log.info(`assessment-svc listening on port ${config.PORT}`);
-} catch (err) {
-  app.log.error(err);
+start().catch((err) => {
+  logger.error(err, "Failed to start assessment-svc");
   process.exit(1);
-}
+});

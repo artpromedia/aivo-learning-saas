@@ -1,15 +1,7 @@
-"""Health check route."""
-
 from fastapi import APIRouter
 
-router = APIRouter(tags=["health"])
-
+router = APIRouter()
 
 @router.get("/health")
-async def health_check():
-    return {"status": "ok", "service": "brain-svc"}
-
-
-@router.get("/ready")
-async def readiness_check():
-    return {"status": "ready"}
+async def health():
+    return {"status": "healthy", "service": "brain-svc"}

@@ -1,37 +1,13 @@
 {
   "name": "@aivo/brand",
-  "version": "0.0.1",
+  "version": "1.0.0",
+  "private": true,
   "type": "module",
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    },
-    "./tokens": {
-      "import": "./dist/tokens.js",
-      "types": "./dist/tokens.d.ts"
-    },
-    "./tailwind-theme.css": "./src/tailwind-theme.css",
-    "./email": {
-      "import": "./dist/email.js",
-      "types": "./dist/email.d.ts"
-    },
-    "./flutter": {
-      "import": "./dist/flutter.js",
-      "types": "./dist/flutter.d.ts"
-    }
-  },
-  "files": ["dist", "src/tailwind-theme.css"],
+  "main": "src/index.ts",
   "scripts": {
-    "build": "tsup",
-    "type-check": "tsc --noEmit",
-    "test": "vitest run",
-    "test:watch": "vitest"
+    "build": "tsc"
   },
   "devDependencies": {
-    "@vitest/coverage-v8": "^3.0.0",
-    "tsup": "^8.3.6",
-    "typescript": "~5.7.3",
-    "vitest": "^3.0.0"
+    "typescript": "^5.7.3"
   }
 }

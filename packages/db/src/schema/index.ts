@@ -1,71 +1,9 @@
-// Enums
 export * from "./enums";
-
-// Identity & Tenancy
-export * from "./identity";
-
-// Learner Profiles
+export * from "./tenants";
+export * from "./users";
 export * from "./learners";
-
-// Brain
+export * from "./assessments";
 export * from "./brain";
-
-// IEP
-export * from "./iep";
-
-// Assessment
-export * from "./assessment";
-
-// Recommendations
-export * from "./recommendations";
-
-// Tutors
-export * from "./tutors";
-
-// Homework
-export * from "./homework";
-
-// Learning
-export * from "./learning";
-
-// Engagement
 export * from "./engagement";
-
-// Billing
 export * from "./billing";
-
-// Comms
-export * from "./comms";
-
-// Config
-export * from "./config";
-
-// Functional Curriculum
-export * from "./functional-curriculum";
-
-// Admin
-export * from "./admin";
-
-// Integrations
-export * from "./integrations";
-
-// Districts
-export * from "./districts";
-
-// Classrooms
-export * from "./classrooms";
-
-// Data Lifecycle (compliance audit trail)
-export * from "./data-lifecycle";
-
-// i18n
-export * from "./i18n";
-
-// Status Page
-export * from "./status";
-
-// Research
-export * from "./research";
-
-// Consent
-export * from "./consent";
+export * from "./audit";

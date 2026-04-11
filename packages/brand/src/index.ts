@@ -1,95 +1,106 @@
-export {
-  AIVO_COLORS,
-  AIVO_TYPOGRAPHY,
-  AIVO_SPACING,
-  AIVO_BORDER_RADIUS,
-  AIVO_SHADOWS,
-  AIVO_GRADIENTS,
-  AIVO_ANIMATION,
-  AIVO_TRANSITIONS,
-  tokens,
-} from "./tokens.js";
+export const BRAND = {
+  name: "AIVO",
+  tagline: "AI-Powered Adaptive Learning for Every Child",
+  colors: {
+    primary: "#7C3AED",
+    primaryLight: "#A78BFA",
+    primaryDark: "#5B21B6",
+    secondary: "#06B6D4",
+    accent: "#F59E0B",
+    success: "#10B981",
+    warning: "#F59E0B",
+    error: "#EF4444",
+    info: "#3B82F6",
+    background: "#FFFFFF",
+    surface: "#F8FAFC",
+    surfaceHover: "#F1F5F9",
+    text: "#1E293B",
+    textSecondary: "#64748B",
+    border: "#E2E8F0",
+  },
+  fonts: {
+    heading: "'Plus Jakarta Sans', sans-serif",
+    body: "'Inter', sans-serif",
+    mono: "'JetBrains Mono', monospace",
+  },
+  radii: {
+    sm: "0.375rem",
+    md: "0.5rem",
+    lg: "0.75rem",
+    xl: "1rem",
+    full: "9999px",
+  },
+  spacing: {
+    xs: "0.25rem",
+    sm: "0.5rem",
+    md: "1rem",
+    lg: "1.5rem",
+    xl: "2rem",
+    xxl: "3rem",
+  },
+  logos: {
+    dark: "/images/aivo-logo-dark.png",
+    purple: "/images/aivo-logo-purple.png",
+    white: "/images/aivo-logo-white.png",
+    favicon: "/images/favicon-192.png",
+  },
+} as const;
 
-export type {
-  AivoColors,
-  AivoTypography,
-  AivoShadows,
-  AivoGradients,
-  AivoTokens,
-} from "./tokens.js";
+export const TUTORS = {
+  nova: { name: "Nova", domain: "Mathematics", icon: "🔢", color: "#7C3AED", tier: "core" },
+  sage: { name: "Sage", domain: "English Language Arts", icon: "📚", color: "#10B981", tier: "core" },
+  spark: { name: "Spark", domain: "Science", icon: "🔬", color: "#F59E0B", tier: "core" },
+  chrono: { name: "Chrono", domain: "History & Social Studies", icon: "🏛️", color: "#6366F1", tier: "core" },
+  pixel: { name: "Pixel", domain: "Coding & Computational Thinking", icon: "💻", color: "#06B6D4", tier: "core" },
+  echo: { name: "Echo", domain: "Speech & Language Therapy", icon: "🗣️", color: "#EC4899", tier: "core" },
+  harmony: { name: "Harmony", domain: "Social-Emotional Learning", icon: "💜", color: "#8B5CF6", tier: "core" },
+  atlas: { name: "Atlas", domain: "Geography & World Cultures", icon: "🌍", color: "#14B8A6", tier: "expansion" },
+  cadence: { name: "Cadence", domain: "Music & Rhythm", icon: "🎵", color: "#D946EF", tier: "expansion" },
+  vigor: { name: "Vigor", domain: "Physical Education & Health", icon: "🏃", color: "#22C55E", tier: "expansion" },
+  lingua: { name: "Lingua", domain: "World Languages", icon: "🌐", color: "#0EA5E9", tier: "expansion" },
+  forge: { name: "Forge", domain: "STEM & Engineering", icon: "⚙️", color: "#EF4444", tier: "expansion" },
+  compass: { name: "Compass", domain: "Life Skills & Executive Function", icon: "🧭", color: "#F97316", tier: "expansion" },
+  muse: { name: "Muse", domain: "Creative Arts & Expression", icon: "🎨", color: "#A855F7", tier: "expansion" },
+} as const;
 
-export { AIVO_BRAND } from "./email.js";
-export type { AivoBrandEmail } from "./email.js";
+export const FUNCTIONING_LEVELS = {
+  STANDARD: {
+    label: "Standard",
+    description: "Full curriculum with grade-level content",
+    assessmentMode: "STANDARD",
+  },
+  SUPPORTED: {
+    label: "Supported",
+    description: "Modified curriculum with scaffolding and accommodations",
+    assessmentMode: "MODIFIED",
+  },
+  LOW_VERBAL: {
+    label: "Low Verbal",
+    description: "Picture-based interactions with reduced text",
+    assessmentMode: "PICTURE_BASED",
+  },
+  NON_VERBAL: {
+    label: "Non-Verbal",
+    description: "Switch scanning and partner-assisted access",
+    assessmentMode: "SWITCH_SCAN",
+  },
+  PRE_SYMBOLIC: {
+    label: "Pre-Symbolic",
+    description: "Cause-effect activities with observational assessment",
+    assessmentMode: "OBSERVATIONAL",
+  },
+} as const;
 
-export {
-  AIVO_FLUTTER_COLORS,
-  AIVO_FLUTTER_TYPOGRAPHY,
-  AIVO_FLUTTER_SPACING,
-  AIVO_FLUTTER_BORDER_RADIUS,
-} from "./flutter.js";
-export type { AivoFlutterColors } from "./flutter.js";
+export const ROLES = {
+  PARENT: { label: "Parent / Guardian", canManageLearners: true },
+  LEARNER: { label: "Learner", canManageLearners: false },
+  TEACHER: { label: "Teacher", canManageLearners: false },
+  CAREGIVER: { label: "Caregiver", canManageLearners: false },
+  THERAPIST: { label: "Therapist", canManageLearners: false },
+  DISTRICT_ADMIN: { label: "District Admin", canManageLearners: false },
+  PLATFORM_ADMIN: { label: "Platform Admin", canManageLearners: false },
+} as const;
 
-import { tokens } from "./tokens.js";
-
-/**
- * Recursively flattens a nested object into CSS custom property declarations.
- * Keys are joined with hyphens and prefixed with `--`.
- *
- * @example
- * flattenToCssVars({ color: { primary: { 500: "#7c3aed" } } })
- * // => "--color-primary-500: #7c3aed;\n"
- */
-function flattenToCssVars(
-  obj: Record<string, unknown>,
-  prefix: string,
-): string {
-  let result = "";
-  for (const [key, value] of Object.entries(obj)) {
-    const cssKey = `${prefix}-${key}`;
-    if (typeof value === "string" || typeof value === "number") {
-      result += `${cssKey}: ${String(value)};\n`;
-    } else if (typeof value === "object" && value !== null) {
-      result += flattenToCssVars(value as Record<string, unknown>, cssKey);
-    }
-  }
-  return result;
-}
-
-/**
- * Converts the full AIVO token object into a CSS custom properties string.
- * Each token path becomes a CSS variable following `--{category}-{name}-{scale}` naming.
- *
- * @returns A string of CSS custom property declarations suitable for injection
- *          into a `:root` block or `<style>` tag.
- *
- * @example
- * const css = cssVariables();
- * // => "--color-purple-500: #7c3aed;\n--color-teal-500: #14b8c8;\n..."
- */
-export function cssVariables(): string {
-  const sections: Record<string, unknown> = {
-    color: tokens.colors,
-    font: {
-      family: { sans: tokens.typography.fontFamily },
-      weight: tokens.typography.fontWeights,
-    },
-    "font-size": Object.fromEntries(
-      Object.entries(tokens.typography.scale).map(([name, val]) => [
-        name,
-        val.fontSize,
-      ]),
-    ),
-    "line-height": Object.fromEntries(
-      Object.entries(tokens.typography.scale).map(([name, val]) => [
-        name,
-        val.lineHeight,
-      ]),
-    ),
-    spacing: tokens.spacing,
-    radius: tokens.borderRadius,
-    shadow: tokens.shadows,
-    transition: tokens.transitions,
-  };
-
-  return flattenToCssVars(sections, "-");
-}
+export type TutorKey = keyof typeof TUTORS;
+export type FunctioningLevel = keyof typeof FUNCTIONING_LEVELS;
+export type UserRole = keyof typeof ROLES;

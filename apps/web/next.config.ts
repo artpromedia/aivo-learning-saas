@@ -1,57 +1,22 @@
 import type { NextConfig } from "next";
-import { platform } from "os";
-import createNextIntlPlugin from "next-intl/plugin";
-
-const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
-
-const withBundleAnalyzer =
-  process.env.ANALYZE === "true"
-    ? require("@next/bundle-analyzer")({ enabled: true })
-    : (config: NextConfig) => config;
-
-const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:3001";
-
-const proxiedApiPrefixes = [
-  "auth",
-  "users",
-  "learners",
-  "lessons",
-  "curriculum",
-  "analytics",
-  "notifications",
-  "billing",
-  "learning",
-  "tutors",
-  "shop",
-  "teacher",
-  "onboarding",
-  "assessment",
-  "family",
-  "invitations",
-  "tenants",
-  "districts",
-];
 
 const nextConfig: NextConfig = {
-  output: platform() === "win32" ? undefined : "standalone",
   reactStrictMode: true,
-  transpilePackages: ["@aivo/brand"],
+  allowedDevOrigins: [
+    "*.replit.dev",
+    "*.replit.app",
+    "*.janeway.replit.dev",
+  ],
   async rewrites() {
     return [
-      ...proxiedApiPrefixes.map((prefix) => ({
-        source: `/api/${prefix}/:path*`,
-        destination: `${BACKEND_URL}/api/${prefix}/:path*`,
-      })),
-      {
-        source: "/family/:path*",
-        destination: `${BACKEND_URL}/family/:path*`,
-      },
-      {
-        source: "/assessment/:path*",
-        destination: `${BACKEND_URL}/assessment/:path*`,
-      },
+      { source: "/api/auth/:path*", destination: "http://localhost:3001/api/auth/:path*" },
+      { source: "/api/users/:path*", destination: "http://localhost:3001/api/users/:path*" },
+      { source: "/api/consent/:path*", destination: "http://localhost:3001/api/consent/:path*" },
+      { source: "/api/assessments/:path*", destination: "http://localhost:3003/api/assessments/:path*" },
+      { source: "/api/iep/:path*", destination: "http://localhost:3003/api/iep/:path*" },
+      { source: "/api/brain/:path*", destination: "http://localhost:3002/api/brain/:path*" },
     ];
   },
 };
 
-export default withBundleAnalyzer(withNextIntl(nextConfig));
+export default nextConfig;

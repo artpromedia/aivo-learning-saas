@@ -1,11 +1,14 @@
-import type { FastifyInstance } from "fastify";
+import { FastifyInstance } from "fastify";
 
-export async function healthRoutes(app: FastifyInstance) {
-  app.get("/health", async (_request, reply) => {
-    return reply.status(200).send({
-      status: "healthy",
-      service: "identity-svc",
-      timestamp: new Date().toISOString(),
-    });
-  });
+export async function registerHealthRoutes(app: FastifyInstance) {
+  app.get("/health", {
+    schema: {
+      tags: ["Health"],
+      response: { 200: { type: "object", properties: { status: { type: "string" }, service: { type: "string" }, timestamp: { type: "string" } } } },
+    },
+  }, async () => ({
+    status: "healthy",
+    service: "identity-svc",
+    timestamp: new Date().toISOString(),
+  }));
 }

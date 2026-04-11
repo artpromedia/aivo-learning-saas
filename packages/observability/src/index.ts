@@ -1,14 +1,16 @@
-export { initTracing } from "./tracer.js";
-export type { TracingOptions } from "./tracer.js";
+import pino from "pino";
 
-export { createMetrics, metricsEndpoint, createMetricsHook } from "./metrics.js";
-export type { Metrics, MetricsOptions } from "./metrics.js";
+export function createLogger(name: string) {
+  return pino({
+    name,
+    level: process.env.LOG_LEVEL || "info",
+    timestamp: pino.stdTimeFunctions.isoTime,
+    formatters: {
+      level(label) {
+        return { level: label };
+      },
+    },
+  });
+}
 
-export { initSentry, sentryErrorHook } from "./sentry.js";
-export type { SentryOptions } from "./sentry.js";
-
-export { createLogger } from "./logger.js";
-export type { LoggerOptions } from "./logger.js";
-
-export { observabilityPlugin } from "./fastify-plugin.js";
-export type { ObservabilityOptions } from "./fastify-plugin.js";
+export type Logger = ReturnType<typeof createLogger>;
