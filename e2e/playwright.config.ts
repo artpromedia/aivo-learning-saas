@@ -112,6 +112,11 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
     {
+      name: 'accessibility',
+      testMatch: /accessibility/,
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
       name: 'marketing-funnel',
       testMatch: /marketing-funnel/,
       use: {

@@ -87,6 +87,64 @@ jobs:
             apps/*/coverage/
           retention-days: 30
 
+  db-migration-check:
+    name: Database Migration Verification
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: aivo
+          POSTGRES_PASSWORD: aivo_ci
+          POSTGRES_DB: aivo_ci
+        ports:
+          - 5434:5432
+        options: >-
+          --health-cmd "pg_isready -U aivo -d aivo_ci"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build @aivo/db
+        run: pnpm --filter @aivo/db build
+
+      - name: Validate migrations apply cleanly
+        env:
+          DATABASE_URL: postgresql://aivo:aivo_ci@localhost:5434/aivo_ci
+        run: |
+          echo "Applying migrations to clean database..."
+          pnpm --filter @aivo/db db:push
+          echo "Migrations applied successfully"
+
+      - name: Verify schema integrity
+        env:
+          DATABASE_URL: postgresql://aivo:aivo_ci@localhost:5434/aivo_ci
+        run: |
+          TABLE_COUNT=$(psql "$DATABASE_URL" --no-psqlrc --tuples-only --no-align -c "
+            SELECT count(*) FROM pg_stat_user_tables WHERE schemaname = 'public';
+          ")
+          echo "Tables created: $TABLE_COUNT"
+          if [ "${TABLE_COUNT:-0}" -lt 10 ]; then
+            echo "::error::Schema verification failed — expected at least 10 tables, found $TABLE_COUNT"
+            exit 1
+          fi
+          echo "Schema integrity verified"
+
   stub-audit:
     runs-on: ubuntu-latest
     steps:

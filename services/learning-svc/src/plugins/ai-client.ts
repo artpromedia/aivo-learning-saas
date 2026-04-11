@@ -1,6 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import fp from "fastify-plugin";
 import { getConfig } from "../config.js";
+import { resilientFetch, createServiceBreaker, TIMEOUT_DEFAULTS } from "@aivo/resilience";
 import type { BrainContext } from "./brain-client.js";
 
 export interface GenerateContentParams {
@@ -88,42 +89,52 @@ declare module "fastify" {
 export default fp(async (fastify: FastifyInstance) => {
   const config = getConfig();
   const baseUrl = config.AI_SVC_URL;
+  const breaker = createServiceBreaker("ai-svc", { timeout: TIMEOUT_DEFAULTS.AI });
 
   const aiClient: AiClient = {
     async generateContent(params: GenerateContentParams): Promise<GeneratedContent> {
-      const res = await fetch(`${baseUrl}/api/ai/generate`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(params),
+      return breaker.fire(async () => {
+        const res = await resilientFetch(`${baseUrl}/api/ai/generate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(params),
+          timeoutMs: TIMEOUT_DEFAULTS.AI,
+        });
+        if (!res.ok) {
+          throw new Error(`ai-svc generateContent failed: ${res.status} ${res.statusText}`);
+        }
+        return res.json() as Promise<GeneratedContent>;
       });
-      if (!res.ok) {
-        throw new Error(`ai-svc generateContent failed: ${res.status} ${res.statusText}`);
-      }
-      return res.json() as Promise<GeneratedContent>;
     },
 
     async generateQuestChapter(params: GenerateQuestChapterParams): Promise<GeneratedChapterContent> {
-      const res = await fetch(`${baseUrl}/api/ai/quest/chapter`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(params),
+      return breaker.fire(async () => {
+        const res = await resilientFetch(`${baseUrl}/api/ai/quest/chapter`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(params),
+          timeoutMs: TIMEOUT_DEFAULTS.AI,
+        });
+        if (!res.ok) {
+          throw new Error(`ai-svc generateQuestChapter failed: ${res.status} ${res.statusText}`);
+        }
+        return res.json() as Promise<GeneratedChapterContent>;
       });
-      if (!res.ok) {
-        throw new Error(`ai-svc generateQuestChapter failed: ${res.status} ${res.statusText}`);
-      }
-      return res.json() as Promise<GeneratedChapterContent>;
     },
 
     async generateBossAssessment(params): Promise<GeneratedChapterContent> {
-      const res = await fetch(`${baseUrl}/api/ai/quest/boss`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(params),
+      return breaker.fire(async () => {
+        const res = await resilientFetch(`${baseUrl}/api/ai/quest/boss`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(params),
+          timeoutMs: TIMEOUT_DEFAULTS.AI,
+        });
+        if (!res.ok) {
+          throw new Error(`ai-svc generateBossAssessment failed: ${res.status} ${res.statusText}`);
+        }
+        return res.json() as Promise<GeneratedChapterContent>;
       });
-      if (!res.ok) {
-        throw new Error(`ai-svc generateBossAssessment failed: ${res.status} ${res.statusText}`);
-      }
-      return res.json() as Promise<GeneratedChapterContent>;
     },
   };
 

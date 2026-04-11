@@ -1,6 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import fp from "fastify-plugin";
 import { getConfig } from "../config.js";
+import { resilientFetch, createServiceBreaker, TIMEOUT_DEFAULTS } from "@aivo/resilience";
 
 export interface BrainContext {
   learnerId: string;
@@ -34,25 +35,33 @@ declare module "fastify" {
 export default fp(async (fastify: FastifyInstance) => {
   const config = getConfig();
   const baseUrl = config.BRAIN_SVC_URL;
+  const breaker = createServiceBreaker("brain-svc", { timeout: TIMEOUT_DEFAULTS.BRAIN });
 
   const brainClient: BrainClient = {
     async getBrainContext(learnerId: string): Promise<BrainContext> {
-      const res = await fetch(`${baseUrl}/api/brain/${learnerId}/context`);
-      if (!res.ok) {
-        throw new Error(`brain-svc getBrainContext failed: ${res.status} ${res.statusText}`);
-      }
-      return res.json() as Promise<BrainContext>;
+      return breaker.fire(async () => {
+        const res = await resilientFetch(`${baseUrl}/api/brain/${learnerId}/context`, {
+          timeoutMs: TIMEOUT_DEFAULTS.BRAIN,
+        });
+        if (!res.ok) {
+          throw new Error(`brain-svc getBrainContext failed: ${res.status} ${res.statusText}`);
+        }
+        return res.json() as Promise<BrainContext>;
+      });
     },
 
     async updateMastery(learnerId: string, subject: string, skill: string, delta: number): Promise<void> {
-      const res = await fetch(`${baseUrl}/api/brain/${learnerId}/mastery`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ subject, skill, delta }),
+      return breaker.fire(async () => {
+        const res = await resilientFetch(`${baseUrl}/api/brain/${learnerId}/mastery`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ subject, skill, delta }),
+          timeoutMs: TIMEOUT_DEFAULTS.BRAIN,
+        });
+        if (!res.ok) {
+          throw new Error(`brain-svc updateMastery failed: ${res.status} ${res.statusText}`);
+        }
       });
-      if (!res.ok) {
-        throw new Error(`brain-svc updateMastery failed: ${res.status} ${res.statusText}`);
-      }
     },
   };
 

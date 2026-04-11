@@ -572,7 +572,8 @@ jobs:
             # Check pods are Ready
             READY_COUNT=$(kubectl get pods -n aivo -l app.kubernetes.io/name=$svc \
               -o jsonpath='{range .items[*]}{.status.conditions[?(@.type=="Ready")].status}{"\n"}{end}' 2>/dev/null \
-              | grep -c "True" || echo "0")
+              | grep -c "True" 2>/dev/null || true)
+            READY_COUNT=${READY_COUNT:-0}
 
             TOTAL_COUNT=$(kubectl get pods -n aivo -l app.kubernetes.io/name=$svc \
               --no-headers 2>/dev/null | wc -l)

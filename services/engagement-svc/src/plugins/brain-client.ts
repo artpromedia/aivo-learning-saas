@@ -1,6 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import fp from "fastify-plugin";
 import { getConfig } from "../config.js";
+import { resilientFetch, createServiceBreaker, TIMEOUT_DEFAULTS } from "@aivo/resilience";
 
 export interface BrainEngagementProfile {
   learnerId: string;
@@ -25,14 +26,19 @@ declare module "fastify" {
 export default fp(async (fastify: FastifyInstance) => {
   const config = getConfig();
   const baseUrl = config.BRAIN_SVC_URL;
+  const breaker = createServiceBreaker("brain-svc", { timeout: TIMEOUT_DEFAULTS.BRAIN });
 
   const brainClient: BrainClient = {
     async getEngagementProfile(learnerId: string): Promise<BrainEngagementProfile> {
-      const res = await fetch(`${baseUrl}/api/brain/${learnerId}/context`);
-      if (!res.ok) {
-        throw new Error(`brain-svc getEngagementProfile failed: ${res.status} ${res.statusText}`);
-      }
-      return res.json() as Promise<BrainEngagementProfile>;
+      return breaker.fire(async () => {
+        const res = await resilientFetch(`${baseUrl}/api/brain/${learnerId}/context`, {
+          timeoutMs: TIMEOUT_DEFAULTS.BRAIN,
+        });
+        if (!res.ok) {
+          throw new Error(`brain-svc getEngagementProfile failed: ${res.status} ${res.statusText}`);
+        }
+        return res.json() as Promise<BrainEngagementProfile>;
+      });
     },
   };
 

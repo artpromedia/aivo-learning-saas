@@ -953,11 +953,20 @@ jobs:
   # ═════════════════════════════════════════════
   # Stage 4b: Create GitHub Release
   # ═════════════════════════════════════════════
+  smoke-tests:
+    name: Post-Deploy Smoke Tests
+    needs: [resolve, deploy-staging]
+    uses: ./.github/workflows/smoke-tests.yml
+    with:
+      environment: staging
+      version: ${{ needs.resolve.outputs.version }}
+    secrets: inherit
+
   create-release:
     name: Create GitHub Release
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: [resolve, deploy-staging, tag-images]
+    needs: [resolve, deploy-staging, tag-images, smoke-tests]
 
     steps:
       - name: Checkout

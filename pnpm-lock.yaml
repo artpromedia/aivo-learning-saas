@@ -377,6 +377,31 @@ importers:
         specifier: ^3.0.0
         version: 3.2.4(@types/node@25.5.0)(jiti@2.6.1)(jsdom@25.0.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)
 
+  packages/resilience:
+    dependencies:
+      opossum:
+        specifier: ^8.4.2
+        version: 8.5.0
+    devDependencies:
+      '@types/node':
+        specifier: ^25.5.0
+        version: 25.5.0
+      '@types/opossum':
+        specifier: ^8.1.9
+        version: 8.1.9
+      '@vitest/coverage-v8':
+        specifier: ^3.0.0
+        version: 3.2.4(vitest@3.2.4(@types/node@25.5.0)(jiti@2.6.1)(jsdom@25.0.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3))
+      tsup:
+        specifier: ^8.3.6
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.8)(tsx@4.21.0)(typescript@5.7.3)(yaml@2.8.3)
+      typescript:
+        specifier: ~5.7.3
+        version: 5.7.3
+      vitest:
+        specifier: ^3.0.0
+        version: 3.2.4(@types/node@25.5.0)(jiti@2.6.1)(jsdom@25.0.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.3)
+
   packages/security:
     dependencies:
       '@fastify/cookie':
@@ -462,6 +487,9 @@ importers:
       '@aivo/observability':
         specifier: workspace:*
         version: link:../../packages/observability
+      '@aivo/resilience':
+        specifier: workspace:*
+        version: link:../../packages/resilience
       '@fastify/cookie':
         specifier: ^11.0.0
         version: 11.0.2
@@ -544,6 +572,9 @@ importers:
       '@aivo/observability':
         specifier: workspace:*
         version: link:../../packages/observability
+      '@aivo/resilience':
+        specifier: workspace:*
+        version: link:../../packages/resilience
       '@fastify/cookie':
         specifier: ^11.0.2
         version: 11.0.2
@@ -805,6 +836,9 @@ importers:
       '@aivo/observability':
         specifier: workspace:*
         version: link:../../packages/observability
+      '@aivo/resilience':
+        specifier: workspace:*
+        version: link:../../packages/resilience
       '@fastify/cookie':
         specifier: ^11.0.2
         version: 11.0.2
@@ -872,6 +906,9 @@ importers:
       '@aivo/observability':
         specifier: workspace:*
         version: link:../../packages/observability
+      '@aivo/resilience':
+        specifier: workspace:*
+        version: link:../../packages/resilience
       '@fastify/cookie':
         specifier: ^11.0.2
         version: 11.0.2
@@ -1182,6 +1219,9 @@ importers:
       '@aivo/observability':
         specifier: workspace:*
         version: link:../../packages/observability
+      '@aivo/resilience':
+        specifier: workspace:*
+        version: link:../../packages/resilience
       '@fastify/cookie':
         specifier: ^11.0.2
         version: 11.0.2
@@ -1392,6 +1432,9 @@ importers:
       '@aivo/observability':
         specifier: workspace:*
         version: link:../../packages/observability
+      '@aivo/resilience':
+        specifier: workspace:*
+        version: link:../../packages/resilience
       '@fastify/cookie':
         specifier: ^11.0.0
         version: 11.0.2
@@ -3672,6 +3715,9 @@ packages:
   '@types/node@25.5.0':
     resolution: {integrity: sha512-jp2P3tQMSxWugkCUKLRPVUpGaL5MVFwF8RDuSRztfwgN1wmqJeMSbKlnEtQqU8UrhTmzEmZdu2I6v2dpp7XIxw==}
 
+  '@types/opossum@8.1.9':
+    resolution: {integrity: sha512-Jm/tYxuJFefiwRYs+/EOsUP3ktk0c8siMgAHPLnA4PXF4wKghzcjqf88dY+Xii5jId5Txw4JV0FMKTpjbd7KJA==}
+
   '@types/pg-pool@2.0.6':
     resolution: {integrity: sha512-TaAUE5rq2VQYxab5Ts7WZhKNmuN78Q6PiFonTDdpbx8a1H0M1vhy3rhiMjl+e2iHmogyMw7jZF4FrE6eJUy5HQ==}
 
@@ -5462,6 +5508,10 @@ packages:
 
   openapi-types@12.1.3:
     resolution: {integrity: sha512-N4YtSYJqghVu4iek2ZUvcN/0aqH1kRDuNqzcycDxhOUpg7GdvLa2F3DgS6yBNhInhv2r/6I0Flkn7CqL8+nIcw==}
+
+  opossum@8.5.0:
+    resolution: {integrity: sha512-LZNvs+p9/ZbG4oN6unnjh4hTxkB0dyHKI2p7azVt8w+//GKDpfHss6WR7KebbpzGEssYwtSd8Mvwxqcmxg10NA==}
+    engines: {node: ^24 || ^22 || ^21 || ^20 || ^18 || ^16}
 
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
@@ -9021,6 +9071,10 @@ snapshots:
     dependencies:
       undici-types: 7.18.2
 
+  '@types/opossum@8.1.9':
+    dependencies:
+      '@types/node': 25.5.0
+
   '@types/pg-pool@2.0.6':
     dependencies:
       '@types/pg': 8.6.1
@@ -10953,6 +11007,8 @@ snapshots:
       wrappy: 1.0.2
 
   openapi-types@12.1.3: {}
+
+  opossum@8.5.0: {}
 
   optionator@0.9.4:
     dependencies:

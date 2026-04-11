@@ -1,6 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import fp from "fastify-plugin";
 import { getConfig } from "../config.js";
+import { resilientFetch, createServiceBreaker, TIMEOUT_DEFAULTS } from "@aivo/resilience";
 
 export interface BrainContext {
   learnerId: string;
@@ -47,13 +48,17 @@ declare module "fastify" {
 export default fp(async (fastify: FastifyInstance) => {
   const config = getConfig();
   const baseUrl = config.BRAIN_SVC_URL;
+  const breaker = createServiceBreaker("brain-svc", { timeout: TIMEOUT_DEFAULTS.BRAIN });
 
-  async function jsonFetch<T>(url: string, options?: RequestInit): Promise<T> {
-    const res = await fetch(url, options);
-    if (!res.ok) {
-      throw new Error(`brain-svc ${options?.method ?? "GET"} ${url} failed: ${res.status}`);
-    }
-    return res.json() as Promise<T>;
+  async function jsonFetch<T>(url: string, options?: RequestInit & { timeoutMs?: number }): Promise<T> {
+    const { timeoutMs = TIMEOUT_DEFAULTS.BRAIN, ...fetchOptions } = options ?? {};
+    return breaker.fire(async () => {
+      const res = await resilientFetch(url, { ...fetchOptions, timeoutMs });
+      if (!res.ok) {
+        throw new Error(`brain-svc ${fetchOptions?.method ?? "GET"} ${url} failed: ${res.status}`);
+      }
+      return res.json() as Promise<T>;
+    });
   }
 
   const brainClient: BrainClient = {

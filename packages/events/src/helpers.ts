@@ -19,6 +19,7 @@ import {
   RESEARCH_SCHEMAS,
   FEATURE_FLAG_SCHEMAS,
 } from "./schemas/index.js";
+import { publishToDlq, MAX_DELIVER, provisionDlqStream } from "./dlq.js";
 
 const sc = StringCodec();
 
@@ -56,6 +57,8 @@ export async function provisionStreams(nc: NatsConnection): Promise<void> {
       });
     }
   }
+
+  await provisionDlqStream(nc);
 }
 
 const ALL_SCHEMAS: Record<string, z.ZodType> = {
@@ -102,12 +105,19 @@ export interface Subscription {
   unsubscribe(): void;
 }
 
+export interface SubscribeOptions {
+  serviceName?: string;
+  maxDeliverAttempts?: number;
+}
+
 export async function subscribeEvent<S extends z.ZodType>(
   nc: NatsConnection,
   eventName: EventName,
   schema: S,
   handler: EventHandler<S>,
+  options: SubscribeOptions = {},
 ): Promise<Subscription> {
+  const { serviceName = "unknown", maxDeliverAttempts = MAX_DELIVER } = options;
   const subject = SUBJECTS[eventName];
   const streamName = resolveStreamForSubject(subject);
   const js = nc.jetstream();
@@ -128,16 +138,37 @@ export async function subscribeEvent<S extends z.ZodType>(
     timeout(15_000),
   ]);
 
-  // Fire-and-forget: do NOT await the loop
   (async () => {
     for await (const msg of messages) {
+      const deliveryCount = (msg as unknown as { info?: { redeliveryCount?: number } }).info?.redeliveryCount
+        ? ((msg as unknown as { info: { redeliveryCount: number } }).info.redeliveryCount + 1)
+        : 1;
+
       try {
-        const raw = JSON.parse(sc.decode(msg.data));
+        const rawStr = sc.decode(msg.data);
+        const raw = JSON.parse(rawStr);
         const validated = schema.parse(raw);
         await handler(validated);
         msg.ack();
       } catch (err) {
-        msg.nak();
+        if (deliveryCount >= maxDeliverAttempts) {
+          try {
+            const rawStr = sc.decode(msg.data);
+            await publishToDlq(
+              nc,
+              subject,
+              rawStr,
+              err instanceof Error ? err.message : String(err),
+              deliveryCount,
+              serviceName,
+            );
+          } catch {
+            // DLQ publish failed — still ack to prevent infinite loop
+          }
+          msg.ack();
+        } else {
+          msg.nak();
+        }
       }
     }
   })();

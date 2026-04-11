@@ -1,6 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import fp from "fastify-plugin";
 import { getConfig } from "../config.js";
+import { resilientFetch, createServiceBreaker, TIMEOUT_DEFAULTS } from "@aivo/resilience";
 
 export interface IepParseResult {
   goals: { area: string; description: string }[];
@@ -51,44 +52,51 @@ declare module "fastify" {
 export default fp(async (fastify: FastifyInstance) => {
   const config = getConfig();
   const baseUrl = config.AI_SVC_URL;
+  const breaker = createServiceBreaker("ai-svc", { timeout: TIMEOUT_DEFAULTS.AI });
 
   const aiClient: AiClient = {
     async parseIep(fileUrl: string, fileType: string): Promise<IepParseResult> {
-      const res = await fetch(`${baseUrl}/ai/iep/parse`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fileUrl, fileType }),
+      return breaker.fire(async () => {
+        const res = await resilientFetch(`${baseUrl}/ai/iep/parse`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ fileUrl, fileType }),
+          timeoutMs: TIMEOUT_DEFAULTS.AI_VISION,
+        });
+        if (!res.ok) {
+          throw new Error(`ai-svc IEP parse failed: ${res.status} ${res.statusText}`);
+        }
+        return res.json() as Promise<IepParseResult>;
       });
-      if (!res.ok) {
-        throw new Error(`ai-svc IEP parse failed: ${res.status} ${res.statusText}`);
-      }
-      return res.json() as Promise<IepParseResult>;
     },
 
     async generateBaselineQuestion(params): Promise<BaselineQuestion> {
-      const res = await fetch(`${baseUrl}/ai/baseline/generate-question`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${params.authToken}`,
-        },
-        body: JSON.stringify({
-          parent_assessment: params.parentAssessment,
-          functioning_level: params.functioningLevel,
-          assessment_mode: params.assessmentMode,
-          theta: params.theta,
-          target_domain: params.targetDomain,
-          administered_items: params.administeredItems ?? [],
-          question_number: params.questionNumber ?? 1,
-          iep_profile: params.iepProfile ?? null,
-        }),
+      return breaker.fire(async () => {
+        const res = await resilientFetch(`${baseUrl}/ai/baseline/generate-question`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${params.authToken}`,
+          },
+          body: JSON.stringify({
+            parent_assessment: params.parentAssessment,
+            functioning_level: params.functioningLevel,
+            assessment_mode: params.assessmentMode,
+            theta: params.theta,
+            target_domain: params.targetDomain,
+            administered_items: params.administeredItems ?? [],
+            question_number: params.questionNumber ?? 1,
+            iep_profile: params.iepProfile ?? null,
+          }),
+          timeoutMs: TIMEOUT_DEFAULTS.AI,
+        });
+        if (!res.ok) {
+          const errText = await res.text().catch(() => "");
+          throw new Error(`ai-svc baseline generation failed: ${res.status} ${errText}`);
+        }
+        const data = (await res.json()) as { question: BaselineQuestion };
+        return data.question;
       });
-      if (!res.ok) {
-        const errText = await res.text().catch(() => "");
-        throw new Error(`ai-svc baseline generation failed: ${res.status} ${errText}`);
-      }
-      const data = (await res.json()) as { question: BaselineQuestion };
-      return data.question;
     },
   };
 

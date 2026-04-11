@@ -45,9 +45,10 @@ Flutter app at feature parity with the web dashboard for all 4 roles:
 ### Packages (shared)
 - `packages/brand` — Design tokens, brand assets (must build before web app)
 - `packages/db` — Database schema (Drizzle ORM + PostgreSQL)
-- `packages/events` — Event types
+- `packages/events` — Event types + Dead Letter Queue (DLQ) support
 - `packages/feature-flags` — Feature flag utilities
 - `packages/observability` — Logging/tracing utilities
+- `packages/resilience` — Circuit breaker (opossum) + resilient fetch with timeouts
 
 ### Services (15 microservices)
 - `services/identity-svc` — Auth gateway (port 3001), uses better-auth
@@ -367,6 +368,46 @@ All 15 services expose interactive API documentation:
 - **DR Playbook**: `docs/disaster-recovery-playbook.md` — RTO < 4h, RPO < 1h
 - **Backup Runbook**: `docs/backup-restore-runbook.md` — PostgreSQL/Redis backup & restore procedures
 - **Backup Test Script**: `scripts/test-backup-restore.sh` — Automated backup restore verification
+- **Backup Verify Workflow**: `.github/workflows/backup-verify.yml` — Monthly automated S3 restore test
+
+## Resilience & Circuit Breakers
+
+All inter-service HTTP calls use circuit breakers (`@aivo/resilience` package, opossum) with timeout policies:
+- **Default timeout**: 5s for standard calls
+- **Brain service**: 10s for cognitive profile reads/writes
+- **AI service**: 30s for content generation, tutoring
+- **AI vision**: 60s for IEP parsing, homework OCR
+
+Circuit breaker config: 50% error threshold, 30s reset timeout, 5 minimum requests before evaluation.
+
+**Protected services**: learning-svc, tutor-svc, family-svc, engagement-svc, assessment-svc, admin-svc — all brain-client and ai-client plugins wrapped.
+
+**NATS Dead Letter Queue**: Failed events route to `AIVO_DLQ` stream after 5 delivery attempts. DLQ messages include original data, error details, and service attribution. See `docs/resilience-matrix.md`.
+
+## Deployment Workflows
+
+### GitHub Actions (14 workflows)
+- `ci.yml` — Build, lint, test, coverage, DB migration verification
+- `deploy-staging.yml` — Matrix build + Trivy scan + Helm deploy to staging
+- `deploy-production.yml` — Canary deployment with approval gate + smoke tests
+- `smoke-tests.yml` — Reusable post-deploy smoke test workflow
+- `backup-verify.yml` — Monthly backup restore verification
+- `rollback.yml` — Manual one-click rollback (by version tag or Helm revision)
+- `secret-scan.yml`, `security-scan.yml`, `load-test.yml`, `marketing-lighthouse.yml`
+- `create-release.yml`, `e2e-module-gate.yml`, `visual-regression.yml`
+- `infra-plan.yml` / `infra-deploy.yml` — Terraform workflows
+
+### Smoke Test Script
+`scripts/smoke-test.sh` — Tests all service health endpoints, API docs, auth flow, and CSRF endpoint.
+
+## Accessibility Testing
+
+E2E accessibility tests using `@axe-core/playwright`:
+- **Location**: `e2e/tests/accessibility/a11y-dashboard.spec.ts`
+- **Coverage**: Public routes (landing, login, register) + dashboard routes (parent, teacher, admin)
+- **Standard**: WCAG 2.1 AA (checks for critical + serious violations)
+- **Keyboard nav**: Tests tab navigation on login, skip links on landing
+- **Playwright project**: `accessibility` (independent, no module dependencies)
 
 ## Notes
 
