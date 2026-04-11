@@ -13,7 +13,7 @@
     "lint:all": "eslint .",
     "type-check:all": "pnpm -r --filter './packages/*' type-check",
     "test": "turbo test",
-    "test:all": "pnpm --filter @aivo/brand --filter @aivo/ui test",
+    "test:all": "pnpm -r --filter './packages/*' --filter './services/*' --filter './apps/marketing' test",
     "dev": "turbo dev --concurrency=25",
     "format": "prettier --write .",
     "format:check": "prettier --check ."

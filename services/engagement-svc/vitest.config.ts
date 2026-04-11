@@ -5,6 +5,8 @@ export default defineConfig({
     include: ["src/__tests__/**/*.test.ts"],
     coverage: {
       provider: "v8",
+      reporter: ["text", "lcov", "json-summary"],
+      reportsDirectory: "./coverage",
       include: ["src/**/*.ts"],
       exclude: [
         "src/__tests__/**",
@@ -15,6 +17,12 @@ export default defineConfig({
         "src/events/**",
         "src/config.ts",
       ],
+      thresholds: {
+        lines: 80,
+        functions: 80,
+        branches: 80,
+        statements: 80,
+      },
     },
   },
 });

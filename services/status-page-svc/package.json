@@ -24,6 +24,8 @@
     "@aivo/db": "workspace:*",
     "@aivo/observability": "workspace:*",
     "@aivo/events": "workspace:*",
+    "@fastify/swagger": "^9.0.0",
+    "@fastify/swagger-ui": "^5.0.0",
     "dotenv": "^17.3.1",
     "drizzle-orm": "0.44.2",
     "fastify": "^5.2.0",

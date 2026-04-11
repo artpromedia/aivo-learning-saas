@@ -348,6 +348,26 @@ Configured for **autoscale** deployment:
 - **Run**: `bash start.sh` (starts identity-svc + Next.js in parallel)
 - **start.sh**: Launches identity-svc (port 3001) and Next.js (port 5000) as background processes
 
+## API Documentation (OpenAPI/Swagger)
+
+All 15 services expose interactive API documentation:
+- **TypeScript services** (13): `@fastify/swagger` + `@fastify/swagger-ui` at `/docs` on each service port
+- **Python services** (2): FastAPI built-in `/docs` (Swagger UI) and `/redoc`
+- **OpenAPI JSON**: Available at `/docs/json` on each TypeScript service, `/openapi.json` on Python services
+- Example: Identity service docs at `http://localhost:3001/docs`
+
+## Code Coverage
+
+- **TypeScript**: Vitest with `v8` provider, 80% threshold (lines, functions, branches, statements) across all 19 configs
+- **Python**: pytest-cov with 80% threshold for brain-svc and ai-svc
+- Run coverage: `pnpm test:coverage` (per service) or `pnpm test:all -- --coverage` (all)
+
+## Disaster Recovery
+
+- **DR Playbook**: `docs/disaster-recovery-playbook.md` — RTO < 4h, RPO < 1h
+- **Backup Runbook**: `docs/backup-restore-runbook.md` — PostgreSQL/Redis backup & restore procedures
+- **Backup Test Script**: `scripts/test-backup-restore.sh` — Automated backup restore verification
+
 ## Notes
 
 - The web app requires the `@aivo/brand` package to be built before starting

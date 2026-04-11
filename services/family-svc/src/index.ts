@@ -1,4 +1,6 @@
 import Fastify from "fastify";
+import swagger from "@fastify/swagger";
+import swaggerUi from "@fastify/swagger-ui";
 import { ZodError } from "zod";
 import { loadConfig } from "./config.js";
 import { observabilityPlugin } from "@aivo/observability";
@@ -53,6 +55,14 @@ export async function buildApp() {
   const app = Fastify({
     logger: { level: config.NODE_ENV === "production" ? "info" : "debug" },
   });
+
+  await app.register(swagger, {
+    openapi: {
+      info: { title: "Family Service", version: "1.0.0", description: "Family dashboard and collaboration service" },
+      servers: [{ url: `http://localhost:${config.PORT}` }],
+    },
+  });
+  await app.register(swaggerUi, { routePrefix: "/docs" });
 
   app.setErrorHandler((error, _request, reply) => {
     if (error instanceof ZodError) {

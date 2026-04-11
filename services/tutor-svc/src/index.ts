@@ -1,5 +1,7 @@
 import Fastify from "fastify";
 import multipart from "@fastify/multipart";
+import swagger from "@fastify/swagger";
+import swaggerUi from "@fastify/swagger-ui";
 import { ZodError } from "zod";
 import { loadConfig } from "./config.js";
 import { observabilityPlugin } from "@aivo/observability";
@@ -40,6 +42,14 @@ export async function buildApp() {
       level: config.NODE_ENV === "production" ? "info" : "debug",
     },
   });
+
+  await app.register(swagger, {
+    openapi: {
+      info: { title: "Tutor Service", version: "1.0.0", description: "AI tutor session management service" },
+      servers: [{ url: `http://localhost:${config.PORT}` }],
+    },
+  });
+  await app.register(swaggerUi, { routePrefix: "/docs" });
 
   // Error handler
   app.setErrorHandler((error, _request, reply) => {

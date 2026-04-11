@@ -2,6 +2,8 @@ import Fastify from "fastify";
 import cookie from "@fastify/cookie";
 import cors from "@fastify/cors";
 import rateLimit from "@fastify/rate-limit";
+import swagger from "@fastify/swagger";
+import swaggerUi from "@fastify/swagger-ui";
 import { ZodError } from "zod";
 
 import { loadConfig } from "./config.js";
@@ -86,6 +88,14 @@ export async function buildApp() {
       level: config.NODE_ENV === "production" ? "info" : "debug",
     },
   });
+
+  await app.register(swagger, {
+    openapi: {
+      info: { title: "Admin Service", version: "1.0.0", description: "Platform administration and analytics service" },
+      servers: [{ url: `http://localhost:${config.PORT}` }],
+    },
+  });
+  await app.register(swaggerUi, { routePrefix: "/docs" });
 
   // Error handler
   app.setErrorHandler((error, _request, reply) => {
