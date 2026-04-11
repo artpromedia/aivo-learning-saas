@@ -8,6 +8,7 @@ import { registerHealthRoutes } from "./routes/health.js";
 import { registerParentAssessmentRoutes } from "./routes/parent-assessment.js";
 import { registerAssessmentRoutes } from "./routes/assessments.js";
 import { registerIepRoutes } from "./routes/iep.js";
+import { registerLearnerBaselineRoutes } from "./routes/learner-baseline.js";
 
 const logger = createLogger("assessment-svc");
 const PORT = parseInt(process.env.ASSESSMENT_PORT || "3003", 10);
@@ -34,6 +35,7 @@ async function start() {
   await registerParentAssessmentRoutes(app);
   await registerAssessmentRoutes(app);
   await registerIepRoutes(app);
+  await registerLearnerBaselineRoutes(app);
 
   await app.listen({ port: PORT, host: "0.0.0.0" });
   logger.info(`Assessment service listening on port ${PORT}`);

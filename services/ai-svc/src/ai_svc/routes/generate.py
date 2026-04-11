@@ -1,9 +1,14 @@
+import json
+import logging
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import Optional
 from ..services.llm_gateway import generate_completion
 from ..services.prompt_builder import build_content_generation_prompt, build_tutor_system_prompt
 from ..services.quality_gate import run_quality_gate
+from ..services.baseline_generator import build_baseline_generation_prompt
+
+logger = logging.getLogger("ai-svc.generate")
 
 router = APIRouter(prefix="/api/ai", tags=["content-generation"])
 
@@ -107,6 +112,78 @@ async def tutor_chat(req: TutorChatRequest):
 
     return TutorChatResponse(
         response=result["content"],
+        model=result["model"],
+        prompt_tokens=result["prompt_tokens"],
+        completion_tokens=result["completion_tokens"],
+    )
+
+
+class BaselineRequest(BaseModel):
+    parent_assessment: dict
+    functioning_level: str = "STANDARD"
+
+
+class BaselineResponse(BaseModel):
+    questions: list
+    subjects: list
+    model: str
+    prompt_tokens: int
+    completion_tokens: int
+
+
+@router.post("/generate-baseline", response_model=BaselineResponse)
+async def generate_baseline(req: BaselineRequest):
+    from ..services.baseline_generator import SUBJECTS
+
+    system_prompt, user_prompt = build_baseline_generation_prompt(req.parent_assessment)
+
+    try:
+        result = await generate_completion(
+            system_prompt=system_prompt,
+            user_prompt=user_prompt,
+            max_tokens=4000,
+            temperature=0.6,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"LLM baseline generation failed: {str(e)}")
+
+    raw = result["content"].strip()
+    if raw.startswith("```"):
+        raw = raw.split("\n", 1)[1] if "\n" in raw else raw[3:]
+        if raw.endswith("```"):
+            raw = raw[:-3]
+
+    try:
+        parsed = json.loads(raw)
+        questions = parsed.get("questions", [])
+    except json.JSONDecodeError:
+        logger.error(f"Failed to parse baseline JSON: {raw[:200]}")
+        raise HTTPException(status_code=502, detail="AI returned invalid JSON for baseline questions")
+
+    REQUIRED_SUBJECTS = {"math", "ela", "science", "speech", "sel", "life_skills", "executive_function"}
+    valid_questions = []
+    for q in questions:
+        if not isinstance(q, dict):
+            continue
+        if not all(k in q for k in ("id", "subject", "questionText", "options", "correctAnswer")):
+            continue
+        if not isinstance(q["options"], list) or len(q["options"]) < 2:
+            continue
+        valid_answers = {o.get("value") for o in q["options"] if isinstance(o, dict) and "value" in o}
+        if q["correctAnswer"] not in valid_answers:
+            continue
+        if q.get("subject") not in REQUIRED_SUBJECTS:
+            continue
+        valid_questions.append(q)
+
+    if len(valid_questions) < 14:
+        raise HTTPException(status_code=502, detail=f"AI generated too few valid questions ({len(valid_questions)}), expected at least 14")
+
+    questions = valid_questions
+
+    return BaselineResponse(
+        questions=questions,
+        subjects=SUBJECTS,
         model=result["model"],
         prompt_tokens=result["prompt_tokens"],
         completion_tokens=result["completion_tokens"],

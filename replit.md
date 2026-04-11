@@ -63,6 +63,8 @@ services/tutor-svc     — Fastify tutor management (port 3006)
 - `POST /api/brain/:learnerId/rollback` — Rollback to snapshot
 - `POST /api/ai/generate` — Generate lesson/practice content via LLM
 - `POST /api/ai/tutor/chat` — Tutor chat completion
+- `POST /api/ai/generate-baseline` — Generate personalized baseline questions from parent assessment
+- `GET /api/assessments/learner/baseline/:learnerId` — Fetch AI-generated baseline questions for learner
 - `POST /api/learning/sessions` — Start lesson session
 - `POST /api/learning/sessions/:id/complete` — Complete session + mastery write-back
 - `GET /api/learning/gradebook/:learnerId` — Gradebook entries
@@ -83,7 +85,7 @@ services/tutor-svc     — Fastify tutor management (port 3006)
 - `/dashboard/parent/learner/[id]/assessment` — Parent Baseline Assessment (49 questions, 11 categories)
 - `/dashboard/parent/learner/[id]/gradebook` — Gradebook (mastery bars, sessions, XP)
 - `/dashboard/learner` — Learner dashboard (tutor grid)
-- `/dashboard/learner/assessment` — Learner Baseline Assessment (42 questions: math, reading, science, speech, SEL, life skills, executive function)
+- `/dashboard/learner/assessment` — Learner Baseline Assessment (dynamically generated from parent assessment via AI, fallback to 42 hardcoded questions across 7 subjects)
 - `/dashboard/learner/lesson/[tutorKey]` — Lesson Chat UI
 
 ### GitHub Repository
