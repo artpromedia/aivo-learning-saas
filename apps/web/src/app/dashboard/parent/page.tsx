@@ -260,13 +260,25 @@ export default function ParentDashboard() {
         )}
 
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
-          <h2 className="text-xl font-heading font-bold text-slate-900 mb-4">Available Tutors</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-            {Object.entries(TUTORS).filter(([, t]) => t.tier === "core").map(([key, tutor]) => (
+          <h2 className="text-xl font-heading font-bold text-slate-900 mb-2">Available Tutors</h2>
+          <p className="text-sm text-slate-500 mb-6">7 core tutors + 7 expansion specialists</p>
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-4">
+            {Object.entries(TUTORS).map(([key, tutor]) => (
               <div key={key} className="text-center p-3 rounded-2xl hover:bg-slate-50 transition cursor-pointer group">
-                <div className="text-3xl mb-2 group-hover:scale-110 transition-transform">{tutor.icon}</div>
+                <div className="relative w-16 h-16 mx-auto mb-2 rounded-full overflow-hidden border-2 group-hover:scale-110 transition-transform shadow-md" style={{ borderColor: tutor.color }}>
+                  <Image
+                    src={tutor.avatar}
+                    alt={`${tutor.name} - ${tutor.domain}`}
+                    fill
+                    className="object-cover object-top"
+                    sizes="64px"
+                  />
+                </div>
                 <div className="font-heading font-bold text-sm" style={{ color: tutor.color }}>{tutor.name}</div>
-                <div className="text-xs text-slate-500 mt-1">{tutor.domain}</div>
+                <div className="text-xs text-slate-500 mt-0.5 leading-tight">{tutor.domain}</div>
+                {tutor.tier === "expansion" && (
+                  <span className="inline-block mt-1 px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-amber-50 text-amber-600">NEW</span>
+                )}
               </div>
             ))}
           </div>

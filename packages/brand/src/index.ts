@@ -47,20 +47,20 @@ export const BRAND = {
 } as const;
 
 export const TUTORS = {
-  nova: { name: "Nova", domain: "Mathematics", icon: "🔢", color: "#7C3AED", tier: "core" },
-  sage: { name: "Sage", domain: "English Language Arts", icon: "📚", color: "#10B981", tier: "core" },
-  spark: { name: "Spark", domain: "Science", icon: "🔬", color: "#F59E0B", tier: "core" },
-  chrono: { name: "Chrono", domain: "History & Social Studies", icon: "🏛️", color: "#6366F1", tier: "core" },
-  pixel: { name: "Pixel", domain: "Coding & Computational Thinking", icon: "💻", color: "#06B6D4", tier: "core" },
-  echo: { name: "Echo", domain: "Speech & Language Therapy", icon: "🗣️", color: "#EC4899", tier: "core" },
-  harmony: { name: "Harmony", domain: "Social-Emotional Learning", icon: "💜", color: "#8B5CF6", tier: "core" },
-  atlas: { name: "Atlas", domain: "Geography & World Cultures", icon: "🌍", color: "#14B8A6", tier: "expansion" },
-  cadence: { name: "Cadence", domain: "Music & Rhythm", icon: "🎵", color: "#D946EF", tier: "expansion" },
-  vigor: { name: "Vigor", domain: "Physical Education & Health", icon: "🏃", color: "#22C55E", tier: "expansion" },
-  lingua: { name: "Lingua", domain: "World Languages", icon: "🌐", color: "#0EA5E9", tier: "expansion" },
-  forge: { name: "Forge", domain: "STEM & Engineering", icon: "⚙️", color: "#EF4444", tier: "expansion" },
-  compass: { name: "Compass", domain: "Life Skills & Executive Function", icon: "🧭", color: "#F97316", tier: "expansion" },
-  muse: { name: "Muse", domain: "Creative Arts & Expression", icon: "🎨", color: "#A855F7", tier: "expansion" },
+  nova: { name: "Nova", domain: "Mathematics", icon: "🔢", color: "#7C3AED", tier: "core", avatar: "/images/tutors/nova.png" },
+  sage: { name: "Sage", domain: "English Language Arts", icon: "📚", color: "#10B981", tier: "core", avatar: "/images/tutors/sage.png" },
+  spark: { name: "Spark", domain: "Science", icon: "🔬", color: "#F59E0B", tier: "core", avatar: "/images/tutors/spark.png" },
+  chrono: { name: "Chrono", domain: "History & Social Studies", icon: "🏛️", color: "#6366F1", tier: "core", avatar: "/images/tutors/chrono.png" },
+  pixel: { name: "Pixel", domain: "Coding & Computational Thinking", icon: "💻", color: "#06B6D4", tier: "core", avatar: "/images/tutors/pixel.png" },
+  echo: { name: "Echo", domain: "Speech & Language Therapy", icon: "🗣️", color: "#EC4899", tier: "core", avatar: "/images/tutors/echo.png" },
+  harmony: { name: "Harmony", domain: "Social-Emotional Learning", icon: "💜", color: "#8B5CF6", tier: "core", avatar: "/images/tutors/harmony.png" },
+  atlas: { name: "Atlas", domain: "Geography & World Cultures", icon: "🌍", color: "#14B8A6", tier: "expansion", avatar: "/images/tutors/atlas.png" },
+  cadence: { name: "Cadence", domain: "Music & Rhythm", icon: "🎵", color: "#D946EF", tier: "expansion", avatar: "/images/tutors/cadence.png" },
+  vigor: { name: "Vigor", domain: "Physical Education & Health", icon: "🏃", color: "#22C55E", tier: "expansion", avatar: "/images/tutors/vigor.png" },
+  lingua: { name: "Lingua", domain: "World Languages", icon: "🌐", color: "#0EA5E9", tier: "expansion", avatar: "/images/tutors/lingua.png" },
+  forge: { name: "Forge", domain: "STEM & Engineering", icon: "⚙️", color: "#EF4444", tier: "expansion", avatar: "/images/tutors/forge.png" },
+  compass: { name: "Compass", domain: "Life Skills & Executive Function", icon: "🧭", color: "#F97316", tier: "expansion", avatar: "/images/tutors/compass.png" },
+  muse: { name: "Muse", domain: "Creative Arts & Expression", icon: "🎨", color: "#A855F7", tier: "expansion", avatar: "/images/tutors/muse.png" },
 } as const;
 
 export const FUNCTIONING_LEVELS = {

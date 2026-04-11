@@ -15,7 +15,7 @@ export default function LearnerDashboard() {
 
   if (loading || !user) return null;
 
-  const coreTutors = Object.entries(TUTORS).filter(([, t]) => t.tier === "core");
+  const allTutors = Object.entries(TUTORS);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-cyan-50">
@@ -27,17 +27,29 @@ export default function LearnerDashboard() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-8 py-12 space-y-10">
+      <main className="max-w-5xl mx-auto px-8 py-12 space-y-10">
         <div className="text-center space-y-2">
           <h1 className="text-4xl font-heading font-bold text-slate-900">Choose Your Tutor</h1>
           <p className="text-slate-500 font-semibold text-lg">Pick a tutor to start your learning adventure!</p>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {coreTutors.map(([key, tutor]) => (
+          {allTutors.map(([key, tutor]) => (
             <button key={key}
-              className="bg-white rounded-2xl p-6 shadow-sm border-2 border-transparent hover:border-primary hover:shadow-xl transition text-center space-y-3 group">
-              <div className="text-5xl group-hover:scale-125 transition-transform">{tutor.icon}</div>
+              className="bg-white rounded-2xl p-6 shadow-sm border-2 border-transparent hover:shadow-xl transition text-center space-y-3 group"
+              style={{ borderColor: "transparent" }}
+              onMouseEnter={(e) => (e.currentTarget.style.borderColor = tutor.color)}
+              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "transparent")}
+            >
+              <div className="relative w-20 h-20 mx-auto rounded-full overflow-hidden border-3 group-hover:scale-110 transition-transform shadow-lg" style={{ borderColor: tutor.color, borderWidth: "3px" }}>
+                <Image
+                  src={tutor.avatar}
+                  alt={`${tutor.name} - ${tutor.domain}`}
+                  fill
+                  className="object-cover object-top"
+                  sizes="80px"
+                />
+              </div>
               <div className="font-heading font-bold text-lg" style={{ color: tutor.color }}>{tutor.name}</div>
               <div className="text-sm text-slate-500 font-semibold">{tutor.domain}</div>
             </button>
