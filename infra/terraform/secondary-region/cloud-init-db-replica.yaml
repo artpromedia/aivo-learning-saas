@@ -1,0 +1,77 @@
+#cloud-config
+
+package_update: true
+package_upgrade: true
+
+packages:
+  - postgresql-16
+  - postgresql-client-16
+  - prometheus-node-exporter
+
+write_files:
+  - path: /opt/aivo/setup-replica.sh
+    permissions: '0755'
+    content: |
+      #!/bin/sh
+      REPL_PASS=$(cat /run/secrets/replicator_password 2>/dev/null || echo "$REPLICATOR_PASSWORD")
+      cat > /etc/postgresql/16/main/conf.d/replica.conf <<CONF
+      primary_conninfo = 'host=${primary_db_ip} port=5432 user=replicator password=$REPL_PASS application_name=fsn1_replica'
+      primary_slot_name = 'fsn1_replica'
+      CONF
+
+  - path: /etc/postgresql/16/main/conf.d/replica.conf
+    content: |
+      # Streaming Replication - Standby Configuration
+      # Overwritten at boot by /opt/aivo/setup-replica.sh with real credentials
+      primary_conninfo = 'host=${primary_db_ip} port=5432 user=replicator application_name=fsn1_replica'
+      primary_slot_name = 'fsn1_replica'
+      hot_standby = on
+      hot_standby_feedback = on
+      max_standby_streaming_delay = 30s
+      max_standby_archive_delay = 60s
+      wal_receiver_timeout = 60s
+      wal_receiver_status_interval = 10s
+
+  - path: /etc/postgresql/16/main/conf.d/monitoring.conf
+    content: |
+      # Monitoring
+      shared_preload_libraries = 'pg_stat_statements'
+      pg_stat_statements.max = 10000
+      pg_stat_statements.track = all
+      log_min_duration_statement = 1000
+      log_checkpoints = on
+      log_connections = on
+      log_disconnections = on
+      log_lock_waits = on
+
+  - path: /opt/aivo/check-replication.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      # Check replication lag and alert if > threshold
+      LAG=$(psql -U postgres -t -c "SELECT CASE WHEN pg_last_wal_receive_lsn() = pg_last_wal_replay_lsn() THEN 0 ELSE EXTRACT(EPOCH FROM now() - pg_last_xact_replay_timestamp()) END AS lag_seconds;" 2>/dev/null | tr -d ' ')
+
+      if [ -z "$LAG" ] || [ "$LAG" = "" ]; then
+        echo "ERROR: Cannot determine replication lag"
+        exit 1
+      fi
+
+      echo "Replication lag: ${LAG}s"
+
+      # Alert if lag > 60 seconds
+      if (( $(echo "$LAG > 60" | bc -l 2>/dev/null || echo 0) )); then
+        echo "WARNING: Replication lag exceeds 60 seconds!"
+        exit 2
+      fi
+
+      exit 0
+
+runcmd:
+  - /opt/aivo/setup-replica.sh
+  - systemctl stop postgresql
+  - rm -rf /var/lib/postgresql/16/main
+  - PGPASSWORD="$REPLICATOR_PASSWORD" sudo -u postgres pg_basebackup -h ${primary_db_ip} -U replicator -D /var/lib/postgresql/16/main -Fp -Xs -P -R
+  - touch /var/lib/postgresql/16/main/standby.signal
+  - chown -R postgres:postgres /var/lib/postgresql/16/main
+  - systemctl start postgresql
+  - echo "*/1 * * * * root /opt/aivo/check-replication.sh >> /var/log/aivo-replication.log 2>&1" >> /etc/crontab

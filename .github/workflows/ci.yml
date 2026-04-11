@@ -441,3 +441,57 @@ jobs:
           assert 'http_req_duration' in thresholds, 'Missing http_req_duration threshold'
           print('Threshold validation passed')
           "
+
+  mutation-testing:
+    runs-on: ubuntu-latest
+    needs: [build-lint-typecheck]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm turbo build --filter=@aivo/brand --filter=@aivo/ui --filter=@aivo/db --filter=@aivo/events --filter=@aivo/observability --filter=@aivo/security
+
+      - name: Run Stryker mutation testing
+        run: pnpm exec stryker run --concurrency 4
+        env:
+          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+
+      - name: Upload mutation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mutation-report
+          path: reports/mutation/
+          retention-days: 30
+
+      - name: Check mutation score threshold
+        run: |
+          if [ -f reports/mutation/mutation-report.json ]; then
+            SCORE=$(python3 -c "
+          import json
+          with open('reports/mutation/mutation-report.json') as f:
+              data = json.load(f)
+          files = data.get('files', {})
+          total_mutants = sum(f.get('mutants', 0) if isinstance(f, int) else len(f.get('mutants', [])) for f in files.values())
+          killed = sum(1 for f in files.values() for m in (f.get('mutants', []) if isinstance(f, dict) else []) if isinstance(m, dict) and m.get('status') == 'Killed')
+          score = (killed / total_mutants * 100) if total_mutants > 0 else 0
+          print(f'{score:.1f}')
+          ")
+            echo "Mutation score: ${SCORE}%"
+            python3 -c "assert float('${SCORE}') >= 50, f'Mutation score {${SCORE}}% below 50% threshold'"
+          else
+            echo "No mutation report found — skipping threshold check"
+          fi

@@ -448,3 +448,89 @@ ingress:
     - secretName: aivo-tls
       hosts:
         - "*.aivo.local"
+
+# ─────────────────────────────────────────────
+# Database Replication (Phase 4)
+# ─────────────────────────────────────────────
+
+database:
+  host: postgresql
+  port: 5432
+  user: aivo
+  secretName: aivo-db-credentials
+  replication:
+    enabled: false
+    replicaHost: ""
+    replicaPort: 5432
+    monitorSchedule: "*/5 * * * *"
+
+# ─────────────────────────────────────────────
+# Flagger Progressive Delivery (Phase 4)
+# ─────────────────────────────────────────────
+
+flagger:
+  enabled: false
+  gateway: "istio-system/aivo-gateway"
+  host: "api.aivo.com"
+  appHost: "app.aivo.com"
+  progressDeadline: 600
+  analysis:
+    interval: "60s"
+    threshold: 5
+    maxWeight: 50
+    stepWeight: 10
+    successRateMin: 99
+    latencyMax: 500
+  smokeTest:
+    enabled: true
+    url: "http://flagger-loadtester.istio-system/"
+  loadTest:
+    enabled: true
+    url: "http://flagger-loadtester.istio-system/"
+
+services:
+  identity-svc:
+    enabled: true
+    port: 3001
+  brain-svc:
+    enabled: true
+    port: 3002
+  learning-svc:
+    enabled: true
+    port: 3003
+  engagement-svc:
+    enabled: true
+    port: 3004
+  family-svc:
+    enabled: true
+    port: 3005
+  tutor-svc:
+    enabled: true
+    port: 3006
+  comms-svc:
+    enabled: true
+    port: 3007
+  billing-svc:
+    enabled: true
+    port: 3008
+  admin-svc:
+    enabled: true
+    port: 3009
+  integrations-svc:
+    enabled: true
+    port: 3010
+  i18n-svc:
+    enabled: true
+    port: 3011
+  assessment-svc:
+    enabled: true
+    port: 3012
+  research-svc:
+    enabled: true
+    port: 3013
+  status-page-svc:
+    enabled: true
+    port: 3014
+  ai-svc:
+    enabled: true
+    port: 5000

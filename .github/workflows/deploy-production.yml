@@ -19,6 +19,11 @@ on:
         required: false
         default: false
         type: boolean
+      use_flagger:
+        description: "Use Flagger progressive delivery (blue-green)"
+        required: false
+        default: false
+        type: boolean
 
 concurrency:
   group: deploy-production
@@ -496,6 +501,12 @@ jobs:
 
       - name: Helm upgrade (production — atomic)
         run: |
+          FLAGGER_FLAG=""
+          if [ "${{ inputs.use_flagger }}" = "true" ]; then
+            echo "Flagger progressive delivery enabled"
+            FLAGGER_FLAG="--set flagger.enabled=true"
+          fi
+
           helm dependency build infra/helm
           helm upgrade --install aivo-learning-saas infra/helm \
             -f infra/helm/values/hetzner-production.yaml \
@@ -503,7 +514,8 @@ jobs:
             -n aivo \
             --atomic \
             --timeout 15m \
-            --wait
+            --wait \
+            $FLAGGER_FLAG
 
       - name: Verify rollout status
         run: |

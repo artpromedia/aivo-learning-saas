@@ -491,6 +491,54 @@ The `/api/districts/lookup?zip=XXXXX` endpoint dynamically finds school district
 
 Results are cached in the local `school_districts` and `district_zip_codes` tables — subsequent lookups for the same zip are instant from the database. Only real Census-verified districts are cached (no synthetic/fabricated data). Curriculum framework is inferred from state (TEKS for TX, COMMON_CORE for CA/IL/MA, STATE_SPECIFIC for others).
 
+## SOC 2 Type II Preparation
+
+SOC 2 documentation in `docs/soc2/`:
+- `control-matrix.md` — Full Trust Services Criteria mapping (CC1-CC9, A1, C1, PI1, P1) to AIVO controls
+- `evidence-guide.md` — What evidence to collect for each criteria, automated collection scripts
+- `gap-analysis.md` — Current readiness assessment and remaining items
+
+Compliance documentation in `docs/compliance/`:
+- `data-breach-procedure.md` — 72-hour GDPR breach notification procedure (P1-P4 classification)
+- `privacy-impact-assessment.md` — PIA template covering all data processing activities
+
+## PostgreSQL Streaming Replication
+
+Multi-region disaster recovery with streaming replication:
+- **Primary**: Hetzner HEL1 (Helsinki)
+- **Secondary**: Hetzner FSN1 (Falkenstein) — hot standby
+- **Terraform**: `infra/terraform/secondary-region/` — server provisioning, firewall, cloud-init
+- **Monitoring**: `infra/helm/templates/pg-replication-monitor.yaml` — CronJob + PrometheusRule alerts
+- **Failover Runbook**: `docs/runbooks/database-failover.md` — step-by-step promotion procedure
+- **SLA targets**: RTO < 4h, RPO < 1h
+
+## Blue-Green Deployment (Flagger + Istio)
+
+Progressive delivery configuration (disabled by default, enable via `flagger.enabled: true`):
+- `infra/helm/templates/flagger-canary.yaml` — Flagger Canary CRD for all services
+- `infra/helm/templates/istio-virtualservice.yaml` — Gateway, VirtualService, DestinationRule
+- **Traffic shifting**: 10% → 50% → 100% with automatic rollback on metric degradation
+- **Metrics**: Request success rate > 99%, p95 latency < 500ms
+- **Webhooks**: Pre-rollout smoke test + rollout load test
+- **Circuit breaker**: Istio DestinationRule with outlier detection (5xx ejection)
+- **Deploy**: `deploy-production.yml` supports `use_flagger` input flag
+
+## Mutation Testing (Stryker.js)
+
+`stryker.config.mjs` configured for critical paths:
+- Auth routes and middleware (identity-svc)
+- Billing routes and services (billing-svc)
+- Learning and engagement routes
+- RLS policies and security package
+- **Thresholds**: break at 50%, low at 60%, high at 80%
+- **CI**: `mutation-testing` job in `ci.yml` runs on push to main, uploads HTML/JSON reports
+
+## Enterprise Documentation
+
+Sales and audit documentation in `docs/enterprise/`:
+- `sales-enablement.md` — Platform overview, compliance summary, architecture, pricing models
+- `audit-scorecard.md` — Final enterprise readiness assessment (92.9% — up from 38.6%)
+
 ## Notes
 
 - The web app requires the `@aivo/brand` package to be built before starting
