@@ -1,11 +1,10 @@
-import { FastifyInstance } from "fastify";
+import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 import { eq, and } from "drizzle-orm";
 import {
   learnerTeachers,
   learnerCaregivers,
   learnerTherapists,
   learners,
-  users,
   brainInsights,
   brainStates,
   iepGoals,
@@ -13,13 +12,66 @@ import {
 } from "@aivo/db";
 import { verifyJWT } from "@aivo/security";
 
-function extractToken(request: any): string | null {
-  const auth = request.headers.authorization;
-  if (auth?.startsWith("Bearer ")) return auth.slice(7);
-  return request.cookies?.access_token || null;
+interface JWTClaims {
+  userId: string;
+  role: string;
 }
 
-async function verifyParentOwnership(db: any, userId: string, learnerId: string): Promise<boolean> {
+interface LearnerId {
+  learnerId: string;
+}
+
+interface MemberParams extends LearnerId {
+  memberId: string;
+}
+
+interface MemberTypeQuery {
+  memberType?: string;
+}
+
+interface InviteTeacherBody {
+  email: string;
+  name?: string;
+}
+
+interface InviteCaregiverBody {
+  email: string;
+  relationship?: string;
+}
+
+interface InviteTherapistBody {
+  email: string;
+  specialty?: string;
+  credentials?: string;
+}
+
+interface InsightBody {
+  insightText: string;
+  domain?: string;
+  source?: string;
+}
+
+function extractToken(request: FastifyRequest): string | null {
+  const auth = request.headers.authorization;
+  if (auth?.startsWith("Bearer ")) return auth.slice(7);
+  return (request.cookies as Record<string, string> | undefined)?.access_token || null;
+}
+
+async function authenticateRequest(request: FastifyRequest, reply: FastifyReply): Promise<JWTClaims | null> {
+  const token = extractToken(request);
+  if (!token) {
+    reply.code(401).send({ error: "Authentication required" });
+    return null;
+  }
+  try {
+    return await verifyJWT(token) as JWTClaims;
+  } catch (_err) {
+    reply.code(401).send({ error: "Invalid token" });
+    return null;
+  }
+}
+
+async function verifyParentOwnership(db: ReturnType<typeof import("@aivo/db").createDb>, userId: string, learnerId: string): Promise<boolean> {
   const result = await db.select().from(learners).where(
     and(eq(learners.id, learnerId), eq(learners.parentId, userId))
   );
@@ -27,16 +79,13 @@ async function verifyParentOwnership(db: any, userId: string, learnerId: string)
 }
 
 export async function registerCollaborationRoutes(app: FastifyInstance) {
-  const db = (app as any).db;
+  const db = (app as unknown as { db: ReturnType<typeof import("@aivo/db").createDb> }).db;
 
   app.get("/api/family/collaboration/:learnerId/members", async (request, reply) => {
-    const token = extractToken(request);
-    if (!token) return reply.code(401).send({ error: "Authentication required" });
+    const claims = await authenticateRequest(request, reply);
+    if (!claims) return;
 
-    let claims: any;
-    try { claims = await verifyJWT(token); } catch { return reply.code(401).send({ error: "Invalid token" }); }
-
-    const { learnerId } = request.params as any;
+    const { learnerId } = request.params as LearnerId;
     const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
     if (!isParent && claims.role !== "PLATFORM_ADMIN") {
       return reply.code(403).send({ error: "Access denied" });
@@ -47,28 +96,25 @@ export async function registerCollaborationRoutes(app: FastifyInstance) {
     const therapists = await db.select().from(learnerTherapists).where(eq(learnerTherapists.learnerId, learnerId));
 
     return {
-      teachers: teachers.map((t: any) => ({ ...t, memberType: "teacher" })),
-      caregivers: caregivers.map((c: any) => ({ ...c, memberType: "caregiver" })),
-      therapists: therapists.map((t: any) => ({ ...t, memberType: "therapist" })),
+      teachers: teachers.map((t) => ({ ...t, memberType: "teacher" })),
+      caregivers: caregivers.map((c) => ({ ...c, memberType: "caregiver" })),
+      therapists: therapists.map((t) => ({ ...t, memberType: "therapist" })),
     };
   });
 
   app.post("/api/family/collaboration/:learnerId/invite/teacher", async (request, reply) => {
-    const token = extractToken(request);
-    if (!token) return reply.code(401).send({ error: "Authentication required" });
+    const claims = await authenticateRequest(request, reply);
+    if (!claims) return;
 
-    let claims: any;
-    try { claims = await verifyJWT(token); } catch { return reply.code(401).send({ error: "Invalid token" }); }
-
-    const { learnerId } = request.params as any;
+    const { learnerId } = request.params as LearnerId;
     const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
     if (!isParent) return reply.code(403).send({ error: "Only parents can invite team members" });
 
-    const { email, name } = request.body as any;
-    if (!email) return reply.code(400).send({ error: "Email is required" });
+    const body = request.body as InviteTeacherBody;
+    if (!body.email) return reply.code(400).send({ error: "Email is required" });
 
     const existing = await db.select().from(learnerTeachers).where(
-      and(eq(learnerTeachers.learnerId, learnerId), eq(learnerTeachers.teacherEmail, email))
+      and(eq(learnerTeachers.learnerId, learnerId), eq(learnerTeachers.teacherEmail, body.email))
     );
     if (existing.length > 0) return reply.code(409).send({ error: "Teacher already invited" });
 
@@ -83,7 +129,7 @@ export async function registerCollaborationRoutes(app: FastifyInstance) {
     const [record] = await db.insert(learnerTeachers).values({
       tenantId,
       learnerId,
-      teacherEmail: email,
+      teacherEmail: body.email,
       invitedBy: claims.userId,
       status: "PENDING",
     }).returning();
@@ -92,21 +138,18 @@ export async function registerCollaborationRoutes(app: FastifyInstance) {
   });
 
   app.post("/api/family/collaboration/:learnerId/invite/caregiver", async (request, reply) => {
-    const token = extractToken(request);
-    if (!token) return reply.code(401).send({ error: "Authentication required" });
+    const claims = await authenticateRequest(request, reply);
+    if (!claims) return;
 
-    let claims: any;
-    try { claims = await verifyJWT(token); } catch { return reply.code(401).send({ error: "Invalid token" }); }
-
-    const { learnerId } = request.params as any;
+    const { learnerId } = request.params as LearnerId;
     const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
     if (!isParent) return reply.code(403).send({ error: "Only parents can invite team members" });
 
-    const { email, relationship } = request.body as any;
-    if (!email) return reply.code(400).send({ error: "Email is required" });
+    const body = request.body as InviteCaregiverBody;
+    if (!body.email) return reply.code(400).send({ error: "Email is required" });
 
     const existing = await db.select().from(learnerCaregivers).where(
-      and(eq(learnerCaregivers.learnerId, learnerId), eq(learnerCaregivers.caregiverEmail, email))
+      and(eq(learnerCaregivers.learnerId, learnerId), eq(learnerCaregivers.caregiverEmail, body.email))
     );
     if (existing.length > 0) return reply.code(409).send({ error: "Caregiver already invited" });
 
@@ -121,9 +164,9 @@ export async function registerCollaborationRoutes(app: FastifyInstance) {
     const [record] = await db.insert(learnerCaregivers).values({
       tenantId,
       learnerId,
-      caregiverEmail: email,
+      caregiverEmail: body.email,
       invitedBy: claims.userId,
-      relationship: relationship || null,
+      relationship: body.relationship || null,
       status: "PENDING",
     }).returning();
 
@@ -131,21 +174,18 @@ export async function registerCollaborationRoutes(app: FastifyInstance) {
   });
 
   app.post("/api/family/collaboration/:learnerId/invite/therapist", async (request, reply) => {
-    const token = extractToken(request);
-    if (!token) return reply.code(401).send({ error: "Authentication required" });
+    const claims = await authenticateRequest(request, reply);
+    if (!claims) return;
 
-    let claims: any;
-    try { claims = await verifyJWT(token); } catch { return reply.code(401).send({ error: "Invalid token" }); }
-
-    const { learnerId } = request.params as any;
+    const { learnerId } = request.params as LearnerId;
     const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
     if (!isParent) return reply.code(403).send({ error: "Only parents can invite team members" });
 
-    const { email, specialty, credentials } = request.body as any;
-    if (!email) return reply.code(400).send({ error: "Email is required" });
+    const body = request.body as InviteTherapistBody;
+    if (!body.email) return reply.code(400).send({ error: "Email is required" });
 
     const existing = await db.select().from(learnerTherapists).where(
-      and(eq(learnerTherapists.learnerId, learnerId), eq(learnerTherapists.therapistEmail, email))
+      and(eq(learnerTherapists.learnerId, learnerId), eq(learnerTherapists.therapistEmail, body.email))
     );
     if (existing.length > 0) return reply.code(409).send({ error: "Therapist already invited" });
 
@@ -155,10 +195,10 @@ export async function registerCollaborationRoutes(app: FastifyInstance) {
     const [record] = await db.insert(learnerTherapists).values({
       tenantId,
       learnerId,
-      therapistEmail: email,
+      therapistEmail: body.email,
       invitedBy: claims.userId,
-      specialty: specialty || null,
-      credentials: credentials || null,
+      specialty: body.specialty || null,
+      credentials: body.credentials || null,
       status: "PENDING",
     }).returning();
 
@@ -166,17 +206,14 @@ export async function registerCollaborationRoutes(app: FastifyInstance) {
   });
 
   app.delete("/api/family/collaboration/:learnerId/member/:memberId", async (request, reply) => {
-    const token = extractToken(request);
-    if (!token) return reply.code(401).send({ error: "Authentication required" });
+    const claims = await authenticateRequest(request, reply);
+    if (!claims) return;
 
-    let claims: any;
-    try { claims = await verifyJWT(token); } catch { return reply.code(401).send({ error: "Invalid token" }); }
-
-    const { learnerId, memberId } = request.params as any;
+    const { learnerId, memberId } = request.params as MemberParams;
     const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
     if (!isParent) return reply.code(403).send({ error: "Only parents can remove team members" });
 
-    const { memberType } = request.query as any;
+    const { memberType } = request.query as MemberTypeQuery;
 
     if (memberType === "teacher") {
       await db.delete(learnerTeachers).where(and(eq(learnerTeachers.id, memberId), eq(learnerTeachers.learnerId, learnerId)));
@@ -192,13 +229,10 @@ export async function registerCollaborationRoutes(app: FastifyInstance) {
   });
 
   app.post("/api/family/collaboration/:learnerId/insight", async (request, reply) => {
-    const token = extractToken(request);
-    if (!token) return reply.code(401).send({ error: "Authentication required" });
+    const claims = await authenticateRequest(request, reply);
+    if (!claims) return;
 
-    let claims: any;
-    try { claims = await verifyJWT(token); } catch { return reply.code(401).send({ error: "Invalid token" }); }
-
-    const { learnerId } = request.params as any;
+    const { learnerId } = request.params as LearnerId;
 
     const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
     if (!isParent) {
@@ -217,28 +251,25 @@ export async function registerCollaborationRoutes(app: FastifyInstance) {
       }
     }
 
-    const { insightText, domain, source } = request.body as any;
-    if (!insightText) return reply.code(400).send({ error: "insightText is required" });
+    const body = request.body as InsightBody;
+    if (!body.insightText) return reply.code(400).send({ error: "insightText is required" });
 
     const [record] = await db.insert(brainInsights).values({
       learnerId,
-      source: source || claims.role?.toLowerCase() || "collaborator",
+      source: body.source || claims.role?.toLowerCase() || "collaborator",
       sourceUserId: claims.userId,
-      insightText,
-      domain: domain || null,
+      insightText: body.insightText,
+      domain: body.domain || null,
     }).returning();
 
     return reply.code(201).send(record);
   });
 
   app.get("/api/family/collaboration/:learnerId/brain/teacher", async (request, reply) => {
-    const token = extractToken(request);
-    if (!token) return reply.code(401).send({ error: "Authentication required" });
+    const claims = await authenticateRequest(request, reply);
+    if (!claims) return;
 
-    let claims: any;
-    try { claims = await verifyJWT(token); } catch { return reply.code(401).send({ error: "Invalid token" }); }
-
-    const { learnerId } = request.params as any;
+    const { learnerId } = request.params as LearnerId;
 
     const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
     const teacherMatch = await db.select().from(learnerTeachers).where(
@@ -266,13 +297,10 @@ export async function registerCollaborationRoutes(app: FastifyInstance) {
   });
 
   app.get("/api/family/collaboration/:learnerId/brain/caregiver", async (request, reply) => {
-    const token = extractToken(request);
-    if (!token) return reply.code(401).send({ error: "Authentication required" });
+    const claims = await authenticateRequest(request, reply);
+    if (!claims) return;
 
-    let claims: any;
-    try { claims = await verifyJWT(token); } catch { return reply.code(401).send({ error: "Invalid token" }); }
-
-    const { learnerId } = request.params as any;
+    const { learnerId } = request.params as LearnerId;
 
     const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
     const caregiverMatch = await db.select().from(learnerCaregivers).where(
@@ -287,31 +315,31 @@ export async function registerCollaborationRoutes(app: FastifyInstance) {
     if (brain.length === 0) return { summary: null };
 
     const state = brain[0];
-    const mastery = state.masteryLevels as Record<string, any> || {};
+    const mastery = state.masteryLevels as Record<string, unknown> || {};
     const subjects = Object.keys(mastery);
     const avgMastery = subjects.length > 0
-      ? Math.round(subjects.reduce((sum, s) => sum + (typeof mastery[s] === "number" ? mastery[s] : 0), 0) / subjects.length)
+      ? Math.round(subjects.reduce((sum, s) => {
+          const val = mastery[s];
+          return sum + (typeof val === "number" ? val : 0);
+        }, 0) / subjects.length)
       : 0;
 
     return {
       summary: {
         overallMastery: avgMastery,
         subjectCount: subjects.length,
-        activeAccommodations: (state.activeAccommodations as any[] || []).length,
-        activeTutors: (state.activeTutors as any[] || []).length,
+        activeAccommodationCount: (state.activeAccommodations as unknown[] || []).length,
+        activeTutorCount: (state.activeTutors as unknown[] || []).length,
       },
       readOnly: true,
     };
   });
 
   app.get("/api/family/collaboration/:learnerId/brain/therapist", async (request, reply) => {
-    const token = extractToken(request);
-    if (!token) return reply.code(401).send({ error: "Authentication required" });
+    const claims = await authenticateRequest(request, reply);
+    if (!claims) return;
 
-    let claims: any;
-    try { claims = await verifyJWT(token); } catch { return reply.code(401).send({ error: "Invalid token" }); }
-
-    const { learnerId } = request.params as any;
+    const { learnerId } = request.params as LearnerId;
 
     const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
     const therapistMatch = await db.select().from(learnerTherapists).where(

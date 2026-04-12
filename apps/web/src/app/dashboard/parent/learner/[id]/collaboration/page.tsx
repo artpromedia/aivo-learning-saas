@@ -46,7 +46,9 @@ export default function CollaborationPage() {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
       if (res.ok) setMembers(await res.json());
-    } catch {}
+    } catch (err) {
+      console.error("Failed to fetch members:", err);
+    }
   };
 
   useEffect(() => { fetchMembers(); }, [accessToken, learnerId]);
@@ -57,7 +59,7 @@ export default function CollaborationPage() {
     setSubmitting(true);
     setError("");
 
-    const body: any = { email: inviteEmail };
+    const body: Record<string, string> = { email: inviteEmail };
     if (showInvite === "caregiver") body.relationship = inviteRelationship;
     if (showInvite === "therapist") {
       body.specialty = inviteSpecialty;
@@ -82,7 +84,7 @@ export default function CollaborationPage() {
         setError(data.error || "Failed to send invite");
       }
     } catch {
-      setError("Network error");
+      setError("Network error — please try again");
     }
     setSubmitting(false);
   };
@@ -95,7 +97,9 @@ export default function CollaborationPage() {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
       fetchMembers();
-    } catch {}
+    } catch (err) {
+      console.error("Failed to remove member:", err);
+    }
   };
 
   const getEmail = (m: TeamMember) => m.teacherEmail || m.caregiverEmail || m.therapistEmail || "";

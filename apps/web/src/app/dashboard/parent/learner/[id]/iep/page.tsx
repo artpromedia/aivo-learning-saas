@@ -62,9 +62,11 @@ export default function IepDashboardPage() {
     const headers = { Authorization: `Bearer ${accessToken}` };
 
     fetch(`/api/family/iep/${learnerId}/progress`, { headers })
-      .then(r => r.json()).then(setProgress).catch(() => {});
+      .then(r => r.json()).then(setProgress)
+      .catch((err) => console.error("Failed to fetch IEP progress:", err));
     fetch(`/api/family/iep/${learnerId}/documents`, { headers })
-      .then(r => r.json()).then(setDocuments).catch(() => {});
+      .then(r => r.json()).then(setDocuments)
+      .catch((err) => console.error("Failed to fetch IEP documents:", err));
   }, [accessToken, learnerId]);
 
   const generateReport = async () => {
@@ -77,7 +79,9 @@ export default function IepDashboardPage() {
         setReport(await res.json());
         setActiveTab("report");
       }
-    } catch {}
+    } catch (err) {
+      console.error("Failed to generate IEP report:", err);
+    }
     setGeneratingReport(false);
   };
 

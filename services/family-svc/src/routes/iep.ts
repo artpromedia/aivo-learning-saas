@@ -1,4 +1,4 @@
-import { FastifyInstance } from "fastify";
+import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 import { eq, and, desc } from "drizzle-orm";
 import {
   iepGoals,
@@ -6,54 +6,92 @@ import {
   iepDocuments,
   learners,
   brainStates,
-  gradebookEntries,
+  lessonSessions,
+  tutorSessions,
 } from "@aivo/db";
 import { verifyJWT } from "@aivo/security";
 
-function extractToken(request: any): string | null {
-  const auth = request.headers.authorization;
-  if (auth?.startsWith("Bearer ")) return auth.slice(7);
-  return request.cookies?.access_token || null;
+interface JWTClaims {
+  userId: string;
+  role: string;
 }
 
-async function verifyParentOwnership(db: any, userId: string, learnerId: string): Promise<boolean> {
+interface LearnerId {
+  learnerId: string;
+}
+
+interface GoalIdParams extends LearnerId {
+  goalId: string;
+}
+
+function extractToken(request: FastifyRequest): string | null {
+  const auth = request.headers.authorization;
+  if (auth?.startsWith("Bearer ")) return auth.slice(7);
+  return (request.cookies as Record<string, string> | undefined)?.access_token || null;
+}
+
+async function authenticateRequest(request: FastifyRequest, reply: FastifyReply): Promise<JWTClaims | null> {
+  const token = extractToken(request);
+  if (!token) {
+    reply.code(401).send({ error: "Authentication required" });
+    return null;
+  }
+  try {
+    return await verifyJWT(token) as JWTClaims;
+  } catch (_err) {
+    reply.code(401).send({ error: "Invalid token" });
+    return null;
+  }
+}
+
+async function verifyParentOwnership(db: ReturnType<typeof import("@aivo/db").createDb>, userId: string, learnerId: string): Promise<boolean> {
   const result = await db.select().from(learners).where(
     and(eq(learners.id, learnerId), eq(learners.parentId, userId))
   );
   return result.length > 0;
 }
 
+function extractBrainMastery(brainState: { masteryLevels: unknown } | undefined): Record<string, number> {
+  if (!brainState) return {};
+  const levels = brainState.masteryLevels as Record<string, unknown> || {};
+  const result: Record<string, number> = {};
+  for (const [key, val] of Object.entries(levels)) {
+    if (typeof val === "number") {
+      result[key] = val;
+    } else if (typeof val === "object" && val !== null) {
+      const inner = val as Record<string, number>;
+      const values = Object.values(inner).filter(v => typeof v === "number");
+      if (values.length > 0) {
+        result[key] = Math.round(values.reduce((a, b) => a + b, 0) / values.length);
+      }
+    }
+  }
+  return result;
+}
+
 export async function registerIepRoutes(app: FastifyInstance) {
-  const db = (app as any).db;
+  const db = (app as unknown as { db: ReturnType<typeof import("@aivo/db").createDb> }).db;
 
   app.get("/api/family/iep/:learnerId/goals", async (request, reply) => {
-    const token = extractToken(request);
-    if (!token) return reply.code(401).send({ error: "Authentication required" });
+    const claims = await authenticateRequest(request, reply);
+    if (!claims) return;
 
-    let claims: any;
-    try { claims = await verifyJWT(token); } catch { return reply.code(401).send({ error: "Invalid token" }); }
-
-    const { learnerId } = request.params as any;
+    const { learnerId } = request.params as LearnerId;
     const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
     if (!isParent && claims.role !== "PLATFORM_ADMIN") {
       return reply.code(403).send({ error: "Access denied" });
     }
 
-    const goals = await db.select().from(iepGoals)
+    return db.select().from(iepGoals)
       .where(eq(iepGoals.learnerId, learnerId))
       .orderBy(desc(iepGoals.createdAt));
-
-    return goals;
   });
 
   app.get("/api/family/iep/:learnerId/goals/:goalId", async (request, reply) => {
-    const token = extractToken(request);
-    if (!token) return reply.code(401).send({ error: "Authentication required" });
+    const claims = await authenticateRequest(request, reply);
+    if (!claims) return;
 
-    let claims: any;
-    try { claims = await verifyJWT(token); } catch { return reply.code(401).send({ error: "Invalid token" }); }
-
-    const { learnerId, goalId } = request.params as any;
+    const { learnerId, goalId } = request.params as GoalIdParams;
     const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
     if (!isParent && claims.role !== "PLATFORM_ADMIN") {
       return reply.code(403).send({ error: "Access denied" });
@@ -68,13 +106,10 @@ export async function registerIepRoutes(app: FastifyInstance) {
   });
 
   app.get("/api/family/iep/:learnerId/profile", async (request, reply) => {
-    const token = extractToken(request);
-    if (!token) return reply.code(401).send({ error: "Authentication required" });
+    const claims = await authenticateRequest(request, reply);
+    if (!claims) return;
 
-    let claims: any;
-    try { claims = await verifyJWT(token); } catch { return reply.code(401).send({ error: "Invalid token" }); }
-
-    const { learnerId } = request.params as any;
+    const { learnerId } = request.params as LearnerId;
     const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
     if (!isParent && claims.role !== "PLATFORM_ADMIN") {
       return reply.code(403).send({ error: "Access denied" });
@@ -88,33 +123,25 @@ export async function registerIepRoutes(app: FastifyInstance) {
   });
 
   app.get("/api/family/iep/:learnerId/documents", async (request, reply) => {
-    const token = extractToken(request);
-    if (!token) return reply.code(401).send({ error: "Authentication required" });
+    const claims = await authenticateRequest(request, reply);
+    if (!claims) return;
 
-    let claims: any;
-    try { claims = await verifyJWT(token); } catch { return reply.code(401).send({ error: "Invalid token" }); }
-
-    const { learnerId } = request.params as any;
+    const { learnerId } = request.params as LearnerId;
     const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
     if (!isParent && claims.role !== "PLATFORM_ADMIN") {
       return reply.code(403).send({ error: "Access denied" });
     }
 
-    const docs = await db.select().from(iepDocuments)
+    return db.select().from(iepDocuments)
       .where(eq(iepDocuments.learnerId, learnerId))
       .orderBy(desc(iepDocuments.uploadedAt));
-
-    return docs;
   });
 
   app.get("/api/family/iep/:learnerId/progress", async (request, reply) => {
-    const token = extractToken(request);
-    if (!token) return reply.code(401).send({ error: "Authentication required" });
+    const claims = await authenticateRequest(request, reply);
+    if (!claims) return;
 
-    let claims: any;
-    try { claims = await verifyJWT(token); } catch { return reply.code(401).send({ error: "Invalid token" }); }
-
-    const { learnerId } = request.params as any;
+    const { learnerId } = request.params as LearnerId;
     const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
     if (!isParent && claims.role !== "PLATFORM_ADMIN") {
       return reply.code(403).send({ error: "Access denied" });
@@ -123,18 +150,12 @@ export async function registerIepRoutes(app: FastifyInstance) {
     const goals = await db.select().from(iepGoals)
       .where(eq(iepGoals.learnerId, learnerId));
 
-    const brainState = await db.select().from(brainStates)
+    const brainRows = await db.select().from(brainStates)
       .where(eq(brainStates.learnerId, learnerId));
 
-    const gradebook = await db.select().from(gradebookEntries)
-      .where(eq(gradebookEntries.learnerId, learnerId));
+    const masteryMap = extractBrainMastery(brainRows[0] as { masteryLevels: unknown } | undefined);
 
-    const masteryMap: Record<string, number> = {};
-    for (const entry of gradebook) {
-      masteryMap[entry.subject] = Math.max(masteryMap[entry.subject] || 0, entry.masteryScore || 0);
-    }
-
-    const goalProgress = goals.map((goal: any) => {
+    const goalProgress = goals.map((goal) => {
       const domain = goal.domain || "";
       const currentMastery = masteryMap[domain] || 0;
       const baselineVal = parseFloat(goal.baseline || "0") || 0;
@@ -143,9 +164,9 @@ export async function registerIepRoutes(app: FastifyInstance) {
       const progressPct = range > 0 ? Math.min(100, Math.max(0, ((currentMastery - baselineVal) / range) * 100)) : 0;
 
       let trend: "improving" | "stable" | "declining" = "stable";
-      if (goal.currentProgress > 0) {
-        if (currentMastery > goal.currentProgress) trend = "improving";
-        else if (currentMastery < goal.currentProgress) trend = "declining";
+      if ((goal.currentProgress ?? 0) > 0) {
+        if (currentMastery > (goal.currentProgress ?? 0)) trend = "improving";
+        else if (currentMastery < (goal.currentProgress ?? 0)) trend = "declining";
       }
 
       return {
@@ -166,19 +187,16 @@ export async function registerIepRoutes(app: FastifyInstance) {
       learnerId,
       goals: goalProgress,
       totalGoals: goals.length,
-      activeGoals: goals.filter((g: any) => g.status === "active").length,
-      brainStateVersion: brainState[0]?.version || 0,
+      activeGoals: goals.filter((g) => g.status === "active").length,
+      brainStateVersion: brainRows[0]?.version || 0,
     };
   });
 
   app.get("/api/family/iep/:learnerId/report", async (request, reply) => {
-    const token = extractToken(request);
-    if (!token) return reply.code(401).send({ error: "Authentication required" });
+    const claims = await authenticateRequest(request, reply);
+    if (!claims) return;
 
-    let claims: any;
-    try { claims = await verifyJWT(token); } catch { return reply.code(401).send({ error: "Invalid token" }); }
-
-    const { learnerId } = request.params as any;
+    const { learnerId } = request.params as LearnerId;
     const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
     if (!isParent && claims.role !== "PLATFORM_ADMIN") {
       return reply.code(403).send({ error: "Access denied" });
@@ -190,21 +208,57 @@ export async function registerIepRoutes(app: FastifyInstance) {
 
     const goals = await db.select().from(iepGoals).where(eq(iepGoals.learnerId, learnerId));
     const profile = await db.select().from(iepProfiles).where(eq(iepProfiles.learnerId, learnerId));
-    const brainState = await db.select().from(brainStates).where(eq(brainStates.learnerId, learnerId));
-    const gradebook = await db.select().from(gradebookEntries).where(eq(gradebookEntries.learnerId, learnerId));
+    const brainRows = await db.select().from(brainStates).where(eq(brainStates.learnerId, learnerId));
+    const sessions = await db.select().from(lessonSessions)
+      .where(eq(lessonSessions.learnerId, learnerId))
+      .orderBy(desc(lessonSessions.startedAt));
+    const tSessions = await db.select().from(tutorSessions)
+      .where(eq(tutorSessions.learnerId, learnerId))
+      .orderBy(desc(tutorSessions.startedAt));
 
-    const masteryMap: Record<string, number> = {};
-    for (const entry of gradebook) {
-      masteryMap[entry.subject] = Math.max(masteryMap[entry.subject] || 0, entry.masteryScore || 0);
+    const masteryMap = extractBrainMastery(brainRows[0] as { masteryLevels: unknown } | undefined);
+
+    const sessionsBySubject: Record<string, { count: number; completed: number; totalXp: number; latestDate: string | null }> = {};
+    for (const s of sessions) {
+      const subj = s.subject;
+      if (!sessionsBySubject[subj]) sessionsBySubject[subj] = { count: 0, completed: 0, totalXp: 0, latestDate: null };
+      sessionsBySubject[subj].count++;
+      if (s.status === "COMPLETED") sessionsBySubject[subj].completed++;
+      sessionsBySubject[subj].totalXp += s.xpEarned || 0;
+      const dt = s.completedAt?.toISOString() || s.startedAt?.toISOString() || null;
+      if (dt && (!sessionsBySubject[subj].latestDate || dt > sessionsBySubject[subj].latestDate!)) {
+        sessionsBySubject[subj].latestDate = dt;
+      }
+    }
+    for (const ts of tSessions) {
+      const subj = ts.tutorName || ts.tutorSku;
+      if (!sessionsBySubject[subj]) sessionsBySubject[subj] = { count: 0, completed: 0, totalXp: 0, latestDate: null };
+      sessionsBySubject[subj].count++;
+      if (ts.completedAt) sessionsBySubject[subj].completed++;
+      sessionsBySubject[subj].totalXp += ts.xpEarned || 0;
     }
 
-    const goalSections = goals.map((goal: any) => {
+    const goalSections = goals.map((goal) => {
       const domain = goal.domain || "";
       const currentMastery = masteryMap[domain] || 0;
       const baselineVal = parseFloat(goal.baseline || "0") || 0;
       const targetVal = parseFloat(goal.targetCriteria || "100") || 100;
       const range = targetVal - baselineVal;
       const progressPct = range > 0 ? Math.min(100, Math.max(0, ((currentMastery - baselineVal) / range) * 100)) : 0;
+
+      const domainSessions = sessionsBySubject[domain] || { count: 0, completed: 0, totalXp: 0, latestDate: null };
+
+      const evidenceParts: string[] = [];
+      evidenceParts.push(`Current Brain mastery in ${domain || "this area"}: ${currentMastery}%.`);
+      evidenceParts.push(`Baseline: ${goal.baseline || "N/A"}, Target: ${goal.targetCriteria || "N/A"}.`);
+      if (domainSessions.count > 0) {
+        evidenceParts.push(`${domainSessions.completed} of ${domainSessions.count} sessions completed, earning ${domainSessions.totalXp} XP.`);
+        if (domainSessions.latestDate) {
+          evidenceParts.push(`Most recent session: ${new Date(domainSessions.latestDate).toLocaleDateString()}.`);
+        }
+      } else {
+        evidenceParts.push("No lesson sessions recorded in this domain yet.");
+      }
 
       return {
         goalText: goal.goalText,
@@ -214,9 +268,18 @@ export async function registerIepRoutes(app: FastifyInstance) {
         currentMastery,
         progressPercent: Math.round(progressPct),
         status: goal.status,
-        evidence: `Current mastery in ${domain}: ${currentMastery}%. Baseline was ${goal.baseline || "N/A"}, target is ${goal.targetCriteria || "N/A"}.`,
+        evidence: evidenceParts.join(" "),
+        sessionEvidence: {
+          sessionCount: domainSessions.count,
+          completedSessions: domainSessions.completed,
+          totalXp: domainSessions.totalXp,
+          lastSessionDate: domainSessions.latestDate,
+        },
       };
     });
+
+    const totalSessions = sessions.length + tSessions.length;
+    const completedSessions = sessions.filter(s => s.status === "COMPLETED").length + tSessions.filter(ts => ts.completedAt).length;
 
     const report = {
       title: `IEP Progress Report — ${learner.name}`,
@@ -229,17 +292,23 @@ export async function registerIepRoutes(app: FastifyInstance) {
       },
       iepProfile: profile[0] || null,
       brainSummary: {
-        version: brainState[0]?.version || 0,
-        activeAccommodations: brainState[0]?.activeAccommodations || [],
-        functioningLevelProfile: brainState[0]?.functioningLevelProfile || {},
+        version: brainRows[0]?.version || 0,
+        activeAccommodations: brainRows[0]?.activeAccommodations || [],
+        functioningLevelProfile: brainRows[0]?.functioningLevelProfile || {},
+        masteryLevels: masteryMap,
+      },
+      sessionSummary: {
+        totalSessions,
+        completedSessions,
+        totalXp: sessions.reduce((sum, s) => sum + (s.xpEarned || 0), 0),
       },
       goals: goalSections,
       summary: {
         totalGoals: goals.length,
-        activeGoals: goals.filter((g: any) => g.status === "active").length,
-        metGoals: goals.filter((g: any) => g.status === "met").length,
+        activeGoals: goals.filter((g) => g.status === "active").length,
+        metGoals: goals.filter((g) => g.status === "met").length,
         averageProgress: goalSections.length > 0
-          ? Math.round(goalSections.reduce((sum: number, g: any) => sum + g.progressPercent, 0) / goalSections.length)
+          ? Math.round(goalSections.reduce((sum, g) => sum + g.progressPercent, 0) / goalSections.length)
           : 0,
       },
     };

@@ -74,7 +74,9 @@ export default function RecommendationsPage() {
         const data = await conflictsRes.json();
         setConflicts(data.conflicts || []);
       }
-    } catch {}
+    } catch (err) {
+      console.error("Failed to fetch recommendations:", err);
+    }
   };
 
   useEffect(() => { fetchData(); }, [accessToken, learnerId]);
@@ -91,7 +93,9 @@ export default function RecommendationsPage() {
         setResponseNotes("");
         fetchData();
       }
-    } catch {}
+    } catch (err) {
+      console.error("Failed to respond to recommendation:", err);
+    }
   };
 
   if (loading || !user) return null;
