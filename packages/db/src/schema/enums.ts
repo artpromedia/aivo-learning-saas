@@ -86,3 +86,19 @@ export const subscriptionStatusEnum = pgEnum("subscription_status", [
   "CANCELLED",
   "TRIALING",
 ]);
+
+export const homeworkModeEnum = pgEnum("homework_mode", [
+  "STANDARD",
+  "SUPPORTED",
+  "LOW_VERBAL",
+  "NON_VERBAL",
+  "PRE_SYMBOLIC",
+]);
+
+export const homeworkStatusEnum = pgEnum("homework_status", [
+  "PROCESSING",
+  "READY",
+  "IN_PROGRESS",
+  "COMPLETED",
+  "FAILED",
+]);

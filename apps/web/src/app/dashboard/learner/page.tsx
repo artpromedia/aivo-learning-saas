@@ -31,10 +31,16 @@ export default function LearnerDashboard() {
         <div className="text-center space-y-2">
           <h1 className="text-4xl font-heading font-bold text-slate-900">Choose Your Tutor</h1>
           <p className="text-slate-500 font-semibold text-lg">Pick a tutor to start your learning adventure!</p>
-          <button onClick={() => router.push("/dashboard/learner/assessment")}
-            className="inline-flex items-center gap-2 mt-2 px-6 py-2 rounded-full bg-amber-100 text-amber-700 font-bold text-sm hover:bg-amber-200 transition">
-            <span>📝</span> Take Baseline Assessment
-          </button>
+          <div className="flex items-center justify-center gap-3 mt-2">
+            <button onClick={() => router.push("/dashboard/learner/assessment")}
+              className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-amber-100 text-amber-700 font-bold text-sm hover:bg-amber-200 transition">
+              <span>📝</span> Take Baseline Assessment
+            </button>
+            <button onClick={() => router.push("/dashboard/learner/homework")}
+              className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-purple-100 text-purple-700 font-bold text-sm hover:bg-purple-200 transition">
+              <span>📸</span> Homework Helper
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

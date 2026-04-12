@@ -75,6 +75,15 @@ services/tutor-svc     — Fastify tutor management (port 3006)
 - `POST /api/tutor/session/start` — Start tutor chat session
 - `POST /api/tutor/session/:id/message` — Send message in tutor chat
 - `POST /api/tutor/session/:id/complete` — Complete tutor session
+- `POST /api/tutors/homework/upload` — Upload homework (image OCR or text)
+- `GET /api/tutors/homework/learner/:learnerId` — List assignments
+- `GET /api/tutors/homework/:assignmentId` — Get assignment detail
+- `POST /api/tutors/homework/session/start` — Start homework help session
+- `POST /api/tutors/homework/session/:id/message` — Chat in homework session
+- `POST /api/tutors/homework/session/:id/complete` — Complete homework session
+- `POST /api/ai/homework/ocr` — OCR processing (ai-svc)
+- `POST /api/ai/homework/adapt` — Adapt problems to functioning level (ai-svc)
+- `POST /api/ai/homework/chat` — Homework chat completion (ai-svc)
 
 ### Frontend Pages
 - `/` — Landing page (parallax tutor carousel)
@@ -84,9 +93,11 @@ services/tutor-svc     — Fastify tutor management (port 3006)
 - `/dashboard/parent/store` — Tutor Store (bundles + individual subscribe)
 - `/dashboard/parent/learner/[id]/assessment` — Parent Baseline Assessment (49 questions, 11 categories)
 - `/dashboard/parent/learner/[id]/gradebook` — Gradebook (mastery bars, sessions, XP)
-- `/dashboard/learner` — Learner dashboard (tutor grid)
+- `/dashboard/learner` — Learner dashboard (tutor grid + homework helper link)
 - `/dashboard/learner/assessment` — Learner Baseline Assessment (dynamically generated from parent assessment via AI, fallback to 42 hardcoded questions across 7 subjects)
 - `/dashboard/learner/lesson/[tutorKey]` — Lesson Chat UI
+- `/dashboard/learner/homework` — Homework Helper (upload photo/paste text, assignment list)
+- `/dashboard/learner/homework/[sessionId]` — Homework Help Session (Socratic chat + problem sidebar)
 
 ### GitHub Repository
 - **New repo**: `artpromedia/aivo-ai-learning` (pushed Phase 0+1 — 125 files, 17,627 lines)

@@ -7,6 +7,7 @@ import { createDb } from "@aivo/db";
 import { registerHealthRoutes } from "./routes/health.js";
 import { registerStoreRoutes } from "./routes/store.js";
 import { registerChatRoutes } from "./routes/chat.js";
+import { registerHomeworkRoutes } from "./routes/homework.js";
 
 const logger = createLogger("tutor-svc");
 const PORT = parseInt(process.env.TUTOR_PORT || "3006", 10);
@@ -30,6 +31,7 @@ async function start() {
   registerHealthRoutes(app);
   registerStoreRoutes(app, db);
   registerChatRoutes(app, db);
+  registerHomeworkRoutes(app, db);
 
   await app.listen({ port: PORT, host: "0.0.0.0" });
   logger.info(`Tutor service listening on port ${PORT}`);
