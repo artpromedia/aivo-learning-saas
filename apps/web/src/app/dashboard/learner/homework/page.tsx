@@ -200,7 +200,7 @@ export default function HomeworkPage() {
             onDrop={handleDrop}
             onClick={() => fileInputRef.current?.click()}
           >
-            <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+            <input ref={fileInputRef} type="file" accept="image/*,.pdf,application/pdf" className="hidden" onChange={handleFileChange} />
             {uploading ? (
               <>
                 <div className="w-12 h-12 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin" />
@@ -211,7 +211,7 @@ export default function HomeworkPage() {
                 <div className="text-5xl">📸</div>
                 <p className="text-slate-700 font-bold text-lg">Upload a Photo</p>
                 <p className="text-slate-400 text-sm">Drag & drop or click to browse</p>
-                <p className="text-slate-300 text-xs">Supports JPG, PNG, WebP</p>
+                <p className="text-slate-300 text-xs">Supports JPG, PNG, WebP, PDF</p>
               </>
             )}
           </div>

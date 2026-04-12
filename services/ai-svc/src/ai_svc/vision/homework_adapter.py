@@ -208,6 +208,26 @@ async def adapt_homework(
         adapted = _parse_adaptation_response(result["content"])
         adapted.functioning_level = functioning_level
         adapted.model = result.get("model", "")
+
+        passed, issues = _validate_adaptation_quality(adapted, extracted_problems, functioning_level)
+        if not passed:
+            logger.warning(f"Adaptation quality gate failed: {issues}")
+            return AdaptedAssignment(
+                original_summary="Quality gate failed — using original problems",
+                adapted_problems=[
+                    AdaptedProblem(
+                        problem_number=p.get("number", i + 1),
+                        original=p.get("problem_text", p.get("text", "")),
+                        adapted=p.get("problem_text", p.get("text", "")),
+                    )
+                    for i, p in enumerate(extracted_problems)
+                ],
+                functioning_level=functioning_level,
+                model=adapted.model,
+            )
+        if issues:
+            logger.info(f"Adaptation quality warnings: {issues}")
+
         return adapted
 
     except Exception as e:
@@ -224,6 +244,40 @@ async def adapt_homework(
             ],
             functioning_level=functioning_level,
         )
+
+
+def _validate_adaptation_quality(
+    adapted: AdaptedAssignment,
+    original_problems: list[dict[str, Any]],
+    functioning_level: str,
+) -> tuple[bool, list[str]]:
+    issues: list[str] = []
+    max_choices = _LEVEL_MAX_CHOICES.get(functioning_level, 4)
+    max_sentences = _LEVEL_MAX_SENTENCES.get(functioning_level, 6)
+
+    if len(adapted.adapted_problems) == 0 and len(original_problems) > 0:
+        issues.append("No adapted problems generated")
+        return False, issues
+
+    for p in adapted.adapted_problems:
+        if not p.adapted and not p.original:
+            issues.append(f"Problem {p.problem_number}: empty adapted text")
+
+        if max_choices > 0 and len(p.choices) > max_choices:
+            p.choices = p.choices[:max_choices]
+
+        if max_sentences > 0:
+            sentences = [s.strip() for s in p.adapted.split(".") if s.strip()]
+            if len(sentences) > max_sentences * 2:
+                issues.append(f"Problem {p.problem_number}: adapted text too long ({len(sentences)} sentences)")
+
+    if functioning_level in ("NON_VERBAL", "PRE_SYMBOLIC"):
+        if not adapted.parent_guide:
+            issues.append("Missing parent guide for NON_VERBAL/PRE_SYMBOLIC level")
+            adapted.parent_guide = "Please work with your child using real objects and sensory activities related to each problem."
+
+    passed = len([i for i in issues if "empty adapted" in i or "No adapted" in i]) == 0
+    return passed, issues
 
 
 def _parse_adaptation_response(text: str) -> AdaptedAssignment:

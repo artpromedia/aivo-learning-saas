@@ -43,7 +43,7 @@ export default function HomeworkSessionPage() {
   const { user, accessToken, loading: authLoading } = useAuth();
   const router = useRouter();
   const params = useParams();
-  const assignmentId = params.sessionId as string;
+  const assignmentId = params.assignmentId as string;
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 

@@ -108,6 +108,9 @@ async def process_ocr(
     if not image_base64:
         return ExtractedDocument(raw_text="No input provided")
 
+    if mime_type == "application/pdf":
+        return await _process_pdf(image_base64)
+
     user_content = [
         {
             "type": "image_url",
@@ -127,6 +130,7 @@ async def process_ocr(
             user_prompt=user_content,
             max_tokens=3000,
             temperature=0.2,
+            preferred_model="gemini/gemini-2.0-flash",
         )
 
         doc = _parse_vision_response(result["content"])
@@ -140,6 +144,56 @@ async def process_ocr(
     except Exception as e:
         logger.error(f"OCR processing failed: {e}")
         return ExtractedDocument(raw_text=f"OCR processing failed: {str(e)}")
+
+
+async def _process_pdf(pdf_base64: str) -> ExtractedDocument:
+    """Extract text from a PDF and process as text input.
+
+    Uses PyPDF2 for text extraction. If text extraction yields
+    content, processes as text. Otherwise falls back to sending
+    individual pages as images to vision model.
+    """
+    try:
+        import io
+        pdf_bytes = base64.b64decode(pdf_base64)
+
+        try:
+            from PyPDF2 import PdfReader
+            reader = PdfReader(io.BytesIO(pdf_bytes))
+            pages_text = []
+            for page in reader.pages[:10]:
+                text = page.extract_text()
+                if text and text.strip():
+                    pages_text.append(text.strip())
+
+            if pages_text:
+                combined_text = "\n\n".join(pages_text)
+                return await _process_text_input(combined_text)
+        except ImportError:
+            logger.warning("PyPDF2 not available, falling back to LLM text extraction")
+
+        result = await generate_completion(
+            system_prompt=_OCR_SYSTEM_PROMPT,
+            user_prompt=(
+                "I have a PDF homework document. The raw text content is below. "
+                "Extract and structure all problems from it.\n\n"
+                f"[PDF raw bytes - {len(pdf_bytes)} bytes, unable to render directly. "
+                "Please process the following base64 content as a document.]"
+            ),
+            max_tokens=3000,
+            temperature=0.2,
+            preferred_model="gemini/gemini-2.0-flash",
+        )
+
+        doc = _parse_vision_response(result["content"])
+        doc.model = result.get("model", "")
+        combined = _build_combined_text(doc)
+        doc.detected_subject = await detect_subject(combined)
+        return doc
+
+    except Exception as e:
+        logger.error(f"PDF processing failed: {e}")
+        return ExtractedDocument(raw_text=f"PDF processing failed: {str(e)}")
 
 
 async def _process_text_input(text: str) -> ExtractedDocument:
