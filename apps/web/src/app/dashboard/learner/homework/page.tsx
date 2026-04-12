@@ -42,7 +42,7 @@ const STATUS_LABELS: Record<string, { label: string; color: string }> = {
 };
 
 export default function HomeworkPage() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, accessToken, loading: authLoading } = useAuth();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -66,7 +66,9 @@ export default function HomeworkPage() {
 
   async function fetchAssignments() {
     try {
-      const res = await fetch(`/api/tutors/homework/learner/${user!.id}`, { credentials: "include" });
+      const res = await fetch(`/api/tutors/homework/learner/${user!.id}`, {
+        headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {},
+      });
       if (res.ok) {
         const data = await res.json();
         setAssignments(data.assignments || []);
@@ -106,10 +108,12 @@ export default function HomeworkPage() {
         return;
       }
 
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (accessToken) headers["Authorization"] = `Bearer ${accessToken}`;
+
       const res = await fetch("/api/tutors/homework/upload", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
+        headers,
         body: JSON.stringify(body),
       });
 

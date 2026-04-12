@@ -257,6 +257,10 @@ export default function ParentDashboard() {
                     className="px-4 py-2 text-sm rounded-full bg-green-50 text-green-700 font-bold hover:bg-green-100 transition">
                     Gradebook
                   </button>
+                  <button onClick={() => router.push(`/dashboard/parent/${l.id}/homework`)}
+                    className="px-4 py-2 text-sm rounded-full bg-amber-50 text-amber-700 font-bold hover:bg-amber-100 transition">
+                    Homework
+                  </button>
                 </div>
               </div>
             ))}

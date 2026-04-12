@@ -40,7 +40,7 @@ const SUBJECT_ICONS: Record<string, string> = {
 };
 
 export default function HomeworkSessionPage() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, accessToken, loading: authLoading } = useAuth();
   const router = useRouter();
   const params = useParams();
   const assignmentId = params.sessionId as string;
@@ -73,7 +73,9 @@ export default function HomeworkSessionPage() {
 
   async function loadAssignment() {
     try {
-      const res = await fetch(`/api/tutors/homework/${assignmentId}`, { credentials: "include" });
+      const res = await fetch(`/api/tutors/homework/${assignmentId}`, {
+        headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {},
+      });
       if (!res.ok) throw new Error("Assignment not found");
       const data = await res.json();
       setAssignment(data);
@@ -87,10 +89,12 @@ export default function HomeworkSessionPage() {
 
   async function startSession(assignmentData: AssignmentData) {
     try {
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (accessToken) headers["Authorization"] = `Bearer ${accessToken}`;
+
       const res = await fetch("/api/tutors/homework/session/start", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
+        headers,
         body: JSON.stringify({ assignmentId: assignmentData.id, learnerId: user!.id }),
       });
       if (!res.ok) throw new Error("Failed to start session");
@@ -118,10 +122,12 @@ export default function HomeworkSessionPage() {
     setMessages((prev) => [...prev, { role: "user", content: userMessage, timestamp: new Date().toISOString() }]);
 
     try {
+      const msgHeaders: Record<string, string> = { "Content-Type": "application/json" };
+      if (accessToken) msgHeaders["Authorization"] = `Bearer ${accessToken}`;
+
       const res = await fetch(`/api/tutors/homework/session/${sessionId}/message`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
+        headers: msgHeaders,
         body: JSON.stringify({ message: userMessage }),
       });
 
@@ -139,10 +145,12 @@ export default function HomeworkSessionPage() {
   async function completeSession() {
     if (!sessionId) return;
     try {
+      const completeHeaders: Record<string, string> = { "Content-Type": "application/json" };
+      if (accessToken) completeHeaders["Authorization"] = `Bearer ${accessToken}`;
+
       await fetch(`/api/tutors/homework/session/${sessionId}/complete`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
+        headers: completeHeaders,
         body: JSON.stringify({
           problemsAttempted: assignment?.adaptedProblems?.length || 0,
           problemsCompleted: completedProblems.size,

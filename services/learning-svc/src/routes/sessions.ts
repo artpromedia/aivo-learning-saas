@@ -130,6 +130,39 @@ export function registerSessionRoutes(app: FastifyInstance, db: any) {
     return { status: "COMPLETED", sessionId };
   });
 
+  app.post("/api/learning/gradebook/update", async (request, reply) => {
+    const { learnerId, skill, masteryScore, sessionType, xpEarned } = request.body as any;
+    if (!learnerId || !skill) {
+      return reply.code(400).send({ error: "learnerId and skill required" });
+    }
+
+    const existing = await db.select().from(gradebookEntries).where(
+      and(eq(gradebookEntries.learnerId, learnerId), eq(gradebookEntries.skill, skill))
+    );
+
+    if (existing.length > 0) {
+      await db.update(gradebookEntries).set({
+        masteryScore: masteryScore ?? existing[0].masteryScore,
+        attemptsCount: (existing[0].attemptsCount || 0) + 1,
+        lastAssessedAt: new Date(),
+        trend: masteryScore > (existing[0].masteryScore || 0) ? "improving" : masteryScore < (existing[0].masteryScore || 0) ? "declining" : "stable",
+        updatedAt: new Date(),
+      }).where(eq(gradebookEntries.id, existing[0].id));
+    } else {
+      await db.insert(gradebookEntries).values({
+        tenantId: "00000000-0000-0000-0000-000000000001",
+        learnerId,
+        subject: skill.replace("homework_", ""),
+        skill,
+        masteryScore: masteryScore || 0,
+        attemptsCount: 1,
+        lastAssessedAt: new Date(),
+      });
+    }
+
+    return { status: "updated", skill, masteryScore };
+  });
+
   app.get("/api/learning/sessions", async (request) => {
     const { learnerId } = request.query as any;
     if (!learnerId) return [];

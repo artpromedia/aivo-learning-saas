@@ -98,6 +98,7 @@ services/tutor-svc     — Fastify tutor management (port 3006)
 - `/dashboard/learner/lesson/[tutorKey]` — Lesson Chat UI
 - `/dashboard/learner/homework` — Homework Helper (upload photo/paste text, assignment list)
 - `/dashboard/learner/homework/[sessionId]` — Homework Help Session (Socratic chat + problem sidebar)
+- `/dashboard/parent/[learnerId]/homework` — Parent Homework History (view child's homework activity)
 
 ### GitHub Repository
 - **New repo**: `artpromedia/aivo-ai-learning` (pushed Phase 0+1 — 125 files, 17,627 lines)
