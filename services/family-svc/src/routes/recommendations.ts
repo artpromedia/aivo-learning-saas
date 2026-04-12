@@ -31,7 +31,7 @@ export async function registerRecommendationRoutes(app: FastifyInstance) {
     if (!claims) return;
 
     const { learnerId } = request.params as LearnerId;
-    const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
+    const isParent = await verifyParentOwnership(db, claims.sub, learnerId);
     if (!isParent && claims.role !== "PLATFORM_ADMIN") {
       return reply.code(403).send({ error: "Access denied" });
     }
@@ -54,7 +54,7 @@ export async function registerRecommendationRoutes(app: FastifyInstance) {
     if (!claims) return;
 
     const { learnerId, recId } = request.params as RespondParams;
-    const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
+    const isParent = await verifyParentOwnership(db, claims.sub, learnerId);
     if (!isParent) return reply.code(403).send({ error: "Only parents can respond to recommendations" });
 
     const body = request.body as RespondBody;
@@ -81,7 +81,7 @@ export async function registerRecommendationRoutes(app: FastifyInstance) {
     if (!claims) return;
 
     const { learnerId } = request.params as LearnerId;
-    const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
+    const isParent = await verifyParentOwnership(db, claims.sub, learnerId);
     if (!isParent && claims.role !== "PLATFORM_ADMIN") {
       return reply.code(403).send({ error: "Access denied" });
     }
@@ -101,7 +101,7 @@ export async function registerRecommendationRoutes(app: FastifyInstance) {
     if (!claims) return;
 
     const { learnerId } = request.params as LearnerId;
-    const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
+    const isParent = await verifyParentOwnership(db, claims.sub, learnerId);
     if (!isParent && claims.role !== "PLATFORM_ADMIN") {
       return reply.code(403).send({ error: "Access denied" });
     }

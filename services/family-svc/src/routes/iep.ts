@@ -45,7 +45,7 @@ export async function registerIepRoutes(app: FastifyInstance) {
     if (!claims) return;
 
     const { learnerId } = request.params as LearnerId;
-    const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
+    const isParent = await verifyParentOwnership(db, claims.sub, learnerId);
     if (!isParent && claims.role !== "PLATFORM_ADMIN") {
       return reply.code(403).send({ error: "Access denied" });
     }
@@ -60,7 +60,7 @@ export async function registerIepRoutes(app: FastifyInstance) {
     if (!claims) return;
 
     const { learnerId, goalId } = request.params as GoalIdParams;
-    const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
+    const isParent = await verifyParentOwnership(db, claims.sub, learnerId);
     if (!isParent && claims.role !== "PLATFORM_ADMIN") {
       return reply.code(403).send({ error: "Access denied" });
     }
@@ -78,7 +78,7 @@ export async function registerIepRoutes(app: FastifyInstance) {
     if (!claims) return;
 
     const { learnerId } = request.params as LearnerId;
-    const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
+    const isParent = await verifyParentOwnership(db, claims.sub, learnerId);
     if (!isParent && claims.role !== "PLATFORM_ADMIN") {
       return reply.code(403).send({ error: "Access denied" });
     }
@@ -95,7 +95,7 @@ export async function registerIepRoutes(app: FastifyInstance) {
     if (!claims) return;
 
     const { learnerId } = request.params as LearnerId;
-    const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
+    const isParent = await verifyParentOwnership(db, claims.sub, learnerId);
     if (!isParent && claims.role !== "PLATFORM_ADMIN") {
       return reply.code(403).send({ error: "Access denied" });
     }
@@ -110,7 +110,7 @@ export async function registerIepRoutes(app: FastifyInstance) {
     if (!claims) return;
 
     const { learnerId } = request.params as LearnerId;
-    const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
+    const isParent = await verifyParentOwnership(db, claims.sub, learnerId);
     if (!isParent && claims.role !== "PLATFORM_ADMIN") {
       return reply.code(403).send({ error: "Access denied" });
     }
@@ -165,7 +165,7 @@ export async function registerIepRoutes(app: FastifyInstance) {
     if (!claims) return;
 
     const { learnerId } = request.params as LearnerId;
-    const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
+    const isParent = await verifyParentOwnership(db, claims.sub, learnerId);
     if (!isParent && claims.role !== "PLATFORM_ADMIN") {
       return reply.code(403).send({ error: "Access denied" });
     }

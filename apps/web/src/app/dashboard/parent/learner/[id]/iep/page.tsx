@@ -33,11 +33,28 @@ interface IepDocument {
   uploadedAt: string;
 }
 
+interface ReportLearner {
+  id: string;
+  name: string;
+}
+
+interface ReportGoal {
+  goalId: string;
+  goalText: string;
+  domain: string;
+  status: string;
+  baseline: string;
+  targetCriteria: string;
+  currentMastery: number;
+  progressPercent: number;
+  sessionEvidence: { lessonCount: number; tutorCount: number };
+}
+
 interface IepReport {
   title: string;
   generatedAt: string;
-  learner: any;
-  goals: any[];
+  learner: ReportLearner;
+  goals: ReportGoal[];
   summary: { totalGoals: number; activeGoals: number; metGoals: number; averageProgress: number };
 }
 

@@ -54,7 +54,7 @@ export async function registerCollaborationRoutes(app: FastifyInstance) {
     if (!claims) return;
 
     const { learnerId } = request.params as LearnerId;
-    const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
+    const isParent = await verifyParentOwnership(db, claims.sub, learnerId);
     if (!isParent && claims.role !== "PLATFORM_ADMIN") {
       return reply.code(403).send({ error: "Access denied" });
     }
@@ -75,7 +75,7 @@ export async function registerCollaborationRoutes(app: FastifyInstance) {
     if (!claims) return;
 
     const { learnerId } = request.params as LearnerId;
-    const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
+    const isParent = await verifyParentOwnership(db, claims.sub, learnerId);
     if (!isParent) return reply.code(403).send({ error: "Only parents can invite team members" });
 
     const body = request.body as InviteTeacherBody;
@@ -99,7 +99,7 @@ export async function registerCollaborationRoutes(app: FastifyInstance) {
       tenantId,
       learnerId,
       teacherEmail: body.email,
-      invitedBy: claims.userId,
+      invitedBy: claims.sub,
       status: "PENDING",
     }).returning();
 
@@ -111,7 +111,7 @@ export async function registerCollaborationRoutes(app: FastifyInstance) {
     if (!claims) return;
 
     const { learnerId } = request.params as LearnerId;
-    const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
+    const isParent = await verifyParentOwnership(db, claims.sub, learnerId);
     if (!isParent) return reply.code(403).send({ error: "Only parents can invite team members" });
 
     const body = request.body as InviteCaregiverBody;
@@ -135,7 +135,7 @@ export async function registerCollaborationRoutes(app: FastifyInstance) {
       tenantId,
       learnerId,
       caregiverEmail: body.email,
-      invitedBy: claims.userId,
+      invitedBy: claims.sub,
       relationship: body.relationship || null,
       status: "PENDING",
     }).returning();
@@ -148,7 +148,7 @@ export async function registerCollaborationRoutes(app: FastifyInstance) {
     if (!claims) return;
 
     const { learnerId } = request.params as LearnerId;
-    const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
+    const isParent = await verifyParentOwnership(db, claims.sub, learnerId);
     if (!isParent) return reply.code(403).send({ error: "Only parents can invite team members" });
 
     const body = request.body as InviteTherapistBody;
@@ -167,7 +167,7 @@ export async function registerCollaborationRoutes(app: FastifyInstance) {
       tenantId,
       learnerId,
       therapistEmail: body.email,
-      invitedBy: claims.userId,
+      invitedBy: claims.sub,
       specialty: body.specialty || null,
       credentials: body.credentials || null,
       status: "PENDING",
@@ -181,7 +181,7 @@ export async function registerCollaborationRoutes(app: FastifyInstance) {
     if (!claims) return;
 
     const { learnerId, memberId } = request.params as MemberParams;
-    const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
+    const isParent = await verifyParentOwnership(db, claims.sub, learnerId);
     if (!isParent) return reply.code(403).send({ error: "Only parents can remove team members" });
 
     const { memberType } = request.query as MemberTypeQuery;
@@ -205,16 +205,16 @@ export async function registerCollaborationRoutes(app: FastifyInstance) {
 
     const { learnerId } = request.params as LearnerId;
 
-    const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
+    const isParent = await verifyParentOwnership(db, claims.sub, learnerId);
     if (!isParent) {
       const teacherMatch = await db.select().from(learnerTeachers).where(
-        and(eq(learnerTeachers.learnerId, learnerId), eq(learnerTeachers.teacherUserId, claims.userId), eq(learnerTeachers.status, "ACCEPTED"))
+        and(eq(learnerTeachers.learnerId, learnerId), eq(learnerTeachers.teacherUserId, claims.sub), eq(learnerTeachers.status, "ACCEPTED"))
       );
       const caregiverMatch = await db.select().from(learnerCaregivers).where(
-        and(eq(learnerCaregivers.learnerId, learnerId), eq(learnerCaregivers.caregiverUserId, claims.userId), eq(learnerCaregivers.status, "ACCEPTED"))
+        and(eq(learnerCaregivers.learnerId, learnerId), eq(learnerCaregivers.caregiverUserId, claims.sub), eq(learnerCaregivers.status, "ACCEPTED"))
       );
       const therapistMatch = await db.select().from(learnerTherapists).where(
-        and(eq(learnerTherapists.learnerId, learnerId), eq(learnerTherapists.therapistUserId, claims.userId), eq(learnerTherapists.status, "ACCEPTED"))
+        and(eq(learnerTherapists.learnerId, learnerId), eq(learnerTherapists.therapistUserId, claims.sub), eq(learnerTherapists.status, "ACCEPTED"))
       );
 
       if (teacherMatch.length === 0 && caregiverMatch.length === 0 && therapistMatch.length === 0 && claims.role !== "PLATFORM_ADMIN") {
@@ -228,7 +228,7 @@ export async function registerCollaborationRoutes(app: FastifyInstance) {
     const [record] = await db.insert(brainInsights).values({
       learnerId,
       source: body.source || claims.role?.toLowerCase() || "collaborator",
-      sourceUserId: claims.userId,
+      sourceUserId: claims.sub,
       insightText: body.insightText,
       domain: body.domain || null,
     }).returning();
@@ -242,9 +242,9 @@ export async function registerCollaborationRoutes(app: FastifyInstance) {
 
     const { learnerId } = request.params as LearnerId;
 
-    const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
+    const isParent = await verifyParentOwnership(db, claims.sub, learnerId);
     const teacherMatch = await db.select().from(learnerTeachers).where(
-      and(eq(learnerTeachers.learnerId, learnerId), eq(learnerTeachers.teacherUserId, claims.userId), eq(learnerTeachers.status, "ACCEPTED"))
+      and(eq(learnerTeachers.learnerId, learnerId), eq(learnerTeachers.teacherUserId, claims.sub), eq(learnerTeachers.status, "ACCEPTED"))
     );
 
     if (!isParent && teacherMatch.length === 0 && claims.role !== "PLATFORM_ADMIN") {
@@ -273,9 +273,9 @@ export async function registerCollaborationRoutes(app: FastifyInstance) {
 
     const { learnerId } = request.params as LearnerId;
 
-    const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
+    const isParent = await verifyParentOwnership(db, claims.sub, learnerId);
     const caregiverMatch = await db.select().from(learnerCaregivers).where(
-      and(eq(learnerCaregivers.learnerId, learnerId), eq(learnerCaregivers.caregiverUserId, claims.userId), eq(learnerCaregivers.status, "ACCEPTED"))
+      and(eq(learnerCaregivers.learnerId, learnerId), eq(learnerCaregivers.caregiverUserId, claims.sub), eq(learnerCaregivers.status, "ACCEPTED"))
     );
 
     if (!isParent && caregiverMatch.length === 0 && claims.role !== "PLATFORM_ADMIN") {
@@ -312,9 +312,9 @@ export async function registerCollaborationRoutes(app: FastifyInstance) {
 
     const { learnerId } = request.params as LearnerId;
 
-    const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
+    const isParent = await verifyParentOwnership(db, claims.sub, learnerId);
     const therapistMatch = await db.select().from(learnerTherapists).where(
-      and(eq(learnerTherapists.learnerId, learnerId), eq(learnerTherapists.therapistUserId, claims.userId), eq(learnerTherapists.status, "ACCEPTED"))
+      and(eq(learnerTherapists.learnerId, learnerId), eq(learnerTherapists.therapistUserId, claims.sub), eq(learnerTherapists.status, "ACCEPTED"))
     );
 
     if (!isParent && therapistMatch.length === 0 && claims.role !== "PLATFORM_ADMIN") {

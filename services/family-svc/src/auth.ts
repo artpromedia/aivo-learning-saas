@@ -1,11 +1,14 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { eq, and } from "drizzle-orm";
 import { learners } from "@aivo/db";
-import { verifyJWT } from "@aivo/security";
+import { verifyJWT, JWTPayload } from "@aivo/security";
 
-export interface JWTClaims {
-  userId: string;
+export interface AuthUser {
+  sub: string;
+  tenantId: string;
   role: string;
+  email?: string;
+  name?: string;
 }
 
 export function extractToken(request: FastifyRequest): string | null {
@@ -14,14 +17,15 @@ export function extractToken(request: FastifyRequest): string | null {
   return null;
 }
 
-export async function authenticateRequest(request: FastifyRequest, reply: FastifyReply): Promise<JWTClaims | null> {
+export async function authenticateRequest(request: FastifyRequest, reply: FastifyReply): Promise<AuthUser | null> {
   const token = extractToken(request);
   if (!token) {
     reply.code(401).send({ error: "Authentication required" });
     return null;
   }
   try {
-    return await verifyJWT(token) as JWTClaims;
+    const payload = await verifyJWT(token);
+    return payload as AuthUser;
   } catch (_err) {
     reply.code(401).send({ error: "Invalid token" });
     return null;
@@ -30,11 +34,11 @@ export async function authenticateRequest(request: FastifyRequest, reply: Fastif
 
 export async function verifyParentOwnership(
   db: ReturnType<typeof import("@aivo/db").createDb>,
-  userId: string,
+  userSub: string,
   learnerId: string
 ): Promise<boolean> {
   const result = await db.select().from(learners).where(
-    and(eq(learners.id, learnerId), eq(learners.parentId, userId))
+    and(eq(learners.id, learnerId), eq(learners.parentId, userSub))
   );
   return result.length > 0;
 }

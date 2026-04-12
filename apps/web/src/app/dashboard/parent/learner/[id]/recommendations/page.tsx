@@ -10,7 +10,7 @@ interface Recommendation {
   status: string;
   title: string;
   description: string;
-  payload: any;
+  payload: Record<string, unknown> | null;
   parentNotes: string | null;
   resolvedAt: string | null;
   createdAt: string;
