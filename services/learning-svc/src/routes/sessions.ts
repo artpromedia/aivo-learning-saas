@@ -131,6 +131,17 @@ export function registerSessionRoutes(app: FastifyInstance, db: any) {
   });
 
   app.post("/api/learning/gradebook/update", async (request, reply) => {
+    const serviceToken = request.headers["x-service-token"];
+    const authHeader = request.headers.authorization;
+    const isInternalCall = request.headers["x-internal-service"] === "tutor-svc";
+
+    if (!serviceToken && !authHeader && !isInternalCall) {
+      const remoteIp = request.ip;
+      if (remoteIp && !remoteIp.startsWith("127.") && remoteIp !== "::1" && !remoteIp.startsWith("172.")) {
+        return reply.code(401).send({ error: "Authentication required" });
+      }
+    }
+
     const { learnerId, skill, masteryScore, sessionType, xpEarned } = request.body as any;
     if (!learnerId || !skill) {
       return reply.code(400).send({ error: "learnerId and skill required" });

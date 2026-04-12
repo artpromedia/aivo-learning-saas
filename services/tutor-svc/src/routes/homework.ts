@@ -87,7 +87,7 @@ async function writeMasteryUpdate(
     const masteryScore = Math.round(completionQuality * 100);
     await fetch(`${LEARNING_SVC_URL}/api/learning/gradebook/update`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "x-internal-service": "tutor-svc" },
       body: JSON.stringify({
         learnerId,
         skill,
