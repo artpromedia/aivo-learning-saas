@@ -35,7 +35,7 @@ export default function TutorStorePage() {
   const [activeSubs, setActiveSubs] = useState<ActiveSub[]>([]);
   const [subscribing, setSubscribing] = useState<string | null>(null);
   const [selectedBundle, setSelectedBundle] = useState<string | null>(null);
-  const [learners, setLearners] = useState<any[]>([]);
+  const [learners, setLearners] = useState<{ id: string; name: string }[]>([]);
   const [selectedLearner, setSelectedLearner] = useState<string>("");
 
   useEffect(() => {
@@ -47,14 +47,14 @@ export default function TutorStorePage() {
     fetch("/api/tutors/catalog").then(r => r.json()).then(data => {
       setCatalog(data.tutors || []);
       setBundles(data.bundles || {});
-    }).catch(() => {});
+    }).catch((err: unknown) => { console.error("Failed to load catalog:", err); });
   }, []);
 
   useEffect(() => {
     if (accessToken && user) {
       fetch("/api/users/learners", { headers: { Authorization: `Bearer ${accessToken}` } })
-        .then(r => r.json()).then(setLearners).catch(() => {});
-      fetch(`/api/tutors/active/${user.id}`).then(r => r.json()).then(setActiveSubs).catch(() => {});
+        .then(r => r.json()).then(setLearners).catch((err: unknown) => { console.error("Failed to load learners:", err); });
+      fetch(`/api/tutors/active/${user.id}`).then(r => r.json()).then(setActiveSubs).catch((err: unknown) => { console.error("Failed to load subs:", err); });
     }
   }, [accessToken, user]);
 
@@ -72,7 +72,7 @@ export default function TutorStorePage() {
       if (res.ok) {
         setActiveSubs([...activeSubs, { tutorSku: sku, status: "active" }]);
       }
-    } catch {}
+    } catch (err: unknown) { console.error("Subscribe failed:", err); }
     setSubscribing(null);
   };
 
@@ -87,12 +87,12 @@ export default function TutorStorePage() {
       });
       if (res.ok) {
         const data = await res.json();
-        const newSubs = data.results
-          .filter((r: any) => r.status === "activated")
-          .map((r: any) => ({ tutorSku: r.sku, status: "active" }));
+        const newSubs = (data.results as { status: string; sku: string }[])
+          .filter((r) => r.status === "activated")
+          .map((r) => ({ tutorSku: r.sku, status: "active" }));
         setActiveSubs([...activeSubs, ...newSubs]);
       }
-    } catch {}
+    } catch (err: unknown) { console.error("Bundle subscribe failed:", err); }
     setSubscribing(null);
     setSelectedBundle(null);
   };

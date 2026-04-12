@@ -31,7 +31,7 @@ services/family-svc    — Fastify family collaboration + IEP (port 3007)
 - **Styling**: AIVO brand system (purple primary #7C3AED), game-themed Fredoka + Nunito fonts
 
 ### Key Concepts
-- **14 Tutors**: 7 core (Nova/Math, Sage/ELA, Spark/Science, Chrono/History, Pixel/Coding, Echo/Speech, Harmony/SEL) + 7 expansion (Atlas/Geography, Cadence/Music, Vigor/PE, Lingua/Languages, Forge/Vocational, Compass/Life Skills, Muse/Art)
+- **14 Tutors**: 7 core (Nova/Math, Sage/ELA, Spark/Science, Chrono/History, Pixel/Coding, Echo/Speech, Harmony/SEL) + 7 expansion (Atlas/Geography, Cadence/Music, Vigor/PE, Lingua/Languages, Forge/STEM Design, Compass/Life Skills, Muse/Creative Writing). All have full system prompts with functioning-level adaptations. Compass includes transition planning module (ages 14-22). Lingua includes bilingual scaffolding with code-switching awareness.
 - **Tutor Avatars**: AI-generated photorealistic portraits in `apps/web/public/images/tutors/` (14 PNG files, 3:4 aspect ratio)
 - **Parallax Tutor Carousel**: Landing page features auto-rotating parallax carousel with depth-stacked cards, center detail panel, and pause/play control
 - **5 Functioning Levels**: STANDARD → SUPPORTED → LOW_VERBAL → NON_VERBAL → PRE_SYMBOLIC

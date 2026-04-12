@@ -22,6 +22,7 @@ const TUTOR_SKU_MAP: Record<string, string> = {
 
 const BUNDLE_PRICING = {
   core7: { name: "Core 7", price: 1499, tutors: ["nova", "sage", "spark", "chrono", "pixel", "echo", "harmony"] },
+  expansion7: { name: "Expansion 7", price: 1499, tutors: ["atlas", "cadence", "vigor", "lingua", "forge", "compass", "muse"] },
   full14: { name: "Full K-12", price: 2499, tutors: Object.keys(TUTOR_SKU_MAP) },
   stem: { name: "STEM Pack", price: 999, tutors: ["nova", "spark", "pixel", "forge"] },
   humanities: { name: "Humanities Pack", price: 999, tutors: ["sage", "chrono", "atlas", "muse"] },
@@ -29,7 +30,7 @@ const BUNDLE_PRICING = {
   individual: { name: "Individual Tutor", price: 499, tutors: [] },
 };
 
-export function registerStoreRoutes(app: FastifyInstance, db: any) {
+export function registerStoreRoutes(app: FastifyInstance, db: ReturnType<typeof import("@aivo/db").createDb>) {
   app.get("/api/tutors/catalog", async () => {
     const catalog = Object.entries(TUTORS).map(([key, tutor]) => ({
       key,
@@ -45,14 +46,14 @@ export function registerStoreRoutes(app: FastifyInstance, db: any) {
   });
 
   app.get("/api/tutors/active/:userId", async (request) => {
-    const { userId } = request.params as any;
+    const { userId } = request.params as { userId: string };
     const subs = await db.select().from(tutorSubscriptions)
       .where(and(eq(tutorSubscriptions.userId, userId), eq(tutorSubscriptions.status, "active")));
     return subs;
   });
 
   app.post("/api/tutors/subscribe", async (request, reply) => {
-    const { userId, tutorSku, tenantId } = request.body as any;
+    const { userId, tutorSku, tenantId } = request.body as { userId: string; tutorSku: string; tenantId?: string };
     if (!userId || !tutorSku) {
       return reply.code(400).send({ error: "userId and tutorSku required" });
     }
@@ -85,7 +86,7 @@ export function registerStoreRoutes(app: FastifyInstance, db: any) {
   });
 
   app.post("/api/tutors/subscribe-bundle", async (request, reply) => {
-    const { userId, bundleKey, tenantId } = request.body as any;
+    const { userId, bundleKey, tenantId } = request.body as { userId: string; bundleKey: string; tenantId?: string };
     if (!userId || !bundleKey) {
       return reply.code(400).send({ error: "userId and bundleKey required" });
     }
@@ -121,7 +122,7 @@ export function registerStoreRoutes(app: FastifyInstance, db: any) {
   });
 
   app.post("/api/tutors/unsubscribe", async (request, reply) => {
-    const { userId, tutorSku } = request.body as any;
+    const { userId, tutorSku } = request.body as { userId: string; tutorSku: string };
     if (!userId || !tutorSku) {
       return reply.code(400).send({ error: "userId and tutorSku required" });
     }
