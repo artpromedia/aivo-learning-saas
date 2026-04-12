@@ -19,6 +19,7 @@ services/brain-svc     — Python FastAPI brain clone (port 3002)
 services/ai-svc        — Python FastAPI LLM gateway (port 3004)
 services/learning-svc  — Fastify lesson sessions (port 3005)
 services/tutor-svc     — Fastify tutor management (port 3006)
+services/family-svc    — Fastify family collaboration + IEP (port 3007)
 ```
 
 ### Tech Stack
@@ -39,7 +40,7 @@ services/tutor-svc     — Fastify tutor management (port 3006)
 
 ### Running Services
 1. **Start application** (port 5000): Next.js frontend
-2. **Identity Service** (ports 3001, 3003, 3005, 3006): Identity + Assessment + Learning + Tutor services
+2. **Identity Service** (ports 3001, 3003, 3005, 3006, 3007): Identity + Assessment + Learning + Tutor + Family services
 3. **Brain Service** (port 3002): Python FastAPI brain-svc
 4. **ai-svc** (port 3004): Python FastAPI LLM gateway (start separately)
 
@@ -99,6 +100,9 @@ services/tutor-svc     — Fastify tutor management (port 3006)
 - `/dashboard/learner/homework` — Homework Helper (upload photo/paste text, assignment list)
 - `/dashboard/learner/homework/[sessionId]` — Homework Help Session (Socratic chat + problem sidebar)
 - `/dashboard/parent/[learnerId]/homework` — Parent Homework History (view child's homework activity)
+- `/dashboard/parent/learner/[id]/collaboration` — Learning Team (invite teacher/caregiver/therapist)
+- `/dashboard/parent/learner/[id]/recommendations` — Recommendation Inbox (approve/decline/adjust Brain recommendations)
+- `/dashboard/parent/learner/[id]/iep` — IEP Goal Tracking (progress bars, trends, report generation)
 
 ### GitHub Repository
 - **New repo**: `artpromedia/aivo-ai-learning` (pushed Phase 0+1 — 125 files, 17,627 lines)

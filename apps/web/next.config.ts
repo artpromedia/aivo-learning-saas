@@ -20,6 +20,7 @@ const nextConfig: NextConfig = {
       { source: "/api/learning/:path*", destination: "http://localhost:3005/api/learning/:path*" },
       { source: "/api/tutors/:path*", destination: "http://localhost:3006/api/tutors/:path*" },
       { source: "/api/tutor/:path*", destination: "http://localhost:3006/api/tutor/:path*" },
+      { source: "/api/family/:path*", destination: "http://localhost:3007/api/family/:path*" },
     ];
   },
 };

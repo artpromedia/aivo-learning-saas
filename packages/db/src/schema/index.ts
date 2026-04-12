@@ -9,3 +9,4 @@ export * from "./billing";
 export * from "./audit";
 export * from "./learning";
 export * from "./homework";
+export * from "./collaboration";

@@ -261,6 +261,18 @@ export default function ParentDashboard() {
                     className="px-4 py-2 text-sm rounded-full bg-amber-50 text-amber-700 font-bold hover:bg-amber-100 transition">
                     Homework
                   </button>
+                  <button onClick={() => router.push(`/dashboard/parent/learner/${l.id}/collaboration`)}
+                    className="px-4 py-2 text-sm rounded-full bg-blue-50 text-blue-700 font-bold hover:bg-blue-100 transition">
+                    Team
+                  </button>
+                  <button onClick={() => router.push(`/dashboard/parent/learner/${l.id}/recommendations`)}
+                    className="px-4 py-2 text-sm rounded-full bg-pink-50 text-pink-700 font-bold hover:bg-pink-100 transition">
+                    Inbox
+                  </button>
+                  <button onClick={() => router.push(`/dashboard/parent/learner/${l.id}/iep`)}
+                    className="px-4 py-2 text-sm rounded-full bg-indigo-50 text-indigo-700 font-bold hover:bg-indigo-100 transition">
+                    IEP Goals
+                  </button>
                 </div>
               </div>
             ))}

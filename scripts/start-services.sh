@@ -19,4 +19,8 @@ echo "Starting tutor-svc on port 3006..."
 cd /home/runner/workspace/services/tutor-svc
 TUTOR_PORT=3006 NODE_ENV=development npx tsx src/index.ts &
 
+echo "Starting family-svc on port 3007..."
+cd /home/runner/workspace/services/family-svc
+FAMILY_PORT=3007 NODE_ENV=development npx tsx src/index.ts &
+
 wait
