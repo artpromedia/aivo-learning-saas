@@ -161,14 +161,14 @@ const TUTORS = [
   },
   {
     name: "Forge",
-    domain: "Vocational & Life Skills",
+    domain: "STEM & Engineering",
     color: "#92400E",
     bg: "from-amber-700 to-yellow-800",
-    tagline: "Build real skills for real life.",
+    tagline: "Design, build, and engineer the future.",
     bullets: [
-      "Hands-on project-based skill building",
-      "Safety and tool awareness training",
-      "Step-by-step guided vocational tasks",
+      "Hands-on engineering design challenges",
+      "Iterative prototyping and testing cycles",
+      "Math, science, and technology integration",
     ],
     img: "/images/tutors/forge.png",
   },
@@ -187,7 +187,7 @@ const TUTORS = [
   },
   {
     name: "Muse",
-    domain: "Visual Arts & Creativity",
+    domain: "Creative Arts & Expression",
     color: "#A855F7",
     bg: "from-purple-500 to-fuchsia-600",
     tagline: "Create without limits.",
