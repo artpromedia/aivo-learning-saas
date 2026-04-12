@@ -36,6 +36,8 @@ interface IepDocument {
 interface ReportLearner {
   id: string;
   name: string;
+  gradeLevel?: string;
+  functioningLevel?: string;
 }
 
 interface ReportGoal {
@@ -44,9 +46,11 @@ interface ReportGoal {
   domain: string;
   status: string;
   baseline: string;
+  target?: string;
   targetCriteria: string;
   currentMastery: number;
   progressPercent: number;
+  evidence?: string;
   sessionEvidence: { lessonCount: number; tutorCount: number };
 }
 
@@ -288,7 +292,7 @@ export default function IepDashboardPage() {
 
                 <div className="space-y-4">
                   <h3 className="font-heading font-bold text-lg text-slate-800">Goal-by-Goal Analysis</h3>
-                  {report.goals.map((g: any, i: number) => (
+                  {report.goals.map((g: ReportGoal, i: number) => (
                     <div key={i} className="p-4 rounded-xl border border-slate-100">
                       <div className="flex items-center gap-2 mb-2">
                         {g.domain && <span className="px-2 py-0.5 text-xs rounded-full bg-purple-100 text-primary font-bold">{g.domain}</span>}
