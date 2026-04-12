@@ -20,14 +20,27 @@ COST_PER_1K_TOKENS = {
 }
 
 
+VISION_MODEL_PRIORITY = [
+    "gemini/gemini-2.0-flash",
+    "openai/gpt-4o",
+    "openai/gpt-4o-mini",
+]
+
+
 async def generate_completion(
     system_prompt: str,
     user_prompt: str,
     temperature: float = 0.7,
     max_tokens: int = 2000,
     preferred_model: Optional[str] = None,
+    model_chain: Optional[list] = None,
 ) -> dict:
-    models_to_try = [preferred_model] + MODEL_PRIORITY if preferred_model else MODEL_PRIORITY
+    if model_chain:
+        models_to_try = model_chain
+    elif preferred_model:
+        models_to_try = [preferred_model] + [m for m in MODEL_PRIORITY if m != preferred_model]
+    else:
+        models_to_try = MODEL_PRIORITY
 
     last_error = None
     for model in models_to_try:

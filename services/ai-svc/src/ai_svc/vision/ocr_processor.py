@@ -12,7 +12,7 @@ import logging
 from dataclasses import dataclass, field
 from typing import Any
 
-from ..services.llm_gateway import generate_completion
+from ..services.llm_gateway import generate_completion, VISION_MODEL_PRIORITY
 from .subject_detector import detect_subject, DetectedSubject
 
 logger = logging.getLogger(__name__)
@@ -130,7 +130,7 @@ async def process_ocr(
             user_prompt=user_content,
             max_tokens=3000,
             temperature=0.2,
-            preferred_model="gemini/gemini-2.0-flash",
+            model_chain=VISION_MODEL_PRIORITY,
         )
 
         doc = _parse_vision_response(result["content"])
@@ -174,15 +174,21 @@ async def _process_pdf(pdf_base64: str) -> ExtractedDocument:
 
         result = await generate_completion(
             system_prompt=_OCR_SYSTEM_PROMPT,
-            user_prompt=(
-                "I have a PDF homework document. The raw text content is below. "
-                "Extract and structure all problems from it.\n\n"
-                f"[PDF raw bytes - {len(pdf_bytes)} bytes, unable to render directly. "
-                "Please process the following base64 content as a document.]"
-            ),
+            user_prompt=[
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": f"data:application/pdf;base64,{pdf_base64}",
+                    },
+                },
+                {
+                    "type": "text",
+                    "text": "Extract all content from this PDF homework document. Return the JSON structure as specified.",
+                },
+            ],
             max_tokens=3000,
             temperature=0.2,
-            preferred_model="gemini/gemini-2.0-flash",
+            model_chain=VISION_MODEL_PRIORITY,
         )
 
         doc = _parse_vision_response(result["content"])

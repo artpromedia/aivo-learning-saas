@@ -1,8 +1,7 @@
 "use client";
 import { useAuth } from "@/providers/auth-provider";
 import { useRouter, useParams } from "next/navigation";
-import { useEffect, useState, useRef } from "react";
-import Image from "next/image";
+import { useEffect, useState, useRef, useCallback } from "react";
 
 interface AdaptedProblem {
   problem_number: number;
@@ -21,15 +20,6 @@ interface ChatMessage {
   timestamp: string;
 }
 
-interface AssignmentData {
-  id: string;
-  subject: string;
-  status: string;
-  homeworkMode: string;
-  extractedProblems: any[];
-  adaptedProblems: AdaptedProblem[];
-}
-
 const SUBJECT_ICONS: Record<string, string> = {
   math: "🔢",
   ela: "📖",
@@ -43,12 +33,12 @@ export default function HomeworkSessionPage() {
   const { user, accessToken, loading: authLoading } = useAuth();
   const router = useRouter();
   const params = useParams();
-  const assignmentId = params.assignmentId as string;
+  const sessionId = params.sessionId as string;
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const [assignment, setAssignment] = useState<AssignmentData | null>(null);
-  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [subject, setSubject] = useState("");
+  const [adaptedProblems, setAdaptedProblems] = useState<AdaptedProblem[]>([]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
@@ -62,53 +52,46 @@ export default function HomeworkSessionPage() {
     if (!authLoading && !user) router.push("/login");
   }, [user, authLoading, router]);
 
+  const authHeaders = useCallback((): Record<string, string> => {
+    const h: Record<string, string> = {};
+    if (accessToken) h["Authorization"] = `Bearer ${accessToken}`;
+    return h;
+  }, [accessToken]);
+
   useEffect(() => {
-    if (!user || !assignmentId) return;
-    loadAssignment();
-  }, [user, assignmentId]);
+    if (!user || !sessionId) return;
+    loadSession();
+  }, [user, sessionId]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  async function loadAssignment() {
+  async function loadSession() {
     try {
-      const res = await fetch(`/api/tutors/homework/${assignmentId}`, {
-        headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {},
+      const res = await fetch(`/api/tutors/homework/session/${sessionId}/state`, {
+        headers: authHeaders(),
       });
-      if (!res.ok) throw new Error("Assignment not found");
+      if (!res.ok) throw new Error("Session not found");
       const data = await res.json();
-      setAssignment(data);
-      await startSession(data);
+
+      setSubject(data.subject || "");
+      setAdaptedProblems(data.adaptedProblems || []);
+
+      const existingMessages: ChatMessage[] = data.messages || [];
+      if (existingMessages.length === 0) {
+        const problems = data.adaptedProblems || [];
+        const greeting = problems.length > 0
+          ? `Hi! I see you have ${problems.length} problem${problems.length > 1 ? "s" : ""} to work on. Let's start with Problem ${problems[0]?.problem_number || 1}. Take a look and tell me what you think the first step is!`
+          : "Hi! I'm here to help with your homework. What would you like to work on?";
+        setMessages([{ role: "assistant", content: greeting, timestamp: new Date().toISOString() }]);
+      } else {
+        setMessages(existingMessages);
+      }
     } catch (err: any) {
       setError(err.message);
     } finally {
       setLoading(false);
-    }
-  }
-
-  async function startSession(assignmentData: AssignmentData) {
-    try {
-      const headers: Record<string, string> = { "Content-Type": "application/json" };
-      if (accessToken) headers["Authorization"] = `Bearer ${accessToken}`;
-
-      const res = await fetch("/api/tutors/homework/session/start", {
-        method: "POST",
-        headers,
-        body: JSON.stringify({ assignmentId: assignmentData.id, learnerId: user!.id }),
-      });
-      if (!res.ok) throw new Error("Failed to start session");
-      const data = await res.json();
-      setSessionId(data.sessionId);
-
-      const problems = assignmentData.adaptedProblems || [];
-      const greeting = problems.length > 0
-        ? `Hi! I see you have ${problems.length} problem${problems.length > 1 ? "s" : ""} to work on. Let's start with Problem ${problems[0]?.problem_number || 1}. Take a look and tell me what you think the first step is!`
-        : "Hi! I'm here to help with your homework. What would you like to work on?";
-
-      setMessages([{ role: "assistant", content: greeting, timestamp: new Date().toISOString() }]);
-    } catch (err: any) {
-      setError(err.message);
     }
   }
 
@@ -122,12 +105,11 @@ export default function HomeworkSessionPage() {
     setMessages((prev) => [...prev, { role: "user", content: userMessage, timestamp: new Date().toISOString() }]);
 
     try {
-      const msgHeaders: Record<string, string> = { "Content-Type": "application/json" };
-      if (accessToken) msgHeaders["Authorization"] = `Bearer ${accessToken}`;
+      const h = { ...authHeaders(), "Content-Type": "application/json" };
 
       const res = await fetch(`/api/tutors/homework/session/${sessionId}/message`, {
         method: "POST",
-        headers: msgHeaders,
+        headers: h,
         body: JSON.stringify({ message: userMessage }),
       });
 
@@ -145,14 +127,13 @@ export default function HomeworkSessionPage() {
   async function completeSession() {
     if (!sessionId) return;
     try {
-      const completeHeaders: Record<string, string> = { "Content-Type": "application/json" };
-      if (accessToken) completeHeaders["Authorization"] = `Bearer ${accessToken}`;
+      const h = { ...authHeaders(), "Content-Type": "application/json" };
 
       await fetch(`/api/tutors/homework/session/${sessionId}/complete`, {
         method: "POST",
-        headers: completeHeaders,
+        headers: h,
         body: JSON.stringify({
-          problemsAttempted: assignment?.adaptedProblems?.length || 0,
+          problemsAttempted: adaptedProblems.length || 0,
           problemsCompleted: completedProblems.size,
         }),
       });
@@ -164,8 +145,7 @@ export default function HomeworkSessionPage() {
 
   function markProblemDone(num: number) {
     setCompletedProblems((prev) => new Set([...prev, num]));
-    const problems = assignment?.adaptedProblems || [];
-    const nextIdx = problems.findIndex((p) => !completedProblems.has(p.problem_number) && p.problem_number !== num);
+    const nextIdx = adaptedProblems.findIndex((p) => !completedProblems.has(p.problem_number) && p.problem_number !== num);
     if (nextIdx >= 0) setCurrentProblem(nextIdx);
   }
 
@@ -192,8 +172,7 @@ export default function HomeworkSessionPage() {
     );
   }
 
-  const problems = assignment?.adaptedProblems || [];
-  const subjectLower = assignment?.subject?.toLowerCase() || "other";
+  const subjectLower = subject?.toLowerCase() || "other";
 
   return (
     <div className="h-screen flex flex-col bg-gradient-to-br from-purple-50 via-white to-cyan-50">
@@ -204,14 +183,14 @@ export default function HomeworkSessionPage() {
           </button>
           <span className="text-2xl">{SUBJECT_ICONS[subjectLower] || "📝"}</span>
           <span className="font-heading font-bold text-slate-800 capitalize">{subjectLower} Homework</span>
-          {problems.length > 0 && (
+          {adaptedProblems.length > 0 && (
             <span className="text-xs text-slate-400">
-              {completedProblems.size}/{problems.length} complete
+              {completedProblems.size}/{adaptedProblems.length} complete
             </span>
           )}
         </div>
         <div className="flex items-center gap-3">
-          {problems.length > 0 && (
+          {adaptedProblems.length > 0 && (
             <button onClick={() => setShowProblems(!showProblems)} className="text-xs text-purple-600 font-bold hover:underline">
               {showProblems ? "Hide Problems" : "Show Problems"}
             </button>
@@ -226,10 +205,10 @@ export default function HomeworkSessionPage() {
       </header>
 
       <div className="flex-1 flex overflow-hidden">
-        {showProblems && problems.length > 0 && (
+        {showProblems && adaptedProblems.length > 0 && (
           <div className="w-80 border-r border-slate-200 bg-white/50 overflow-y-auto p-4 space-y-3 shrink-0">
             <h3 className="font-heading font-bold text-sm text-slate-600 uppercase tracking-wide">Problems</h3>
-            {problems.map((p, idx) => {
+            {adaptedProblems.map((p, idx) => {
               const isDone = completedProblems.has(p.problem_number);
               const isActive = idx === currentProblem;
               return (
@@ -311,11 +290,11 @@ export default function HomeworkSessionPage() {
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask for help or share your answer..."
                 className="flex-1 rounded-full border border-slate-200 px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300"
-                disabled={sending || !sessionId}
+                disabled={sending}
               />
               <button
                 type="submit"
-                disabled={sending || !input.trim() || !sessionId}
+                disabled={sending || !input.trim()}
                 className="px-6 py-3 bg-purple-600 text-white rounded-full font-bold text-sm hover:bg-purple-700 transition disabled:opacity-50"
               >
                 Send

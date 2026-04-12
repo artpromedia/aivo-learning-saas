@@ -333,6 +333,41 @@ export function registerHomeworkRoutes(app: FastifyInstance, db: any) {
     };
   });
 
+  app.get("/api/tutors/homework/session/:sessionId/state", async (request, reply) => {
+    const authUser = await extractAuth(request);
+    if (!authUser) return reply.code(401).send({ error: "Authentication required" });
+
+    const { sessionId } = request.params as any;
+    const [session] = await db
+      .select()
+      .from(homeworkSessions)
+      .where(eq(homeworkSessions.id, sessionId));
+
+    if (!session) return reply.code(404).send({ error: "Session not found" });
+
+    const hasAccess = await verifyLearnerOwnership(db, session.learnerId, authUser);
+    if (!hasAccess) {
+      return reply.code(403).send({ error: "You do not have access to this session" });
+    }
+
+    const [assignment] = await db
+      .select()
+      .from(homeworkAssignments)
+      .where(eq(homeworkAssignments.id, session.homeworkAssignmentId));
+
+    return {
+      sessionId: session.id,
+      assignmentId: session.homeworkAssignmentId,
+      learnerId: session.learnerId,
+      tutorSku: session.tutorSku,
+      subject: assignment?.subject || "",
+      adaptedProblems: assignment?.adaptedProblems || [],
+      messages: session.messages || [],
+      startedAt: session.startedAt,
+      endedAt: session.endedAt,
+    };
+  });
+
   app.post("/api/tutors/homework/session/:sessionId/message", async (request, reply) => {
     const authUser = await extractAuth(request);
     if (!authUser) return reply.code(401).send({ error: "Authentication required" });

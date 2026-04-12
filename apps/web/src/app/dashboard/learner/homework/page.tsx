@@ -253,12 +253,24 @@ export default function HomeworkPage() {
               return (
                 <button
                   key={hw.id}
-                  onClick={() => {
+                  onClick={async () => {
                     if (hw.status === "READY" || hw.status === "IN_PROGRESS") {
-                      router.push(`/dashboard/learner/homework/${hw.id}`);
+                      try {
+                        const headers: Record<string, string> = { "Content-Type": "application/json" };
+                        if (accessToken) headers["Authorization"] = `Bearer ${accessToken}`;
+                        const res = await fetch("/api/tutors/homework/session/start", {
+                          method: "POST",
+                          headers,
+                          body: JSON.stringify({ assignmentId: hw.id, learnerId: user!.id }),
+                        });
+                        if (res.ok) {
+                          const data = await res.json();
+                          router.push(`/dashboard/learner/homework/${data.sessionId}`);
+                        }
+                      } catch {}
                     }
                   }}
-                  disabled={hw.status === "PROCESSING" || hw.status === "FAILED"}
+                  disabled={hw.status === "FAILED"}
                   className="w-full bg-white rounded-xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition flex items-center gap-4 text-left disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   <div

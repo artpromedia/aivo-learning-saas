@@ -97,7 +97,7 @@ services/tutor-svc     — Fastify tutor management (port 3006)
 - `/dashboard/learner/assessment` — Learner Baseline Assessment (dynamically generated from parent assessment via AI, fallback to 42 hardcoded questions across 7 subjects)
 - `/dashboard/learner/lesson/[tutorKey]` — Lesson Chat UI
 - `/dashboard/learner/homework` — Homework Helper (upload photo/paste text, assignment list)
-- `/dashboard/learner/homework/[assignmentId]` — Homework Help Session (Socratic chat + problem sidebar)
+- `/dashboard/learner/homework/[sessionId]` — Homework Help Session (Socratic chat + problem sidebar)
 - `/dashboard/parent/[learnerId]/homework` — Parent Homework History (view child's homework activity)
 
 ### GitHub Repository
