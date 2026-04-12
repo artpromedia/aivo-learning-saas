@@ -90,10 +90,13 @@ services/family-svc    — Fastify family collaboration + IEP (port 3007)
 - `/` — Landing page (parallax tutor carousel)
 - `/login` — Email login + Learner PIN login
 - `/register` — Parent registration
-- `/dashboard/parent` — Parent dashboard (learner cards, store link)
+- `/dashboard/parent` — Parent dashboard (learner cards with compact Brain Visualization, store link)
 - `/dashboard/parent/store` — Tutor Store (bundles + individual subscribe)
 - `/dashboard/parent/learner/[id]/assessment` — Parent Baseline Assessment (49 questions, 11 categories)
 - `/dashboard/parent/learner/[id]/gradebook` — Gradebook (mastery bars, sessions, XP)
+- `/dashboard/teacher` — Teacher dashboard (connected learners grid with Brain Visualization)
+- `/dashboard/caregiver` — Caregiver dashboard (connected learners grid with Brain Visualization)
+- `/dashboard/therapist` — Therapist dashboard (connected clients grid with Brain Visualization)
 - `/dashboard/learner` — Learner dashboard (tutor grid + homework helper link)
 - `/dashboard/learner/assessment` — Learner Baseline Assessment (dynamically generated from parent assessment via AI, fallback to 42 hardcoded questions across 7 subjects)
 - `/dashboard/learner/lesson/[tutorKey]` — Lesson Chat UI
@@ -103,6 +106,13 @@ services/family-svc    — Fastify family collaboration + IEP (port 3007)
 - `/dashboard/parent/learner/[id]/collaboration` — Learning Team (invite teacher/caregiver/therapist)
 - `/dashboard/parent/learner/[id]/recommendations` — Recommendation Inbox (approve/decline/adjust Brain recommendations)
 - `/dashboard/parent/learner/[id]/iep` — IEP Goal Tracking (progress bars, trends, report generation)
+
+### Brain Visualization
+- **Component**: `apps/web/src/components/BrainVisualization.tsx`
+- **3 Views**: Brain (animated SVG neural net), RAI (safety checks), XAI (domain mastery breakdown)
+- **Integration**: Parent dashboard (compact, per learner card), Teacher/Caregiver/Therapist dashboards (compact, per connected learner)
+- **API**: `GET /api/brain/:learnerId` (JWT-protected via brain-svc auth)
+- **Connected Learners API**: `GET /api/family/collaboration/connected-learners` (returns learners linked to authenticated teacher/caregiver/therapist)
 
 ### GitHub Repository
 - **New repo**: `artpromedia/aivo-ai-learning` (pushed Phase 0+1 — 125 files, 17,627 lines)

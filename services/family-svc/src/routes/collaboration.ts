@@ -342,4 +342,67 @@ export async function registerCollaborationRoutes(app: FastifyInstance) {
       readOnly: true,
     };
   });
+
+  app.get("/api/family/collaboration/connected-learners", async (request, reply) => {
+    const claims = await authenticateRequest(request, reply);
+    if (!claims) return;
+
+    const userId = claims.sub;
+
+    const teacherRows = await db.select({
+      learnerId: learnerTeachers.learnerId,
+    }).from(learnerTeachers).where(
+      and(
+        eq(learnerTeachers.status, "ACCEPTED"),
+        eq(learnerTeachers.teacherUserId, userId)
+      )
+    );
+
+    const caregiverRows = await db.select({
+      learnerId: learnerCaregivers.learnerId,
+    }).from(learnerCaregivers).where(
+      and(
+        eq(learnerCaregivers.status, "ACCEPTED"),
+        eq(learnerCaregivers.caregiverUserId, userId)
+      )
+    );
+
+    const therapistRows = await db.select({
+      learnerId: learnerTherapists.learnerId,
+    }).from(learnerTherapists).where(
+      and(
+        eq(learnerTherapists.status, "ACCEPTED"),
+        eq(learnerTherapists.therapistUserId, userId)
+      )
+    );
+
+    const learnerIds = new Set<string>();
+    for (const r of [...teacherRows, ...caregiverRows, ...therapistRows]) {
+      learnerIds.add(r.learnerId);
+    }
+
+    if (learnerIds.size === 0) return [];
+
+    interface ConnectedLearnerDto {
+      id: string;
+      name: string;
+      functioningLevel: string | null;
+      gradeLevel: string | null;
+    }
+
+    const results: ConnectedLearnerDto[] = [];
+    for (const lid of learnerIds) {
+      const [learner] = await db.select().from(learners).where(eq(learners.id, lid));
+      if (learner) {
+        results.push({
+          id: learner.id,
+          name: learner.name,
+          functioningLevel: learner.functioningLevel,
+          gradeLevel: learner.gradeLevel,
+        });
+      }
+    }
+
+    return results;
+  });
 }

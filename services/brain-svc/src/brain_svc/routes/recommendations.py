@@ -6,11 +6,12 @@ from sqlalchemy.orm import Session
 from sqlalchemy import text
 from brain_svc.models.database import get_db
 from brain_svc.models.schemas import RecommendationCreate, RecommendationResolve
+from brain_svc.auth import AuthClaims, require_auth
 
 router = APIRouter()
 
 @router.post("/")
-async def create_recommendation(request: RecommendationCreate, db: Session = Depends(get_db)):
+async def create_recommendation(request: RecommendationCreate, db: Session = Depends(get_db), auth: AuthClaims = Depends(require_auth)):
     rec_id = str(uuid.uuid4())
     db.execute(
         text("""INSERT INTO brain_recommendations
@@ -31,7 +32,7 @@ async def create_recommendation(request: RecommendationCreate, db: Session = Dep
     return {"id": rec_id, "status": "PENDING"}
 
 @router.get("/{learner_id}")
-async def list_recommendations(learner_id: str, status: str = None, db: Session = Depends(get_db)):
+async def list_recommendations(learner_id: str, status: str = None, db: Session = Depends(get_db), auth: AuthClaims = Depends(require_auth)):
     query = "SELECT * FROM brain_recommendations WHERE learner_id = :lid"
     params = {"lid": learner_id}
     if status:
@@ -42,7 +43,7 @@ async def list_recommendations(learner_id: str, status: str = None, db: Session 
     return [dict(r) for r in results]
 
 @router.put("/{recommendation_id}/resolve")
-async def resolve_recommendation(recommendation_id: str, request: RecommendationResolve, db: Session = Depends(get_db)):
+async def resolve_recommendation(recommendation_id: str, request: RecommendationResolve, db: Session = Depends(get_db), auth: AuthClaims = Depends(require_auth)):
     result = db.execute(
         text("SELECT id FROM brain_recommendations WHERE id = :id"),
         {"id": recommendation_id}

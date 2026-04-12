@@ -7,16 +7,17 @@ from sqlalchemy import text
 from brain_svc.models.database import get_db
 from brain_svc.models.schemas import BrainCloneRequest, BrainRollbackRequest
 from brain_svc.services.clone_pipeline import clone_brain
+from brain_svc.auth import AuthClaims, require_auth
 
 router = APIRouter()
 
 @router.post("/clone")
-async def clone_brain_endpoint(request: BrainCloneRequest, db: Session = Depends(get_db)):
+async def clone_brain_endpoint(request: BrainCloneRequest, db: Session = Depends(get_db), auth: AuthClaims = Depends(require_auth)):
     result = clone_brain(db, request)
     return result
 
 @router.get("/{learner_id}")
-async def get_brain_state(learner_id: str, db: Session = Depends(get_db)):
+async def get_brain_state(learner_id: str, db: Session = Depends(get_db), auth: AuthClaims = Depends(require_auth)):
     result = db.execute(
         text("SELECT * FROM brain_states WHERE learner_id = :lid ORDER BY version DESC LIMIT 1"),
         {"lid": learner_id}
@@ -28,7 +29,7 @@ async def get_brain_state(learner_id: str, db: Session = Depends(get_db)):
     return dict(result)
 
 @router.get("/{learner_id}/history")
-async def get_brain_history(learner_id: str, db: Session = Depends(get_db)):
+async def get_brain_history(learner_id: str, db: Session = Depends(get_db), auth: AuthClaims = Depends(require_auth)):
     results = db.execute(
         text("SELECT * FROM brain_state_snapshots WHERE learner_id = :lid ORDER BY version DESC"),
         {"lid": learner_id}
@@ -36,7 +37,7 @@ async def get_brain_history(learner_id: str, db: Session = Depends(get_db)):
     return [dict(r) for r in results]
 
 @router.post("/{learner_id}/rollback")
-async def rollback_brain(learner_id: str, request: BrainRollbackRequest, db: Session = Depends(get_db)):
+async def rollback_brain(learner_id: str, request: BrainRollbackRequest, db: Session = Depends(get_db), auth: AuthClaims = Depends(require_auth)):
     snapshot = db.execute(
         text("SELECT * FROM brain_state_snapshots WHERE id = :sid AND learner_id = :lid"),
         {"sid": request.snapshot_id, "lid": learner_id}

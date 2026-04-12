@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import { TUTORS } from "@aivo/brand";
+import BrainVisualization from "@/components/BrainVisualization";
 
 interface Learner {
   id: string;
@@ -243,6 +244,16 @@ export default function ParentDashboard() {
                 )}
                 {l.districtName && (
                   <p className="text-xs text-slate-400 mt-0.5">{l.districtName}</p>
+                )}
+                {accessToken && (
+                  <div className="mt-4">
+                    <BrainVisualization
+                      learnerId={l.id}
+                      learnerName={l.name}
+                      accessToken={accessToken}
+                      compact
+                    />
+                  </div>
                 )}
                 <div className="mt-4 flex gap-2 flex-wrap">
                   <button onClick={() => router.push(`/dashboard/parent/learner/${l.id}`)}
