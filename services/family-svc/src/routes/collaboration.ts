@@ -92,7 +92,8 @@ export async function registerCollaborationRoutes(app: FastifyInstance) {
     }
 
     const learnerRows = await db.select().from(learners).where(eq(learners.id, learnerId));
-    const tenantId = learnerRows[0]?.tenantId || "00000000-0000-0000-0000-000000000001";
+    if (learnerRows.length === 0) return reply.code(404).send({ error: "Learner not found" });
+    const tenantId = learnerRows[0].tenantId;
 
     const [record] = await db.insert(learnerTeachers).values({
       tenantId,
@@ -127,7 +128,8 @@ export async function registerCollaborationRoutes(app: FastifyInstance) {
     }
 
     const learnerRows = await db.select().from(learners).where(eq(learners.id, learnerId));
-    const tenantId = learnerRows[0]?.tenantId || "00000000-0000-0000-0000-000000000001";
+    if (learnerRows.length === 0) return reply.code(404).send({ error: "Learner not found" });
+    const tenantId = learnerRows[0].tenantId;
 
     const [record] = await db.insert(learnerCaregivers).values({
       tenantId,
@@ -158,7 +160,8 @@ export async function registerCollaborationRoutes(app: FastifyInstance) {
     if (existing.length > 0) return reply.code(409).send({ error: "Therapist already invited" });
 
     const learnerRows = await db.select().from(learners).where(eq(learners.id, learnerId));
-    const tenantId = learnerRows[0]?.tenantId || "00000000-0000-0000-0000-000000000001";
+    if (learnerRows.length === 0) return reply.code(404).send({ error: "Learner not found" });
+    const tenantId = learnerRows[0].tenantId;
 
     const [record] = await db.insert(learnerTherapists).values({
       tenantId,
