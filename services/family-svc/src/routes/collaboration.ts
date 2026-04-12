@@ -7,6 +7,9 @@ import {
   learners,
   users,
   brainInsights,
+  brainStates,
+  iepGoals,
+  therapyGoals,
 } from "@aivo/db";
 import { verifyJWT } from "@aivo/security";
 
@@ -196,6 +199,24 @@ export async function registerCollaborationRoutes(app: FastifyInstance) {
     try { claims = await verifyJWT(token); } catch { return reply.code(401).send({ error: "Invalid token" }); }
 
     const { learnerId } = request.params as any;
+
+    const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
+    if (!isParent) {
+      const teacherMatch = await db.select().from(learnerTeachers).where(
+        and(eq(learnerTeachers.learnerId, learnerId), eq(learnerTeachers.teacherUserId, claims.userId), eq(learnerTeachers.status, "ACCEPTED"))
+      );
+      const caregiverMatch = await db.select().from(learnerCaregivers).where(
+        and(eq(learnerCaregivers.learnerId, learnerId), eq(learnerCaregivers.caregiverUserId, claims.userId), eq(learnerCaregivers.status, "ACCEPTED"))
+      );
+      const therapistMatch = await db.select().from(learnerTherapists).where(
+        and(eq(learnerTherapists.learnerId, learnerId), eq(learnerTherapists.therapistUserId, claims.userId), eq(learnerTherapists.status, "ACCEPTED"))
+      );
+
+      if (teacherMatch.length === 0 && caregiverMatch.length === 0 && therapistMatch.length === 0 && claims.role !== "PLATFORM_ADMIN") {
+        return reply.code(403).send({ error: "You must be a parent or accepted team member to submit insights" });
+      }
+    }
+
     const { insightText, domain, source } = request.body as any;
     if (!insightText) return reply.code(400).send({ error: "insightText is required" });
 
@@ -208,5 +229,118 @@ export async function registerCollaborationRoutes(app: FastifyInstance) {
     }).returning();
 
     return reply.code(201).send(record);
+  });
+
+  app.get("/api/family/collaboration/:learnerId/brain/teacher", async (request, reply) => {
+    const token = extractToken(request);
+    if (!token) return reply.code(401).send({ error: "Authentication required" });
+
+    let claims: any;
+    try { claims = await verifyJWT(token); } catch { return reply.code(401).send({ error: "Invalid token" }); }
+
+    const { learnerId } = request.params as any;
+
+    const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
+    const teacherMatch = await db.select().from(learnerTeachers).where(
+      and(eq(learnerTeachers.learnerId, learnerId), eq(learnerTeachers.teacherUserId, claims.userId), eq(learnerTeachers.status, "ACCEPTED"))
+    );
+
+    if (!isParent && teacherMatch.length === 0 && claims.role !== "PLATFORM_ADMIN") {
+      return reply.code(403).send({ error: "Access denied — teacher or parent role required" });
+    }
+
+    const brain = await db.select().from(brainStates).where(eq(brainStates.learnerId, learnerId));
+    if (brain.length === 0) return { brainState: null };
+
+    const state = brain[0];
+    return {
+      brainState: {
+        masteryLevels: state.masteryLevels,
+        activeAccommodations: state.activeAccommodations,
+        curriculumAlignment: state.curriculumAlignment,
+        activeTutors: state.activeTutors,
+        version: state.version,
+      },
+      readOnly: true,
+    };
+  });
+
+  app.get("/api/family/collaboration/:learnerId/brain/caregiver", async (request, reply) => {
+    const token = extractToken(request);
+    if (!token) return reply.code(401).send({ error: "Authentication required" });
+
+    let claims: any;
+    try { claims = await verifyJWT(token); } catch { return reply.code(401).send({ error: "Invalid token" }); }
+
+    const { learnerId } = request.params as any;
+
+    const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
+    const caregiverMatch = await db.select().from(learnerCaregivers).where(
+      and(eq(learnerCaregivers.learnerId, learnerId), eq(learnerCaregivers.caregiverUserId, claims.userId), eq(learnerCaregivers.status, "ACCEPTED"))
+    );
+
+    if (!isParent && caregiverMatch.length === 0 && claims.role !== "PLATFORM_ADMIN") {
+      return reply.code(403).send({ error: "Access denied — caregiver or parent role required" });
+    }
+
+    const brain = await db.select().from(brainStates).where(eq(brainStates.learnerId, learnerId));
+    if (brain.length === 0) return { summary: null };
+
+    const state = brain[0];
+    const mastery = state.masteryLevels as Record<string, any> || {};
+    const subjects = Object.keys(mastery);
+    const avgMastery = subjects.length > 0
+      ? Math.round(subjects.reduce((sum, s) => sum + (typeof mastery[s] === "number" ? mastery[s] : 0), 0) / subjects.length)
+      : 0;
+
+    return {
+      summary: {
+        overallMastery: avgMastery,
+        subjectCount: subjects.length,
+        activeAccommodations: (state.activeAccommodations as any[] || []).length,
+        activeTutors: (state.activeTutors as any[] || []).length,
+      },
+      readOnly: true,
+    };
+  });
+
+  app.get("/api/family/collaboration/:learnerId/brain/therapist", async (request, reply) => {
+    const token = extractToken(request);
+    if (!token) return reply.code(401).send({ error: "Authentication required" });
+
+    let claims: any;
+    try { claims = await verifyJWT(token); } catch { return reply.code(401).send({ error: "Invalid token" }); }
+
+    const { learnerId } = request.params as any;
+
+    const isParent = await verifyParentOwnership(db, claims.userId, learnerId);
+    const therapistMatch = await db.select().from(learnerTherapists).where(
+      and(eq(learnerTherapists.learnerId, learnerId), eq(learnerTherapists.therapistUserId, claims.userId), eq(learnerTherapists.status, "ACCEPTED"))
+    );
+
+    if (!isParent && therapistMatch.length === 0 && claims.role !== "PLATFORM_ADMIN") {
+      return reply.code(403).send({ error: "Access denied — therapist or parent role required" });
+    }
+
+    const brain = await db.select().from(brainStates).where(eq(brainStates.learnerId, learnerId));
+    const goals = await db.select().from(iepGoals).where(eq(iepGoals.learnerId, learnerId));
+    const tGoals = await db.select().from(therapyGoals).where(eq(therapyGoals.learnerId, learnerId));
+
+    const state = brain[0] || null;
+
+    return {
+      brainState: state ? {
+        functioningLevelProfile: state.functioningLevelProfile,
+        iepProfile: state.iepProfile,
+        sensoryProfile: state.sensoryProfile,
+        activeAccommodations: state.activeAccommodations,
+        disabilitySignals: state.disabilitySignals,
+        version: state.version,
+      } : null,
+      iepGoals: goals,
+      therapyGoals: tGoals,
+      hipaaScoped: true,
+      readOnly: true,
+    };
   });
 }
