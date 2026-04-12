@@ -1,16 +1,10 @@
-import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
+import { FastifyInstance } from "fastify";
 import { eq, and, desc } from "drizzle-orm";
 import {
   brainRecommendations,
   brainInsights,
-  learners,
 } from "@aivo/db";
-import { verifyJWT } from "@aivo/security";
-
-interface JWTClaims {
-  userId: string;
-  role: string;
-}
+import { authenticateRequest, verifyParentOwnership } from "../auth.js";
 
 interface LearnerId {
   learnerId: string;
@@ -27,33 +21,6 @@ interface RespondBody {
 
 interface QueryStatus {
   status?: string;
-}
-
-function extractToken(request: FastifyRequest): string | null {
-  const auth = request.headers.authorization;
-  if (auth?.startsWith("Bearer ")) return auth.slice(7);
-  return (request.cookies as Record<string, string> | undefined)?.access_token || null;
-}
-
-async function authenticateRequest(request: FastifyRequest, reply: FastifyReply): Promise<JWTClaims | null> {
-  const token = extractToken(request);
-  if (!token) {
-    reply.code(401).send({ error: "Authentication required" });
-    return null;
-  }
-  try {
-    return await verifyJWT(token) as JWTClaims;
-  } catch (_err) {
-    reply.code(401).send({ error: "Invalid token" });
-    return null;
-  }
-}
-
-async function verifyParentOwnership(db: ReturnType<typeof import("@aivo/db").createDb>, userId: string, learnerId: string): Promise<boolean> {
-  const result = await db.select().from(learners).where(
-    and(eq(learners.id, learnerId), eq(learners.parentId, userId))
-  );
-  return result.length > 0;
 }
 
 export async function registerRecommendationRoutes(app: FastifyInstance) {
